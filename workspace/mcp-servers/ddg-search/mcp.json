@@ -1,0 +1,9 @@
+{
+  "name": "ddg-search",
+  "version": "1.0.0",
+  "description": "DuckDuckGo 网页搜索（免费，无需 API Key）",
+  "command": "python",
+  "args": ["server.py"],
+  "cwd": "${workspace}/mcp-servers/ddg-search",
+  "env": {}
+}

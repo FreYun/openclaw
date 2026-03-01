@@ -1,0 +1,41 @@
+version: '2.2'
+
+services:
+  # SearXNG search engine backend
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./config:/etc/searxng:rw
+      - ./data:/var/cache/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8888/
+    restart: unless-stopped
+    networks:
+      - websearch-network
+
+  # MCP Web Search Server
+  mcp-websearch:
+    build: .
+    container_name: mcp-server-websearch
+    ports:
+      - "8003:8003"
+    environment:
+      - SEARXNG_URL=http://searxng:8080
+      - SEARXNG_TIMEOUT=10.0
+    depends_on:
+      - searxng
+    restart: unless-stopped
+    networks:
+      - websearch-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8003/healthz').raise_for_status()"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+networks:
+  websearch-network:
+    driver: bridge

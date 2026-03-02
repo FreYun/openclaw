@@ -28,6 +28,16 @@
     "mcp-grep": {
       "command": "npx",
       "args": ["-y", "@247arjun/mcp-grep"]
+    },
+    "memory_search": {
+      "command": "python",
+      "args": ["D:\\memory-search-mcp\\mcp_memory_server.py"],
+      "env": {
+        "DASHSCOPE_API_KEY": "sk-8937a309c5f04f909aabd1ad255b3654",
+        "MEMORY_WORKSPACE": "D:\\.openclaw\\workspace",
+        "MEMORY_DB_PATH": "D:\\.openclaw\\memory\\search_index.sqlite",
+        "MEMORY_INCLUDE_SESSIONS": "1"
+      }
     }
   },
   "imports": []

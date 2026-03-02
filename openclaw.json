@@ -1,11 +1,11 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.2.27",
-    "lastTouchedAt": "2026-03-01T12:42:28.175Z"
+    "lastTouchedAt": "2026-03-02T16:01:24.131Z"
   },
   "wizard": {
-    "lastRunAt": "2026-02-26T02:39:40.496Z",
-    "lastRunVersion": "2026.2.24",
+    "lastRunAt": "2026-03-01T17:31:58.398Z",
+    "lastRunVersion": "2026.2.27",
     "lastRunCommand": "configure",
     "lastRunMode": "local"
   },
@@ -160,9 +160,6 @@
       "model": {
         "primary": "bailian/qwen3.5-plus"
       },
-      "heartbeat": {
-        "every": "2h"
-      },
       "models": {
         "bailian/qwen3.5-plus": {},
         "bailian/qwen3-max-2026-01-23": {},
@@ -177,6 +174,9 @@
       "compaction": {
         "mode": "safeguard"
       },
+      "heartbeat": {
+        "every": "2h"
+      },
       "maxConcurrent": 4,
       "subagents": {
         "maxConcurrent": 8
@@ -185,9 +185,20 @@
   },
   "tools": {
     "exec": {
-      "host": "gateway"
+      "host": "gateway",
+      "security": "full",
+      "ask": "off"
     }
   },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default"
+      }
+    }
+  ],
   "messages": {
     "ackReactionScope": "group-mentions"
   },
@@ -215,14 +226,42 @@
         },
         "boot-md": {
           "enabled": true
+        },
+        "emotion-check": {
+          "enabled": true
+        }
+      },
+      "load": {
+        "extraDirs": [
+          "D:\\.openclaw\\workspace\\skills\\emotion-system\\hooks\\openclaw"
+        ]
+      },
+      "installs": {
+        "emotion-check": {
+          "source": "path",
+          "sourcePath": "D:\\.openclaw\\workspace\\skills\\emotion-system\\hooks\\openclaw",
+          "installPath": "D:\\.openclaw\\workspace\\skills\\emotion-system\\hooks\\openclaw",
+          "installedAt": "2026-03-02T16:01:24.122Z",
+          "hooks": [
+            "emotion-check"
+          ]
         }
       }
     }
   },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "appId": "cli_a92ecf1a2038dcd2",
+      "appSecret": "5fZPY0rUqEykU5826AWandwM1cKk3Aya",
+      "domain": "feishu",
+      "groupPolicy": "open"
+    }
+  },
   "gateway": {
-    "port": 18789,
+    "port": 18790,
     "mode": "local",
-    "bind": "loopback",
+    "bind": "auto",
     "auth": {
       "mode": "token",
       "token": "cf5c3f0f245db51357171803cb0f6a0224b53350bc224d11"
@@ -232,19 +271,24 @@
       "resetOnExit": false
     },
     "nodes": {
-      "denyCommands": [
-        "camera.snap",
-        "camera.clip",
-        "screen.record",
-        "calendar.add",
-        "contacts.add",
-        "reminders.add"
-      ]
+      "denyCommands": []
     }
   },
   "skills": {
     "install": {
       "nodeManager": "npm"
+    }
+  },
+  "plugins": {
+    "load": {
+      "paths": [
+        "D:\\openclaw\\extensions\\feishu"
+      ]
+    },
+    "entries": {
+      "feishu": {
+        "enabled": true
+      }
     }
   }
 }

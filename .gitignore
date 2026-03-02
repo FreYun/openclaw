@@ -15,6 +15,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+# Browser data
+browser/
+
 # Logs & temp
 *.log
 *.tmp

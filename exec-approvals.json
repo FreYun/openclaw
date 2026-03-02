@@ -4,16 +4,16 @@
     "path": "D:\\/.openclaw/exec-approvals.sock",
     "token": "MYX5sCau4WXrzy_WzAU91OvvcZg00ote"
   },
-  "defaults": {},
+  "defaults": {
+    "security": "full",
+    "ask": "off",
+    "askFallback": "off"
+  },
   "agents": {
     "main": {
-      "allowlist": [
-        {
-          "id": "81a01f0f-9446-4e72-a403-0b41578bc464",
-          "pattern": "C:\\Program Files\\nodejs\\npx.cmd",
-          "lastUsedAt": 1772372652845
-        }
-      ]
+      "security": "full",
+      "ask": "off",
+      "allowlist": []
     }
   }
 }

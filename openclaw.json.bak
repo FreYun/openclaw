@@ -1,13 +1,17 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.2.24",
-    "lastTouchedAt": "2026-02-26T02:39:40.511Z"
+    "lastTouchedVersion": "2026.2.27",
+    "lastTouchedAt": "2026-03-02T13:47:51.109Z"
   },
   "wizard": {
-    "lastRunAt": "2026-02-26T02:39:40.496Z",
-    "lastRunVersion": "2026.2.24",
+    "lastRunAt": "2026-03-01T17:31:58.398Z",
+    "lastRunVersion": "2026.2.27",
     "lastRunCommand": "configure",
     "lastRunMode": "local"
+  },
+  "browser": {
+    "enabled": true,
+    "defaultProfile": "openclaw"
   },
   "models": {
     "mode": "merge",
@@ -170,6 +174,9 @@
       "compaction": {
         "mode": "safeguard"
       },
+      "heartbeat": {
+        "every": "2h"
+      },
       "maxConcurrent": 4,
       "subagents": {
         "maxConcurrent": 8
@@ -178,9 +185,20 @@
   },
   "tools": {
     "exec": {
-      "host": "gateway"
+      "host": "gateway",
+      "security": "full",
+      "ask": "off"
     }
   },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default"
+      }
+    }
+  ],
   "messages": {
     "ackReactionScope": "group-mentions"
   },
@@ -212,10 +230,19 @@
       }
     }
   },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "appId": "cli_a92ecf1a2038dcd2",
+      "appSecret": "5fZPY0rUqEykU5826AWandwM1cKk3Aya",
+      "domain": "feishu",
+      "groupPolicy": "open"
+    }
+  },
   "gateway": {
-    "port": 18789,
+    "port": 18790,
     "mode": "local",
-    "bind": "loopback",
+    "bind": "auto",
     "auth": {
       "mode": "token",
       "token": "cf5c3f0f245db51357171803cb0f6a0224b53350bc224d11"
@@ -225,22 +252,24 @@
       "resetOnExit": false
     },
     "nodes": {
-      "denyCommands": [
-        "camera.snap",
-        "camera.clip",
-        "screen.record",
-        "calendar.add",
-        "contacts.add",
-        "reminders.add"
-      ]
+      "denyCommands": []
     }
-  },
-  "browser": {
-    "defaultProfile": "openclaw"
   },
   "skills": {
     "install": {
       "nodeManager": "npm"
+    }
+  },
+  "plugins": {
+    "load": {
+      "paths": [
+        "D:\\openclaw\\extensions\\feishu"
+      ]
+    },
+    "entries": {
+      "feishu": {
+        "enabled": true
+      }
     }
   }
 }

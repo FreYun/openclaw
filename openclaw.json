@@ -226,25 +226,6 @@
         },
         "boot-md": {
           "enabled": true
-        },
-        "emotion-check": {
-          "enabled": true
-        }
-      },
-      "load": {
-        "extraDirs": [
-          "D:\\.openclaw\\workspace\\skills\\emotion-system\\hooks\\openclaw"
-        ]
-      },
-      "installs": {
-        "emotion-check": {
-          "source": "path",
-          "sourcePath": "D:\\.openclaw\\workspace\\skills\\emotion-system\\hooks\\openclaw",
-          "installPath": "D:\\.openclaw\\workspace\\skills\\emotion-system\\hooks\\openclaw",
-          "installedAt": "2026-03-02T16:01:24.122Z",
-          "hooks": [
-            "emotion-check"
-          ]
         }
       }
     }

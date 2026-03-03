@@ -508,7 +508,35 @@ description: Browse, read, post, and comment on Xiaohongshu (小红书) using th
      - 不再用同一个 `ref` 死循环重试（尤其是评论输入框在页面最底部，一次失败就先滚动到最底部再 `snapshot`，用新 ref）；
      - 先重新 `snapshot`，必要时先滚动页面让目标区域进入视口，再用新 snapshot 里的 `ref` 继续操作。
 
-2. **执行小红书/浏览器操作时禁止关闭 gateway**
+2. **Browser 服务错误处理（重要！）**
+   - 看到 `Can't reach the OpenClaw browser control service` 或 `Failed to start Chrome CDP`：
+     - **不代表 gateway 挂了**，只是浏览器服务暂时不可用
+     - **不要重启 gateway**
+     - 正确做法：
+       1. 先 `browser start` 重试
+       2. 如果还不行，用 `browser navigate` 刷新页面
+       3. 再不行，关闭当前页面重新 `browser open`
+   - 只有多次 `browser start` 都失败且用户明确要求时，才考虑重启 gateway。
+
+3. **任务完成后必须关闭所有 tab（铁律！）**
+   - 完成一个任务（如评论完一个帖子、回复完评论、发完笔记）后：
+     - **先 `browser tabs` 查看所有打开的 tab**
+     - **逐个 `browser close` 关闭每个 tab**（包括小红书页面、about:blank、Service Worker 等）
+   - **为什么这是铁律**：
+     - 不关 tab 会导致下次操作时 ref 混乱、页面状态错乱
+     - 积累多了会拖慢浏览器、增加内存占用
+     - 每次都是干净的环境，避免「这个 tab 是上次留下的」这种坑
+   - **示例**：
+     ```json
+     { "action": "tabs" }
+     // 返回 [{targetId: "xxx", title: "通知 - 小红书"}, {targetId: "yyy", title: "about:blank"}, ...]
+     // 然后逐个关闭：
+     { "action": "close", "targetId": "xxx" }
+     { "action": "close", "targetId": "yyy" }
+     ```
+   - **只有用户明确说「保持浏览器打开」时才不关**，否则默认干完就关。
+
+4. **执行小红书/浏览器操作时禁止关闭 gateway**
    - **禁止**在操作过程中执行关闭、停止或重启 OpenClaw gateway 的命令（如 `openclaw gateway` 的 stop/restart、或通过菜单/exec 关掉 gateway）。browser 报错（如 Can't reach browser control service、ref 失效）时，先按「ref 失效 → 重新 snapshot / 兜底用 ref 点」处理，**不要擅自关 gateway**。
    - 只有当**用户明确要求**你帮忙重启或关闭 gateway 时，才执行相关命令；或多次 `browser start` / `browser snapshot` 都失败且错误明确指向服务不可用、并已告知用户后，经用户同意再考虑重启。
    - 单纯的 `Unknown ref` / `Element not found` **不是** 服务挂了，而是你在用旧的 `ref`，此时**禁止**关 gateway。

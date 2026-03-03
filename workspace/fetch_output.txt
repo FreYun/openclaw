@@ -1,6 +1,0 @@
-# Content from https://www.baidu.com
-
-百度一下，你就知道
-<style data-for="result" type="text/css" >html{font-size:100px}html body{font-size:.14rem;font-size:14px}body{color:#333;background:#fff;padding:6px 0 0;margin:0;position:relative}body,th,td,.p1,.p2{font-family:arial}p,form,ol,ul,li,dl,dt,dd,h3{margin:0;padding:0;list-style:none}input{padd
-
-... (truncated)

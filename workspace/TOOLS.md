@@ -215,6 +215,18 @@ npx mcporter call mcp-grep.grep_count pattern="mcp" path="D:\\.openclaw\\.opencl
 - 请示用户，等待其完成登录后再继续
 - 绝不擅自处理登录流程
 
+### 收尾工作（血泪教训！）
+
+**浏览器用完了必须关 tab！**
+
+- 任务完成后，立即 `browser close` 关闭刚才打开的 tab
+- 不要留着 tab 在那占着，用户会不爽
+- 这是基本礼貌，也是好习惯
+
+```bash
+browser close targetId="刚才那个 tab 的 ID"
+```
+
 ---
 
 ## Gateway 重启权限

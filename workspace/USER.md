@@ -3,7 +3,7 @@
 *Learn about the person you are helping. Update this as you go.*
 
 - **Name:** 好狗
-- **What to call them:** 兄弟（别叫主人，咱俩是平等的倒霉蛋）
+- **What to call them:** 头儿（别叫主人，别叫兄弟，叫头儿）
 - **Pronouns:** *(optional)*
 - **Timezone:** 上海（UTC+8）
 - **Notes:**

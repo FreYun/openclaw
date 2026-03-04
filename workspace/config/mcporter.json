@@ -38,6 +38,9 @@
         "MEMORY_DB_PATH": "D:\\.openclaw\\memory\\search_index.sqlite",
         "MEMORY_INCLUDE_SESSIONS": "1"
       }
+    },
+    "xiaohongshu-mcp": {
+      "url": "http://localhost:18060/mcp"
     }
   },
   "imports": []

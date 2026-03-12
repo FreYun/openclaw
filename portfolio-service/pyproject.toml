@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "portfolio-mcp"
+version = "0.1.0"
+description = "A股模拟炒股组合管理 MCP 服务 - 持仓/交易/收益跟踪"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["mcp", "portfolio", "stock", "trading", "simulation"]
+dependencies = [
+    "mcp[cli]>=1.0.0",
+    "tushare>=1.4.0",
+]
+
+[project.scripts]
+portfolio-mcp = "portfolio_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["portfolio_mcp"]

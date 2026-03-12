@@ -1,0 +1,10 @@
+{
+  "name": "openclaw-tushare",
+  "version": "1.0.0",
+  "description": "Tushare Pro financial data plugin for OpenClaw — A-shares, indices, financials, northbound flow",
+  "author": "alexsun",
+  "license": "MIT",
+  "openclaw": {
+    "extensions": ["./index.ts"]
+  }
+}

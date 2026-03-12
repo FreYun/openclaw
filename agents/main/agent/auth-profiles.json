@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "profiles": {
+    "kimi-coding:default": {
+      "type": "api_key",
+      "provider": "kimi-coding",
+      "key": "sk-kimi-a23m9zHlUBxCCUtU2GoTxHKrMpJPztjRcXpqbFIb9DzwY6AU7Md7B7e7gCap1Spo"
+    },
+    "legacylands:default": {
+      "type": "api_key",
+      "provider": "legacylands",
+      "key": "cr_4b42bf4732256fbaedf0e04763dda8bc038f8f8ca51bf3654ba6f81cc0678924"
+    }
+  },
+  "lastGood": {
+    "kimi-coding": "kimi-coding:default",
+    "legacylands": "legacylands:default"
+  },
+  "usageStats": {
+    "kimi-coding:default": {
+      "lastUsed": 1773042837922,
+      "errorCount": 0,
+      "lastFailureAt": 1772629912147
+    },
+    "legacylands:default": {
+      "lastUsed": 1773296936646,
+      "errorCount": 0
+    }
+  }
+}

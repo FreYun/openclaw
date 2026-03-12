@@ -1,0 +1,21 @@
+# ── Personal data (never commit) ─────────────────────────────
+memory/
+MEMORY.md
+
+# ── Runtime state ─────────────────────────────────────────────
+.openclaw/
+.clawhub/
+**/.clawhub/
+
+# ── Editor / IDE ──────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── Python cache ──────────────────────────────────────────────
+**/__pycache__/
+*.pyc
+*.pyo
+
+# ── OS files ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

@@ -1,0 +1,77 @@
+{
+  "_comment": "这不是完整的 openclaw.json，而是需要确认/合并的关键字段片段。",
+  "_comment2": "完整配置由 openclaw wizard 生成，此文件仅供对照检查。",
+
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "zai": {
+        "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "glm-5",
+            "name": "GLM-5",
+            "reasoning": true,
+            "input": ["text"],
+            "contextWindow": 204800,
+            "maxTokens": 131072
+          },
+          {
+            "id": "glm-4.7-flash",
+            "name": "GLM-4.7 Flash",
+            "reasoning": true,
+            "input": ["text"],
+            "contextWindow": 204800,
+            "maxTokens": 131072
+          }
+        ]
+      }
+    }
+  },
+
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "zai/glm-5"
+      },
+      "workspace": "/home/YOUR_USERNAME/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      }
+    }
+  },
+
+  "tools": {
+    "profile": "full",
+    "deny": ["web_search"]
+  },
+
+  "plugins": {
+    "allow": ["openclaw-tushare"],
+    "entries": {
+      "openclaw-tushare": {
+        "enabled": true,
+        "config": {
+          "token": "YOUR_TUSHARE_TOKEN"
+        }
+      }
+    }
+  },
+
+  "memory": {
+    "backend": "qmd",
+    "qmd": {
+      "includeDefaultMemory": true,
+      "update": {
+        "interval": "5m",
+        "debounceMs": 15000
+      },
+      "searchMode": "search",
+      "limits": {
+        "maxResults": 6,
+        "timeoutMs": 4000
+      }
+    }
+  }
+}

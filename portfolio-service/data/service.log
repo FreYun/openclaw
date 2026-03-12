@@ -1,0 +1,15 @@
+nohup: 忽略输入
+2026-03-09 16:08:12,580 [INFO] 守护进程启动，服务地址: http://0.0.0.0:18790/sse
+2026-03-09 16:08:12,580 [INFO] 命令: /home/rooot/.openclaw/portfolio-service/.venv/bin/python -m portfolio_mcp --transport sse --host 0.0.0.0 --port 18790
+2026-03-09 16:08:12,580 [INFO] 启动服务进程 (第 1 次)...
+INFO:     Started server process [2511822]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:18790 (Press CTRL+C to quit)
+INFO:     Shutting down
+2026-03-10 14:24:16,774 [INFO] 收到停止信号，正在关闭服务...
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2511822]
+2026-03-10 14:24:21,826 [INFO] 服务已正常停止。
+2026-03-10 14:24:21,826 [INFO] 守护进程退出。共重启 0 次。

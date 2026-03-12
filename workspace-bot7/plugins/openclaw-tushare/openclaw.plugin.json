@@ -1,0 +1,21 @@
+{
+  "id": "openclaw-tushare",
+  "name": "Tushare Financial Data",
+  "description": "Financial data tools powered by Tushare Pro API (A-shares, Hong Kong stocks, indices, financials, northbound flow).",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "token": {
+        "type": "string"
+      }
+    },
+    "required": ["token"]
+  },
+  "uiHints": {
+    "token": {
+      "label": "Tushare API Token",
+      "sensitive": true
+    }
+  }
+}

@@ -1,0 +1,48 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Browser profiles & cache
+browser/
+
+# Secrets & credentials
+credentials/
+cookies.json
+openclaw.json
+openclaw.json.bak*
+
+# Runtime & logs
+logs/
+media/
+delivery-queue/
+
+# Device pairing
+devices/
+
+# Subagent state
+subagents/
+
+# OS & IDE
+.DS_Store
+.cursor/
+
+# Node.js
+node_modules/
+
+# Build artifacts & archives
+portfolio-service.zip
+update-check.json
+
+# Fly.io secrets
+fly.private.toml
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.production
+
+# Bot memory (runtime journals, not source)
+workspace-bot*/memory/
+workspace-main/memory/
+memory/

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "finance-data": {
+      "url": "http://localhost:8000/sse"
+    },
+    "xiaohongshu-mcp": {
+      "url": "http://localhost:18065/mcp"
+    }
+  },
+  "imports": []
+}

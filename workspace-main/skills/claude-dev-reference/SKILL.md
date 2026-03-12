@@ -1,0 +1,1 @@
+/home/rooot/.openclaw/CLAUDE.md

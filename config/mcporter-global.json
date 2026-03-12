@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "finance-data": {
+      "url": "http://localhost:8000/sse"
+    }
+  }
+}

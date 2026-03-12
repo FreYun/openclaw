@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "bigmodel-search": {
+      "description": "智谱 BigModel 联网搜索 MCP（web_search_prime）",
+      "baseUrl": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_ZHIPU_API_KEY"
+      }
+    },
+    "zai-vision": {
+      "command": "npx",
+      "args": ["-y", "@z_ai/mcp-server"],
+      "description": "智谱视觉理解 MCP（GLM-4.6V）—— 用于图表分析（technical-analyst 技能）",
+      "env": {
+        "Z_AI_API_KEY": "YOUR_ZHIPU_API_KEY",
+        "Z_AI_MODE": "ZHIPU"
+      }
+    }
+  },
+  "imports": []
+}

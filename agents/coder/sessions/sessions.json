@@ -1,0 +1,13 @@
+{
+  "agent:coder:interactive": {
+    "session_id": "1770617938407",
+    "session_key": "agent:coder:interactive",
+    "created_at": 1770617938407,
+    "updated_at": 1770617938408,
+    "message_count": 6,
+    "total_tokens": 12954,
+    "context_tokens": 12954,
+    "chat_type": "direct",
+    "channel": null
+  }
+}

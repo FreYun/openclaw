@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老詹的组合</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --surface: #ffffff; --border: #e2e5ea;
+    --text: #1a1a2e; --text2: #6b7280; --text3: #9ca3af;
+    --green: #16a34a; --green-bg: rgba(22,163,74,0.08);
+    --red: #dc2626; --red-bg: rgba(220,38,38,0.08);
+    --blue: #2563eb; --yellow: #d97706;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; padding: 20px;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .header h1 { font-size: 20px; font-weight: 600; }
+  .header .meta { font-size: 13px; color: var(--text2); text-align: right; }
+  .header .meta .time { font-variant-numeric: tabular-nums; }
+  .status-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); margin-right: 6px; vertical-align: middle;
+  }
+  .status-dot.loading { background: var(--yellow); animation: pulse 1s infinite; }
+  .status-dot.error { background: var(--red); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Summary Cards */
+  .summary {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px;
+  }
+  .card .label { font-size: 12px; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .card .value { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .card .sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .card.hero { grid-column: span 2; }
+  .card.hero .value { font-size: 36px; }
+  .up { color: var(--red); }
+  .down { color: var(--green); }
+
+  /* Category bar */
+  .cat-bar {
+    display: flex; height: 8px; border-radius: 4px; overflow: hidden;
+    margin-bottom: 24px; background: var(--surface);
+  }
+  .cat-bar .seg { transition: width 0.5s ease; position: relative; }
+  .cat-bar .seg:hover::after {
+    content: attr(data-label); position: absolute; top: -28px; left: 50%;
+    transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 1;
+  }
+
+  /* Table */
+  .table-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 24px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 600;
+    color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border); background: var(--surface);
+    position: sticky; top: 0;
+  }
+  th.right, td.right { text-align: right; }
+  td {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,0,0,0.02); }
+  tr.cash-row td { color: var(--text2); font-style: italic; }
+  tr.total-row td { font-weight: 700; border-top: 2px solid var(--border); background: rgba(0,0,0,0.02); }
+
+  .pct-bar {
+    display: inline-block; height: 4px; border-radius: 2px;
+    vertical-align: middle; margin-right: 6px; min-width: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .badge {
+    display: inline-block; font-size: 10px; padding: 1px 6px;
+    border-radius: 3px; font-weight: 500; margin-right: 4px;
+  }
+  .badge.宽基指数 { background: rgba(37,99,235,0.1); color: var(--blue); }
+  .badge.港股海外 { background: rgba(217,119,6,0.1); color: var(--yellow); }
+  .badge.行业主题 { background: rgba(124,58,237,0.1); color: #7c3aed; }
+  .badge.小盘 { background: rgba(22,163,74,0.1); color: var(--green); }
+  .badge.商品 { background: rgba(220,38,38,0.1); color: var(--red); }
+
+  /* Category Summary */
+  .cat-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 8px; margin-bottom: 24px;
+  }
+  .cat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 12px;
+  }
+  .cat-card .cat-name { font-size: 12px; color: var(--text2); }
+  .cat-card .cat-weight { font-size: 11px; color: var(--text3); }
+  .cat-card .cat-pct { font-size: 18px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+  /* Footer */
+  .footer { font-size: 11px; color: var(--text3); padding: 12px 0; text-align: center; }
+
+  /* Countdown */
+  .countdown { font-size: 11px; color: var(--text3); }
+
+  /* Loading overlay */
+  .table-wrap { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .card { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .loading-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg); display: flex; align-items: center;
+    justify-content: center; z-index: 100; transition: opacity 0.3s;
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .spinner { font-size: 16px; color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner">正在获取行情数据...</div>
+</div>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>老詹的组合</h1>
+    <div class="meta">
+      <div><span class="status-dot loading" id="statusDot"></span><span id="statusText">加载中</span></div>
+      <div class="time" id="updateTime">--:--:--</div>
+      <div class="countdown" id="countdown"></div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary">
+    <div class="card hero">
+      <div class="label">组合预估收益</div>
+      <div class="value" id="totalPct">--</div>
+      <div class="sub" id="totalPnl">--</div>
+    </div>
+    <div class="card">
+      <div class="label">持仓数</div>
+      <div class="value" id="posCount">--</div>
+      <div class="sub" id="cashInfo">--</div>
+    </div>
+    <div class="card">
+      <div class="label">涨跌比</div>
+      <div class="value" id="upDown">--</div>
+      <div class="sub" id="upDownDetail">--</div>
+    </div>
+  </div>
+
+  <!-- Category Allocation Bar -->
+  <div class="cat-bar" id="catBar"></div>
+
+  <!-- Category Summary -->
+  <div class="cat-cards" id="catCards"></div>
+
+  <!-- Positions Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>分类</th>
+          <th>基金</th>
+          <th class="right">仓位</th>
+          <th class="right">指数涨跌</th>
+          <th class="right">贡献</th>
+          <th>跟踪指数</th>
+        </tr>
+      </thead>
+      <tbody id="posBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    联接基金实际收益因仓位比例（90-95%）、申赎费、跟踪误差等略有偏差 · 数据来源: 东方财富
+  </div>
+</div>
+
+<script>
+const REFRESH_INTERVAL = 30; // seconds
+let countdown = 0;
+let firstLoad = true;
+
+const CAT_COLORS = {
+  '宽基指数': '#2563eb',
+  '港股/海外': '#d97706',
+  '行业主题': '#7c3aed',
+  '小盘': '#16a34a',
+  '商品': '#dc2626',
+};
+
+function formatPct(v, decimals = 2) {
+  return (v >= 0 ? '+' : '') + v.toFixed(decimals) + '%';
+}
+
+function pctClass(v) {
+  return v > 0 ? 'up' : v < 0 ? 'down' : '';
+}
+
+function renderSummary(data) {
+  const totalEl = document.getElementById('totalPct');
+  totalEl.textContent = formatPct(data.total_pct);
+  totalEl.className = 'value ' + pctClass(data.total_pct);
+
+  const pnl = 100000 * data.total_pct / 100;
+  document.getElementById('totalPnl').textContent = `若 10 万本金：${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)} 元`;
+
+  document.getElementById('posCount').textContent = data.positions.length;
+  document.getElementById('cashInfo').textContent = `现金 ${data.cash_weight}%`;
+
+  const up = data.positions.filter(p => p.index_pct > 0).length;
+  const down = data.positions.filter(p => p.index_pct < 0).length;
+  const flat = data.positions.length - up - down;
+  document.getElementById('upDown').innerHTML = `<span class="up">${up}</span> / <span class="down">${down}</span>`;
+  document.getElementById('upDownDetail').textContent = flat > 0 ? `${flat} 只持平` : '';
+}
+
+function catOrderByWeight(cats) {
+  return Object.keys(cats).sort((a, b) => cats[b].weight - cats[a].weight);
+}
+
+function renderCatBar(data) {
+  const bar = document.getElementById('catBar');
+  const cats = data.category_summary;
+  const ordered = catOrderByWeight(cats);
+  let html = '';
+  for (const cat of ordered) {
+    const w = cats[cat].weight;
+    const color = CAT_COLORS[cat] || '#8b949e';
+    html += `<div class="seg" style="width:${w}%;background:${color}" data-label="${cat} ${w.toFixed(1)}%"></div>`;
+  }
+  html += `<div class="seg" style="width:${data.cash_weight}%;background:var(--text3)" data-label="现金 ${data.cash_weight}%"></div>`;
+  bar.innerHTML = html;
+}
+
+function renderCatCards(data) {
+  const container = document.getElementById('catCards');
+  const cats = data.category_summary;
+  const ordered = catOrderByWeight(cats);
+  let html = '';
+  for (const cat of ordered) {
+    if (!cats[cat]) continue;
+    const c = cats[cat];
+    const cls = pctClass(c.contribution);
+    html += `
+      <div class="cat-card">
+        <div class="cat-name">${cat}</div>
+        <div class="cat-weight">${c.weight.toFixed(1)}%</div>
+        <div class="cat-pct ${cls}">${formatPct(c.contribution, 4)}</div>
+      </div>`;
+  }
+  html += `
+    <div class="cat-card">
+      <div class="cat-name">现金</div>
+      <div class="cat-weight">${data.cash_weight}%</div>
+      <div class="cat-pct" style="color:var(--text3)">0.0000%</div>
+    </div>`;
+  container.innerHTML = html;
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('posBody');
+  let html = '';
+
+  // 1. 按分类汇总权重，确定分类排序
+  const catWeights = {};
+  for (const p of data.positions) {
+    catWeights[p.category] = (catWeights[p.category] || 0) + p.weight;
+  }
+  const catOrder = Object.keys(catWeights).sort((a, b) => catWeights[b] - catWeights[a]);
+
+  // 2. 按分类分组，组内按权重降序
+  const groups = {};
+  for (const p of data.positions) {
+    if (!groups[p.category]) groups[p.category] = [];
+    groups[p.category].push(p);
+  }
+  for (const cat of catOrder) {
+    groups[cat].sort((a, b) => b.weight - a.weight);
+  }
+
+  // 3. 渲染：每个分类一个小标题行 + 成员行
+  for (const cat of catOrder) {
+    const items = groups[cat];
+    const catW = catWeights[cat].toFixed(2);
+    const catContrib = items.reduce((s, p) => s + p.contribution, 0);
+    const catContribCls = pctClass(catContrib);
+    const badgeCls = cat.replace('/', '');
+    const color = CAT_COLORS[cat] || '#8b949e';
+
+    // 分类标题行
+    html += `
+      <tr class="cat-header-row" style="background:rgba(0,0,0,0.02)">
+        <td><span class="badge ${badgeCls}">${cat}</span></td>
+        <td style="font-weight:600;color:var(--text2)">${items.length} 只</td>
+        <td class="right" style="font-weight:600">${catW}%</td>
+        <td class="right"></td>
+        <td class="right ${catContribCls}" style="font-weight:600">${formatPct(catContrib, 4)}</td>
+        <td></td>
+      </tr>`;
+
+    for (const p of items) {
+      const pctCls = pctClass(p.index_pct);
+      const contribCls = pctClass(p.contribution);
+      const barW = Math.min(Math.abs(p.index_pct) * 30, 60);
+      const barColor = p.index_pct >= 0 ? 'var(--red)' : 'var(--green)';
+      html += `
+        <tr>
+          <td></td>
+          <td style="padding-left:24px">${p.fund_name}</td>
+          <td class="right">${p.weight.toFixed(2)}%</td>
+          <td class="right">
+            <span class="pct-bar" style="width:${barW}px;background:${barColor}"></span>
+            <span class="${pctCls}">${formatPct(p.index_pct)}</span>
+          </td>
+          <td class="right ${contribCls}">${formatPct(p.contribution, 4)}</td>
+          <td style="color:var(--text2)">${p.index_name}</td>
+        </tr>`;
+    }
+  }
+
+  // Cash row
+  html += `
+    <tr class="cash-row">
+      <td></td><td>现金</td>
+      <td class="right">${data.cash_weight}%</td>
+      <td class="right">0.00%</td><td class="right">0.0000%</td><td></td>
+    </tr>`;
+
+  // Total row
+  const totalCls = pctClass(data.total_pct);
+  html += `
+    <tr class="total-row">
+      <td></td><td>组合合计</td>
+      <td class="right">100%</td><td class="right"></td>
+      <td class="right ${totalCls}">${formatPct(data.total_pct, 4)}</td><td></td>
+    </tr>`;
+
+  tbody.innerHTML = html;
+}
+
+async function refresh() {
+  const dot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  dot.className = 'status-dot loading';
+  statusText.textContent = '刷新中...';
+
+  try {
+    const res = await fetch('/api/portfolio');
+    const data = await res.json();
+
+    renderSummary(data);
+    renderCatBar(data);
+    renderCatCards(data);
+    renderTable(data);
+
+    document.getElementById('updateTime').textContent = data.timestamp.split(' ')[1];
+    dot.className = 'status-dot';
+    statusText.textContent = '实时';
+
+    if (firstLoad) {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      firstLoad = false;
+    }
+  } catch (e) {
+    dot.className = 'status-dot error';
+    statusText.textContent = '连接失败';
+    console.error(e);
+
+    if (firstLoad) {
+      document.querySelector('.spinner').textContent = '连接失败，请检查服务是否启动';
+    }
+  }
+
+  countdown = REFRESH_INTERVAL;
+}
+
+function tick() {
+  countdown--;
+  if (countdown <= 0) {
+    refresh();
+  } else {
+    document.getElementById('countdown').textContent = `${countdown}s 后刷新`;
+  }
+}
+
+refresh();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>

@@ -142,7 +142,7 @@ bot1-bot7: 全部已配置 / botX 未配置 xiaohongshu-mcp
 
 提示用户重启：
 ```bash
-nohup /tmp/xhs-mcp -headless=true -port=:18060 > /tmp/xiaohongshu-mcp.log 2>&1 &
+cd /home/rooot/MCP/xiaohongshu-mcp && nohup go run . -headless=true -port=:18060 > /tmp/xiaohongshu-mcp.log 2>&1 &
 ```
 
 ### Bot 未登录

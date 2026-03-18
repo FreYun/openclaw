@@ -1,9 +1,15 @@
 # Text-to-Image Post
 
-> **⚠️ Card text ≠ body text — they MUST be written separately!**
-> - **`-b` (body file)** = text rendered ON the image cards (`text_content`). Separate cards with **blank lines**. Max 3 cards.
-> - **`-c` (parameter)** = text displayed BELOW the images (`content`). Typically a summary or engagement prompt.
-> - Omitting `-c` makes body text identical to card text — **not intended behavior**.
+> **🚨 核心规则：`-b` 文件中的空行（`\n\n`）= 分割线，每段生成一张独立的图片卡片！**
+> - 想要 **1 张图片** → `-b` 文件中**不要有空行**（所有文字连续写）
+> - 想要 **2 张图片** → 用**一个空行**分成两段
+> - 想要 **3 张图片** → 用**两个空行**分成三段（最多 3 张）
+> - **常见错误**：把多个段落用空行隔开，结果生成了多张图片而不是预期的一张
+
+> **🚨 `-b` 和 `-c` 都是必填项，缺一不可！**
+> - **`-b` (body file)** = 卡片上的文字 (`text_content`)。用**空行**分隔不同卡片，最多 3 张。
+> - **`-c` (parameter)** = 图片下方的正文 (`content`)。通常是总结、互动引导、或补充说明。
+> - **漏掉 `-c` 会直接报错，无法提交。** 两者内容必须不同：卡片是核心观点，正文是补充讨论。
 
 ```bash
 cat > /tmp/post_body_$$.txt << 'BODYEOF'

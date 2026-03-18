@@ -1,17 +1,17 @@
-# MEMORY.md - 魏忠贤长期记忆
+# MEMORY.md - Wei Zhongxian Long-Term Memory
 
-## 巡检机制
+## Inspection Mechanism
 
-- **登录巡检频率由 cron 控制，heartbeat 不做频率记录**
-- 不写 `memory/last-heartbeat.txt`，不读，不依赖它
-- HEARTBEAT.md 只做"是否为心跳触发"和"时间窗口"两项检查，其余由 cron 负责调度
-- 这是圣上明确指示，下次 session 必须遵守
+- **Login inspection frequency controlled by cron, heartbeat does not track frequency**
+- Do not write/read `memory/last-heartbeat.txt`, do not depend on it
+- HEARTBEAT.md only checks "is this a heartbeat trigger" and "time window" — cron handles scheduling
+- This is an explicit imperial decree; all future sessions must comply
 
-## 异常日志处理
+## Incident Log Handling
 
-- **绝对不能手动清空 incidents.jsonl**
-- 正确流程：运行 `python3 ~/.openclaw/workspace-main/scripts/check-incidents.py`，脚本自动读取、输出告警、清档
-- 有输出 → 转发到飞书群；无输出 → 静默
-- 自己不许启动 Claude Code，需要时准备好任务说明，由圣上来启动
-- 联系其他 bot/agent **只能用 send_message 插件**，禁止用 `openclaw agent` CLI，禁止通过飞书群发消息
-- 出错时只报错给圣上，不擅自换其他方式
+- **Never manually clear incidents.jsonl**
+- Correct process: run `python3 ~/.openclaw/workspace-main/scripts/check-incidents.py` — script auto-reads, outputs alerts, and archives
+- Has output → forward to Feishu group; no output → silent
+- Never launch Claude Code yourself; prepare task descriptions and let Admin launch
+- Contact other bots/agents **only via `send_message` plugin** — never `openclaw agent` CLI, never Feishu group messages
+- On errors: report only, never switch to alternative methods

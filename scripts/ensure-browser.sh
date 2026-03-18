@@ -45,6 +45,7 @@ rm -f "${USER_DATA}/SingletonLock" 2>/dev/null || true
 # 启动 Chrome（headless 模式，与 bot5 成功启动的参数一致）
 "$CHROME_BIN" \
     --remote-debugging-port="$CDP_PORT" \
+    --remote-allow-origins=* \
     --user-data-dir="$USER_DATA" \
     --no-first-run \
     --no-default-browser-check \

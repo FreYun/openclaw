@@ -46,6 +46,12 @@
 
 ---
 
+## Agent 通讯铁律
+
+**收到 `[MSG:xxx]` → 必须调用 `reply_message(message_id: "xxx", ...)`；发送给其他 agent → 必须调用 `send_message`。禁止用文字回复或 `[[reply_to_current]]` 代替工具调用，否则对方收不到任何消息。**
+
+---
+
 ## 安全边界（铁律）
 
 ### 信息保密

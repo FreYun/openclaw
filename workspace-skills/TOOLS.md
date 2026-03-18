@@ -60,3 +60,74 @@ done
 # 查看某 bot 的 MCP 插件配置
 cat /home/rooot/.openclaw/workspace-botN/config/mcporter.json
 ```
+
+---
+
+## Skill 网关（主网关）
+
+技能部拥有并维护一个 MCP 聚合网关，所有 bot 通过它访问研究数据等共享工具。
+
+| 项目 | 值 |
+|------|------|
+| 代码目录 | `/home/rooot/.openclaw/research-gateway/` |
+| 端口 | `18080` |
+| 权限配置 | `/home/rooot/.openclaw/research-gateway/permissions.yaml` |
+| 日志 | `/tmp/research-gateway.log` |
+| PID | `/tmp/research-gateway.pid` |
+
+### 网关管理
+
+```bash
+# 启动/停止/重启/状态/日志
+bash /home/rooot/.openclaw/research-gateway/run.sh start
+bash /home/rooot/.openclaw/research-gateway/run.sh stop
+bash /home/rooot/.openclaw/research-gateway/run.sh restart
+bash /home/rooot/.openclaw/research-gateway/run.sh status
+bash /home/rooot/.openclaw/research-gateway/run.sh log
+
+# 健康检查
+curl -s http://localhost:18080/health | python3 -m json.tool
+
+# 查看所有 bot 路由
+curl -s http://localhost:18080/
+```
+
+### 权限管理
+
+编辑 `permissions.yaml`，修改角色定义或 bot→角色映射。配置变更在**下一次网关重启时生效**（无需立即重启）：
+
+```bash
+vim /home/rooot/.openclaw/research-gateway/permissions.yaml
+# 配置保存后，下次网关重启自动加载
+# 如需立即生效：bash /home/rooot/.openclaw/research-gateway/run.sh restart
+```
+
+各 bot 连接方式（已自动配置到 mcporter.json）：
+```
+http://localhost:18080/mcp/{bot_id}
+```
+
+### 当前角色
+
+| 角色 | 工具数 | bot |
+|------|--------|-----|
+| full_access | 10 | bot7, bot8 |
+| content_creator | 4 | bot1-4, bot6, bot9-10 |
+| fund_advisor | 8 | bot5 |
+| admin | 11 | bot_main, skills |
+
+### 权限申请处理
+
+```bash
+# 查看 bot 当前权限信息
+bash ~/.openclaw/workspace-skills/scripts/handle-permission-request.sh <bot_id> <tool1,tool2>
+
+# 修改权限后重启网关
+vim /home/rooot/.openclaw/research-gateway/permissions.yaml
+bash /home/rooot/.openclaw/research-gateway/run.sh restart
+```
+
+### 变更记录
+
+变更日志：`memory/changelog.md`
+权限申请记录：`memory/permission-requests.md`

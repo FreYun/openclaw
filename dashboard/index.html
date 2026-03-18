@@ -112,9 +112,10 @@
     position: relative;
   }
   .agent-chip .name {
-    font-size: 13px;
+    font-size: 18px;
     color: var(--green);
     margin-bottom: 4px;
+    font-family: var(--cn);
   }
   .agent-chip .name.system { color: var(--purple); }
   .agent-chip .stat { color: var(--dim); margin: 3px 0; font-family: var(--cn); font-size: 13px; }
@@ -128,6 +129,21 @@
     padding: 3px 6px;
     border-radius: 2px;
   }
+  .new-btn {
+    background: rgba(233,69,96,0.15);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--pixel);
+    font-size: 9px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: all 0.2s;
+  }
+  .new-btn:hover { background: var(--accent); color: #fff; }
+  .new-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .new-btn.success { background: var(--green); border-color: var(--green); color: #000; }
 
   /* Publish Queue */
   .queue-row {
@@ -188,9 +204,9 @@
     100% { background: transparent; }
   }
   .msg .time { color: var(--dim); font-size: 9px; }
-  .msg .from { color: var(--green); text-align: right; }
+  .msg .from { color: var(--green); text-align: right; font-size: 16px; font-family: var(--cn); }
   .msg .arrow { color: var(--border); text-align: center; }
-  .msg .to { color: var(--blue); }
+  .msg .to { color: var(--blue); font-size: 16px; font-family: var(--cn); }
   .msg .content {
     color: var(--text);
     white-space: nowrap;
@@ -278,45 +294,59 @@
     overflow-y: auto;
   }
   .pub-item {
-    padding: 3px 0;
+    display: grid;
+    grid-template-columns: 140px 150px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 4px;
     color: var(--dim);
-    border-bottom: 1px solid rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 14px;
   }
   .pub-item .bot-tag {
     display: inline-block;
-    font-size: 9px;
-    padding: 2px 5px;
+    font-size: 12px;
+    padding: 3px 7px;
     border-radius: 2px;
-    margin-right: 4px;
+    font-family: var(--cn);
+    text-align: center;
+    white-space: nowrap;
   }
+
+  /* Model picker */
+  .model-btn {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.05);
+    color: var(--dim);
+    cursor: pointer;
+    font-family: monospace;
+    white-space: nowrap;
+  }
+  .model-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+  .model-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .model-option:hover { border-color: var(--blue); background: rgba(84,160,255,0.1); }
+  .model-option.active { border-color: var(--yellow); background: rgba(254,202,87,0.1); }
 
   /* Flow diagram */
   .flow-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 0;
-    flex-wrap: wrap;
+    padding: 8px 0;
+    overflow-x: auto;
   }
-  .flow-node {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 8px 14px;
-    font-size: 11px;
-    text-align: center;
-    min-width: 60px;
-    position: relative;
-  }
-  .flow-node .count {
-    font-size: 16px;
-    color: var(--yellow);
-    margin-top: 2px;
-  }
-  .flow-edge {
-    color: var(--border);
-    font-size: 18px;
+  .flow-container svg {
+    display: block;
+    margin: 0 auto;
   }
 
   /* Message detail modal */
@@ -425,8 +455,8 @@
   .filter-btn.type-reply.active { background: var(--green); border-color: var(--green); color: #000; }
   .filter-btn.type-notify.active { background: var(--purple); border-color: var(--purple); }
 
-  .search-input {
-    background: rgba(255,255,255,0.05);
+  .search-input, select.search-input {
+    background: #1a1a2e;
     border: 1px solid var(--border);
     color: var(--text);
     font-family: var(--pixel);
@@ -434,6 +464,11 @@
     padding: 6px 10px;
     border-radius: 2px;
     width: 260px;
+  }
+  select.search-input option {
+    background: #1a1a2e;
+    color: var(--text);
+    padding: 4px 8px;
   }
   .search-input::placeholder { color: var(--dim); }
   .search-input:focus { outline: none; border-color: var(--accent); }
@@ -452,7 +487,7 @@
   /* Session rows */
   .sess-header {
     display: grid;
-    grid-template-columns: 160px 180px 110px 80px 1fr;
+    grid-template-columns: 160px 180px 110px 80px 1fr 60px;
     gap: 10px;
     padding: 6px 12px;
     font-size: 12px;
@@ -465,7 +500,7 @@
   }
   .sess-row {
     display: grid;
-    grid-template-columns: 160px 180px 110px 80px 1fr;
+    grid-template-columns: 160px 180px 110px 80px 1fr 60px;
     gap: 10px;
     padding: 6px 12px;
     font-size: 14px;
@@ -474,6 +509,14 @@
     align-items: center;
   }
   .sess-row:hover { background: rgba(255,255,255,0.03); }
+  .sess-row.selected { background: rgba(233,69,96,0.08); }
+  .sess-check { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+  .del-btn {
+    background: none; border: 1px solid var(--accent); color: var(--accent);
+    font-family: var(--pixel); font-size: 8px; padding: 2px 5px; border-radius: 2px;
+    cursor: pointer; opacity: 0.6; transition: opacity 0.2s;
+  }
+  .del-btn:hover { opacity: 1; background: var(--accent); color: #fff; }
   .source-badge.heartbeat { background: rgba(255,159,67,0.2); color: var(--orange); border: 1px solid var(--orange); }
   .source-badge {
     display: inline-block;
@@ -554,14 +597,22 @@
 <div class="grid full">
   <div class="card">
     <div class="card-title"><span class="icon">📋</span>会话管理</div>
-    <div class="filter-bar">
+    <div class="filter-bar" style="flex-wrap:wrap;gap:4px 6px;align-items:center">
       <button class="filter-btn active" data-sfilter="all" onclick="setSessionFilter('all', this)">ALL</button>
       <button class="filter-btn" data-sfilter="feishu" onclick="setSessionFilter('feishu', this)">FEISHU</button>
       <button class="filter-btn" data-sfilter="local" onclick="setSessionFilter('local', this)">LOCAL</button>
       <button class="filter-btn" data-sfilter="cron" onclick="setSessionFilter('cron', this)">CRON</button>
       <button class="filter-btn" data-sfilter="heartbeat" onclick="setSessionFilter('heartbeat', this)">HEARTBEAT</button>
+      <button class="filter-btn" data-sfilter="agent" onclick="setSessionFilter('agent', this)">AGENT</button>
       <span style="color:var(--border)">|</span>
-      <input type="text" class="search-input" id="sessionSearchInput" placeholder="搜索 agent / session ID..." oninput="renderSessions()">
+      <select id="agentSelect" class="search-input" style="width:160px;cursor:pointer" onchange="currentAgentFilter=this.value;renderSessions()">
+        <option value="all">ALL AGENTS</option>
+      </select>
+      <input type="text" class="search-input" id="sessionSearchInput" placeholder="搜索..." oninput="renderSessions()" style="width:160px">
+      <span style="color:var(--border)">|</span>
+      <button class="new-btn" id="bulkNewBtn" onclick="bulkAction('new')" style="font-size:9px">/new selected</button>
+      <button class="new-btn" id="bulkDelBtn" onclick="bulkAction('delete')" style="font-size:9px;border-color:var(--accent);color:var(--accent)">DEL selected</button>
+      <span id="selectedCount" style="color:var(--dim);font-size:11px"></span>
     </div>
     <div class="timeline" id="sessionsTable" style="max-height:500px"></div>
   </div>
@@ -570,7 +621,10 @@
 <!-- Row 3: Message Flow Diagram -->
 <div class="grid full">
   <div class="card">
-    <div class="card-title"><span class="icon">🔀</span>消息流向（今日）</div>
+    <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span><span class="icon">🔀</span>消息流向（今日）</span>
+      <button class="new-btn" onclick="toggleFlowDiagram()" id="flowToggleBtn">收起</button>
+    </div>
     <div class="flow-container" id="flowDiagram"></div>
   </div>
 </div>
@@ -580,6 +634,7 @@
 <div class="grid full">
   <div class="card">
     <div class="card-title"><span class="icon">⏰</span>定时任务</div>
+    <div id="cronFilterBar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:0 4px"></div>
     <div id="cronContainer"></div>
   </div>
 </div>
@@ -594,30 +649,149 @@
   </div>
 </div>
 
+<!-- Model Picker Modal -->
+<div class="modal-overlay" id="modelOverlay" onclick="document.getElementById('modelOverlay').classList.remove('show')">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
+    <button class="close-btn" onclick="document.getElementById('modelOverlay').classList.remove('show')">✕ 关闭</button>
+    <h3>🧠 模型设置</h3>
+    <div id="modelBody"></div>
+  </div>
+</div>
+
 <script>
 let currentData = null;
 let currentFilter = "all";
 let currentSessionFilter = "all";
+let currentAgentFilter = "all";
+let cronAgentFilter = "all";
 let knownMessageIds = new Set();
 let firstLoad = true;
 
-const SYSTEM_AGENTS = new Set(["bot_main", "mcp_publisher", "security", "skills"]);
+const SYSTEM_AGENTS = new Set(["bot_main", "mcp_publisher", "security", "skills", "coder", "image-generator", "bot11"]);
 const BOT_NAMES = {
-  bot1: "来财妹妹", bot2: "bot2", bot3: "bot3",
+  bot1: "来财妹妹", bot2: "图解产业链", bot3: "meme爱基金",
   bot4: "阿泽（研报搬运工）", bot5: "宣妈慢慢变富",
-  bot6: "bot6", bot7: "老K投资笔记", bot8: "bot8",
+  bot6: "爱理财的James", bot7: "老K投资笔记", bot8: "老k（科技分析师）",
   bot9: "bot9", bot10: "测试君",
   bot_main: "魏忠贤（管家）", mcp_publisher: "印务局",
   security: "安全卫士", skills: "技能中心",
-  main: "main（旧）", coder: "coder"
+  bot11: "小奶龙",
+  main: "main（旧）", coder: "工部",
+  "image-generator": "画师", xiaonailong: "小奶龙"
 };
 const BOT_COLORS = {
   bot1: "#ff6b6b", bot2: "#ffa07a", bot3: "#98d8c8", bot4: "#f7dc6f",
   bot5: "#bb8fce", bot6: "#85c1e9", bot7: "#f0b27a", bot8: "#82e0aa",
   bot9: "#f1948a", bot10: "#aed6f1",
   bot_main: "#a29bfe", mcp_publisher: "#e94560",
-  security: "#ff9f43", skills: "#00d2d3"
+  security: "#ff9f43", skills: "#00d2d3", coder: "#74b9ff",
+  "image-generator": "#dfe6e9", xiaonailong: "#fdcb6e",
+  bot11: "#fdcb6e"
 };
+
+// Normalize legacy agent IDs
+const AGENT_ALIASES = { xiaonailong: "bot11" };
+function nid(agentId) { return AGENT_ALIASES[agentId] || agentId; }
+
+// Display helpers: name as primary, botID as secondary
+function dn(agentId) { const id = nid(agentId); return BOT_NAMES[id] || id; }
+function dnFull(agentId) {
+  const id = nid(agentId);
+  const name = BOT_NAMES[id];
+  return name && name !== id ? `${name} <span style="opacity:0.5;font-size:0.8em">${id}</span>` : id;
+}
+function dnSub(agentId) {
+  const id = nid(agentId);
+  const name = BOT_NAMES[id];
+  return name && name !== id ? `<span style="font-size:0.75em;opacity:0.5">${id}</span>` : '';
+}
+
+// Model management
+let modelData = null;
+async function fetchModels() {
+  try {
+    const r = await fetch("/api/models");
+    modelData = await r.json();
+  } catch {}
+}
+function getModelShort(agentId) {
+  if (!modelData || !modelData[agentId]) return null;
+  const p = modelData[agentId].primary;
+  if (!p) return null;
+  const parts = p.split("/");
+  return parts.length > 1 ? parts[1] : p;
+}
+function getModelFull(agentId) {
+  return modelData?.[agentId]?.primary || null;
+}
+async function showModelPicker(agentId) {
+  if (!modelData) await fetchModels();
+  const info = modelData?.[agentId];
+  if (!info || !info.available?.length) { alert("无可用模型"); return; }
+
+  const overlay = document.getElementById("modelOverlay");
+  const body = document.getElementById("modelBody");
+  const current = info.primary || "未设置";
+
+  // Group by provider
+  const grouped = {};
+  for (const m of info.available) {
+    if (!grouped[m.provider]) grouped[m.provider] = [];
+    grouped[m.provider].push(m);
+  }
+
+  body.innerHTML = `
+    <div style="margin-bottom:12px">
+      <span style="color:var(--dim)">Agent:</span>
+      <span style="color:${BOT_COLORS[agentId]||'#888'};font-family:var(--cn);font-weight:bold">${dn(agentId)}</span>
+      <span style="color:var(--dim);font-size:11px">${agentId}</span>
+    </div>
+    <div style="margin-bottom:16px">
+      <span style="color:var(--dim)">当前:</span>
+      <span style="color:var(--yellow);font-size:12px">${current}</span>
+    </div>
+    ${Object.entries(grouped).map(([prov, models]) => `
+      <div style="margin-bottom:12px">
+        <div style="color:var(--blue);font-size:11px;margin-bottom:6px;font-family:var(--pixel)">${prov}</div>
+        ${models.map(m => {
+          const val = `${prov}/${m.modelId}`;
+          const isActive = val === current;
+          return `
+            <div class="model-option ${isActive ? 'active' : ''}" onclick="setModel('${agentId}','${val}',this)">
+              <span style="font-family:var(--cn);font-size:13px">${m.name}</span>
+              ${m.reasoning ? '<span style="font-size:9px;color:var(--green);margin-left:6px;border:1px solid var(--green);padding:1px 4px;border-radius:2px">R</span>' : ''}
+              ${isActive ? '<span style="color:var(--yellow);margin-left:auto;font-size:10px">ACTIVE</span>' : ''}
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `).join("")}
+    <div style="color:var(--dim);font-size:10px;margin-top:12px;font-family:var(--cn)">
+      修改后新会话生效，已有会话不受影响
+    </div>
+  `;
+  overlay.classList.add("show");
+}
+async function setModel(agentId, model, el) {
+  el.style.opacity = "0.5";
+  try {
+    const r = await fetch("/api/models/set", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ agentId, model })
+    });
+    const data = await r.json();
+    if (data.status === "ok") {
+      await fetchModels();
+      showModelPicker(agentId); // refresh picker
+      renderAgentStats(); // refresh agent cards
+      renderSessions(); // refresh session list
+    } else {
+      alert("设置失败: " + (data.error || "未知错误"));
+    }
+  } catch (e) { alert("请求失败: " + e.message); }
+  el.style.opacity = "1";
+}
 
 async function fetchData() {
   const indicator = document.getElementById("refreshIndicator");
@@ -627,6 +801,7 @@ async function fetchData() {
   try {
     const resp = await fetch("/api/data");
     currentData = await resp.json();
+    if (!modelData) await fetchModels(); // load models on first fetch
     render();
     indicator.className = "refresh-indicator";
     indicator.innerHTML = '<span class="dot green"></span> LIVE';
@@ -663,10 +838,10 @@ function renderAgentStats() {
   const stats = currentData.agentStats;
   const sessions = currentData.agentSessions;
 
-  const agents = [...new Set([...Object.keys(stats), ...Object.keys(sessions)])]
-    .filter(a => a !== "bot_nonexistent_999")
+  const agents = [...new Set([...Object.keys(stats), ...Object.keys(sessions)].map(nid))]
+    .filter(a => a !== "bot_nonexistent_999" && a !== "main")
     .sort((a, b) => {
-      const order = ["bot_main", "mcp_publisher", "security", "skills"];
+      const order = ["bot_main", "mcp_publisher", "security", "skills", "coder", "image-generator", "bot11"];
       const ia = order.indexOf(a), ib = order.indexOf(b);
       const isOrderedA = ia !== -1, isOrderedB = ib !== -1;
       if (isOrderedA && isOrderedB) return ia - ib;
@@ -680,23 +855,83 @@ function renderAgentStats() {
       return a.localeCompare(b);
     });
 
-  grid.innerHTML = agents.map(agent => {
-    const s = stats[agent] || { inbox: 0, outbox: 0 };
-    const sess = sessions[agent] || {};
+  function renderChip(agent) {
+    const s = stats[agent] || stats["xiaonailong"] && agent === "bot11" && stats["xiaonailong"] || { inbox: 0, outbox: 0 };
+    const sess = sessions[agent] || sessions["xiaonailong"] && agent === "bot11" && sessions["xiaonailong"] || {};
     const isSystem = SYSTEM_AGENTS.has(agent);
     const color = BOT_COLORS[agent] || "#888";
     const lastActive = sess.lastActive ? timeAgo(new Date(sess.lastActive)) : "---";
-
+    const modelShort = getModelShort(agent);
+    const modelBtn = modelShort
+      ? `<button class="model-btn" onclick="event.stopPropagation();showModelPicker('${agent}')" title="${getModelFull(agent)}">${modelShort}</button>`
+      : '';
     return `
       <div class="agent-chip">
-        <div class="name ${isSystem ? 'system' : ''}" style="color:${color}">${agent}</div>
-        ${BOT_NAMES[agent] && BOT_NAMES[agent] !== agent ? `<div style="font-family:var(--cn);font-size:15px;color:#ccc;margin-bottom:3px;font-weight:bold">${BOT_NAMES[agent]}</div>` : ''}
+        <div class="name ${isSystem ? 'system' : ''}" style="color:${color};font-family:var(--cn);font-size:15px">${dn(agent)}</div>
+        <div style="font-size:10px;color:var(--dim);margin-bottom:3px;display:flex;align-items:center;gap:6px"><span>${agent}</span>${modelBtn}</div>
         <div class="stat">📥 <b>${s.inbox}</b> 收  📤 <b>${s.outbox}</b> 发</div>
         <div class="stat">🕐 ${lastActive}</div>
         ${s.inbox > 20 ? `<div class="badge">${s.inbox}</div>` : ''}
+        <button class="new-btn" id="new-${agent}" onclick="event.stopPropagation();resetAgent('${agent}',this)">/new</button>
       </div>
     `;
-  }).join("");
+  }
+
+  // Split into system agents and editorial bots (bot1-10)
+  const systemAgents = agents.filter(a => !a.match(/^bot(\d+)$/));
+  const editorialBots = agents.filter(a => a.match(/^bot(\d+)$/));
+
+  // Summary stats for editorial group
+  let totalInbox = 0, totalOutbox = 0, activeCount = 0;
+  for (const bot of editorialBots) {
+    const s = stats[bot] || { inbox: 0, outbox: 0 };
+    totalInbox += s.inbox;
+    totalOutbox += s.outbox;
+    const sess = sessions[bot] || {};
+    if (sess.lastActive && (Date.now() - new Date(sess.lastActive).getTime()) < 3600000) activeCount++;
+  }
+
+  const editorialExpanded = document.getElementById("editorialGrid")?.style.display === "grid";
+
+  const editorialBotsHtml = editorialBots.map(a => renderChip(a)).join("");
+
+  // System agents grid
+  grid.innerHTML = systemAgents.map(a => renderChip(a)).join("");
+
+  // Editorial summary bar below system agents
+  let editorialBar = document.getElementById("editorialBar");
+  if (editorialBar) editorialBar.remove();
+  editorialBar = document.createElement("div");
+  editorialBar.id = "editorialBar";
+  editorialBar.style.cssText = "margin-top:12px;padding:10px 14px;border:2px solid var(--yellow);border-radius:4px;background:rgba(254,202,87,0.05);cursor:pointer;display:flex;align-items:center;gap:16px;flex-wrap:wrap";
+  editorialBar.onclick = toggleEditorial;
+  editorialBar.innerHTML = `
+    <span style="color:var(--yellow);font-family:var(--cn);font-size:18px;font-weight:bold">📝 编辑部</span>
+    <span style="font-family:var(--cn);font-size:14px;color:#ccc">bot1–10（${editorialBots.length} 人）</span>
+    <span style="font-family:var(--cn);font-size:14px;color:var(--dim)">📥 <b style="color:var(--text)">${totalInbox}</b> 收</span>
+    <span style="font-family:var(--cn);font-size:14px;color:var(--dim)">📤 <b style="color:var(--text)">${totalOutbox}</b> 发</span>
+    <span style="font-family:var(--cn);font-size:14px;color:var(--dim)">🟢 <b style="color:var(--text)">${activeCount}</b> 活跃</span>
+    <span style="color:var(--dim);font-size:11px;margin-left:auto">${editorialExpanded ? '▲ 收起' : '▼ 展开'}</span>
+  `;
+  grid.after(editorialBar);
+
+  // Editorial detail grid below the bar
+  let editorialDiv = document.getElementById("editorialGrid");
+  if (editorialDiv) editorialDiv.remove();
+  editorialDiv = document.createElement("div");
+  editorialDiv.id = "editorialGrid";
+  editorialDiv.className = "agent-grid";
+  editorialDiv.style.display = editorialExpanded ? "grid" : "none";
+  editorialDiv.style.marginTop = "10px";
+  editorialDiv.innerHTML = editorialBotsHtml;
+  editorialBar.after(editorialDiv);
+}
+
+function toggleEditorial() {
+  const el = document.getElementById("editorialGrid");
+  if (!el) return;
+  el.style.display = el.style.display === "grid" ? "none" : "grid";
+  renderAgentStats();
 }
 
 function renderPublishQueue() {
@@ -719,40 +954,199 @@ function renderPublishQueue() {
   `;
 }
 
+let flowDiagramCollapsed = false;
+function toggleFlowDiagram() {
+  flowDiagramCollapsed = !flowDiagramCollapsed;
+  const container = document.getElementById("flowDiagram");
+  const btn = document.getElementById("flowToggleBtn");
+  container.style.display = flowDiagramCollapsed ? "none" : "";
+  btn.textContent = flowDiagramCollapsed ? "展开" : "收起";
+}
+
 function renderFlowDiagram() {
-  // Count message flows between agent pairs
+  const container = document.getElementById("flowDiagram");
+  if (flowDiagramCollapsed) return;
+
   const flows = {};
   const today = new Date().toISOString().slice(0, 10);
   const todayMsgs = currentData.messages.filter(m => m.created_at && m.created_at.startsWith(today));
 
   for (const msg of todayMsgs) {
-    const key = `${msg.from}→${msg.to}`;
+    if (!msg.from || !msg.to) continue;
+    const from = nid(msg.from), to = nid(msg.to);
+    const key = `${from}→${to}`;
     flows[key] = (flows[key] || 0) + 1;
   }
 
-  const sorted = Object.entries(flows).sort((a, b) => b[1] - a[1]).slice(0, 8);
-
-  if (sorted.length === 0) {
-    document.getElementById("flowDiagram").innerHTML =
-      '<span style="color:var(--dim);font-size:12px">今日暂无消息</span>';
+  const sorted = Object.entries(flows).sort((a, b) => b[1] - a[1]).slice(0, 15);
+  if (!sorted.length) {
+    container.innerHTML = '<span style="color:var(--dim);font-size:12px">今日暂无消息</span>';
     return;
   }
 
-  document.getElementById("flowDiagram").innerHTML = sorted.map(([key, count]) => {
+  // Collect unique nodes
+  const nodeVolume = {};
+  for (const [key, count] of sorted) {
     const [from, to] = key.split("→");
-    const fromColor = BOT_COLORS[from] || "#888";
-    const toColor = BOT_COLORS[to] || "#888";
-    return `
-      <div class="flow-node" style="border-color:${fromColor}">
-        <span style="color:${fromColor}">${from}</span>
-      </div>
-      <div class="flow-edge">→<sup style="font-size:10px;color:var(--yellow)">${count}</sup></div>
-      <div class="flow-node" style="border-color:${toColor}">
-        <span style="color:${toColor}">${to}</span>
-      </div>
-      <span style="width:16px"></span>
+    nodeVolume[from] = (nodeVolume[from] || 0) + count;
+    nodeVolume[to] = (nodeVolume[to] || 0) + count;
+  }
+  const nodes = Object.keys(nodeVolume).sort((a, b) => nodeVolume[b] - nodeVolume[a]);
+
+  // Layout: circle with generous spacing
+  const nodeCount = nodes.length;
+  const centerX = 400, centerY = 280;
+  const radius = Math.min(230, 100 + nodeCount * 20);
+  const nodeW = 110, nodeH = 40;
+  const nodePos = {};
+  nodes.forEach((n, i) => {
+    const angle = (2 * Math.PI * i / nodeCount) - Math.PI / 2;
+    nodePos[n] = { x: centerX + radius * Math.cos(angle), y: centerY + radius * Math.sin(angle) };
+  });
+
+  const svgW = 800, svgH = 580;
+  const maxCount = Math.max(...sorted.map(([,c]) => c));
+
+  // For each node, collect all incident edges and assign port offsets
+  // so edges connect at different points around the node perimeter
+  const nodeIncoming = {}; // node -> [edge indices arriving]
+  const nodeOutgoing = {}; // node -> [edge indices leaving]
+  sorted.forEach(([key], idx) => {
+    const [from, to] = key.split("→");
+    if (!nodeOutgoing[from]) nodeOutgoing[from] = [];
+    if (!nodeIncoming[to]) nodeIncoming[to] = [];
+    nodeOutgoing[from].push(idx);
+    nodeIncoming[to].push(idx);
+  });
+
+  // Compute per-edge port offsets: spread connections around node edge
+  // Sort incident edges by angle to the other node for consistent ordering
+  function sortByAngle(node, edgeIndices, getOther) {
+    const p = nodePos[node];
+    return edgeIndices.slice().sort((a, b) => {
+      const oa = getOther(a), ob = getOther(b);
+      const pa = nodePos[oa], pb = nodePos[ob];
+      if (!pa || !pb) return 0;
+      return Math.atan2(pa.y - p.y, pa.x - p.x) - Math.atan2(pb.y - p.y, pb.x - p.x);
+    });
+  }
+
+  const edgePortOffset = {}; // edgeIdx -> { srcOff, dstOff } perpendicular pixel offsets
+  for (const node of nodes) {
+    // Outgoing: spread source ports
+    const out = sortByAngle(node, nodeOutgoing[node] || [], (idx) => sorted[idx][0].split("→")[1]);
+    const outN = out.length;
+    out.forEach((edgeIdx, i) => {
+      if (!edgePortOffset[edgeIdx]) edgePortOffset[edgeIdx] = { srcOff: 0, dstOff: 0 };
+      edgePortOffset[edgeIdx].srcOff = outN <= 1 ? 0 : (i - (outN - 1) / 2) * 8;
+    });
+    // Incoming: spread destination ports
+    const inc = sortByAngle(node, nodeIncoming[node] || [], (idx) => sorted[idx][0].split("→")[0]);
+    const incN = inc.length;
+    inc.forEach((edgeIdx, i) => {
+      if (!edgePortOffset[edgeIdx]) edgePortOffset[edgeIdx] = { srcOff: 0, dstOff: 0 };
+      edgePortOffset[edgeIdx].dstOff = incN <= 1 ? 0 : (i - (incN - 1) / 2) * 8;
+    });
+  }
+
+  // Track bidirectional pairs
+  const pairDir = {};
+  sorted.forEach(([key]) => {
+    const [from, to] = key.split("→");
+    const pk = [from, to].sort().join("|");
+    if (!pairDir[pk]) pairDir[pk] = [];
+    pairDir[pk].push(key);
+  });
+
+  // Build edges SVG
+  let edgesSvg = '';
+  sorted.forEach(([key, count], idx) => {
+    const [from, to] = key.split("→");
+    const p1 = nodePos[from], p2 = nodePos[to];
+    if (!p1 || !p2) return;
+
+    const dx = p2.x - p1.x, dy = p2.y - p1.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 1) return;
+    const ux = dx / dist, uy = dy / dist; // unit vector along edge
+    const nx = -uy, ny = ux; // perpendicular (normal)
+
+    // Port offsets — shift start/end perpendicular to the line
+    const ports = edgePortOffset[idx] || { srcOff: 0, dstOff: 0 };
+    const x1 = p1.x + ux * (nodeW / 2 + 4) + nx * ports.srcOff;
+    const y1 = p1.y + uy * (nodeH / 2 + 4) + ny * ports.srcOff;
+    const x2 = p2.x - ux * (nodeW / 2 + 12) + nx * ports.dstOff;
+    const y2 = p2.y - uy * (nodeH / 2 + 12) + ny * ports.dstOff;
+
+    // Determine curve magnitude
+    const pk = [from, to].sort().join("|");
+    const isBidirectional = (pairDir[pk] || []).length === 2;
+    let curveMag, curveSign;
+    if (isBidirectional) {
+      curveMag = 45;
+      curveSign = pairDir[pk][0] === key ? 1 : -1;
+    } else {
+      // Unidirectional: use a per-edge curve based on global index to separate
+      curveMag = 20 + (idx % 3) * 10;
+      curveSign = idx % 2 === 0 ? 1 : -1;
+    }
+
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const cx = mx + nx * curveMag * curveSign;
+    const cy = my + ny * curveMag * curveSign;
+
+    const strokeW = Math.max(1.2, Math.min(3, 1.2 + (count / maxCount) * 1.8));
+    const opacity = 0.35 + 0.55 * (count / maxCount);
+    const color = BOT_COLORS[from] || "#888";
+    const pathId = `flow-path-${idx}`;
+
+    const pathD = `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+
+    // Label at t=0.3 on the quadratic bezier, pushed outward
+    const t = 0.3;
+    const lx = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * cx + t * t * x2;
+    const ly = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * cy + t * t * y2;
+    const labelPush = 12 * curveSign;
+    const llx = lx + nx * labelPush;
+    const lly = ly + ny * labelPush;
+
+    edgesSvg += `
+      <path id="${pathId}" d="${pathD}" fill="none" stroke="${color}" stroke-width="${strokeW}" stroke-opacity="${opacity}" marker-end="url(#arrowhead)"/>
+      <text x="${llx}" y="${lly}" text-anchor="middle" dominant-baseline="central"
+        font-size="11" font-weight="bold" fill="var(--yellow)" font-family="monospace">${count}</text>
     `;
-  }).join("");
+  });
+
+  // Build nodes SVG (rendered after edges so nodes are on top)
+  let nodesSvg = '';
+  for (const n of nodes) {
+    const p = nodePos[n];
+    const color = BOT_COLORS[n] || "#888";
+    const label = BOT_NAMES[n] || n;
+    const vol = nodeVolume[n];
+    nodesSvg += `
+      <g>
+        <rect x="${p.x - nodeW / 2}" y="${p.y - nodeH / 2}" width="${nodeW}" height="${nodeH}" rx="4"
+          fill="rgba(22,33,62,0.95)" stroke="${color}" stroke-width="1.5"/>
+        <text x="${p.x}" y="${p.y - 5}" text-anchor="middle" dominant-baseline="central"
+          fill="${color}" font-size="13" font-family="var(--cn)" font-weight="bold">${label}</text>
+        <text x="${p.x}" y="${p.y + 11}" text-anchor="middle" fill="var(--dim)" font-size="8"
+          font-family="monospace">${n} · ${vol}msg</text>
+      </g>
+    `;
+  }
+
+  container.innerHTML = `
+    <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" style="max-width:100%">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+          <polygon points="0 0, 10 4, 0 8" fill="#7f8c8d" opacity="0.8"/>
+        </marker>
+      </defs>
+      ${edgesSvg}
+      ${nodesSvg}
+    </svg>
+  `;
 }
 
 function renderTimeline() {
@@ -787,9 +1181,9 @@ function renderTimeline() {
     return `
       <div class="msg ${isNew ? 'new' : ''}" onclick="showDetail('${msg.message_id}')">
         <span class="time">${timeStr}</span>
-        <span class="from" style="color:${fromColor}">${msg.from}</span>
+        <span class="from" style="color:${fromColor}">${dn(msg.from)}</span>
         <span class="arrow">→</span>
-        <span class="to" style="color:${toColor}">${msg.to}</span>
+        <span class="to" style="color:${toColor}">${dn(msg.to)}</span>
         <span class="content">
           <span class="type-badge ${msg.type}">${msg.type}</span>
           ${content}
@@ -802,110 +1196,124 @@ function renderTimeline() {
   knownMessageIds = newIds;
 }
 
+function setCronFilter(agent, btn) {
+  cronAgentFilter = agent;
+  document.querySelectorAll("#cronFilterBar .filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderCronJobs();
+}
+
 function renderCronJobs() {
   const container = document.getElementById("cronContainer");
+  const filterBar = document.getElementById("cronFilterBar");
   const cronData = currentData.cronJobs;
-  const runs = currentData.cronRuns;
 
   const jobs = Array.isArray(cronData) ? cronData : (cronData?.jobs || []);
   if (!jobs.length) {
     container.innerHTML = '<div style="color:var(--dim);padding:12px">无定时任务</div>';
+    filterBar.innerHTML = "";
     return;
   }
 
-  // Group by agentId
-  const grouped = {};
-  for (const job of jobs) {
-    const agent = job.agentId || "unknown";
-    if (!grouped[agent]) grouped[agent] = [];
-    grouped[agent].push(job);
-  }
-
-  const agentOrder = ["bot_main", "skills", "mcp_publisher"];
-  const sortedAgents = Object.keys(grouped).sort((a, b) => {
+  // Collect unique agents
+  const agents = [...new Set(jobs.map(j => j.agentId || "unknown"))];
+  const agentOrder = ["bot_main", "skills", "mcp_publisher", "bot11", "bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7", "bot8", "bot9", "bot10"];
+  agents.sort((a, b) => {
     const ia = agentOrder.indexOf(a), ib = agentOrder.indexOf(b);
     return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
   });
 
-  container.innerHTML = sortedAgents.map(agent => {
+  // Render filter chips
+  filterBar.innerHTML = `
+    <button class="filter-btn ${cronAgentFilter === 'all' ? 'active' : ''}" onclick="setCronFilter('all', this)">ALL</button>
+    ${agents.map(a => {
+      const color = BOT_COLORS[a] || "#888";
+      const name = BOT_NAMES[a] || a;
+      const count = jobs.filter(j => j.agentId === a).length;
+      return `<button class="filter-btn ${cronAgentFilter === a ? 'active' : ''}" style="border-color:${color};${cronAgentFilter === a ? 'background:' + color + '33' : ''}" onclick="setCronFilter('${a}', this)">${name} <span style="opacity:0.6">${count}</span></button>`;
+    }).join("")}
+  `;
+
+  // Filter
+  let filtered = cronAgentFilter === "all" ? jobs : jobs.filter(j => j.agentId === cronAgentFilter);
+
+  // Sort by next run time (soonest first), disabled at bottom
+  filtered = [...filtered].sort((a, b) => {
+    if ((a.enabled !== false) !== (b.enabled !== false)) return (a.enabled !== false) ? -1 : 1;
+    const na = a.state?.nextRunAtMs || Infinity;
+    const nb = b.state?.nextRunAtMs || Infinity;
+    return na - nb;
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = '<div style="color:var(--dim);padding:12px">该 agent 无定时任务</div>';
+    return;
+  }
+
+  const rows = filtered.map(job => {
+    const agent = job.agentId || "unknown";
     const color = BOT_COLORS[agent] || "#888";
-    const agentJobs = grouped[agent];
+    const agentLabel = BOT_NAMES[agent] || agent;
+    const schedule = job.schedule?.expr || "?";
+    const state = job.state || {};
+    const delivery = job.delivery || {};
+    const enabled = job.enabled !== false;
 
-    const rows = agentJobs.map(job => {
-      const schedule = job.schedule?.expr || "?";
-      const tz = job.schedule?.tz || "";
-      const state = job.state || {};
-      const delivery = job.delivery || {};
-      const enabled = job.enabled !== false;
+    const lastStatus = state.lastStatus || state.lastRunStatus;
+    let statusHtml = '<span class="cron-status skip"></span> -';
+    if (lastStatus === "ok") statusHtml = '<span class="cron-status ok"></span> OK';
+    else if (lastStatus === "error") statusHtml = '<span class="cron-status err"></span> ERR';
 
-      // Status
-      const lastStatus = state.lastStatus || state.lastRunStatus;
-      let statusHtml = '<span class="cron-status skip"></span> -';
-      if (lastStatus === "ok") {
-        statusHtml = '<span class="cron-status ok"></span> OK';
-      } else if (lastStatus === "error") {
-        statusHtml = '<span class="cron-status err"></span> ERR';
-      }
+    let lastRunStr = "-";
+    if (state.lastRunAtMs) {
+      const t = new Date(state.lastRunAtMs);
+      lastRunStr = `${(t.getMonth()+1).toString().padStart(2,"0")}-${t.getDate().toString().padStart(2,"0")} ${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}`;
+    }
 
-      // Last run time
-      let lastRunStr = "-";
-      if (state.lastRunAtMs) {
-        const t = new Date(state.lastRunAtMs);
-        lastRunStr = `${(t.getMonth()+1).toString().padStart(2,"0")}-${t.getDate().toString().padStart(2,"0")} ${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}`;
-      }
+    let nextRunStr = "-";
+    if (state.nextRunAtMs) {
+      const t = new Date(state.nextRunAtMs);
+      nextRunStr = `${(t.getMonth()+1).toString().padStart(2,"0")}-${t.getDate().toString().padStart(2,"0")} ${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}`;
+    }
 
-      // Next run
-      let nextRunStr = "-";
-      if (state.nextRunAtMs) {
-        const t = new Date(state.nextRunAtMs);
-        nextRunStr = `${(t.getMonth()+1).toString().padStart(2,"0")}-${t.getDate().toString().padStart(2,"0")} ${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}`;
-      }
+    let durationStr = "-";
+    if (state.lastDurationMs) {
+      const sec = Math.round(state.lastDurationMs / 1000);
+      durationStr = sec >= 60 ? `${Math.floor(sec/60)}m${sec%60}s` : `${sec}s`;
+    }
 
-      // Duration
-      let durationStr = "-";
-      if (state.lastDurationMs) {
-        const sec = Math.round(state.lastDurationMs / 1000);
-        durationStr = sec >= 60 ? `${Math.floor(sec/60)}m${sec%60}s` : `${sec}s`;
-      }
+    const deliveryMode = delivery.mode || "none";
+    const deliveryHtml = `<span class="cron-delivery ${deliveryMode}">${deliveryMode}</span>`;
+    const deliveredHtml = state.lastDelivered
+      ? '<span class="cron-status ok"></span>'
+      : (deliveryMode === "none" ? '<span style="color:var(--dim)">-</span>' : '<span class="cron-status skip"></span>');
 
-      // Delivery
-      const deliveryMode = delivery.mode || "none";
-      const deliveryHtml = `<span class="cron-delivery ${deliveryMode}">${deliveryMode}</span>`;
-
-      // Delivered
-      const deliveredHtml = state.lastDelivered
-        ? '<span class="cron-status ok"></span>'
-        : (deliveryMode === "none" ? '<span style="color:var(--dim)">-</span>' : '<span class="cron-status skip"></span>');
-
-      const nameDisplay = job.name || job.id?.slice(0,8) || "?";
-      const opacity = enabled ? "1" : "0.4";
-
-      return `
-        <tr style="opacity:${opacity}" title="${job.description || ''}${state.lastError ? '\\nError: ' + state.lastError : ''}${state.consecutiveErrors ? '\\n连续错误: ' + state.consecutiveErrors : ''}">
-          <td>${nameDisplay}</td>
-          <td class="mono">${schedule}</td>
-          <td>${statusHtml}</td>
-          <td style="color:var(--dim);font-size:11px">${lastRunStr}</td>
-          <td style="color:var(--dim);font-size:11px">${durationStr}</td>
-          <td>${deliveryHtml}</td>
-          <td>${deliveredHtml}</td>
-          <td style="color:var(--dim);font-size:11px">${nextRunStr}</td>
-        </tr>
-      `;
-    }).join("");
+    const nameDisplay = job.name || job.id?.slice(0,8) || "?";
+    const opacity = enabled ? "1" : "0.4";
 
     return `
-      <div class="cron-section">
-        <div class="cron-agent-label" style="color:${color}">${agent}</div>
-        <table class="cron-table">
-          <thead><tr>
-            <th>任务名</th><th>Schedule</th><th>状态</th><th>上次运行</th><th>耗时</th><th>投递</th><th>送达</th><th>下次运行</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
+      <tr style="opacity:${opacity}" title="${job.description || ''}${state.lastError ? '\\nError: ' + state.lastError : ''}${state.consecutiveErrors ? '\\n连续错误: ' + state.consecutiveErrors : ''}">
+        <td style="white-space:nowrap"><span style="color:${color};font-family:var(--cn);font-size:13px">${agentLabel}</span></td>
+        <td>${nameDisplay}</td>
+        <td class="mono">${schedule}</td>
+        <td>${statusHtml}</td>
+        <td style="color:var(--dim);font-size:11px">${lastRunStr}</td>
+        <td style="color:var(--dim);font-size:11px">${durationStr}</td>
+        <td>${deliveryHtml}</td>
+        <td>${deliveredHtml}</td>
+        <td style="color:var(--dim);font-size:11px">${nextRunStr}</td>
+      </tr>
     `;
   }).join("");
+
+  container.innerHTML = `
+    <table class="cron-table">
+      <thead><tr>
+        <th>任务</th><th>Schedule</th><th>状态</th><th>上次运行</th><th>耗时</th><th>投递</th><th>送达</th><th>下次运行</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
 }
 
 function renderPublished() {
@@ -921,9 +1329,9 @@ function renderPublished() {
     const date = dateMatch ? dateMatch[1].replace("T", " ") : "";
     return `
       <div class="pub-item">
-        <span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${bot}</span>
-        <span style="color:var(--dim);margin-right:8px">${date}</span>
-        <span style="color:var(--text);font-family:var(--cn)">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
+        <span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span>
+        <span style="color:var(--dim);font-size:13px;font-family:monospace">${date}</span>
+        <span style="color:var(--text);font-family:var(--cn);font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
       </div>
     `;
   }).join("");
@@ -937,6 +1345,8 @@ function setSessionFilter(filter, btn) {
   renderSessions();
 }
 
+let selectedSessions = new Set(); // stores "agentId||sessionId||key"
+
 function renderSessions() {
   const container = document.getElementById("sessionsTable");
   if (!currentData || !currentData.allSessions) {
@@ -944,14 +1354,32 @@ function renderSessions() {
     return;
   }
 
+  // Build agent dropdown
+  const sel = document.getElementById("agentSelect");
+  if (sel) {
+    const agents = [...new Set(currentData.allSessions.map(s => s.agent))].sort((a, b) => {
+      const na = a.match(/^bot(\d+)$/), nb = b.match(/^bot(\d+)$/);
+      if (na && nb) return parseInt(na[1]) - parseInt(nb[1]);
+      if (na) return 1; if (nb) return -1;
+      return a.localeCompare(b);
+    });
+    const prev = sel.value;
+    sel.innerHTML = '<option value="all">ALL AGENTS</option>' +
+      agents.map(a => {
+        const name = BOT_NAMES[a] || a;
+        const count = currentData.allSessions.filter(s => s.agent === a).length;
+        return `<option value="${a}" ${prev === a ? 'selected' : ''}>${name} (${a}) [${count}]</option>`;
+      }).join("");
+  }
+
   let sessions = currentData.allSessions;
 
-  // Filter by source
   if (currentSessionFilter !== "all") {
     sessions = sessions.filter(s => s.source === currentSessionFilter);
   }
-
-  // Search filter
+  if (currentAgentFilter !== "all") {
+    sessions = sessions.filter(s => s.agent === currentAgentFilter);
+  }
   const search = (document.getElementById("sessionSearchInput")?.value || "").toLowerCase();
   if (search) {
     sessions = sessions.filter(s =>
@@ -961,36 +1389,131 @@ function renderSessions() {
     );
   }
 
+  const displayed = sessions.slice(0, 100);
+  const allChecked = displayed.length > 0 && displayed.every(s => selectedSessions.has(sessKey(s)));
+
   let html = `
-    <div class="sess-header">
+    <div class="sess-header" style="grid-template-columns: 30px 130px 200px 100px 100px 1fr 90px">
+      <span><input type="checkbox" class="sess-check" ${allChecked ? 'checked' : ''} onchange="toggleAllSessions(this.checked)"></span>
       <span>最后活动</span>
       <span>Agent</span>
+      <span>模型</span>
       <span>来源</span>
-      <span>类型</span>
       <span>Session</span>
+      <span>操作</span>
     </div>
   `;
 
-  html += sessions.slice(0, 100).map(s => {
+  html += displayed.map(s => {
     const color = BOT_COLORS[s.agent] || "#888";
     const t = s.updatedAt ? new Date(s.updatedAt) : null;
     const timeStr = t
       ? `${(t.getMonth()+1).toString().padStart(2,"0")}-${t.getDate().toString().padStart(2,"0")} ${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}`
       : "---";
     const ago = t ? timeAgo(t) : "";
+    const sk = sessKey(s);
+    const checked = selectedSessions.has(sk);
+    const shortKey = s.key.replace(/^agent:[^:]+:/, '');
 
     return `
-      <div class="sess-row">
+      <div class="sess-row${checked ? ' selected' : ''}" style="grid-template-columns: 30px 130px 200px 100px 100px 1fr 90px">
+        <span><input type="checkbox" class="sess-check" ${checked ? 'checked' : ''} onchange="toggleSession('${sk}',this.checked)"></span>
         <span class="time">${timeStr}<br><span style="color:var(--dim);font-size:11px">${ago}</span></span>
-        <span style="color:${color};font-size:14px;font-weight:bold">${s.agent}</span>
+        <span style="color:${color};font-size:14px;font-weight:bold;font-family:var(--cn)">${dn(s.agent)} <span style="font-size:10px;opacity:0.5">${s.agent}</span></span>
+        <span><button class="model-btn" onclick="event.stopPropagation();showModelPicker('${s.agent}')" title="${getModelFull(s.agent) || '未设置'}">${getModelShort(s.agent) || '---'}</button></span>
         <span><span class="source-badge ${s.source}">${s.source}</span></span>
-        <span style="color:var(--dim)">${s.chatType || "-"}</span>
-        <span><a href="http://127.0.0.1:18789/chat?session=${encodeURIComponent(s.key)}" target="_blank" class="sess-id" title="${s.key}">${s.sessionId}</a> <span style="color:var(--dim);font-size:13px;margin-left:8px">${s.key.replace(/^agent:[^:]+:/, '')}</span></span>
+        <span style="font-size:11px"><a href="http://127.0.0.1:18789/chat?session=${encodeURIComponent(s.key)}" target="_blank" class="sess-id" title="${s.key}" style="font-size:11px">${s.sessionId.slice(0,8)}</a> <span style="color:var(--dim);font-size:10px;margin-left:4px">${shortKey}</span></span>
+        <span style="display:flex;gap:4px">
+          <button class="new-btn" onclick="event.stopPropagation();resetSession('${s.agent}','${s.sessionId}',this)" style="margin:0;font-size:8px;padding:3px 6px">/new</button>
+          <button class="del-btn" onclick="event.stopPropagation();deleteSession('${s.agent}','${s.sessionId}','${s.key.replace(/'/g,"\\'")}',this)">DEL</button>
+        </span>
       </div>
     `;
   }).join("");
 
   container.innerHTML = html;
+  updateSelectedCount();
+}
+
+function sessKey(s) { return `${s.agent}||${s.sessionId}||${s.key}`; }
+function parseSessKey(k) { const [agentId, sessionId, key] = k.split("||"); return { agentId, sessionId, key }; }
+
+function toggleSession(sk, checked) {
+  if (checked) selectedSessions.add(sk); else selectedSessions.delete(sk);
+  renderSessions();
+}
+
+function toggleAllSessions(checked) {
+  if (!currentData) return;
+  let sessions = currentData.allSessions;
+  if (currentSessionFilter !== "all") sessions = sessions.filter(s => s.source === currentSessionFilter);
+  if (currentAgentFilter !== "all") sessions = sessions.filter(s => s.agent === currentAgentFilter);
+  const search = (document.getElementById("sessionSearchInput")?.value || "").toLowerCase();
+  if (search) sessions = sessions.filter(s => s.agent.toLowerCase().includes(search) || s.sessionId.toLowerCase().includes(search) || s.key.toLowerCase().includes(search));
+  for (const s of sessions.slice(0, 100)) {
+    const sk = sessKey(s);
+    if (checked) selectedSessions.add(sk); else selectedSessions.delete(sk);
+  }
+  renderSessions();
+}
+
+function updateSelectedCount() {
+  const el = document.getElementById("selectedCount");
+  if (el) el.textContent = selectedSessions.size ? `${selectedSessions.size} selected` : "";
+}
+
+async function deleteSession(agentId, sessionId, key, btn) {
+  if (!confirm(`删除会话 ${key.replace(/^agent:[^:]+:/, '')}？`)) return;
+  btn.disabled = true; btn.textContent = "...";
+  try {
+    const resp = await fetch("/api/session/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ agentId, sessionId, key })
+    });
+    const data = await resp.json();
+    if (data.status === "ok") {
+      btn.textContent = "OK";
+      setTimeout(() => fetchData(), 500);
+    } else {
+      btn.textContent = "ERR";
+      setTimeout(() => { btn.textContent = "DEL"; btn.disabled = false; }, 3000);
+    }
+  } catch {
+    btn.textContent = "ERR";
+    setTimeout(() => { btn.textContent = "DEL"; btn.disabled = false; }, 3000);
+  }
+}
+
+async function bulkAction(action) {
+  if (!selectedSessions.size) return;
+  const label = action === "new" ? `/new ${selectedSessions.size} 个会话` : `删除 ${selectedSessions.size} 个会话`;
+  if (!confirm(`确认${label}？`)) return;
+  const targets = [...selectedSessions].map(parseSessKey);
+  const btn = document.getElementById(action === "new" ? "bulkNewBtn" : "bulkDelBtn");
+  btn.disabled = true; btn.textContent = "...";
+  try {
+    const resp = await fetch("/api/session/bulk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, sessions: targets })
+    });
+    const data = await resp.json();
+    const ok = (data.results || []).filter(r => r.status === "ok").length;
+    const fail = (data.results || []).filter(r => r.status === "error").length;
+    btn.textContent = `${ok} ok${fail ? " " + fail + " err" : ""}`;
+    if (action === "delete") { selectedSessions.clear(); setTimeout(() => fetchData(), 500); }
+    setTimeout(() => {
+      btn.textContent = action === "new" ? "/new selected" : "DEL selected";
+      btn.disabled = false;
+    }, 3000);
+  } catch {
+    btn.textContent = "ERR";
+    setTimeout(() => {
+      btn.textContent = action === "new" ? "/new selected" : "DEL selected";
+      btn.disabled = false;
+    }, 3000);
+  }
 }
 
 // Filters
@@ -1023,7 +1546,7 @@ function showDetail(messageId) {
         <div class="trace-chain">
           ${msg.trace.map(t => `
             <div class="trace-node">
-              ${t.agent}${t.reply_channel ? ` → ${t.reply_channel}` : ""}${t.reply_to ? `:${t.reply_to.slice(0,12)}...` : ""}
+              ${dn(t.agent)}${t.reply_channel ? ` → ${t.reply_channel}` : ""}${t.reply_to ? `:${t.reply_to.slice(0,12)}...` : ""}
             </div>
           `).join('<span style="color:var(--border)">→</span>')}
         </div>
@@ -1038,11 +1561,11 @@ function showDetail(messageId) {
     </div>
     <div class="field">
       <span class="field-label">From:</span>
-      <span class="field-value" style="color:${fromColor}">${msg.from}</span>
+      <span class="field-value" style="color:${fromColor}">${dn(msg.from)} <span style="opacity:0.5;font-size:0.8em">${msg.from}</span></span>
     </div>
     <div class="field">
       <span class="field-label">To:</span>
-      <span class="field-value" style="color:${toColor}">${msg.to}</span>
+      <span class="field-value" style="color:${toColor}">${dn(msg.to)} <span style="opacity:0.5;font-size:0.8em">${msg.to}</span></span>
     </div>
     <div class="field">
       <span class="field-label">Type:</span>
@@ -1095,6 +1618,49 @@ function timeAgo(date) {
   if (hours < 24) return `${hours}h前`;
   const days = Math.floor(hours / 24);
   return `${days}d前`;
+}
+
+// Reset agent: send /new to all sessions
+async function resetAgent(agentId, btn) {
+  if (!confirm(`向 ${agentId} 的所有 session 发送 /new？`)) return;
+  btn.disabled = true;
+  btn.textContent = "...";
+  try {
+    const resp = await fetch(`/api/agent/${agentId}/new`, { method: "POST" });
+    const data = await resp.json();
+    const ok = (data.sessions || []).filter(s => s.status === "ok").length;
+    const fail = (data.sessions || []).filter(s => s.status === "error").length;
+    btn.textContent = `✓ ${ok}ok${fail ? " " + fail + "err" : ""}`;
+    btn.classList.add("success");
+    setTimeout(() => { btn.textContent = "/new"; btn.disabled = false; btn.classList.remove("success"); }, 3000);
+  } catch (e) {
+    btn.textContent = "ERR";
+    setTimeout(() => { btn.textContent = "/new"; btn.disabled = false; }, 3000);
+  }
+}
+
+// Reset single session: send /new
+async function resetSession(agentId, sessionId, btn) {
+  btn.disabled = true;
+  btn.textContent = "...";
+  try {
+    const resp = await fetch("/api/session/new", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ agentId, sessionId })
+    });
+    const data = await resp.json();
+    if (data.status === "ok") {
+      btn.textContent = "OK";
+      btn.classList.add("success");
+    } else {
+      btn.textContent = "ERR";
+    }
+    setTimeout(() => { btn.textContent = "/new"; btn.disabled = false; btn.classList.remove("success"); }, 3000);
+  } catch {
+    btn.textContent = "ERR";
+    setTimeout(() => { btn.textContent = "/new"; btn.disabled = false; }, 3000);
+  }
 }
 
 // Auto-refresh

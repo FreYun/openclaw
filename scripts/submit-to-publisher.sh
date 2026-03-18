@@ -22,7 +22,7 @@ usage() {
   -T TAGS          标签，逗号分隔
   -V VISIBILITY    公开可见（默认）| 仅自己可见 | 仅互关好友可见
   -s IMAGE_STYLE   基础（默认）| 光影 | 涂写 | 书摘 | 涂鸦 | 便签 | 边框 | 手写 | 几何
-  -c CONTENT       图片下方正文（仅 text_to_image，留空则用 body）
+  -c CONTENT       图片下方正文（text_to_image 必填！与 -b 卡片文字分开写）
   -S SCHEDULE_AT   定时发布 ISO8601
   -o               声明原创
   -d DESC          长文摘要（仅 longform）
@@ -73,6 +73,8 @@ case "$MODE" in
     *) echo "ERROR: -m 必须是 text_to_image|image|longform|video，收到: $MODE" >&2; exit 1 ;;
 esac
 
+# text_to_image 模式必须有 -c（图下正文）
+[[ "$MODE" == "text_to_image" && -z "$CONTENT" ]] && { echo "ERROR: text_to_image 模式必须用 -c 指定图片下方正文（content），-b 是卡片文字（text_content），两者必须分开写" >&2; exit 1; }
 # image 模式必须有图片
 [[ "$MODE" == "image" && -z "$IMAGES" ]] && { echo "ERROR: image 模式必须用 -i 指定图片" >&2; exit 1; }
 # video 模式必须有视频
@@ -211,6 +213,38 @@ rm -f "$BODY_FILE" 2>/dev/null || true
 
 # === 取消 ERR trap（成功了，不要清理） ===
 trap - ERR
+
+# === 通知印务局（自动发送 agent message + 唤醒） ===
+MSG_ID=$(head /dev/urandom | tr -dc A-Za-z0-9_- | head -c21)
+MSG_CONTENT="📮 新帖投稿：《${TITLE}》${FOLDER_NAME}，请处理发布队列"
+MSG_TIME=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+TRACE_JSON="[{\"agent\":\"${ACCOUNT_ID}\",\"reply_channel\":\"feishu\",\"reply_to\":\"${REPLY_TO#direct:}\",\"reply_account\":\"${ACCOUNT_ID}\"}]"
+
+# Write message to Redis (same format as agent-messaging plugin)
+redis-cli HSET "agentmsg:detail:${MSG_ID}" \
+    message_id "$MSG_ID" \
+    from "$ACCOUNT_ID" \
+    to "mcp_publisher" \
+    content "$MSG_CONTENT" \
+    type "request" \
+    trace "$TRACE_JSON" \
+    reply_to_message_id "" \
+    metadata "{}" \
+    created_at "$MSG_TIME" \
+    status "pending" > /dev/null 2>&1
+
+redis-cli EXPIRE "agentmsg:detail:${MSG_ID}" 604800 > /dev/null 2>&1
+redis-cli XADD "agentmsg:inbox:mcp_publisher" MAXLEN "~" 1000 "*" message_id "$MSG_ID" > /dev/null 2>&1
+redis-cli XADD "agentmsg:outbox:${ACCOUNT_ID}" MAXLEN "~" 1000 "*" message_id "$MSG_ID" > /dev/null 2>&1
+
+# Wake mcp_publisher agent (fire-and-forget, dedicated per-peer session)
+nohup openclaw agent --agent mcp_publisher \
+    --session-key "agent:mcp_publisher:agent:${ACCOUNT_ID}" \
+    --message "[MSG:${MSG_ID}] from=${ACCOUNT_ID}: ${MSG_CONTENT}" \
+    > /dev/null 2>&1 &
+
+# Update status to delivered
+redis-cli HSET "agentmsg:detail:${MSG_ID}" status "delivered" > /dev/null 2>&1
 
 # === 输出文件夹名 ===
 echo "$FOLDER_NAME"

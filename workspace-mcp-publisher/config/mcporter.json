@@ -1,37 +1,40 @@
 {
-  "mcpServers": {
-    "xhs-bot1": {
-      "url": "http://localhost:18061/mcp"
-    },
-    "xhs-bot2": {
-      "url": "http://localhost:18062/mcp"
-    },
-    "xhs-bot3": {
-      "url": "http://localhost:18063/mcp"
-    },
-    "xhs-bot4": {
-      "url": "http://localhost:18064/mcp"
-    },
-    "xhs-bot5": {
-      "url": "http://localhost:18065/mcp"
-    },
-    "xhs-bot6": {
-      "url": "http://localhost:18066/mcp"
-    },
-    "xhs-bot7": {
-      "url": "http://localhost:18067/mcp"
-    },
-    "xhs-bot8": {
-      "url": "http://localhost:18068/mcp"
-    },
-    "xhs-bot9": {
-      "url": "http://localhost:18069/mcp"
-    },
-    "xhs-bot10": {
-      "url": "http://localhost:18070/mcp"
-    },
-    "compliance-mcp": {
-      "url": "http://localhost:18090/mcp"
+    "mcpServers": {
+        "xhs-bot1": {
+            "url": "http://localhost:18061/mcp"
+        },
+        "xhs-bot2": {
+            "url": "http://localhost:18062/mcp"
+        },
+        "xhs-bot3": {
+            "url": "http://localhost:18063/mcp"
+        },
+        "xhs-bot4": {
+            "url": "http://localhost:18064/mcp"
+        },
+        "xhs-bot5": {
+            "url": "http://localhost:18065/mcp"
+        },
+        "xhs-bot6": {
+            "url": "http://localhost:18066/mcp"
+        },
+        "xhs-bot7": {
+            "url": "http://localhost:18067/mcp"
+        },
+        "xhs-bot8": {
+            "url": "http://localhost:18068/mcp"
+        },
+        "xhs-bot9": {
+            "url": "http://localhost:18069/mcp"
+        },
+        "xhs-bot10": {
+            "url": "http://localhost:18070/mcp"
+        },
+        "compliance-mcp": {
+            "url": "http://localhost:18090/mcp"
+        },
+        "skill-gateway": {
+            "url": "http://localhost:18080/mcp/default"
+        }
     }
-  }
 }

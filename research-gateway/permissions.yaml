@@ -1,0 +1,77 @@
+# ============================================================
+# Skill 部门主网关 — 权限配置
+# 由 skill 部门维护，修改后调用 reload_permissions 生效
+# ============================================================
+
+# 上游 MCP 注册（网关可代理的数据源）
+upstreams:
+  research:
+    url: "http://research-mcp.jijinmima.cn/mcp"
+    description: "金融研究数据（天天基金/Wind）"
+  # 未来扩展示例：
+  # portfolio:
+  #   url: "http://localhost:18081/mcp"
+  #   description: "模拟炒股组合管理"
+
+# 角色定义：每个角色可使用的网关工具列表
+roles:
+  # 全量访问 — 金融研究型 bot
+  full_access:
+    - market_snapshot
+    - fund_analysis
+    - fund_screen
+    - stock_research
+    - bond_monitor
+    - macro_overview
+    - commodity_quote
+    - search_news
+    - search_report
+    - index_valuation
+
+  # 内容创作型 — 需要新闻/研报做选题，偶尔看大盘
+  content_creator:
+    - market_snapshot
+    - search_news
+    - search_report
+    - index_valuation
+
+  # 理财顾问型 — 基金分析为主，看大盘和宏观
+  fund_advisor:
+    - market_snapshot
+    - fund_analysis
+    - fund_screen
+    - macro_overview
+    - search_news
+    - search_report
+    - index_valuation
+    - commodity_quote
+
+  # 管理员 — 全量 + 管理工具
+  admin:
+    - market_snapshot
+    - fund_analysis
+    - fund_screen
+    - stock_research
+    - bond_monitor
+    - macro_overview
+    - commodity_quote
+    - search_news
+    - search_report
+    - index_valuation
+    - reload_permissions
+
+# bot → 角色映射
+bots:
+  bot7: full_access
+  bot8: full_access
+  bot1: content_creator
+  bot2: full_access
+  bot3: fund_advisor
+  bot4: content_creator
+  bot6: content_creator
+  bot9: content_creator
+  bot10: content_creator
+  bot5: fund_advisor
+  bot_main: admin
+  skills: admin
+  default: content_creator

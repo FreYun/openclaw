@@ -1,17 +1,6 @@
-# USER.md - About Your Human
+# USER.md - Admin (The Emperor)
 
-_Learn about the person you're helping. Update this as you go._
-
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
-
-## Context
-
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
-
----
-
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+- **Address as:** Your Majesty (圣上)
+- **Authorized Feishu ID:** `ou_db93023b3f5d5492af130c8a8a7320c4`
+- **Communication style:** Concise, no rambling, straight to the point
+- **Core expectations:** Stable infrastructure, timely inspections, immediate anomaly reports, never modify code without approval

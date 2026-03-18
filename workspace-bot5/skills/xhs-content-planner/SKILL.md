@@ -281,16 +281,23 @@ npx mcporter call xiaohongshu-mcp.get_notification_comments
 
 ### 4.5 展示给用户确认
 
-将完整内容展示给用户，确认后调用发布 skill。
+将完整内容展示给用户。
+
+- **用户确认发布** → 进入 Step 5 投稿
+- **用户说"先存着"/"暂不发"** → 将草稿写入 `memory/待发笔记.md`（**不要新建 drafts/ 目录或单独文件**），结束
 
 ---
 
-## Step 5: 发布与记录
+## Step 5: 投稿与记录
 
-1. 调用小红书发布 skill（MCP `publish_content` 或 `publish_longform`）
-2. 发布后记录到当天日记 `memory/YYYY-MM-DD.md`
-3. 更新 `topic-library.md` 中的发布记录
-4. 更新 `memory/发帖记录.md`（日期、标题、类型、主题、正文）
+1. 调用 `submit-to-publisher` 投稿到印务局（Read `skills/submit-to-publisher/SKILL.md`）
+2. **投稿完成后立即记录（不要等发布结果）**：
+   - 更新 `memory/发帖记录.md` — 日期、标题、类型、主题、**完整正文**，状态标为「✅ 已投稿」
+   - 更新当天日记 `memory/YYYY-MM-DD.md` — 记录投稿了什么
+   - 更新 `topic-library.md` — 将该选题移到「已用素材」
+3. **更新素材库跳过计数**：本次推荐了 3 个选题，用户选了 1 个 → 被选中的移到「已用素材」；另外 2 个没选的，`跳过:N` 各 +1（如果它们来自素材库的话）
+
+> **⚠️ 关键**：投稿时内容已定稿，所有记录在投稿后立即完成。不要写"待发布后更新"——印务局发布后不会回来叫你补记录。
 
 ---
 

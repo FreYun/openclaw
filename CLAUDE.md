@@ -58,11 +58,8 @@ UserProfileResponse { UserBasicInfo, Interactions[], Feeds[] }
 # 先停掉已有的无头服务
 pkill -f "xhs-mcp"
 
-# 编译最新代码
-cd /home/rooot/MCP/xiaohongshu-mcp && go build -o /tmp/xhs-mcp .
-
-# 启动有头模式（-headless=false）
-XHS_PROFILES_DIR=/home/rooot/.xhs-profiles /tmp/xhs-mcp -headless=false -port=:18060 > /tmp/xiaohongshu-mcp.log 2>&1 &
+# 启动有头模式（-headless=false），从源码目录直接运行
+cd /home/rooot/MCP/xiaohongshu-mcp && XHS_PROFILES_DIR=/home/rooot/.xhs-profiles go run . -headless=false -port=:18060 > /tmp/xiaohongshu-mcp.log 2>&1 &
 
 # 等待启动后验证
 sleep 3 && curl -s http://localhost:18060/health
@@ -193,7 +190,7 @@ done
 ### MCP 源码位置
 
 - 源码：`/home/rooot/MCP/xiaohongshu-mcp/`
-- 编译产物：`/tmp/xhs-mcp`
+- 启动方式：`cd /home/rooot/MCP/xiaohongshu-mcp && go run .`
 - Chrome profiles：`/home/rooot/.xhs-profiles/botN/`
 
 ---

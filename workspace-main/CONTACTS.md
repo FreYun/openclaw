@@ -1,104 +1,101 @@
-# 电话本 — 魏忠贤专用
+# Directory - Wei Zhongxian's Contacts
 
-> 各部门联系方式一览。有事按部门找人，别乱串。
-> 飞书发消息用 `openclaw agent --agent <agent_id>`，写文件用对应路径。
+> Department contacts at a glance. Route by department, don't cross wires.
+> Message agents via `send_message(to: "<agent_id>", ...)`.
 
 ---
 
-## 一、安全部
+## 1. Security Department
 
-| 字段 | 内容 |
-|------|------|
+| Field | Value |
+|-------|-------|
 | **Agent ID** | `security` |
 | **Workspace** | `workspace-security/` |
-| **职能** | 运行时异常接收 & 归档，ERROR 级别转告 bot_main |
-| **上报方式（各 bot）** | 调用 `skills/report-incident/SKILL.md` — 写文件 + 通知 agent |
-| **通知命令** | `openclaw agent --agent security --message "【上报】..."` |
-| **事件日志** | `/home/rooot/.openclaw/security/incidents.jsonl` |
-| **参考文档** | `workspace-security/AGENTS.md`、`workspace/skills/report-incident/SKILL.md` |
+| **Function** | Runtime incident intake & archival, escalate ERROR-level to bot_main |
+| **Reporting (bots)** | Call `skills/report-incident/SKILL.md` — write file + notify agent |
+| **Incident log** | `/home/rooot/.openclaw/security/incidents.jsonl` |
+| **Docs** | `workspace-security/AGENTS.md`, `workspace/skills/report-incident/SKILL.md` |
 
 ---
 
-## 二、印务局
+## 2. Publisher (印务局)
 
-| 字段 | 内容 |
-|------|------|
+| Field | Value |
+|-------|-------|
 | **Agent ID** | `mcp_publisher` |
-| **名号** | 印务局 📮 |
-| **职能** | 统一接收各 bot 的发布任务，执行小红书内容发布，管理合规审核 |
-| **联系命令** | `openclaw agent --agent mcp_publisher --message "..."` |
-| **发布队列** | `/home/rooot/.openclaw/publish-queue/` |
-| **参考文档** | `workspace-mcp-publisher/AGENTS.md` |
+| **Emoji** | 📮 |
+| **Function** | Receives publish tasks from bots, executes XHS content publishing, manages compliance review |
+| **Publish queue** | `/home/rooot/.openclaw/publish-queue/` |
+| **Docs** | `workspace-mcp-publisher/AGENTS.md` |
 
 ---
 
-## 三、技能部
+## 3. Skills Department
 
-| 字段 | 内容 |
-|------|------|
+| Field | Value |
+|-------|-------|
 | **Agent ID** | `skills` |
 | **Workspace** | `workspace-skills/` |
-| **职能** | Skill 目录维护、symlink 同步检查、MCP 插件清单管理 |
-| **联系命令** | `openclaw agent --agent skills --message "..."` |
-| **Skill 源目录** | `/home/rooot/.openclaw/workspace/skills/` |
-| **刷新目录** | `python3 ~/.openclaw/workspace-skills/scripts/update-inventory.py` |
-| **参考文档** | `workspace-skills/AGENTS.md` |
+| **Function** | Skill inventory maintenance, symlink sync checks, MCP plugin manifest |
+| **Skill source** | `/home/rooot/.openclaw/workspace/skills/` |
+| **Refresh inventory** | `python3 ~/.openclaw/workspace-skills/scripts/update-inventory.py` |
+| **Docs** | `workspace-skills/AGENTS.md` |
 
 ---
 
-## 四、运营部
+## 4. Image Generation (制图部)
 
-总监：咱家（bot_main）兼管
-联系任意下属：`openclaw agent --agent <agent_id> --message "..."`
-
-### 在册人员
-
-| # | Agent ID | 名号 | Emoji | 定位 | MCP 端口 | 状态 |
-|---|---------|------|-------|------|---------|------|
-| 1 | `bot1` | 来财妹妹 | ✨ | 小红书内容创作，活泼接地气 | 18061 | 活跃 |
-| 2 | `bot2` | _(待命名)_ | — | 未配置 | 18062 | 待激活 |
-| 3 | `bot3` | _(待命名)_ | — | 未配置 | 18063 | 待激活 |
-| 4 | `bot4` | _(待命名)_ | 📊 | 研报解读专家，研报转小红书内容 | 18064 | 活跃 |
-| 5 | `bot5` | 宣妈慢慢变富 | 🪙 | 黄金热点简评，产品经理/二孩麻麻人设 | 18065 | 活跃 |
-| 6 | `bot6` | _(待命名)_ | — | 未配置 | 18066 | 待激活 |
-| 7 | `bot7` | 老K投资笔记 | ♠️ | 科技行业深度投研，直接犀利 | 18067 | 活跃 |
-| 8 | `bot8` | 老k | 📡 | 科技行业投研分析 | 18068 | 活跃 |
-| 9 | `bot9` | _(待命名)_ | — | 未配置 | 18069 | 待激活 |
-| 10 | `bot10` | _(待命名)_ | — | 未配置 | 18070 | 待激活 |
-
-### 快速联系
-
-```bash
-# 联系具体 bot（替换 botN）
-openclaw agent --agent bot1 --message "来财妹妹，有任务"
-
-# 广播给所有活跃 bot（逐一发送）
-for id in bot1 bot4 bot5 bot7 bot8; do
-  openclaw agent --agent $id --message "【通知】..."
-done
-```
+| Field | Value |
+|-------|-------|
+| **Agent ID** | `image-generator` |
+| **Emoji** | 🎨 |
+| **Function** | Receives image generation requests, optimizes prompts, generates images via API |
+| **Output** | `/tmp/image-generator/{task_folder}/` |
+| **Docs** | `workspace-image-generator/AGENTS.md` |
 
 ---
 
-## 附：部门关系
+## 5. Operations (Content Bots)
+
+Director: Wei Zhongxian (bot_main), concurrent role.
+
+### Roster
+
+| # | Agent ID | Name | Emoji | Focus | MCP Port | Status |
+|---|---------|------|-------|-------|---------|--------|
+| 1 | `bot1` | 来财妹妹 | ✨ | XHS content, lively & relatable | 18061 | Active |
+| 2 | `bot2` | _(standby)_ | — | Unconfigured | 18062 | Inactive |
+| 3 | `bot3` | _(standby)_ | — | Unconfigured | 18063 | Inactive |
+| 4 | `bot4` | 研报搬运工阿泽 | 📊 | Research report → XHS content | 18064 | Active |
+| 5 | `bot5` | 宣妈慢慢变富 | 🪙 | Gold hot takes, product manager persona | 18065 | Active |
+| 6 | `bot6` | _(standby)_ | — | Unconfigured | 18066 | Inactive |
+| 7 | `bot7` | 老K投资笔记 | ♠️ | Tech sector deep research, sharp & direct | 18067 | Active |
+| 8 | `bot8` | 老k | 📡 | Tech sector research analysis | 18068 | Active |
+| 9 | `bot9` | _(standby)_ | — | Unconfigured | 18069 | Inactive |
+| 10 | `bot10` | _(standby)_ | — | Unconfigured | 18070 | Inactive |
+
+---
+
+## Org Chart
 
 ```
-研究部（圣上）
+Admin (The Emperor)
     │
-    ├── 魏忠贤（bot_main）——— 大内总管，统筹各部
+    ├── Wei Zhongxian (bot_main) ── Grand Steward
     │
-    ├── 安全部（security）——— 运行时异常接收 & 归档
-    ├── 印务局（mcp_publisher）— 内容发布执行
-    ├── 技能部（skills）———————— Skill 目录 & symlink 管理
-    └── 运营部
-            ├── bot1 来财妹妹 ✨
-            ├── bot4 研报解读 📊
-            ├── bot5 宣妈慢慢变富 🪙
-            ├── bot7 老K投资笔记 ♠️
-            ├── bot8 老k 📡
-            └── bot2/3/6/9/10（待激活）
+    ├── Security Dept (security) ── Runtime incidents
+    ├── Publisher (mcp_publisher) ── Content publishing
+    ├── Skills Dept (skills) ──────── Skill inventory
+    ├── Image Gen (image-generator) ─ Image generation
+    └── Operations
+            ├── bot1  来财妹妹 ✨
+            ├── bot4  研报搬运工阿泽 📊
+            ├── bot5  宣妈慢慢变富 🪙
+            ├── bot7  老K投资笔记 ♠️
+            ├── bot8  老k 📡
+            └── bot2/3/6/9/10 (inactive)
 ```
 
 ---
 
-_最后更新：2026-03-13_
+_Last updated: 2026-03-17_

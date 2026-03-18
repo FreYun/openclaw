@@ -28,8 +28,31 @@ const TraceEntrySchema = Type.Object({
   ),
 });
 
+function getKnownAgentIds(runtime: { config: { loadConfig: () => unknown } }): Set<string> {
+  try {
+    const cfg = runtime.config.loadConfig() as { agents?: { list?: Array<{ id?: string }> } };
+    const list = cfg?.agents?.list;
+    if (!Array.isArray(list)) return new Set(["main"]);
+    const ids = list
+      .map((e) => e?.id?.trim().toLowerCase())
+      .filter((id): id is string => Boolean(id));
+    return new Set(ids.length > 0 ? ids : ["main"]);
+  } catch {
+    return new Set(["main"]);
+  }
+}
+
 export function registerMessagingTools(api: OpenClawPluginApi, store: MessageStore): void {
   const { runtime } = api;
+
+  // Validate target agent exists
+  const validateTarget = (to: string) => {
+    const knownAgents = getKnownAgentIds(runtime);
+    if (!knownAgents.has(to.trim().toLowerCase())) {
+      return json({ error: `Unknown agent: "${to}". Known agents: ${[...knownAgents].join(", ")}` });
+    }
+    return null;
+  };
 
   // ── send_message ──────────────────────────────────────────────────────
   api.registerTool(
@@ -58,6 +81,9 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           trace: TraceEntry[];
           metadata?: Record<string, unknown>;
         };
+
+        const rejected = validateTarget(to);
+        if (rejected) return rejected;
 
         const msg: AgentMessage = {
           message_id: nanoid(),
@@ -100,25 +126,24 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
       name: "reply_message",
       label: "Reply Agent Message",
       description:
-        "Reply to a received message. By default, wakes the previous agent in the trace " +
-        "so it can process the result. Set deliver_to_user=true to skip intermediate agents " +
-        "and deliver directly to the origin external user (e.g. feishu).",
+        "Reply to a received message. ALWAYS delivers to the origin external user (e.g. feishu). " +
+        "Set also_notify_agent=true to additionally wake the previous agent in the trace chain.",
       parameters: Type.Object({
         message_id: Type.String({ description: "The message_id of the message to reply to" }),
         content: Type.String({ description: "Reply content" }),
-        deliver_to_user: Type.Optional(
+        also_notify_agent: Type.Optional(
           Type.Boolean({
             description:
-              "If true, deliver directly to the origin external user (feishu), " +
-              "skipping intermediate agents. Default: false (wake previous agent).",
+              "If true, also wake the previous agent in the trace chain " +
+              "in addition to delivering to the external user. Default: false.",
           }),
         ),
       }),
       async execute(_toolCallId: string, params: Record<string, unknown>) {
-        const { message_id: origMsgId, content, deliver_to_user: deliverToUser } = params as {
+        const { message_id: origMsgId, content, also_notify_agent: alsoNotifyAgent } = params as {
           message_id: string;
           content: string;
-          deliver_to_user?: boolean;
+          also_notify_agent?: boolean;
         };
 
         const original = await store.get(origMsgId);
@@ -130,17 +155,15 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           return json({ error: "Cannot reply: trace is empty (no route back)" });
         }
 
-        // deliver_to_user: skip trace, go straight to origin external user
-        // default: wake previous agent in the trace chain
-        const route = deliverToUser
-          ? resolveDirectDeliveryRoute(original.trace) ?? resolveReplyRoute(original.trace)
-          : resolveReplyRoute(original.trace);
+        // Always deliver to the origin external user
+        const userRoute = resolveDirectDeliveryRoute(original.trace);
+        const primaryRoute = userRoute ?? resolveReplyRoute(original.trace);
 
         // Create the reply message with trace peeled back one hop
         const reply: AgentMessage = {
           message_id: nanoid(),
           from: ctx.agentId ?? "unknown",
-          to: route.agent,
+          to: primaryRoute.agent,
           content,
           type: "reply",
           trace: popTrace(original.trace),
@@ -151,9 +174,10 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
 
         await store.save(reply);
 
+        // Deliver to user
         const result = await dispatchMessage(
           runtime,
-          route,
+          primaryRoute,
           reply.message_id,
           reply.from,
           content,
@@ -161,10 +185,29 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
 
         await store.updateStatus(reply.message_id, result.ok ? "delivered" : "failed");
 
+        // Do NOT auto-wake the originating agent on reply.
+        // Re-waking causes runaway multi-turn loops: sender sees reply → sends
+        // another request → receiver replies → sender sees reply → …
+        // The reply is stored in Redis; the sender can retrieve it via
+        // list_messages / get_message, or use ask_agent for synchronous flow.
+        let agentNotified = false;
+        if (alsoNotifyAgent) {
+          const fallback = resolveReplyRoute(original.trace);
+          dispatchMessage(
+            runtime,
+            fallback,
+            reply.message_id,
+            reply.from,
+            content,
+          ).catch(() => {}); // fire-and-forget
+          agentNotified = true;
+        }
+
         return json({
           message_id: reply.message_id,
-          routed_to: route.agent,
-          route_kind: route.kind,
+          routed_to: primaryRoute.agent,
+          route_kind: primaryRoute.kind,
+          agent_notified: agentNotified,
           status: result.ok ? "delivered" : "failed",
           error: result.error,
         });
@@ -192,6 +235,9 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           to: string;
           content: string;
         };
+
+        const rejected = validateTarget(to);
+        if (rejected) return rejected;
 
         const original = await store.get(origMsgId);
         if (!original) {
@@ -275,6 +321,9 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           trace: TraceEntry[];
           metadata?: Record<string, unknown>;
         };
+
+        const rejected = validateTarget(to);
+        if (rejected) return rejected;
 
         const msg: AgentMessage = {
           message_id: nanoid(),

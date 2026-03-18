@@ -144,6 +144,7 @@ A 股量化数据优先用 Tushare 工具：
 2. **禁止**：`openclaw agent --message`（CLI 直接调用）、`message()` 旧工具、shell 脚本通知、`sessions_send`
 3. **每条消息必须带 trace**：trace 是溯源链，保证多层传递后结果能逐层回传到源头用户
 4. **reply_message 自动路由**：不需要手动判断回传给谁，总线根据 trace 自动决定
+5. **⛔ 严格一轮对话**：收到 request → 处理 → reply_message，**结束**。禁止在 reply 之后又 send_message。一个 request 只对应一个 reply，把所有内容放在 reply 里。禁止"先 reply 说已完成，再 send_message 发数据"——数据直接写在 reply 的 content 里。除非用户（研究部）明确要求多轮，否则一律一轮结束。
 
 ### 5 个工具
 
@@ -176,20 +177,24 @@ send_message(
 - `reply_channel` + `reply_to` + `reply_account`：只在源头（第一跳）填写，表示结果最终要送回给外部用户
 - 中间节点转发时，总线自动追加 trace，不需要手动构造
 
-### ⛔ 收到 `[MSG:xxx]` 前缀消息 — 必须 reply_message
+### ⛔⛔⛔ 收到 `[MSG:xxx]` 前缀消息 — 必须 reply_message
 
 当你被唤醒并收到 `[MSG:xxx]` 前缀的消息时，`xxx` 是 message_id。
 
-**铁律：处理完后必须调用 `reply_message` 回传结果。不回传 = 对方收不到任何回复，消息石沉大海。**
+**铁律：处理完后调用一次 `reply_message(message_id: "xxx", content: "...")` 回传结果，然后结束。**
 
 ```
-reply_message(message_id: "xxx", content: "你的回复内容")
+reply_message(message_id: "xxx", content: "你的回复内容——把所有数据、结论都放这里")
 ```
 
-- 默认回传给上一跳 agent（让它继续处理）
-- 加 `deliver_to_user: true` → 跳过中间 agent，直接发到飞书用户
+- 默认直接送达飞书用户
+- 加 `also_notify_agent: true` → 同时唤醒上一跳 agent
+
+**⚠️ 严禁用 `[[reply_to_current]]` 或直接文字回复来应答 `[MSG:xxx]` 消息。那样只会回复飞书当前对话，发送方 agent 收不到任何回复，消息石沉大海。必须调用 `reply_message` 工具。**
 
 **不管任务成功还是失败，都必须 reply_message。没有例外。**
+
+**⛔ reply 之后禁止再 send_message / forward_message。一个 request 对应一个 reply，数据全部放在 reply 里，不要拆成"先回复确认 + 再发数据"两条消息。**
 
 ### 典型流程：投稿到印务局
 

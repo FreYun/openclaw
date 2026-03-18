@@ -27,6 +27,11 @@ export async function dispatchMessage(
       ];
       if (route.session_id) {
         argv.push("--session-id", route.session_id);
+      } else {
+        // Route to a per-peer agent session so agent-to-agent messages
+        // don't pollute the main session. All communication between two
+        // agents shares one session (e.g. agent:bot7:agent:bot1).
+        argv.push("--session-key", `agent:${route.agent}:agent:${fromAgent}`);
       }
       await runtime.system.runCommandWithTimeout(argv, DISPATCH_TIMEOUT_MS);
     } else {

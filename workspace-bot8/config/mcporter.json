@@ -5,6 +5,9 @@
         },
         "compliance-mcp": {
             "url": "http://localhost:18090/mcp"
+        },
+        "skill-gateway": {
+            "url": "http://localhost:18080/mcp/bot8/mcp"
         }
     },
     "imports": []

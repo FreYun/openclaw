@@ -1,15 +1,11 @@
-# TOOLS.md - 印务局工具配置
+# TOOLS.md — Publisher Tool Config
 
-> **首先 `Read ../workspace/TOOLS_COMMON.md` 获取统一工具规范。**
+> First `Read ../workspace/TOOLS_COMMON.md` for universal tool rules.
 
----
+## MCP Port Routing
 
-## MCP 端口路由表
-
-我连接所有 bot 的 XHS MCP 服务。根据帖子的 `account_id` 选择对应的 MCP 服务名：
-
-| account_id | MCP 服务名 | 端口 |
-|------------|-----------|------|
+| account_id | MCP service | Port |
+|------------|-------------|------|
 | bot1 | xhs-bot1 | 18061 |
 | bot2 | xhs-bot2 | 18062 |
 | bot3 | xhs-bot3 | 18063 |
@@ -21,70 +17,42 @@
 | bot9 | xhs-bot9 | 18069 |
 | bot10 | xhs-bot10 | 18070 |
 
-### 调用模式
+**Critical**: MCP service name (`xhs-botN`) and `account_id` (`botN`) must match. Routing error = wrong account.
+
+## Usage
 
 ```bash
-# 发布到 bot7 的账号
-npx mcporter call "xhs-bot7.publish_content(account_id: 'bot7', title: '...', content: '...', text_to_image: true)"
-
-# 检查 bot5 的登录状态
+# Publish
+npx mcporter call "xhs-bot7.publish_content(account_id: 'bot7', title: '...', ...)"
+# Login check
 npx mcporter call "xhs-bot5.check_login_status(account_id: 'bot5')"
+# Compliance
+npx mcporter call "compliance-mcp.review_content(title: '...', content: '...', tags: '...')"
+# Health check
+curl -s --connect-timeout 5 http://localhost:{port}/health
 ```
 
-**关键**：MCP 服务名（`xhs-botN`）和 `account_id`（`botN`）必须对应。路由错误会导致发到错误账号。
-
-## 合规审核
+## MCP Restart (single port)
 
 ```bash
-npx mcporter call "compliance-mcp.review_content(title: '标题', content: '内容', tags: '标签1,标签2')"
+lsof -ti:{port} | xargs kill 2>/dev/null; sleep 2
+XHS_PROFILES_DIR=/home/rooot/.xhs-profiles nohup /home/rooot/MCP/xiaohongshu-mcp/xiaohongshu-mcp -headless=true -port=:{port} > /tmp/xhs-mcp-{port}.log 2>&1 &
+sleep 3 && curl -s http://localhost:{port}/health
 ```
 
-## MCP 健康检查
-
-```bash
-# 逐端口检查
-curl -s --connect-timeout 5 http://localhost:18061/health
-curl -s --connect-timeout 5 http://localhost:18067/health
-# ... 以此类推
-```
-
-## MCP 服务重启（单个端口）
-
-```bash
-# 先精确杀掉（绝不用 pkill 通配符！）
-lsof -ti:18067 | xargs kill 2>/dev/null
-
-# 等待进程退出
-sleep 2
-
-# 启动新实例
-XHS_PROFILES_DIR=/home/rooot/.xhs-profiles nohup /tmp/xhs-mcp -headless=true -port=:18067 > /tmp/xhs-mcp-bot7.log 2>&1 &
-
-# 验证
-sleep 3 && curl -s http://localhost:18067/health
-```
-
-## 发布队列路径
+## Publish Queue
 
 ```
 /home/rooot/.openclaw/publish-queue/
-├── pending/
-│   ├── 2026-03-14T14-35-09_bot7_efxrjy/   ← 文件夹格式（新，由提交脚本创建）
-│   │   ├── post.md                          ← YAML frontmatter + 正文
-│   │   ├── 1.jpg                            ← 图片（可选，image 模式）
-│   │   ├── 2.png
-│   │   └── video.mp4                        ← 视频（可选，video 模式）
-│   └── 2026-03-14T10-00-00_bot5_abc123.md   ← 旧格式（向后兼容）
-├── publishing/    ← mv 锁定（文件夹 mv 同样原子）
-└── published/     ← 归档（仅成功的，失败直接删除并回传通知）
+├── pending/      ← folder format (post.md + media) or .md file (legacy)
+├── publishing/   ← mv lock
+└── published/    ← archive (success only; failures deleted + notified)
 ```
 
-> 提交脚本：`~/.openclaw/scripts/submit-to-publisher.sh`，bot 调用后自动创建文件夹格式的队列条目。
+Submit script: `~/.openclaw/scripts/submit-to-publisher.sh`
 
-## 飞书告警
-
-通过 `message()` 工具发送，使用 bot_main 的飞书账号：
+## Feishu Alert
 
 ```
-message(action="send", channel="feishu", target="oc_e59188e3ecdb04acd9b33843870a2249", message="告警内容")
+message(action="send", channel="feishu", target="oc_e59188e3ecdb04acd9b33843870a2249", message="...")
 ```

@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "内容发布成功: &{Title:奶龙凭什么成为最火国漫IP？ Content:【奶龙爆火公式】\n\n圆滚滚身材\n+ 呆萌表情  \n+ 佛系态度\n= 打工人精神图腾\n\n🔥 不需要复杂世界观\n🔥 一个让人共鸣的形象就够了\n\n你身边有奶龙控吗？ Images:1 Status:发布完成 PostID:}"
+      }
+    ]
+  }
+}

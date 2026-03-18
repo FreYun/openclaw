@@ -36,6 +36,7 @@ export type AgentCliOpts = {
   agent?: string;
   to?: string;
   sessionId?: string;
+  sessionKey?: string;
   thinking?: string;
   verbose?: string;
   json?: boolean;
@@ -106,12 +107,14 @@ export async function agentViaGatewayCommand(opts: AgentCliOpts, runtime: Runtim
   const timeoutSeconds = parseTimeoutSeconds({ cfg, timeout: opts.timeout });
   const gatewayTimeoutMs = Math.max(10_000, (timeoutSeconds + 30) * 1000);
 
-  const sessionKey = resolveSessionKeyForRequest({
-    cfg,
-    agentId,
-    to: opts.to,
-    sessionId: opts.sessionId,
-  }).sessionKey;
+  const sessionKey =
+    opts.sessionKey?.trim() ||
+    resolveSessionKeyForRequest({
+      cfg,
+      agentId,
+      to: opts.to,
+      sessionId: opts.sessionId,
+    }).sessionKey;
 
   const channel = normalizeMessageChannel(opts.channel) ?? DEFAULT_CHAT_CHANNEL;
   const idempotencyKey = opts.runId?.trim() || randomIdempotencyKey();

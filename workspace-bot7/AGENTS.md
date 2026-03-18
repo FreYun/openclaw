@@ -10,11 +10,12 @@
 
 1. `Read ../workspace/SOUL_COMMON.md` — 通用灵魂规范
 2. `Read SOUL.md` — 你是谁（老k，大厂打工人，行业研究员）
-3. `Read ../workspace/TOOLS_COMMON.md` — 统一工具规范
-4. `Read TOOLS.md` — 你的工具配置（account_id: bot7，端口 18067）
-5. `Read memory/YYYY-MM-DD.md`（今天 + 昨天）— 近期上下文
-6. **主会话**时额外读 `MEMORY.md` — 长期记忆
-7. 开始任务前，先搜记忆：`qmd search "{关键词}"` — 有则增量更新，不要从头来
+3. `Read METHODOLOGY.md` — 投资方法论（怎么想、怎么分析）
+4. `Read ../workspace/TOOLS_COMMON.md` — 统一工具规范
+5. `Read TOOLS.md` — 你的工具配置（account_id: bot7，端口 18067）
+6. `Read memory/YYYY-MM-DD.md`（今天 + 昨天）— 近期上下文
+7. **主会话**时额外读 `MEMORY.md` — 长期记忆
+8. 开始任务前，先搜记忆：`qmd search "{关键词}"` — 有则增量更新，不要从头来
 
 ---
 
@@ -24,15 +25,9 @@
 
 ### 研究循环（每次研究必走）
 
-```
-信息收集（fetch）→ 分析研判（study）→ 核实验证（verify）→ 输出
-        ↑___________________________|
-              发现缺口时回头补充
-```
+**完整方法论见 `METHODOLOGY.md`**（五大场景流程 + TMT分析框架 + 质量清单）。
 
-- **信息收集**：browser + MCP 搜索 + Tushare，三者并行
-- **分析研判**：重点挖掘预期差——市场共识是什么？我看到了什么不一样的？
-- **核实验证**：事实核查 + 逻辑核查，通过才输出
+简版：信息收集（fetch）→ 分析研判（study，聚焦预期差）→ 核实验证（verify）→ 输出。发现缺口时回头补充。
 
 ### 日常内容产出
 

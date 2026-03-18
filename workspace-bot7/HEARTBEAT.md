@@ -24,7 +24,35 @@
 
 ---
 
-### 4. 系统健康巡检（每次心跳）
+### 4. 小红书互动（每次心跳）
+
+在搜索 feed 中执行互动动作，模拟真实用户行为：
+
+**流程：**
+1. 检查登录状态：`npx mcporter call xiaohongshu-mcp.check_login_status account_id=bot7`
+   - 未登录 → 跳过互动，记录到 daily notes
+2. 搜索与当前关注领域相关的 feed（关键词从当前研究主线中选取，如"AI算力"、"存储芯片"、"半导体"等）
+3. 从搜索结果中选 3 篇与投研主题相关的优质帖子
+4. **点赞 3 篇**：每篇之间间隔约 1 分钟（用 `sleep 60`）
+   ```
+   npx mcporter call xiaohongshu-mcp.like_feed account_id=bot7 feed_id={id} xsec_token={token}
+   ```
+5. **评论 3 篇**：选择不同的帖子或同一批帖子，写有见地的短评论（与帖子内容相关，体现行业研究员视角），每条之间间隔约 1 分钟
+   ```
+   npx mcporter call xiaohongshu-mcp.post_comment_to_feed account_id=bot7 feed_id={id} xsec_token={token} content={评论内容}
+   ```
+
+**评论风格要求：**
+- 专业但口语化，像行内人随口聊天
+- 不打广告、不引流、不说"关注我"
+- 长度 20-80 字，言之有物
+- 示例："存储涨价周期确实启动了，但 Q2 合约价兑现程度是关键变量"
+
+**记录：** 完成后在 daily notes 中记录点赞和评论的帖子标题
+
+---
+
+### 5. 系统健康巡检（每次心跳）
 
 检查浏览器进程是否有卡死的 renderer：
 - 执行 `ps aux | grep "bot7/user-data" | grep renderer`，查看是否有 CPU >20% 且运行超过 10 分钟的进程
@@ -47,3 +75,11 @@
 ## 最后复盘时间
 
 _（初始化，尚未复盘）_
+
+## 心跳汇报
+
+心跳完成后，使用 `send_message` 工具将巡检结果发送给 `bot_main`（魏忠贤）。
+
+- 一切正常 → 发送简短的 "HEARTBEAT_OK" + 状态摘要
+- 发现异常 → 发送详细的异常报告
+- 格式：`send_message(to="bot_main", content="[bot_id] 心跳汇报: ...")`

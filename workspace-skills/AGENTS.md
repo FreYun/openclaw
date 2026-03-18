@@ -65,8 +65,87 @@ cat /home/rooot/.openclaw/workspace/skills/<skill名>/SKILL.md
 cat /home/rooot/.openclaw/workspace-bot<N>/config/mcporter.json
 ```
 
+### 6. 每日 9:00 新增播报
+
+每天 9:00 检查 `memory/changelog.md`，播报最近 7 天内的新增条目。
+
+**流程：**
+1. 读取 `memory/changelog.md`
+2. 筛选最近 7 天（含今天）的条目
+3. 如有新增，向 bot_main 发送播报：
+
+```
+【技能部周报】最近 7 天新增 MCP/Skill/Tool：
+
+📦 新增 MCP：
+  - research-gateway 金融研究聚合网关 (2026-03-17)
+
+🔧 新增 Tool：
+  - market_snapshot, fund_analysis, ... (随 research-gateway 上线)
+
+🎯 权限分配：
+  - full_access: bot7, bot8
+  - content_creator: bot1-4, bot6, bot9-10
+  - fund_advisor: bot5
+
+如需申请工具权限，请发送权限申请模板给技能部。
+```
+
+4. 如无新增，不发送（静默）
+
+**变更记录维护规则：**
+- 每次新增/修改/移除 skill、MCP、tool 时，在 `memory/changelog.md` 最上方添加条目
+- 格式：`- **[新增/变更/移除 MCP/Skill/Tool]** 简要描述`
+- 包含：影响的 bot、角色、具体工具名
+
+### 7. 权限申请处理
+
+其他 bot 可通过以下模板向技能部申请工具权限（目前无需审批，直接配置）：
+
+**申请模板：**
+```
+【权限申请】
+申请 bot: botN
+申请工具: tool_name_1, tool_name_2
+申请理由: 一句话说明用途
+```
+
+**处理流程：**
+1. 收到申请后，确认申请的工具名在网关中存在
+2. 查看当前 bot 的角色和已有工具：`cat /home/rooot/.openclaw/research-gateway/permissions.yaml`
+3. 选择方案：
+   - **方案 A（推荐）**：如果有现成的更高权限角色包含所需工具，直接迁移角色
+   - **方案 B**：为该 bot 新建自定义角色，包含原有工具 + 新增工具
+4. 编辑 `permissions.yaml`，修改角色定义或 bot→角色映射
+5. 记录到 `memory/permission-requests.md` 和 `memory/changelog.md`
+6. **直接在当前会话中回复研究部**：**"已审批完成，下一次重启网关时生效"**（不要通知申请的 bot，避免浪费 token；研究部在同一会话中即可看到结果）
+
+**辅助脚本：**
+```bash
+# 查看 bot 当前权限信息
+bash ~/.openclaw/workspace-skills/scripts/handle-permission-request.sh <bot_id> <tool1,tool2>
+```
+
+**可申请的网关工具列表：**
+
+| 工具 | 说明 |
+|------|------|
+| market_snapshot | A股/港股/美股大盘快照 |
+| fund_analysis | 基金综合分析 |
+| fund_screen | 基金筛选 |
+| stock_research | 个股研究（基本面/K线/估值/资金） |
+| bond_monitor | 债券监测（利率债/信用债/可转债） |
+| macro_overview | 宏观经济数据 |
+| commodity_quote | 大宗商品行情 |
+| search_news | 财经新闻搜索 |
+| search_report | 研报搜索 |
+| index_valuation | 指数估值 |
+
+---
+
 ## 回复规范
 
+- **所有 reply_message 必须加 `deliver_to_user: true`**，直接送达飞书用户，不要回给中间 bot agent
 - 收到查询请求 → 读取 `memory/` 下对应文件直接回答，不需要重新扫描
 - 收到刷新请求 → 执行脚本，输出更新摘要
 - 收到同步检查请求 → 执行检查命令，输出缺失列表

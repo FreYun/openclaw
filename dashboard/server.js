@@ -5,12 +5,13 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
+const { execSync, execFile } = require("child_process");
 
 const PORT = parseInt(process.argv[2] || "18888");
 const PUBLISH_QUEUE = "/home/rooot/.openclaw/publish-queue";
 const AGENTS_DIR = "/home/rooot/.openclaw/agents";
 const CRON_DIR = "/home/rooot/.openclaw/cron";
+const OPENCLAW_JSON = "/home/rooot/.openclaw/openclaw.json";
 
 // Server-side cache: refresh at most every 10s
 let cachedData = null;
@@ -107,18 +108,29 @@ function getMessages(limit = 200) {
   return messages;
 }
 
+function getKnownAgentIds() {
+  try {
+    return fs.readdirSync(AGENTS_DIR).filter(d => {
+      try { return fs.statSync(path.join(AGENTS_DIR, d)).isDirectory(); } catch { return false; }
+    });
+  } catch { return []; }
+}
+
 function getAgentStats() {
+  const knownAgents = new Set(getKnownAgentIds());
   const inboxKeys = redis('KEYS "agentmsg:inbox:*"').split("\n").filter(Boolean);
   const outboxKeys = redis('KEYS "agentmsg:outbox:*"').split("\n").filter(Boolean);
 
   const stats = {};
   for (const key of inboxKeys) {
     const agent = key.replace("agentmsg:inbox:", "");
+    if (!knownAgents.has(agent)) continue; // skip unknown agents
     if (!stats[agent]) stats[agent] = { inbox: 0, outbox: 0 };
     stats[agent].inbox = parseInt(redis(`XLEN ${key}`)) || 0;
   }
   for (const key of outboxKeys) {
     const agent = key.replace("agentmsg:outbox:", "");
+    if (!knownAgents.has(agent)) continue; // skip unknown agents
     if (!stats[agent]) stats[agent] = { inbox: 0, outbox: 0 };
     stats[agent].outbox = parseInt(redis(`XLEN ${key}`)) || 0;
   }
@@ -266,7 +278,7 @@ function getAllSessions() {
   return sessions;
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
 
   if (url.pathname === "/api/data") {
@@ -289,6 +301,239 @@ const server = http.createServer((req, res) => {
       cacheTime = now;
     }
     res.end(cachedData);
+    return;
+  }
+
+  // POST /api/agent/:id/new — send /new to all sessions of an agent (parallel)
+  const newMatch = url.pathname.match(/^\/api\/agent\/([^/]+)\/new$/);
+  if (newMatch && req.method === "POST") {
+    const agentId = newMatch[1];
+    const sessFile = path.join(AGENTS_DIR, agentId, "sessions", "sessions.json");
+    try {
+      const data = JSON.parse(fs.readFileSync(sessFile, "utf8"));
+      const tasks = [];
+      for (const [key, sess] of Object.entries(data)) {
+        const sid = sess.sessionId;
+        if (!sid) continue;
+        tasks.push({ key, sid });
+      }
+      // Run all sessions in parallel
+      const results = await Promise.all(tasks.map(({ key, sid }) =>
+        new Promise(resolve => {
+          execFile("openclaw", [
+            "agent", "--agent", agentId, "--session-id", sid,
+            "--message", "/new", "--thinking", "off", "--timeout", "30"
+          ], { encoding: "utf8", timeout: 35000 }, (err) => {
+            if (err) {
+              resolve({ sessionId: sid, key, status: "error", error: (err.stderr || err.message || "").slice(0, 200) });
+            } else {
+              resolve({ sessionId: sid, key, status: "ok" });
+            }
+          });
+        })
+      ));
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ agent: agentId, sessions: results }));
+    } catch (e) {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ agent: agentId, error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/session/new — send /new to a single session
+  const sessNewMatch = url.pathname.match(/^\/api\/session\/new$/);
+  if (sessNewMatch && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { agentId, sessionId } = body;
+    if (!agentId || !sessionId) {
+      res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: "agentId and sessionId required" }));
+      return;
+    }
+    try {
+      await new Promise((resolve, reject) => {
+        execFile("openclaw", [
+          "agent", "--agent", agentId, "--session-id", sessionId,
+          "--message", "/new", "--thinking", "off", "--timeout", "30"
+        ], { encoding: "utf8", timeout: 35000 }, (err) => {
+          if (err) reject(err); else resolve();
+        });
+      });
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "ok", agentId, sessionId }));
+    } catch (e) {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "error", agentId, sessionId, error: (e.stderr || e.message || "").slice(0, 200) }));
+    }
+    return;
+  }
+
+  // POST /api/session/delete — delete a session from sessions.json and its .jsonl file
+  if (url.pathname === "/api/session/delete" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { agentId, sessionId, key } = body;
+    if (!agentId || !key) {
+      res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: "agentId and key required" }));
+      return;
+    }
+    try {
+      const sessFile = path.join(AGENTS_DIR, agentId, "sessions", "sessions.json");
+      const data = JSON.parse(fs.readFileSync(sessFile, "utf8"));
+      if (data[key]) {
+        const sid = data[key].sessionId;
+        delete data[key];
+        fs.writeFileSync(sessFile, JSON.stringify(data, null, 2));
+        // Delete the .jsonl file if it exists
+        if (sid) {
+          const jsonlFile = path.join(AGENTS_DIR, agentId, "sessions", `${sid}.jsonl`);
+          try { fs.unlinkSync(jsonlFile); } catch {}
+        }
+      }
+      cachedData = null; // Invalidate cache
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "ok", agentId, key }));
+    } catch (e) {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/session/bulk — bulk /new or delete for multiple sessions
+  if (url.pathname === "/api/session/bulk" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { action, sessions: targets } = body; // action: "new" | "delete", sessions: [{agentId, sessionId, key}]
+    if (!action || !Array.isArray(targets) || !targets.length) {
+      res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: "action and sessions[] required" }));
+      return;
+    }
+
+    if (action === "new") {
+      const results = await Promise.all(targets.map(t =>
+        new Promise(resolve => {
+          execFile("openclaw", [
+            "agent", "--agent", t.agentId, "--session-id", t.sessionId,
+            "--message", "/new", "--thinking", "off", "--timeout", "30"
+          ], { encoding: "utf8", timeout: 35000 }, (err) => {
+            resolve({ ...t, status: err ? "error" : "ok" });
+          });
+        })
+      ));
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ action, results }));
+    } else if (action === "delete") {
+      const results = [];
+      for (const t of targets) {
+        try {
+          const sessFile = path.join(AGENTS_DIR, t.agentId, "sessions", "sessions.json");
+          const data = JSON.parse(fs.readFileSync(sessFile, "utf8"));
+          if (data[t.key]) {
+            const sid = data[t.key].sessionId;
+            delete data[t.key];
+            fs.writeFileSync(sessFile, JSON.stringify(data, null, 2));
+            if (sid) {
+              const jsonlFile = path.join(AGENTS_DIR, t.agentId, "sessions", `${sid}.jsonl`);
+              try { fs.unlinkSync(jsonlFile); } catch {}
+            }
+          }
+          results.push({ ...t, status: "ok" });
+        } catch (e) {
+          results.push({ ...t, status: "error", error: e.message });
+        }
+      }
+      cachedData = null;
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ action, results }));
+    } else {
+      res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: "unknown action" }));
+    }
+    return;
+  }
+
+  // GET /api/models — get all agents' current model + available models
+  if (url.pathname === "/api/models" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const ocData = JSON.parse(fs.readFileSync(OPENCLAW_JSON, "utf8"));
+      const agents = ocData.agents?.list || [];
+      const result = {};
+      for (const a of agents) {
+        const primary = a.model?.primary || null;
+        // Read available models from agent's models.json
+        let available = [];
+        const modelsFile = path.join(AGENTS_DIR, a.id, "agent", "models.json");
+        try {
+          const mData = JSON.parse(fs.readFileSync(modelsFile, "utf8"));
+          for (const [provName, prov] of Object.entries(mData.providers || {})) {
+            for (const m of (prov.models || [])) {
+              available.push({ provider: provName, modelId: m.id, name: m.name || m.id, reasoning: m.reasoning || false });
+            }
+          }
+        } catch {}
+        result[a.id] = { primary, available };
+      }
+      res.end(JSON.stringify(result));
+    } catch (e) {
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/models/set — set an agent's primary model
+  if (url.pathname === "/api/models/set" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { agentId, model } = body; // model: "provider/modelId"
+    if (!agentId || !model) {
+      res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: "agentId and model required" }));
+      return;
+    }
+    try {
+      const ocData = JSON.parse(fs.readFileSync(OPENCLAW_JSON, "utf8"));
+      const agents = ocData.agents?.list || [];
+      const agent = agents.find(a => a.id === agentId);
+      if (!agent) throw new Error(`Agent ${agentId} not found`);
+      if (!agent.model) agent.model = {};
+      agent.model.primary = model;
+      fs.writeFileSync(OPENCLAW_JSON, JSON.stringify(ocData, null, 2));
+      cachedData = null;
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "ok", agentId, model }));
+    } catch (e) {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // CORS preflight for POST endpoints
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
+    });
+    res.end();
     return;
   }
 

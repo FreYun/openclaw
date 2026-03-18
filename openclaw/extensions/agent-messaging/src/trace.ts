@@ -40,14 +40,16 @@ export function resolveReplyRoute(trace: TraceEntry[]): RouteDecision {
  */
 export function resolveDirectDeliveryRoute(trace: TraceEntry[]): RouteDecision | null {
   for (const entry of trace) {
-    if (entry.reply_channel && entry.reply_to && entry.reply_account) {
+    if (entry.reply_channel && entry.reply_to) {
+      // Fall back to entry.agent if reply_account was omitted
+      const account = entry.reply_account || entry.agent;
       return {
         kind: "deliver_external",
         agent: entry.agent,
         session_id: entry.session_id,
         reply_channel: entry.reply_channel,
         reply_to: entry.reply_to,
-        reply_account: entry.reply_account,
+        reply_account: account,
       };
     }
   }

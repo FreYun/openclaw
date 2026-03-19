@@ -43,7 +43,7 @@ npx mcporter call "xhs-bot7.publish_longform(account_id: 'bot7', title: '...', .
 | `visibility` | string | — | `公开可见`（默认）/ `仅自己可见` / `仅互关好友可见` |
 | `products` | []string | — | 带货商品关键词 |
 | `text_to_image` | bool | — | `true` = 文字配图模式（自动生成图片）|
-| `text_content` | string | — | 图片卡片上的文字（仅 `text_to_image=true` 时有效）；不填则用 `content` 前100字 |
+| `text_image` | string | — | 图片卡片上的文字（仅 `text_to_image=true` 时有效）；不填则用 `content` 前100字 |
 | `image_style` | string | — | 图片风格：`基础`（默认）/ `光影` / `涂写` / `书摘` / `涂鸦` / `便签` / `边框` / `手写` / `几何` |
 
 ### 两种模式说明
@@ -51,11 +51,11 @@ npx mcporter call "xhs-bot7.publish_longform(account_id: 'bot7', title: '...', .
 **普通图文**（`text_to_image: false` 或不填）：
 - `images` 必填（URL 或本地路径）
 - `content` = 图片下方显示的正文
-- `text_content` 忽略
+- `text_image` 忽略
 
 **文字配图**（`text_to_image: true`）：
 - `images` 可不填（小红书自动将文字生成图片）
-- `text_content` = 图片卡片上的文字（每张卡片用 `\n\n` 分隔多张）
+- `text_image` = 图片卡片上的文字（每张卡片用 `\n\n` 分隔多张）
 - `content` = 图片下方的正文
 - `image_style` 控制图片风格
 
@@ -67,18 +67,18 @@ npx mcporter call "xhs-bot5.publish_content(
   title: '黄金今天又涨了',
   content: '今天黄金价格创新高，背后的逻辑是什么？来聊聊我的看法。\n\n#黄金 #投资',
   text_to_image: true,
-  text_content: '今天黄金又涨了\n\n背后逻辑是什么\n\n我来分析一下',
+  text_image: '今天黄金又涨了\n\n背后逻辑是什么\n\n我来分析一下',
   image_style: '基础',
   tags: ['黄金', '投资'],
   visibility: '公开可见'
 )"
 ```
 
-> `text_content` 中用 `\n\n` 分隔多张卡片，`content` 是图片下方的正文，两者都是正文，位置不同。
+> `text_image` 中用 `\n\n` 分隔多张卡片，`content` 是图片下方的正文，两者都是正文，位置不同。
 
 ### Tag 使用指南
 
-- 话题标签**只通过 `tags` 参数**传，不要在 `content` 或 `text_content` 中写 `#话题`
+- 话题标签**只通过 `tags` 参数**传，不要在 `content` 或 `text_image` 中写 `#话题`
 - 系统自动生成富文本 Tag，正文中手写的 `#xxx` 会变成普通文字，不会变成话题链接
 - 建议 3-5 个 Tag，太多会稀释权重
 
@@ -138,7 +138,7 @@ npx mcporter call "xhs-bot7.publish_content(
 ## Important Notes
 
 - **`account_id` 每次必填**，路由到对应 MCP 服务
-- **`content` 和 `text_content` 都是正文**，位置不同（图下 vs 图上），无主次之分
+- **`content` 和 `text_image` 都是正文**，位置不同（图下 vs 图上），无主次之分
 - **`desc`** 只用于 `publish_longform`，是发布页摘要；`publish_content` 没有 `desc` 参数
 - **Tag 只通过 `tags` 参数**，不要在正文中硬写 `#话题`
 - **定时发布**格式 ISO8601，时区 `+08:00`，支持1小时～14天内

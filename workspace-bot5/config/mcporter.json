@@ -1,13 +1,10 @@
 {
     "mcpServers": {
-        "xiaohongshu-mcp": {
-            "url": "http://localhost:18065/mcp"
-        },
-        "compliance-mcp": {
-            "url": "http://localhost:18090/mcp"
-        },
         "skill-gateway": {
             "url": "http://localhost:18080/mcp/bot5/mcp"
+        },
+        "xiaohongshu-mcp": {
+            "url": "http://localhost:18065/mcp"
         }
     },
     "imports": []

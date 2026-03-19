@@ -74,7 +74,7 @@ case "$MODE" in
 esac
 
 # text_to_image 模式必须有 -c（图下正文）
-[[ "$MODE" == "text_to_image" && -z "$CONTENT" ]] && { echo "ERROR: text_to_image 模式必须用 -c 指定图片下方正文（content），-b 是卡片文字（text_content），两者必须分开写" >&2; exit 1; }
+[[ "$MODE" == "text_to_image" && -z "$CONTENT" ]] && { echo "ERROR: text_to_image 模式必须用 -c 指定图片下方正文（content），-b 是卡片文字（text_image），两者必须分开写" >&2; exit 1; }
 # image 模式必须有图片
 [[ "$MODE" == "image" && -z "$IMAGES" ]] && { echo "ERROR: image 模式必须用 -i 指定图片" >&2; exit 1; }
 # video 模式必须有视频
@@ -150,6 +150,7 @@ yaml_escape() { printf '%s' "$1" | sed 's/"/\\"/g'; }
 TITLE_ESC=$(yaml_escape "$TITLE")
 CONTENT_ESC=$(yaml_escape "$CONTENT")
 DESC_ESC=$(yaml_escape "$DESC")
+BODY_TEXT_ESC=$(yaml_escape "$(cat "$BODY_FILE")")
 SUBMITTED_AT=$(date +%Y-%m-%dT%H:%M:%S%:z)
 
 # === 写 post.md ===
@@ -166,6 +167,7 @@ SUBMITTED_AT=$(date +%Y-%m-%dT%H:%M:%S%:z)
         echo "content: \"${CONTENT_ESC}\""
         echo "visibility: \"${VISIBILITY}\""
         if [[ "$MODE" == "text_to_image" ]]; then
+            echo "text_image: \"${BODY_TEXT_ESC}\""
             echo "image_style: \"${IMAGE_STYLE}\""
         fi
         if [[ "$MODE" == "image" ]]; then

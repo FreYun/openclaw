@@ -69,7 +69,18 @@
       "Bash(redis-cli INFO)",
       "Bash(redis-cli --raw HGETALL agentmsg:detail:87_ugPVnJkINB6CUW1AGu)",
       "Bash(chmod +x /home/rooot/.openclaw/scripts/start-gateway.sh)",
-      "Bash(lsof -ti:18888)"
+      "Bash(lsof -ti:18888)",
+      "Bash(pip3 list:*)",
+      "Bash(nvidia-smi --query-gpu=name,memory.total,memory.free --format=csv,noheader)",
+      "Bash(source .venv/bin/activate)",
+      "Bash(pip install:*)",
+      "Bash(lspci)",
+      "Bash(rocm-smi)",
+      "Bash(amdgpu-info)",
+      "Bash(lsof -ti:18789)",
+      "Bash(find /home/rooot/.npm-global/lib/node_modules/ -path *feishu* -name *.js)",
+      "Bash(head -10 find /home/rooot/.npm-global/lib/node_modules/ -path *lark* -name *.js)",
+      "Bash(node --input-type=module -e \":*)"
     ],
     "additionalDirectories": [
       "/home/rooot/.openclaw/publish-queue/pending"

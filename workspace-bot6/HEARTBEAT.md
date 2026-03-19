@@ -55,8 +55,12 @@
 
 ## 心跳汇报
 
-心跳完成后，使用 `send_message` 工具将巡检结果发送给 `bot_main`（魏忠贤）。
+**⚠️ 不要用 `send_message` 汇报心跳结果！** 发消息会唤醒对方 agent，对方回复又会唤醒你，造成无限循环。
 
-- 一切正常 → 发送简短的 "HEARTBEAT_OK" + 状态摘要
-- 发现异常 → 发送详细的异常报告
-- 格式：`send_message(to="bot_main", content="[bot_id] 心跳汇报: ...")`
+心跳结果写入文件即可：
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') HEARTBEAT_OK - 状态摘要" >> /home/rooot/.openclaw/workspace-bot6/HEARTBEAT_LOG.md
+```
+
+- 一切正常 → 写一行 HEARTBEAT_OK + 状态摘要
+- 发现严重异常（如进程崩溃）→ 才用 `send_message` 通知 `bot_main`，且消息末尾加 `[NO_REPLY_NEEDED]`

@@ -35,7 +35,7 @@ Folder format (new): read `post.md` + scan media files. `.md` file (legacy): rea
 Parse YAML frontmatter + body (everything after `---`).
 
 Field mapping:
-- `text_to_image`: `content` param = frontmatter `content` (fallback: body); `text_content` = body
+- `text_to_image`: `content` param = frontmatter `content` (fallback: body); `text_image` = body
 - Other modes (`image`/`longform`/`video`): `content` param = body
 
 ### 2. Validate
@@ -75,7 +75,12 @@ npx mcporter call "compliance-mcp.review_content(title: '...', content: '...', t
 ```
 - Pass → continue
 - Fail → delete entry → notify with violations + fix suggestions
-- Service down → delete entry → notify "compliance offline, resubmit later"
+- Service down → auto-start then retry:
+  ```bash
+  cd /home/rooot/MCP/compliance-mcp && nohup ./compliance-mcp -port=:18090 > /tmp/compliance-mcp.log 2>&1 &
+  sleep 3 && curl -s --connect-timeout 3 http://localhost:18090/health
+  ```
+  Wait 5s → retry `review_content` once → if still down: delete entry → notify "compliance offline, resubmit later"
 
 ### 5. Login Check
 
@@ -95,7 +100,7 @@ npx mcporter call "xhs-{account_id}.check_login_status(account_id: '{account_id}
 
 **text_to_image:**
 ```bash
-npx mcporter call --timeout 180000 "xhs-{aid}.publish_content(account_id:'{aid}', title:'{t}', content:'{c}', text_content:'{body}', text_to_image:true, image_style:'{style}', tags:[...], visibility:'{v}', is_original:{bool}, schedule_at:'{sa}')"
+npx mcporter call --timeout 180000 "xhs-{aid}.publish_content(account_id:'{aid}', title:'{t}', content:'{c}', text_image:'{body}', text_to_image:true, image_style:'{style}', tags:[...], visibility:'{v}', is_original:{bool}, schedule_at:'{sa}')"
 ```
 
 **image:**

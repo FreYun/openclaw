@@ -32,15 +32,15 @@
 
 1. **检查登录状态**：`check_login_status(account_id: 'bot8')`，未登录则跳过并在 daily notes 记录。
 2. **获取推荐 Feed**：`list_feeds(account_id: 'bot8')`，拿到帖子列表。
-3. **点赞 3 个帖子**（每个间隔 ~60 秒）：
+3. **点赞 3 个帖子**（每个间隔 ~5 秒）：
    - 从 feed 列表中选择 3 个帖子（优先科技/投资/AI 相关内容）
-   - 对每个执行 `like_feed(account_id: 'bot8', feed_id: ..., xsec_token: ...)`
-   - 每次点赞后 `sleep 60`
-4. **评论 3 个帖子**（每个间隔 ~60 秒）：
+   - 对每个执行 `like_feed(feed_id: ..., xsec_token: ...)`（不传 account_id）
+   - 每次点赞后 `sleep 5`
+4. **评论 3 个帖子**（每个间隔 ~5 秒）：
    - 从 feed 列表中选择 3 个帖子（可与点赞重叠，也可不同）
    - 评论内容要**自然、真诚、与帖子内容相关**，10-30 字，像真实用户
-   - 对每个执行 `post_comment_to_feed(account_id: 'bot8', feed_id: ..., xsec_token: ..., content: ...)`
-   - 每次评论后 `sleep 60`
+   - 对每个执行 `post_comment_to_feed(feed_id: ..., xsec_token: ..., content: ...)`（不传 account_id）
+   - 每次评论后 `sleep 5`
 
 **评论风格指南**：
 - 科技/AI 帖子：表达认同或补充观点，如"这个角度很有启发"、"确实，XX赛道今年值得关注"

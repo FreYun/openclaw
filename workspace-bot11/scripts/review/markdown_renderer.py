@@ -314,12 +314,6 @@ def render_capital_flow(capital, shareholder, erp):
             lines.append(f"### 北向资金\n")
             lines.append(f"- 数据暂缺")
 
-        # 两融
-        margin = capital.get("margin")
-        if margin:
-            lines.append(f"\n### 两融余额\n")
-            lines.append(f"- 融资融券余额：**{_fmt(margin.get('total'), '.0f')}** 亿元")
-
         # 国债收益率
         bond = capital.get("bond_yield")
         if bond:

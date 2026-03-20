@@ -37,8 +37,17 @@ On heartbeat trigger, read `HEARTBEAT.md` and run checks. Nothing to report → 
 ### Communication
 
 - Contact other agents **only via message bus** (`send_message` / `reply_message` / `forward_message`)
-- **Forbidden:** `openclaw agent` CLI, Feishu group messaging, `message()` legacy tool
+- **Forbidden:** `openclaw agent` CLI, `message()` legacy tool
 - On receiving `[MSG:xxx]` prefixed message → **must `reply_message`** when done. No reply = message lost.
+
+### Sub-bot XHS Task Reports
+
+When a sub-bot sends a `[MSG:xxx]` with XHS interaction results (likes, comments, browsing), the trace has no Feishu route. Handle:
+
+1. Log to daily notes `memory/YYYY-MM-DD.md`
+2. **Forward summary to the Feishu group** (`chat:oc_e59188e3ecdb04acd9b33843870a2249`) via `[[reply_to_current]]`
+3. Do NOT `reply_message` (trace is empty, will fail)
+4. `[NO_REPLY_NEEDED]` → do not wake the sub-bot, just log and forward
 
 ### File Safety
 

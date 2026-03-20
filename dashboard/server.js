@@ -13,6 +13,22 @@ const AGENTS_DIR = "/home/rooot/.openclaw/agents";
 const CRON_DIR = "/home/rooot/.openclaw/cron";
 const OPENCLAW_JSON = "/home/rooot/.openclaw/openclaw.json";
 
+function parseCronLine(line) {
+  // Match: min hour dom month dow command
+  const m = line.match(/^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.+)$/);
+  if (!m) return null;
+  const [, min, hour, dom, month, dow, command] = m;
+  // Extract a short name from the command
+  let name = command;
+  const pyMatch = command.match(/([\w-]+\.py)/g);
+  if (pyMatch) name = pyMatch[pyMatch.length - 1]; // last .py file in chain
+  else {
+    const cmdParts = command.split("&&").pop().trim().split(/\s+/);
+    name = path.basename(cmdParts[0]);
+  }
+  return { schedule: `${min} ${hour} ${dom} ${month} ${dow}`, command, name };
+}
+
 // Server-side cache: refresh at most every 10s
 let cachedData = null;
 let cacheTime = 0;
@@ -519,6 +535,105 @@ const server = http.createServer(async (req, res) => {
       cachedData = null;
       res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
       res.end(JSON.stringify({ status: "ok", agentId, model }));
+    } catch (e) {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // GET /api/crontab — list system crontab entries
+  if (url.pathname === "/api/crontab" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const raw = execSync("crontab -l 2>/dev/null || true", { encoding: "utf8", timeout: 3000 });
+      const entries = [];
+      const lines = raw.split("\n");
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        // Check if this is a disabled entry (commented out cron line)
+        const disabledMatch = trimmed.match(/^#\s*DISABLED:\s*(.+)$/);
+        if (disabledMatch) {
+          const cronLine = disabledMatch[1];
+          const parsed = parseCronLine(cronLine);
+          if (parsed) {
+            // Check if previous line is a comment (description)
+            let description = "";
+            if (i > 0) {
+              const prevLine = lines[i - 1].trim();
+              if (prevLine.startsWith("#") && !prevLine.startsWith("# DISABLED:")) {
+                description = prevLine.replace(/^#\s*/, "");
+              }
+            }
+            entries.push({ ...parsed, enabled: false, lineIndex: i, description });
+          }
+          continue;
+        }
+
+        // Skip regular comments
+        if (trimmed.startsWith("#")) continue;
+
+        // Parse active cron line
+        const parsed = parseCronLine(trimmed);
+        if (parsed) {
+          // Check if previous line is a comment (description)
+          let description = "";
+          if (i > 0) {
+            const prevLine = lines[i - 1].trim();
+            if (prevLine.startsWith("#") && !prevLine.startsWith("# DISABLED:")) {
+              description = prevLine.replace(/^#\s*/, "");
+            }
+          }
+          entries.push({ ...parsed, enabled: true, lineIndex: i, description });
+        }
+      }
+      res.end(JSON.stringify({ entries, raw }));
+    } catch (e) {
+      res.end(JSON.stringify({ entries: [], error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/crontab/toggle — enable/disable a crontab entry
+  if (url.pathname === "/api/crontab/toggle" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { lineIndex, enable } = body;
+    if (typeof lineIndex !== "number") {
+      res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: "lineIndex required" }));
+      return;
+    }
+    try {
+      const raw = execSync("crontab -l 2>/dev/null || true", { encoding: "utf8", timeout: 3000 });
+      const lines = raw.split("\n");
+      if (lineIndex < 0 || lineIndex >= lines.length) throw new Error("Invalid lineIndex");
+
+      const line = lines[lineIndex].trim();
+      if (enable) {
+        // Re-enable: remove "# DISABLED: " prefix
+        if (line.startsWith("# DISABLED:")) {
+          lines[lineIndex] = line.replace(/^#\s*DISABLED:\s*/, "");
+        }
+      } else {
+        // Disable: add "# DISABLED: " prefix
+        if (!line.startsWith("#")) {
+          lines[lineIndex] = "# DISABLED: " + line;
+        }
+      }
+
+      // Write back via crontab
+      const newCrontab = lines.join("\n");
+      execSync("crontab -", { input: newCrontab, encoding: "utf8", timeout: 3000 });
+
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "ok", enable }));
     } catch (e) {
       res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
       res.end(JSON.stringify({ status: "error", error: e.message }));

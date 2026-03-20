@@ -1,9 +1,7 @@
 """
 模块：资金与流动性
-- 北向资金净流入
-- 两融余额
+- 北向资金净流入（tushare 为主，akshare 当日延迟故仅做备用）
 - 国债收益率
-- akshare 主 / tushare 验证北向
 """
 
 import logging
@@ -56,50 +54,6 @@ def _fetch_northbound_ts(date_str):
         logging.warning(f"tushare 获取北向资金失败: {e}")
         return None
 
-
-def _fetch_margin_ak(date_str):
-    """akshare 获取两融余额"""
-    try:
-        date_fmt = date_str.replace("-", "")
-
-        # 上交所融资融券
-        sse_balance = 0
-        try:
-            df_sse = ak.stock_margin_sse(start_date=date_fmt, end_date=date_fmt)
-            if df_sse is not None and len(df_sse) > 0:
-                # 融资融券余额列
-                for col in ["融资融券余额", "融资融券余额(元)", "rzrqye"]:
-                    if col in df_sse.columns:
-                        sse_balance = float(df_sse.iloc[0][col])
-                        break
-        except Exception as e:
-            logging.warning(f"上交所两融数据获取失败: {e}")
-
-        # 深交所融资融券
-        szse_balance = 0
-        try:
-            df_szse = ak.stock_margin_szse(date=date_fmt)
-            if df_szse is not None and len(df_szse) > 0:
-                for col in ["融资融券余额", "融资融券余额(元)", "rzrqye"]:
-                    if col in df_szse.columns:
-                        szse_balance = float(df_szse.iloc[0][col])
-                        break
-        except Exception as e:
-            logging.warning(f"深交所两融数据获取失败: {e}")
-
-        total = sse_balance + szse_balance
-        # 如果数据是元，转为亿
-        if total > 1e10:
-            total = total / 1e8
-
-        return {
-            "total": round(total, 2),
-            "sse": round(sse_balance / 1e8 if sse_balance > 1e10 else sse_balance, 2),
-            "szse": round(szse_balance / 1e8 if szse_balance > 1e10 else szse_balance, 2),
-        }
-    except Exception as e:
-        logging.warning(f"akshare 获取两融数据失败: {e}")
-        return None
 
 
 def _fetch_bond_yield_ak(date_str):
@@ -166,15 +120,12 @@ def fetch_capital_flow(date_str):
             "ok": diff_pct < 5,
         }
 
-    # 2. 两融余额
-    margin = _fetch_margin_ak(date_str)
-
-    # 3. 国债收益率
+    # 2. 国债收益率
     bond_yield = _fetch_bond_yield_ak(date_str)
 
     return {
         "northbound": northbound,
-        "margin": margin,
+        "margin": None,
         "bond_yield": bond_yield,
         "_validation": {"northbound": nb_validation} if nb_validation else {},
     }

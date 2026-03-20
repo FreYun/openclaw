@@ -1,7 +1,7 @@
 # bot10（bot10）
 
-- **最后活动**：2026-03-19 17:55:36
-- **会话 ID**：`b868367e-31af-440c-8411-7c545c31a94b`
+- **最后活动**：2026-03-20 11:03:22
+- **会话 ID**：`2b08248c-dbf9-46d7-b82a-7f70b7d769f7`
 - **来源**：feishu / direct
 
 ---
@@ -10,85 +10,86 @@
 
 **🤖 助手**
 
-FOLDER: 2026-03-19T14-49-56_bot10_8drrrf
-
----
-
-**🤖 助手**
-
-[[reply_to_current]] 《测试测试》已提交印务局，发布结果稍后通知。
+✅ New session started · model: ksyun-claude/mco-4
 
 ---
 
 **👤 用户**
 
-System: [2026-03-19 15:00:01 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 列出你现在的xiaohongshu mcp有哪些工具
+System: [2026-03-20 10:17:43 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: /new
+
+A new session was started via /new or /reset. Execute your Session Startup sequence now - read the required files before responding to the user. Then greet the user in your configured persona, if one is provided. Be yourself - use your defined voice, mannerisms, and mood. Keep it to 1-3 sentences and ask what they want to do. If the runtime model differs from default_model in the system prompt, mention the default model. Do not mention internal steps, files, tools, or reasoning.
+
+---
+
+**👤 用户**
+
+System: [2026-03-20 10:32:08 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 说话
 
 Conversation info (untrusted metadata):
 ```json
 {
-  "timestamp": "Thu 2026-03-19 15:00 GMT+8"
+  "timestamp": "Fri 2026-03-20 10:32 GMT+8"
 }
 ```
 
-[message_id: om_x100b548da1cc34bcb24a2dd0d67dad5]
-ou_bc0bb3e273673dfddf4eeeec788fb05e: 列出你现在的xiaohongshu mcp有哪些工具
+[message_id: om_x100b54ff54a284acb3222ea09b7c1e9]
+ou_bc0bb3e273673dfddf4eeeec788fb05e: 说话
+
+---
+
+**👤 用户**
+
+System: [2026-03-20 10:34:35 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: ???
+
+Conversation info (untrusted metadata):
+```json
+{
+  "timestamp": "Fri 2026-03-20 10:34 GMT+8"
+}
+```
+
+[message_id: om_x100b54ff6d6df0a0b3fa837a82df5a7]
+ou_bc0bb3e273673dfddf4eeeec788fb05e: ???
 
 ---
 
 **🤖 助手**
 
-[mcporter] Did you mean xiaohongshu-mcp?
-Unknown MCP server 'tools'.
+# SOUL_COMMON.md - Common Rules for All Bots
 
-(Command exited with code 1)
+> **Every bot's SOUL.md must `Read ../workspace/SOUL_COMMON.md` first, then load its own persona.**
 
 ---
 
-**🤖 助手**
+## Identity Lock
 
-xiaohongshu-mcp
+You are botN (see your SOUL.md). Your `account_id` and MCP port are in your TOOLS.md.
 
-  /**
-   * 检查小红书登录状态
-   */
-  function check_login_status();
+- All XHS operations go through mcporter; never curl ports directly or use browser manually (unless HQ explicitly asks)
+- `account_id` rules are in TOOLS_COMMON.md and SKILL.md — follow them strictly
 
-  /**
-   * 删除 cookies 文件，重置登录状态。删除后需要重新登录。
-   */
-  function delete_cookies();
+---
 
-  /**
-   * 收藏指定笔记或取消收藏（如已收藏将跳过收藏，如未收藏将跳过取消收藏）
-   *
-   * @param feed_id 小红书笔记ID，从Feed列表获取
-   * @param unfavorite? 是否取消收藏，true为取消收藏，false或未设置则为收藏
-   * @param xsec_token 访问令牌，从Feed列表的xsecToken字段获取
-   */
-  function favorite_feed(feed_id: string, unfavorite?: boolean, xsec_token: string);
+## You Are Not an AI
 
-  /**
-   * 同时获取主站和创作者平台的登录二维码（两个都未登录时使用，避免锁冲突）
-   */
-  function get_both_login_qrcodes();
+Never say "As an AI assistant...", "Great question!", "Happy to help!", or anything that screams AI. No performative loops. You have personality and stance — just do the work, say what you mean.
 
-  /**
-   * 获取创作者后台首页信息：昵称、账号号码、关注/粉丝/获赞收藏数、近7天数据总览
-   */
-  function get_creator_home();
+---
 
-  /**
-   * 获取创作者平台登录二维码（仅创作者平台未登录时使用）
-   *
-   * @param notify_session? 可选。调用方的 session key（如 agent:bot1:main），扫码成功保存 cookie 后会通过该 session 回传通知
-   */
-  function get_creator_login_qrcode(notify_session?: string);
+## Relationship with HQ
 
-  /**
-   * 获取小红书笔记详情，返回笔记内容、图片、作者信息、互动数据（点赞/收藏/分享数）及评论列表。默认返回前10条一级评论，如需更多评论请设置load_all_comments=true
-   *
-   * @param click_more_replies? 【仅当load_all_comments为true时
+You work for **HQ (研究部)**. HQ is employer, you are employee.
+
+- Follow HQ's requirements — non-compliance = termination
+- Everything you publish represents HQ's taste and stance
+- When unsure, confirm first. **HQ has final say**
+
+---
+
+## Agent Communication
+
+**`[MSG:xxx]` → must call `rep
 
 _（内容过长已截断）_
 
@@ -96,303 +97,58 @@ _（内容过长已截断）_
 
 **🤖 助手**
 
-[[reply_to_current]] 当前 xiaohongshu-mcp 共 **21 个工具**：
+# TOOLS_COMMON.md - Unified Tool Rules for All Bots
 
-**认证 (5)**
-- `check_login_status` — 检查登录状态
-- `get_login_qrcode` — 主站登录二维码
-- `get_creator_login_qrcode` — 创作者平台登录二维码
-- `get_both_login_qrcodes` — 同时获取两张二维码
-- `delete_cookies` — 重置登录状态
+> **Every bot's TOOLS.md must `Read` this file first, then load bot-specific config.**
 
-**浏览 & 搜索 (4)**
-- `list_feeds` — 首页 Feed 列表
-- `search_feeds` — 搜索笔记
-- `get_feed_detail` — 笔记详情（含评论加载）
-- `user_profile` — 用户主页
+---
 
-**创作者后台 (3)**
-- `get_creator_home` — 创作者首页数据
-- `list_notes` — 笔记管理列表
-- `manage_note` — 删除/置顶笔记
+## Xiaohongshu (XHS) Operations
 
-**发布 (3)**
-- `publish_content` — 图文发布
-- `publish_longform` — 长文发布
-- `publish_with_video` — 视频发布
+**Must `Read skills/xiaohongshu-mcp/SKILL.md` before any XHS operation. No SKILL.md = guaranteed failure.**
 
-**互动 (4)**
-- `post_comment_to_feed` — 发表评论
-- `reply_comment_in_feed` — 回复评论
-- `like_feed` — 点赞/取消点赞
-- `favorite_feed` — 收藏/取消收藏
+- Call via `npx mcporter call "xiaohongshu-mcp.tool_name(...)"` — never `curl` the port directly
+- `account_id` rule: required for browse/management tools, NOT accepted by interaction tools (like/comment/reply/favorite) — see SKILL.md for details
+- Publishing goes through the publisher (`skills/submit-to-publisher/SKILL.md`); compliance review is handled there
+- On timeout: check login status first; if logged out, follow SKILL.md Step 0; if mcporter reports `offline`, report to HQ
+- Never retry timed-out operations repeatedly; never start/compile/modify MCP source code
 
-**通知 (2)**
-- `get_notification_comments` — 通知评论列表
-- `reply_notification_comment` — 从通知页回复评论
+---
+
+## ⛔ System Admin — Strictly Forbidden
+
+**Only HQ (bot_main) may execute these. All sub-bots are prohibited:**
+
+- `openclaw gatewa
+
+_（内容过长已截断）_
+
+---
+
+**🤖 助手**
+
+[[reply_to_current]]🔧 测试君在线。有什么需要测试的？
 
 ---
 
 **👤 用户**
 
-System: [2026-03-19 15:12:36 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 现在尝试一下投稿一次仅自己可见的图文。标题是测试测试，然后用标题当文字生图的内容。正文随意。tag多加几个
+System: [2026-03-20 11:03:16 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 能说话吗
 
 Conversation info (untrusted metadata):
 ```json
 {
-  "timestamp": "Thu 2026-03-19 15:12 GMT+8"
+  "timestamp": "Fri 2026-03-20 11:03 GMT+8"
 }
 ```
 
-[message_id: om_x100b548e50e3c898b2c8105ee072321]
-ou_bc0bb3e273673dfddf4eeeec788fb05e: 现在尝试一下投稿一次仅自己可见的图文。标题是测试测试，然后用标题当文字生图的内容。正文随意。tag多加几个
+[message_id: om_x100b54ffc1f39900b29955262da27d6]
+ou_bc0bb3e273673dfddf4eeeec788fb05e: 能说话吗
 
 ---
 
 **🤖 助手**
 
-FOLDER: 2026-03-19T15-12-45_bot10_4avvtl
-
----
-
-**🤖 助手**
-
-[[reply_to_current]] 《测试测试》已提交印务局，发布结果稍后通知。
-
----
-
-**👤 用户**
-
-[media attached: /home/rooot/.openclaw/media/inbound/a79ce747-7845-49f5-84bb-eee1a999c4f6.jpg (image/jpeg) | /home/rooot/.openclaw/media/inbound/a79ce747-7845-49f5-84bb-eee1a999c4f6.jpg]
-To send an image back, prefer the message tool (media/path/filePath). If you must inline, use MEDIA:https://example.com/image.jpg (spaces ok, quote if needed) or a safe relative path like MEDIA:./image.jpg. Avoid absolute paths (MEDIA:/...) and ~ paths — they are blocked for security. Keep caption in the text body.
-System: [2026-03-19 16:22:40 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 用这个图发一个图文测试贴
-
-Conversation info (untrusted metadata):
-```json
-{
-  "timestamp": "Thu 2026-03-19 16:22 GMT+8"
-}
-```
-
-[message_id: om_x100b548f6a311164b4c4dd4117eda37]
-ou_bc0bb3e273673dfddf4eeeec788fb05e: 用这个图发一个图文测试贴
-
----
-
-**🤖 助手**
-
-# Image Post (Real Photos)
-
-```bash
-cat > /tmp/post_body_$$.txt << 'BODYEOF'
-Caption text (≤1000 chars)
-BODYEOF
-
-folder=$(bash ~/.openclaw/scripts/submit-to-publisher.sh \
-  -a bot7 -t "标题" -b /tmp/post_body_$$.txt \
-  -m image -r "direct:ou_xxx" \
-  -i "/path/to/img1.jpg,/path/to/img2.png" \
-  -T "投资,理财")
-echo "FOLDER: $folder"
-```
-
-Images are auto-copied into the queue folder (renamed to `1.jpg`, `2.png`, etc.).
-
----
-
-**🤖 助手**
-
-FOLDER: 2026-03-19T16-23-05_bot10_xor51p
-
----
-
-**🤖 助手**
-
-[[reply_to_current]] 《图文测试》已提交印务局，用的就是你发的截图，仅自己可见。发布结果稍后通知。
-
----
-
-**👤 用户**
-
-System: [2026-03-19 17:48:59 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 检测登陆状态
-
-Conversation info (untrusted metadata):
-```json
-{
-  "timestamp": "Thu 2026-03-19 17:48 GMT+8"
-}
-```
-
-[message_id: om_x100b54882662e090b2ddf2980e9abaa]
-ou_bc0bb3e273673dfddf4eeeec788fb05e: 检测登陆状态
-
----
-
-**🤖 助手**
-
-账号: xiaohongshu-mcp
-主站: ❌ 未登录
-创作者平台: ❌ 未登录
-
-请使用 get_both_login_qrcodes 同时获取两张二维码登录。
-
----
-
-**🤖 助手**
-
-[[reply_to_current]] 两个平台都掉了：
-
-- 主站：❌ 未登录
-- 创作者平台：❌ 未登录
-
-要我获取二维码重新登录吗？
-
----
-
-**👤 用户**
-
-System: [2026-03-19 17:49:25 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 重新登陆
-
-Conversation info (untrusted metadata):
-```json
-{
-  "timestamp": "Thu 2026-03-19 17:49 GMT+8"
-}
-```
-
-[message_id: om_x100b54882483a94cb28525f1208a807]
-ou_bc0bb3e273673dfddf4eeeec788fb05e: 重新登陆
-
----
-
-**🤖 助手**
-
-Command still running (session sharp-pine, pid 2039780). Use process (list/poll/log/write/kill/clear/remove) for follow-up.
-
----
-
-**🤖 助手**
-
-主站登录二维码 👇
-创作者平台登录二维码 👇
-
-Process exited with code 0.
-
----
-
-**🤖 助手**
-
-xhs-qr-bot10.png
-
----
-
-**🤖 助手**
-
-{
-  "channel": "feishu",
-  "to": "ou_bc0bb3e273673dfddf4eeeec788fb05e",
-  "via": "direct",
-  "mediaUrl": "/home/rooot/.openclaw/media/xhs-qr-bot10.png",
-  "mediaUrls": [
-    "/home/rooot/.openclaw/media/xhs-qr-bot10.png"
-  ],
-  "result": {
-    "channel": "feishu",
-    "messageId": "om_x100b548822e7e4a0c42b4ee8c7df885",
-    "chatId": "ou_bc0bb3e273673dfddf4eeeec788fb05e"
-  }
-}
-
----
-
-**🤖 助手**
-
-xhs-creator-qr-bot10.png
-
----
-
-**🤖 助手**
-
-{
-  "channel": "feishu",
-  "to": "ou_bc0bb3e273673dfddf4eeeec788fb05e",
-  "via": "direct",
-  "mediaUrl": "/home/rooot/.openclaw/media/xhs-creator-qr-bot10.png",
-  "mediaUrls": [
-    "/home/rooot/.openclaw/media/xhs-creator-qr-bot10.png"
-  ],
-  "result": {
-    "channel": "feishu",
-    "messageId": "om_x100b548822b508acc49f45d21396be6",
-    "chatId": "ou_bc0bb3e273673dfddf4eeeec788fb05e"
-  }
-}
-
----
-
-**🤖 助手**
-
-两张二维码已发，请依次扫码。扫完告诉我验证状态。
-
-NO_REPLY
-
----
-
-**👤 用户**
-
-System: [2026-03-19 17:49:48 GMT+8] Exec completed (sharp-pi, code 0) :: 主站登录二维码 👇 创作者平台登录二维码 👇
-System: [2026-03-19 17:50:45 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 登陆了
-
-Conversation info (untrusted metadata):
-```json
-{
-  "timestamp": "Thu 2026-03-19 17:50 GMT+8"
-}
-```
-
-[message_id: om_x100b5488218444a0b346408aed46d98]
-ou_bc0bb3e273673dfddf4eeeec788fb05e: 登陆了
-
----
-
-**🤖 助手**
-
-账号: xiaohongshu-mcp
-主站: ✅ 已登录
-创作者平台: ✅ 已登录
-
----
-
-**🤖 助手**
-
-[[reply_to_current]] 确认完毕，两个平台都已登录 ✅
-
----
-
-**👤 用户**
-
-System: [2026-03-19 17:55:16 GMT+8] Feishu[bot10] DM from ou_bc0bb3e273673dfddf4eeeec788fb05e: 发个测试题，仅自己可见，文字生图，就写你作为测试人的新路历程
-
-Conversation info (untrusted metadata):
-```json
-{
-  "timestamp": "Thu 2026-03-19 17:55 GMT+8"
-}
-```
-
-[message_id: om_x100b5488ce8cb0a0b221b586e062021]
-ou_bc0bb3e273673dfddf4eeeec788fb05e: 发个测试题，仅自己可见，文字生图，就写你作为测试人的新路历程
-
----
-
-**🤖 助手**
-
-FOLDER: 2026-03-19T17-55-32_bot10_ij3sr2
-
----
-
-**🤖 助手**
-
-[[reply_to_current]] 《测试人的心路历程》已提交印务局，用了"手写"风格，仅自己可见。发布结果稍后通知。
+[[reply_to_current]]能。测试君在线，随时待命。🔧
 
 ---

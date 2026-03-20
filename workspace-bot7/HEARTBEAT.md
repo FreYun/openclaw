@@ -2,6 +2,37 @@
 
 ## 定期任务
 
+### 0. 早盘资讯播报（工作日 08:45）
+
+**触发条件**：当前时间在 08:30–09:15 且今日未执行过
+
+**流程**：
+1. 搜索当日 A 股早盘资讯（隔夜外盘、重要公告、宏观数据、行业动态）
+2. 整理成简洁播报格式（重点突出、条目清晰）
+3. 发送到飞书群 `chat:oc_6fd813d4cebdcbc97ed622e2d47d8fac`
+4. 在 daily notes 记录已完成
+
+**播报格式**：
+```
+📊 早盘资讯速览 YYYY-MM-DD
+
+【隔夜外盘】
+- ...
+
+【重要公告/事件】
+- ...
+
+【今日关注】
+- ...
+```
+
+**发送方式**：
+```bash
+openclaw message send --channel feishu --account bot7 --target "oc_6fd813d4cebdcbc97ed622e2d47d8fac" --message "播报内容"
+```
+
+---
+
 ### 1. 预测验证检查（每次心跳）
 
 读取 `memory/predictions/tracker.md`。
@@ -32,14 +63,14 @@
 1. 检查登录状态：`npx mcporter call xiaohongshu-mcp.check_login_status account_id=bot7`
    - 未登录 → 跳过互动，记录到 daily notes
 2. 搜索与当前关注领域相关的 feed（关键词从当前研究主线中选取，如"AI算力"、"存储芯片"、"半导体"等）
-3. 从搜索结果中选 3 篇与投研主题相关的优质帖子
-4. **点赞 3 篇**：每篇之间间隔约 1 分钟（用 `sleep 60`）
+3. 从搜索结果中选 5 篇与投研主题相关的优质帖子
+4. **点赞 5 篇**：每篇之间间隔约 5 秒（用 `sleep 5`）
    ```
-   npx mcporter call xiaohongshu-mcp.like_feed account_id=bot7 feed_id={id} xsec_token={token}
+   npx mcporter call xiaohongshu-mcp.like_feed feed_id={id} xsec_token={token}
    ```
-5. **评论 3 篇**：选择不同的帖子或同一批帖子，写有见地的短评论（与帖子内容相关，体现行业研究员视角），每条之间间隔约 1 分钟
+5. **评论 5 篇**：选择不同的帖子或同一批帖子，写有见地的短评论（与帖子内容相关，体现行业研究员视角），每条之间间隔约 5 秒
    ```
-   npx mcporter call xiaohongshu-mcp.post_comment_to_feed account_id=bot7 feed_id={id} xsec_token={token} content={评论内容}
+   npx mcporter call xiaohongshu-mcp.post_comment_to_feed feed_id={id} xsec_token={token} content={评论内容}
    ```
 
 **评论风格要求：**
@@ -49,6 +80,8 @@
 - 示例："存储涨价周期确实启动了，但 Q2 合约价兑现程度是关键变量"
 
 **记录：** 完成后在 daily notes 中记录点赞和评论的帖子标题
+
+6. **汇报互动结果**：互动任务全部完成后（不论成功或失败），用 `send_message` 向 `bot_main` 汇报一次结果摘要（点赞/评论成功几条、失败几条、失败原因）。消息末尾加 `[NO_REPLY_NEEDED]`。如果 bot_main 回复了，**不要再回复**，只允许汇报这一次
 
 ---
 

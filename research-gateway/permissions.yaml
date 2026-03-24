@@ -72,6 +72,7 @@ bots:
   bot9: content_creator
   bot10: content_creator
   bot5: fund_advisor
+  bot11: full_access
   bot_main: admin
   skills: admin
   default: content_creator

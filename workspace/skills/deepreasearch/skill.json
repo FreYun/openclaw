@@ -1,0 +1,7 @@
+{
+  "name": "深度研究",
+  "icon": "🔎",
+  "slot": "research",
+  "desc": "多轮迭代深度研究框架",
+  "subType": "general"
+}

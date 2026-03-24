@@ -1,0 +1,7 @@
+{
+  "name": "自选股",
+  "icon": "👀",
+  "slot": "research",
+  "desc": "自选股列表管理与行情追踪",
+  "subType": "research"
+}

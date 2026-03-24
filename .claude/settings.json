@@ -80,7 +80,8 @@
       "Bash(lsof -ti:18789)",
       "Bash(find /home/rooot/.npm-global/lib/node_modules/ -path *feishu* -name *.js)",
       "Bash(head -10 find /home/rooot/.npm-global/lib/node_modules/ -path *lark* -name *.js)",
-      "Bash(node --input-type=module -e \":*)"
+      "Bash(node --input-type=module -e \":*)",
+      "Bash(node -e \":*)"
     ],
     "additionalDirectories": [
       "/home/rooot/.openclaw/publish-queue/pending"

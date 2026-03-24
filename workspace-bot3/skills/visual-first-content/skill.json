@@ -1,0 +1,7 @@
+{
+  "name": "视觉优先",
+  "icon": "🎨",
+  "slot": "accessory",
+  "subType": "content",
+  "desc": "图片主导的内容创作框架"
+}

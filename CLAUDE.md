@@ -139,8 +139,7 @@ tail -f /tmp/xiaohongshu-mcp.log
 │
 ├── workspace-bot1/               # bot1 专属 workspace
 │   ├── skills/                   # bot1 的 skill（通用 symlink + 独有）
-│   │   ├── xiaohongshu-mcp/      # → ../../workspace/skills/xiaohongshu-mcp（symlink）
-│   │   ├── xhs-operate/          # → ../../workspace/skills/xhs-operate（symlink）
+│   │   ├── xhs-op/               # → ../../workspace/skills/xhs-op（symlink）
 │   │   └── fupan/                # ← bot1 独有 skill
 │   ├── IDENTITY.md               # bot1 人设
 │   ├── TOOLS.md                  # bot1 工具配置（引用 TOOLS_COMMON.md）
@@ -161,7 +160,7 @@ tail -f /tmp/xiaohongshu-mcp.log
 
 | 类型 | 说明 | 例子 |
 |------|------|------|
-| **通用 skill** | 源文件在 `workspace/skills/`，各 bot 通过 **symlink** 引用，改一处全生效 | `xiaohongshu-mcp`, `xhs-operate` |
+| **通用 skill** | 源文件在 `workspace/skills/`，各 bot 通过 **symlink** 引用，改一处全生效 | `xhs-op`, `xhs-nurture` |
 | **独有 skill** | 仅特定 bot 拥有，体现其专业方向 | bot7/bot8 的 `stock-watcher`, `technical-analyst`; bot3 的 `visual-first-content` |
 
 ### 当前各 Bot 独有 Skill
@@ -396,7 +395,7 @@ diff /home/rooot/.openclaw/workspace-bot5/HEARTBEAT.md \
 N=11  # 新 bot 编号
 mkdir -p /home/rooot/.openclaw/workspace-bot${N}/skills
 # 通用 skill 用 symlink（改一处全生效）
-for skill in xiaohongshu-mcp xhs-operate; do
+for skill in xhs-op xhs-nurture; do
   ln -s ../../workspace/skills/${skill} /home/rooot/.openclaw/workspace-bot${N}/skills/${skill}
 done
 # 复制模板文件

@@ -5,13 +5,14 @@
 Before doing anything else:
 
 1. Read `SOUL.md` — this is who you are
-2. Read `USER.md` — this is who you're helping
-3. Read `memory/diary/YYYY-MM-DD.md` (today + yesterday) for recent context
-4. read `MEMORY.md`
-5. 在今天的日记 `memory/diary/YYYY-MM-DD.md` 中追加一条 session 记录：
+2. Read `EQUIPPED_SKILLS.md` — 当前已装备的技能清单（由装备系统自动生成）
+3. Read `USER.md` — this is who you're helping
+4. Read `memory/diary/YYYY-MM-DD.md` (today + yesterday) for recent context
+5. read `MEMORY.md`
+6. 在今天的日记 `memory/diary/YYYY-MM-DD.md` 中追加一条 session 记录：
    - 格式：`## Session HH:MM` + 一行简述
    - **追加，不要覆盖已有内容**
-6. read `TOOLS.md`
+7. read `TOOLS.md`
 
 Don't ask permission. Just do it.
 
@@ -33,28 +34,38 @@ Don't ask permission. Just do it.
 
 ### Step 1：热点解读（数据采集 + 分析）
 
-1. 完整读取 `skills/fupan/SKILL.md`
+1. 完整读取 `skills/laicaimeimei-fupan/SKILL.md`
 2. 按文件中「核心工作流」的 Step 1 → Step 5 **逐步执行**
 3. 完成后确认以下两个文件已生成：
    - `workspace/reports/hotspot/YYYY-MM-DD.md`（热点解读报告）
    - `workspace/reports/hotspot/YYYY-MM-DD-帖子内容.md`（雪球讨论原文）
 
-### Step 2：生成小红书帖子
+### Step 2：生成小红书帖子内容
 
-1. 完整读取 `skills/fupan/SKILL-xiaohongshu.md`
+1. 完整读取 `skills/laicaimeimei-fupan/SKILL-xiaohongshu.md`
 2. 完整读取 `memory/xiaohongshu/Bool 资本不眠 - 发帖风格分析.md`
 3. 读取 Step 1 产出的两个报告文件
 4. **调用 `list_notes` 获取最近一篇已发帖子，读取其内容，对照风格写帖子**（保持语气、结构、互动钩子一致）
-5. 按 `skills/fupan/SKILL-xiaohongshu.md` 中「核心工作流」的步骤 1 → 6 生成帖子
+5. 按 `skills/laicaimeimei-fupan/SKILL-xiaohongshu.md` 中 Phase 1（Step 1 → Step 7）生成帖子内容：
+   - 选题 → 标题 → 配图文字 → 正文 → 标签
+   - **内容复核**：检查个股名称，第一个字替换为大写拼音首字母（如 宁德时代 → N德时代）
 6. 展示给用户确认
 
-### Step 3：投稿到发布队列
+### Step 3：生成封面图
 
-1. 用户确认帖子内容后，读取 `skills/submit-to-publisher/SKILL.md`
-2. 按其中的投稿流程，将帖子写入发布队列，触发印务局发布
-3. 告知用户「帖子已提交，等待印务局发布」
+1. 完整读取 `skills/laicaimeimei-fupan/SKILL-image.md`
+2. 根据帖子内容判断情绪类型（大涨 / 大跌 / 通用）
+3. 读取 `memory/branding/cover-prompt.md`，取对应 base prompt，嵌入配图文字
+4. 调用 `image-gen-mcp.generate_image` 生成封面图（竖版 1024x1536）
+5. 将封面图保存到 `workspace/reports/hotspot/YYYY-MM-DD-封面图.png`
+6. 展示给用户确认（中文乱码可后期叠字）
 
-⚠️ **不再直接调用 publish 工具。小红书 MCP 仅用于浏览、搜索、评论等非发布操作。**
+### Step 4：投稿到发布队列
+
+> 投稿发布流程详见 `EQUIPPED_SKILLS.md` 中「小红书运营」的「投稿发布」子模块。
+
+1. 用户确认帖子内容和封面图后，走投稿发布流程（image 模式，附带 Step 3 的封面图）
+2. 告知用户「《{标题}》已提交印务局，发布结果稍后通知」
 
 ⚠️ **每个 Step 开头必须先读取对应的文件，不要凭记忆执行。每次复盘都必须重新读取所有文件。**
 

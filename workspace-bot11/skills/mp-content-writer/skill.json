@@ -1,0 +1,7 @@
+{
+  "name": "公众号写作",
+  "icon": "📝",
+  "slot": "accessory",
+  "subType": "content",
+  "desc": "公众号投资文章框架（日评/深度/周报）"
+}

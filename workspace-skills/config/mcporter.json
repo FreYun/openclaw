@@ -1,8 +1,4 @@
 {
-    "mcpServers": {
-        "skill-gateway": {
-            "url": "http://localhost:18080/mcp/skills"
-        }
-    },
+    "mcpServers": {},
     "imports": []
 }

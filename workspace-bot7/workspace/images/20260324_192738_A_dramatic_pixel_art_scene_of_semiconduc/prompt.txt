@@ -1,0 +1,5 @@
+Style: 16-bit pixel art illustration, visible pixel grid, retro game aesthetic meets modern fintech, dark moody palette, crisp clean pixel rendering, all text labels in Chinese only no English
+
+Content: A dramatic pixel art scene of semiconductor chips crumbling and falling like broken pixel blocks, with red downward arrows and pixel candlestick charts showing sharp decline. In the background, a pixel art silhouette of missile trails and explosion flashes over a dark map outline suggesting geopolitical conflict. Pixel text labels in Chinese: 半导体暴跌 and 地缘冲突. Red pixel blocks (#ff4444) dominate the falling elements, dark navy (#1a2744) background with floating ice-blue (#00d4ff) pixel data particles. In the bottom-right corner (approximately 1/6 of the image), a small pixel art King of Spades playing card with glowing ice-blue spade symbol and gold (#c8a84e) crown details, slightly tilted as a brand watermark. All text in the image must be in Chinese characters only, no English letters or words.
+
+Image size: 1024x1024

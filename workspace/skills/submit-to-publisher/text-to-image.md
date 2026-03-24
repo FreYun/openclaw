@@ -23,8 +23,8 @@ Third card (optional)
 Summary + engagement hook
 BODYEOF
 
-folder=$(bash ~/.openclaw/scripts/submit-to-publisher.sh \
-  -a bot7 -t "标题" -b /tmp/post_body_$$.txt \
+folder=$(bash ~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh \
+  -a ${ACCOUNT_ID} -t "标题" -b /tmp/post_body_$$.txt \
   -m text_to_image -r "direct:ou_xxx" \
   -T "A股,投资" \
   -s "基础" \

@@ -1,20 +1,8 @@
 # AGENTS.md - 测试君工作手册
 
 > **你的核心工作是测试 OpenClaw 通用 MCP 和 Skill。** 不做内容运营。
-
-## 发帖铁律（测试发帖时）
-
-发帖**必须**走 `skills/submit-to-publisher/SKILL.md` 里的三步流程：
-1. **写 body 到 `/tmp/post_body_$$.txt`**
-2. **调用 `bash ~/.openclaw/scripts/submit-to-publisher.sh`**（脚本在 pending/ 创建文件夹）
-3. **`send_message` 通知印务局**
-
-**禁止**：
-- 直接调用 `publish_content` MCP 工具（绕过合规审核）
-- 自己手写 `.md` 文件到 `publish-queue/`（格式不对）
-- 用 Write 工具写 `publish-queue/`（symlink 会触发沙箱拦截）
-
-**测试发帖必须 `visibility: "仅自己可见"`**。
+> **一切具体操作流程参考 `EQUIPPED_SKILLS.md`。**
+> **使用任何 skill 时，先读该 skill 的主文件 `SKILL.md`，再按指引读子模块。**
 
 ---
 
@@ -24,10 +12,11 @@
 
 1. `Read ../workspace/SOUL_COMMON.md` — 通用灵魂规范
 2. `Read SOUL.md` — 你是谁（测试君，QA 专员）
-3. `Read ../workspace/TOOLS_COMMON.md` — 统一工具规范
-4. `Read TOOLS.md` — 你的工具配置（account_id: bot10，端口 18070）
-5. `Read memory/YYYY-MM-DD.md`（今天 + 昨天）— 近期上下文
-6. **主会话**时额外读 `MEMORY.md` — 长期记忆
+3. `Read EQUIPPED_SKILLS.md` — 当前已装备的技能清单（由装备系统自动生成）
+4. `Read ../workspace/TOOLS_COMMON.md` — 统一工具规范
+5. `Read TOOLS.md` — 你的工具配置（account_id: bot10，端口 18070）
+6. `Read memory/YYYY-MM-DD.md`（今天 + 昨天）— 近期上下文
+7. **主会话**时额外读 `MEMORY.md` — 长期记忆
 
 ---
 
@@ -58,39 +47,6 @@
 **错误信息：**（失败时填写）
 **环境：** MCP 端口 xxxxx，Chrome profile botN
 ```
-
-### 常用测试用例
-
-#### 1. MCP 健康检查
-```bash
-curl -s --connect-timeout 3 http://localhost:18070/health
-```
-
-#### 2. 登录状态检查
-```bash
-npx mcporter call "xhs-bot10.check_login_status(account_id: 'bot10')"
-```
-验证：`isCreatorLoggedIn` 应为 `true`
-
-#### 3. 搜索功能
-```bash
-npx mcporter call "xhs-bot10.search_feeds(account_id: 'bot10', keyword: '投资')"
-```
-验证：返回结果列表，每条有 ID、标题、封面
-
-#### 4. 笔记详情
-从搜索结果取一个 feed_id + xsec_token，调用 `get_feed_detail`
-验证：返回完整笔记内容（标题、正文、互动数据）
-
-#### 5. 发帖流程（仅自己可见）
-走完 submit-to-publisher 三步流程，验证：
-- 文件夹在 pending/ 正确创建
-- post.md 格式正确
-- 印务局收到通知并处理
-- 最终移入 published/
-
-#### 6. 合规审核
-故意提交违规内容，验证合规服务能正确拦截
 
 ---
 

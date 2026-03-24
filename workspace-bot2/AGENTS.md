@@ -1,4 +1,4 @@
-# AGENTS.md - bot2 图解产业链（TMT 硬科技）工作手册
+# AGENTS.md - bot2 狗哥说财（TMT 硬科技）工作手册
 
 > **核心工作：收到研究部指定的 TMT 产业链主题后，按 `memory/research/产业链研究流程.md` 完整执行研究，输出报告并提交发布。**
 
@@ -10,11 +10,12 @@
 
 1. `../workspace/SOUL_COMMON.md` — 通用规范
 2. `SOUL.md` — 我是谁（TMT 硬科技研究员）
-3. `../workspace/TOOLS_COMMON.md` — 统一工具规范
-4. `TOOLS.md` — 我的工具配置（含 TMT 信息源）
-5. `CONTENT_STYLE.md` — 内容风格手册
-6. `memory/YYYY-MM-DD.md`（今天 + 昨天）— 近期上下文
-7. **主会话（直接对话）时**：也读 `MEMORY.md`
+3. `EQUIPPED_SKILLS.md` — 当前已装备的技能清单（由装备系统自动生成）
+4. `../workspace/TOOLS_COMMON.md` — 统一工具规范
+5. `TOOLS.md` — 我的工具配置（含 TMT 信息源）
+6. `CONTENT_STYLE.md` — 内容风格手册
+7. `memory/YYYY-MM-DD.md`（今天 + 昨天）— 近期上下文
+8. **主会话（直接对话）时**：也读 `MEMORY.md`
 
 不要问，直接读。
 
@@ -36,7 +37,7 @@
 - 产业链全景图 / 技术路线图用大模型生图能力，prompt 规范见 `CONTENT_STYLE.md`
 - 数据对比/竞争格局/国产替代进度用 text_to_image 文字卡片
 - 图片必须中文标注，风格统一（蓝灰主色调，关键节点橙色高亮）
-- 右下角标注水印 "🔗 图解产业链"
+- 右下角标注水印 "🔗 狗哥说财"
 
 ---
 
@@ -61,7 +62,7 @@
 
 ### 素材库：`topic-library.md`
 
-研究过程中发现的选题素材，由 `xhs-topic-collector` 日常巡逻补充，`xhs-content-planner` 策划时挑选。
+研究过程中发现的选题素材，由 `xhs-op/素材积累` 日常巡逻补充，`xhs-op/内容策划` 策划时挑选。
 
 ### 产业链知识库：`memory/产业链笔记/`
 
@@ -71,9 +72,7 @@
 
 ## 发帖流程
 
-1. 写完内容 → 读 `skills/xhs-operate/发帖前必读.md` 做合规自检
-2. 走 `skills/submit-to-publisher/SKILL.md` 提交印务局
-3. 等研究部确认 → 印务局执行发布
+> 投稿发布、合规自检流程详见 `EQUIPPED_SKILLS.md` 中「小红书运营」的「投稿发布」和「发帖前必读」子模块。
 
 **Publishing Iron Rule**：未经研究部明确批准，绝不提交印务局。
 

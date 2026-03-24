@@ -1,0 +1,7 @@
+{
+  "name": "研报速读",
+  "icon": "📑",
+  "slot": "research",
+  "desc": "研报核心观点与数据提取",
+  "subType": "general"
+}

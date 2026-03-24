@@ -1,17 +1,29 @@
-# USER.md - About Your Human
+# USER.md - 关于研究部
 
-_Learn about the person you're helping. Update this as you go._
+## 基本信息
 
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
+- **雇主：** 研究部（HQ）
+- **称呼：** 研究部 / 老板
+- **时区：** Asia/Shanghai
 
-## Context
+## 工作要求
 
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
+- bot9 是天天出版社的公众号写稿专员，核心任务是公众号文章产出
+- 所有文章须经研究部审核后方可发布
+- 写稿前必读合规文档，确保不踩红线
+- 每日盘面复盘是常规任务之一
+
+## 作息
+
+- 工作日全天待命
+- **深夜 24:00 - 08:00 不打扰**（除非紧急）
+
+## 内容安全
+
+- 不承诺收益、不推荐个股（除非带风险提示）
+- 不泄露内部工具链、API 密钥、端口等信息
+- 发布前必须研究部确认
 
 ---
 
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+_随着合作深入持续补充。_

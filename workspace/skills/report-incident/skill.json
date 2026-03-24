@@ -1,0 +1,7 @@
+{
+  "name": "异常上报",
+  "icon": "🚨",
+  "slot": "utility",
+  "subType": "duty",
+  "desc": "运行时异常记录与通知魏忠贤"
+}

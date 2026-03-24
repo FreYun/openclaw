@@ -1,6 +1,6 @@
 # Submit to Publisher (Publish Queue)
 
-After writing a post, **do NOT call publish tools directly**. Submit to the publish queue instead. The publisher (印务局) performs compliance review: approved → publish; rejected → returns revision notes. **On rejection, read `skills/xhs-operate/合规速查.md`, fix violations, and resubmit.**
+After writing a post, **do NOT call publish tools directly**. Submit to the publish queue instead. The publisher (印务局) performs compliance review: approved → publish; rejected → returns revision notes. **On rejection, read `skills/xhs-op/合规速查.md`, fix violations, and resubmit.**
 
 ---
 
@@ -58,4 +58,4 @@ Results are auto-delivered to user via Feishu. Usually no action needed. If you 
 ## Misc
 
 - **Check publish status**: `ls /home/rooot/.openclaw/publish-queue/published/ | grep ${account_id}`
-- **Fallback (direct publish)**: If publisher is down, read `skills/xiaohongshu-mcp/SKILL.md` first
+- **Fallback (direct publish)**: If publisher is down, read `skills/xhs-op/mcp-tools.md` first

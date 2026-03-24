@@ -1,0 +1,21 @@
+{
+  "name": "技能生成器",
+  "icon": "🧬",
+  "slot": "utility",
+  "desc": "按照 META-SKILL-README.md 规范，通过 Claude Code 生成新 skill",
+  "subType": "duty",
+  "subSkills": [
+    {
+      "name": "生成流程",
+      "icon": "📋",
+      "file": "workflow.md",
+      "desc": "从需求到完成 skill 的完整步骤"
+    },
+    {
+      "name": "质量检查",
+      "icon": "✅",
+      "file": "validation.md",
+      "desc": "skill 验收清单和常见错误"
+    }
+  ]
+}

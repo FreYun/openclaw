@@ -5,9 +5,9 @@ _上次更新：2026-03-15_
 ## 运营平台
 
 ### 小红书
-- 已有 xhs-content-planner（内容策划）和 xhs-topic-collector（素材巡逻）两个 skill
+- 小红书运营使用 `xhs-op` skill（含内容策划、素材积累等子技能）
 - 每日 3 次内容策划（9:00、13:00、18:00）+ 3 次素材巡逻（10:00、15:00、21:00）
-- 素材库：`skills/xhs-content-planner/topic-library.md`
+- 素材库：`topic-library.md`
 - 发帖经验：`memory/小红书发帖经验.md`
 - 限流规则：`memory/小红书限流规则备忘.md`
 

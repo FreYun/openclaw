@@ -1,0 +1,7 @@
+{
+  "name": "事实核查",
+  "icon": "✅",
+  "slot": "research",
+  "desc": "新闻数据交叉验证与逻辑检查",
+  "subType": "general"
+}

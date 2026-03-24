@@ -49,7 +49,7 @@ sleep 3 && curl -s http://localhost:{port}/health
 └── published/    ← archive (success only; failures deleted + notified)
 ```
 
-Submit script: `~/.openclaw/scripts/submit-to-publisher.sh`
+Submit script: `~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh`
 
 ## Feishu Alert
 

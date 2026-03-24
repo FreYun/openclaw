@@ -1,0 +1,7 @@
+{
+  "name": "管理运维",
+  "icon": "📋",
+  "slot": "utility",
+  "subType": "duty",
+  "desc": "agent 状态巡检、异常处理、变更建议撰写"
+}

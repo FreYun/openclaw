@@ -1,0 +1,7 @@
+{
+  "name": "个股分析",
+  "icon": "🔬",
+  "slot": "research",
+  "desc": "估值、财务、市场情绪快照",
+  "subType": "research"
+}

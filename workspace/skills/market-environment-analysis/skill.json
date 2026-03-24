@@ -1,0 +1,7 @@
+{
+  "name": "宏观环境",
+  "icon": "🌍",
+  "slot": "research",
+  "desc": "全球市场、汇率、商品、风险偏好",
+  "subType": "research"
+}

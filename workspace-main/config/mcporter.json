@@ -2,9 +2,6 @@
     "mcpServers": {
         "xiaohongshu-mcp": {
             "url": "http://localhost:18060/mcp"
-        },
-        "skill-gateway": {
-            "url": "http://localhost:18080/mcp/bot_main"
         }
     },
     "imports": []

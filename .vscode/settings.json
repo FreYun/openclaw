@@ -1,0 +1,9 @@
+{
+  "files.watcherExclude": {
+    "**/browser/**": true,
+    "**/openclaw/**": true,
+    "**/.venv/**": true,
+    "**/portfolio-service/**": true,
+    "**/.git/**": true
+  }
+}

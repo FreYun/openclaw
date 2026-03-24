@@ -1,0 +1,7 @@
+{
+  "name": "资金流向",
+  "icon": "💰",
+  "slot": "research",
+  "desc": "北向资金、融资融券、主力流向监控",
+  "subType": "research"
+}

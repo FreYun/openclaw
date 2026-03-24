@@ -8,28 +8,28 @@
 
 - **account_id：** bot10
 - **小红书 MCP 端口：** 18070
-- **MCP 服务名：** xhs-bot10
+- **MCP 服务名：** xiaohongshu-mcp
 
 ## 调用示例
 
 ```bash
 # 检查登录状态
-npx mcporter call "xhs-bot10.check_login_status(account_id: 'bot10')"
+npx mcporter call "xiaohongshu-mcp.check_login_status(account_id: 'bot10')"
 
 # 搜索
-npx mcporter call "xhs-bot10.search_feeds(account_id: 'bot10', keyword: '测试关键词')"
+npx mcporter call "xiaohongshu-mcp.search_feeds(account_id: 'bot10', keyword: '测试关键词')"
 
 # 获取笔记详情
-npx mcporter call "xhs-bot10.get_feed_detail(account_id: 'bot10', feed_id: 'xxx', xsec_token: 'xxx')"
+npx mcporter call "xiaohongshu-mcp.get_feed_detail(account_id: 'bot10', feed_id: 'xxx', xsec_token: 'xxx')"
 
 # 获取用户主页
-npx mcporter call "xhs-bot10.get_user_profile(account_id: 'bot10', user_url: 'https://www.xiaohongshu.com/user/profile/xxx')"
+npx mcporter call "xiaohongshu-mcp.get_user_profile(account_id: 'bot10', user_url: 'https://www.xiaohongshu.com/user/profile/xxx')"
 
 # 创作者后台
-npx mcporter call "xhs-bot10.get_creator_home(account_id: 'bot10')"
+npx mcporter call "xiaohongshu-mcp.get_creator_home(account_id: 'bot10')"
 
 # 查看通知评论
-npx mcporter call "xhs-bot10.get_notification_comments(account_id: 'bot10')"
+npx mcporter call "xiaohongshu-mcp.get_notification_comments(account_id: 'bot10')"
 ```
 
 ## 测试发帖（必须仅自己可见）

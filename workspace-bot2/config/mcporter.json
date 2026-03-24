@@ -6,7 +6,10 @@
         "compliance-mcp": {
             "url": "http://localhost:18090/mcp"
         },
-        "skill-gateway": {
+        "image-gen-mcp": {
+            "url": "http://localhost:18085/mcp"
+        },
+        "research-gateway": {
             "url": "http://localhost:18080/mcp/bot2/mcp"
         }
     },

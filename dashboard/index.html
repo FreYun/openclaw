@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>天天出版社 · 消息看板</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" media="print" onload="this.media='all'" onerror="">
 <style>
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -539,6 +539,410 @@
   .sess-id:hover { color: var(--blue); }
   a.sess-id { text-decoration: none; }
 
+  /* Equipment Modal */
+  .equip-modal { max-width: 860px; }
+  .agent-chip { cursor: pointer; }
+  .agent-chip:hover { border-color: var(--yellow); }
+
+  .slot-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+  .slot-row-label {
+    font-size: 9px;
+    color: var(--dim);
+    font-family: var(--pixel);
+    width: 50px;
+    text-align: right;
+  }
+  .row-unequip-btn {
+    font-size: 9px;
+    padding: 2px 7px;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    font-family: var(--pixel);
+    white-space: nowrap;
+    opacity: 0.5;
+    transition: opacity 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+  .row-unequip-btn:hover { opacity: 1; background: rgba(233,69,96,0.12); }
+
+  .equip-slot {
+    width: 76px;
+    height: 76px;
+    border: 2px dashed var(--border);
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    gap: 2px;
+  }
+  .equip-slot:hover { border-color: var(--yellow); background: rgba(254,202,87,0.08); }
+  .equip-slot.filled { border: 2px solid var(--green); background: rgba(0,210,211,0.06); }
+  .equip-slot.drop-target { border-color: var(--accent); background: rgba(233,69,96,0.12); animation: pulse-slot 0.6s infinite; }
+  .equip-slot.drop-ok { border-color: var(--green); background: rgba(0,210,211,0.15); }
+  .equip-slot .slot-icon { font-size: 22px; }
+  .equip-slot .slot-name { font-size: 10px; font-family: var(--cn); color: var(--text); text-align: center; line-height: 1.2; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .equip-slot .slot-empty { font-size: 9px; color: var(--dim); font-family: var(--pixel); }
+  .equip-slot.locked { opacity: 0.25; cursor: not-allowed; border-color: var(--dim); }
+  .equip-slot.locked:hover { border-color: var(--dim); background: rgba(255,255,255,0.03); }
+  .equip-slot .lock-icon { font-size: 12px; opacity: 0.5; }
+  @keyframes pulse-slot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(233,69,96,0.3); }
+    50% { box-shadow: 0 0 8px 3px rgba(233,69,96,0.15); }
+  }
+
+  .skill-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 10px;
+    cursor: grab;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--cn);
+    font-size: 13px;
+    user-select: none;
+    min-width: 120px;
+  }
+  .skill-card:hover { border-color: var(--blue); background: rgba(84,160,255,0.08); }
+  .skill-card.dragging { opacity: 0.4; }
+  .skill-card.equipped { opacity: 0.35; border-style: dashed; cursor: default; }
+  .skill-card .skill-icon { font-size: 18px; flex-shrink: 0; }
+  .skill-card .skill-name { white-space: nowrap; }
+  .skill-card .skill-slot-badge {
+    font-size: 8px;
+    font-family: var(--pixel);
+    color: var(--dim);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .sub-type-badge {
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--cn);
+    flex-shrink: 0;
+  }
+  .sub-type-badge.st-content {
+    background: rgba(84,160,255,0.15);
+    color: var(--accent);
+  }
+  .sub-type-badge.st-image {
+    background: rgba(255,180,50,0.15);
+    color: #f0b030;
+  }
+  .sub-type-badge.st-duty {
+    background: rgba(120,200,120,0.15);
+    color: #70c070;
+  }
+  .sub-type-badge.st-scheduled {
+    background: rgba(200,140,255,0.15);
+    color: #c090ff;
+  }
+  .sub-type-badge.st-research {
+    background: rgba(255,120,120,0.15);
+    color: #ff8080;
+  }
+  .sub-type-badge.st-general {
+    background: rgba(100,200,200,0.15);
+    color: #70c8c8;
+  }
+  .skill-card .owner-badge {
+    font-size: 9px;
+    background: rgba(162,155,254,0.2);
+    color: var(--purple);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-family: var(--pixel);
+    flex-shrink: 0;
+  }
+
+  /* Gem System (MCP Sockets) */
+  .gem-badges { display: flex; gap: 3px; margin-top: 2px; flex-wrap: wrap; }
+  .gem-badge {
+    font-size: 13px;
+    line-height: 1;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+  }
+  .gem-badge.healthy { opacity: 1; }
+  .gem-badge.unhealthy { opacity: 0.5; filter: saturate(0.3); }
+  .gem-badge.down { opacity: 0.3; filter: grayscale(1); }
+
+  .gem-panel {
+    margin-top: 16px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  .gem-panel-title {
+    font-size: 10px;
+    color: var(--dim);
+    margin-bottom: 8px;
+    font-family: var(--pixel);
+  }
+  .gem-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 6px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    font-family: var(--cn);
+    font-size: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid transparent;
+  }
+  .gem-row:hover { border-color: var(--border); }
+  .gem-row .gem-icon { font-size: 14px; flex-shrink: 0; }
+  .gem-row .gem-name { white-space: nowrap; }
+  .gem-row .gem-port { display: none; }
+  .gem-row .gem-health {
+    font-size: 8px;
+    font-family: var(--pixel);
+    padding: 1px 4px;
+    border-radius: 2px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .gem-health.healthy { background: rgba(0,210,211,0.15); color: var(--green); }
+  .gem-health.unhealthy { background: rgba(254,202,87,0.15); color: var(--yellow); }
+  .gem-health.down { background: rgba(233,69,96,0.15); color: var(--accent); }
+  .gem-health.unknown { background: rgba(127,140,141,0.15); color: var(--dim); }
+  .gem-health.planned { background: rgba(127,140,141,0.1); color: var(--dim); }
+  .gem-row .gem-needed {
+    font-size: 9px;
+    font-family: var(--pixel);
+    color: var(--yellow);
+  }
+  .gem-row .gem-action {
+    margin-left: auto;
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--pixel);
+    border: 1px solid;
+    background: transparent;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .gem-action.add { border-color: var(--green); color: var(--green); }
+  .gem-action.add:hover { background: var(--green); color: #000; }
+  .gem-action.remove { border-color: var(--accent); color: var(--accent); }
+  .gem-action.remove:hover { background: var(--accent); color: #fff; }
+  .gem-action.locked { border-color: var(--dim); color: var(--dim); cursor: not-allowed; opacity: 0.5; }
+  .gem-action.na { border-color: var(--dim); color: var(--dim); cursor: default; opacity: 0.4; }
+  .gem-warnings {
+    margin-top: 6px;
+    font-size: 11px;
+    font-family: var(--cn);
+    color: var(--yellow);
+  }
+  .gem-warnings div { padding: 2px 0; }
+  .gem-subtool-btn {
+    font-size: 8px; font-family: var(--pixel);
+    padding: 1px 4px; border-radius: 2px; cursor: pointer;
+    border: 1px solid var(--dim); color: var(--dim);
+    background: transparent; flex-shrink: 0; transition: all 0.15s;
+  }
+  .gem-subtool-btn:hover { border-color: var(--green); color: var(--green); }
+  .gem-subtool-btn.open { border-color: var(--yellow); color: var(--yellow); }
+  .gem-tools-panel {
+    margin: 2px 0 4px 20px;
+    padding: 6px 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+  .gem-tools-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px;
+  }
+  .gem-tool-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; font-family: var(--cn); cursor: pointer;
+    padding: 2px 0; position: relative;
+  }
+  .gem-tool-item input[type=checkbox] { cursor: pointer; accent-color: var(--green); }
+  .gem-tool-item .tool-name { color: var(--text); }
+  .gem-tool-item .tool-desc {
+    display: none; position: absolute; left: 0; top: 100%;
+    background: var(--card); border: 1px solid var(--border); border-radius: 3px;
+    padding: 3px 7px; white-space: nowrap; z-index: 100;
+    color: var(--dim); font-size: 10px; pointer-events: none;
+  }
+  .gem-tool-item:hover .tool-desc { display: block; }
+  .gem-tools-apply {
+    margin-top: 6px; display: flex; justify-content: flex-end; gap: 6px;
+  }
+  .gem-tools-apply button {
+    font-size: 9px; font-family: var(--pixel); padding: 2px 8px;
+    border-radius: 2px; cursor: pointer; border: 1px solid; background: transparent;
+  }
+  .gem-tools-apply .apply-btn { border-color: var(--green); color: var(--green); }
+  .gem-tools-apply .apply-btn:hover { background: var(--green); color: #000; }
+  .gem-tools-apply .reset-btn { border-color: var(--dim); color: var(--dim); }
+  .gem-tools-apply .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .plugin-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 4px;
+    font-size: 13px; cursor: default; position: relative;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+  }
+  .plugin-badge .plugin-tip {
+    display: none; position: absolute; left: 32px; top: 50%; transform: translateY(-50%);
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    padding: 4px 8px; white-space: nowrap; z-index: 10;
+    font-family: var(--cn); font-size: 10px; color: var(--fg);
+  }
+  .plugin-badge .plugin-tip .tip-desc { color: var(--dim); margin-top: 1px; }
+  .plugin-badge:hover .plugin-tip { display: block; }
+  .plugin-badge.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(0,210,211,0.08);
+  }
+
+  /* Skill tooltip */
+  .skill-tooltip {
+    position: fixed;
+    background: #0d1b2a;
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-family: var(--cn);
+    font-size: 12px;
+    color: var(--text);
+    max-width: 280px;
+    z-index: 10000;
+    pointer-events: none;
+    line-height: 1.5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .skill-tooltip .tt-name { color: var(--green); font-weight: bold; margin-bottom: 4px; }
+  .skill-tooltip .tt-desc { color: #ccc; }
+
+  /* Sub-skills expand panel */
+  .sub-skills-panel {
+    margin-top: 6px;
+    padding: 8px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .sub-skill-tag {
+    background: rgba(84,160,255,0.1);
+    border: 1px solid rgba(84,160,255,0.25);
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-family: var(--cn);
+    font-size: 11px;
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: default;
+  }
+  .sub-skill-tag { cursor: pointer; transition: all 0.15s; }
+  .sub-skill-tag:hover { background: rgba(84,160,255,0.25); border-color: var(--blue); }
+  .sub-skill-tag .sub-icon { font-size: 13px; }
+
+  /* Skill MD viewer modal */
+  .md-modal { max-width: 720px; max-height: 80vh; }
+  .md-modal .md-title { font-family: var(--cn); font-size: 14px; color: var(--yellow); margin-bottom: 12px; }
+  .md-modal .md-body {
+    font-family: var(--cn);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    overflow-y: auto;
+    max-height: 65vh;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .md-modal .md-body h1, .md-modal .md-body h2, .md-modal .md-body h3 { color: var(--blue); margin: 12px 0 6px; }
+  .md-modal .md-body h1 { font-size: 16px; } .md-modal .md-body h2 { font-size: 14px; } .md-modal .md-body h3 { font-size: 13px; }
+  .md-modal .md-body code { background: rgba(255,255,255,0.08); padding: 1px 4px; border-radius: 2px; font-family: var(--mono); font-size: 12px; }
+  .md-modal .md-body pre { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; overflow-x: auto; margin: 8px 0; }
+  .md-modal .md-body pre code { background: none; padding: 0; }
+  .md-modal .md-body table { border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+  .md-modal .md-body th, .md-modal .md-body td { border: 1px solid var(--border); padding: 4px 8px; }
+  .md-modal .md-body th { background: rgba(255,255,255,0.05); }
+  .md-modal .md-body blockquote { border-left: 3px solid var(--yellow); padding-left: 10px; color: var(--dim); margin: 8px 0; }
+  .md-modal .md-body ul, .md-modal .md-body ol { padding-left: 20px; }
+  .md-modal .md-body hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+  .md-modal .md-body a { color: var(--blue); }
+  .skill-card.has-subs { position: relative; }
+  .skill-card.has-subs::after {
+    content: "▾";
+    font-size: 10px;
+    color: var(--dim);
+    margin-left: 2px;
+  }
+  .skill-card.has-subs.expanded::after { content: "▴"; }
+
+  .base-skill-tag {
+    background: rgba(162,155,254,0.1);
+    border: 1px solid rgba(162,155,254,0.3);
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: var(--purple);
+    font-family: var(--cn);
+  }
+
+  .inv-filter-btn {
+    font-size: 11px;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    font-family: var(--cn);
+  }
+  .inv-filter-btn:hover { color: var(--text); border-color: var(--blue); }
+  .inv-filter-btn.active { background: rgba(84,160,255,0.2); color: var(--blue); border-color: var(--blue); }
+  .inv-filter-btn.sub-filter { font-size: 10px; padding: 2px 6px; border-style: dashed; }
+
+  .armory-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-family: var(--cn);
+    font-size: 13px;
+    z-index: 9999;
+    animation: toast-in 0.3s ease-out;
+    pointer-events: none;
+  }
+  .armory-toast.ok { background: var(--green); color: #000; }
+  .armory-toast.err { background: var(--accent); color: #fff; }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
   /* Responsive */
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
@@ -640,14 +1044,63 @@
 </div>
 
 
-<!-- Row 5: System Crontab -->
-<div class="grid full">
-  <div class="card">
-    <div class="card-title"><span class="icon">🖥️</span>系统定时任务 (crontab)</div>
-    <div id="sysCrontabContainer"></div>
+<!-- Equipment Modal -->
+<div class="modal-overlay" id="equipOverlay" onclick="closeEquipModal(event)">
+  <div class="modal equip-modal" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="document.getElementById('equipOverlay').classList.remove('show')">✕ 关闭</button>
+    <div id="equipModalHeader" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <h3 id="equipBotName" style="margin:0">⚔️ 装备</h3>
+      <button id="syncSkillsBtn" onclick="syncSkills()" style="margin-left:auto;font-size:11px;padding:3px 10px;border:1px solid var(--border);border-radius:3px;background:transparent;color:var(--dim);cursor:pointer;font-family:var(--pixel)">🔄 SYNC</button>
+    </div>
+    <div style="display:flex;gap:16px;align-items:flex-start">
+      <!-- Left: Plugins + Equipment Slots -->
+      <div id="equipPanel" style="min-width:260px;flex:1 1 auto">
+        <div style="margin-bottom:10px">
+          <div style="font-size:10px;color:var(--dim);margin-bottom:4px;font-family:var(--pixel)">🔌 PLUGINS</div>
+          <div id="pluginList" style="display:flex;flex-direction:column;gap:4px"></div>
+        </div>
+        <div id="equipSlots" style="display:flex;flex-direction:column;align-items:center;gap:8px"></div>
+      </div>
+      <!-- Right: MCP Gem -->
+      <div style="flex:0 0 auto;min-width:160px;max-width:220px;position:sticky;top:12px">
+        <div class="gem-panel" style="margin:0;padding:0;border:none">
+          <div class="gem-panel-title" style="display:flex;align-items:center;gap:6px">💎 <span id="gemPanelLabel">MCP GEM</span> <button id="gemStoreBtn" onclick="toggleGemStore()" style="font-size:9px;padding:1px 5px;border:1px solid var(--border);border-radius:2px;background:transparent;color:var(--dim);cursor:pointer;font-family:var(--pixel);margin-left:auto" title="宝石仓库">📦</button></div>
+          <div id="gemList"></div>
+          <div id="gemWarnings" class="gem-warnings"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Skill Inventory -->
+    <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)">
+      <div id="inventoryFilters" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px"></div>
+      <div id="inventoryList" style="max-height:380px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) var(--bg);display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start"
+           ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)"></div>
+    </div>
+    <!-- Base Layer -->
+    <div style="margin-top:16px;padding-top:10px;border-top:1px dashed var(--border)">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:6px;font-family:var(--pixel)">BASE LAYER (PERMANENT)</div>
+      <div id="baseLayerSkills" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+    </div>
   </div>
 </div>
 
+<!-- Row 6: System Services (crontab + MCP) -->
+<div class="grid full">
+  <div class="card">
+    <div class="card-title"><span class="icon">🖥️</span>系统服务</div>
+    <div id="systemServicesContainer"></div>
+  </div>
+</div>
+
+
+<!-- Skill MD Viewer Modal -->
+<div class="modal-overlay" id="skillMdOverlay" onclick="document.getElementById('skillMdOverlay').classList.remove('show')">
+  <div class="modal md-modal" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="document.getElementById('skillMdOverlay').classList.remove('show')">✕ 关闭</button>
+    <div class="md-title" id="skillMdTitle"></div>
+    <div class="md-body" id="skillMdBody"></div>
+  </div>
+</div>
 
 <!-- Message Detail Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
@@ -668,6 +1121,11 @@
 </div>
 
 <script>
+window.onerror = function(msg, src, line, col, err) {
+  document.body.insertAdjacentHTML('afterbegin',
+    '<div style="background:#e94560;color:#fff;padding:12px;font-family:monospace;font-size:13px">' +
+    'JS Error: ' + msg + ' (line ' + line + ')' + '</div>');
+};
 let currentData = null;
 let currentFilter = "all";
 let currentSessionFilter = "all";
@@ -675,10 +1133,26 @@ let currentAgentFilter = "all";
 let cronAgentFilter = "all";
 let knownMessageIds = new Set();
 let firstLoad = true;
+let gatewayToken = "";
+
+async function fetchConfig() {
+  try {
+    const r = await fetch("/api/config");
+    const d = await r.json();
+    gatewayToken = d.gatewayToken || "";
+  } catch {}
+}
+
+function chatUrl(sessionKey) {
+  const base = `${window.location.protocol}//${window.location.hostname}:18789/chat`;
+  const params = new URLSearchParams({ session: sessionKey });
+  if (gatewayToken) params.set("token", gatewayToken);
+  return `${base}?${params}`;
+}
 
 const SYSTEM_AGENTS = new Set(["bot_main", "mcp_publisher", "security", "skills", "coder", "image-generator", "bot11"]);
 const BOT_NAMES = {
-  bot1: "来财妹妹", bot2: "图解产业链", bot3: "meme爱基金",
+  bot1: "来财妹妹", bot2: "狗哥说财", bot3: "meme爱基金",
   bot4: "阿泽（研报搬运工）", bot5: "宣妈慢慢变富",
   bot6: "爱理财的James", bot7: "老K投资笔记", bot8: "老k（科技分析师）",
   bot9: "bot9", bot10: "测试君",
@@ -832,6 +1306,7 @@ function render() {
   renderTimeline();
   renderCronJobs();
   renderSysCrontab();
+  renderMcpServices();
   renderPublished();
   firstLoad = false;
 }
@@ -875,12 +1350,37 @@ function renderAgentStats() {
     const modelBtn = modelShort
       ? `<button class="model-btn" onclick="event.stopPropagation();showModelPicker('${agent}')" title="${getModelFull(agent)}">${modelShort}</button>`
       : '';
+    const hasEquipment = !!armoryData?.equipment?.bots?.[agent];
+    const clickHandler = (!isSystem || hasEquipment) ? `onclick="openEquipModal('${agent}')"` : '';
+    let equipBadge = '';
+    if (hasEquipment) {
+      const slots = armoryData.equipment.bots[agent].slots || {};
+      const filled = Object.values(slots).filter(Boolean).length;
+      const total = Object.keys(slots).length;
+      equipBadge = `<div style="font-size:10px;color:var(--dim);margin-top:2px">⚔️ ${filled}/${total}</div>`;
+    }
+    // Gem badges
+    let gemBadgesHtml = '';
+    if (gemData?.bindings?.[agent] && gemData?.registry?.gems) {
+      const badges = [];
+      for (const [gid, gem] of Object.entries(gemData.registry.gems)) {
+        const b = gemData.bindings[agent]?.[gid];
+        if (!b?.socketed) continue;
+        const health = getGemHealthStatus(gid, agent);
+        badges.push(`<span class="gem-badge ${health}" title="${gem.name}: ${health}">${gem.icon}</span>`);
+      }
+      if (badges.length > 0) {
+        gemBadgesHtml = `<div class="gem-badges">${badges.join("")}</div>`;
+      }
+    }
     return `
-      <div class="agent-chip">
+      <div class="agent-chip" ${clickHandler}>
         <div class="name ${isSystem ? 'system' : ''}" style="color:${color};font-family:var(--cn);font-size:15px">${dn(agent)}</div>
         <div style="font-size:10px;color:var(--dim);margin-bottom:3px;display:flex;align-items:center;gap:6px"><span>${agent}</span>${modelBtn}</div>
         <div class="stat">📥 <b>${s.inbox}</b> 收  📤 <b>${s.outbox}</b> 发</div>
         <div class="stat">🕐 ${lastActive}</div>
+        ${equipBadge}
+        ${gemBadgesHtml}
         ${s.inbox > 20 ? `<div class="badge">${s.inbox}</div>` : ''}
         <button class="new-btn" id="new-${agent}" onclick="event.stopPropagation();resetAgent('${agent}',this)">/new</button>
       </div>
@@ -1326,9 +1826,12 @@ function renderCronJobs() {
   `;
 }
 
-// ── System Crontab ──
+// ── System Services (crontab + MCP unified) ──
 let sysCrontabData = null;
 let sysCrontabLoading = false;
+let mcpServicesData = null;
+let mcpServicesLoading = false;
+let startAllStatus = null;
 
 async function fetchSysCrontab() {
   try {
@@ -1339,32 +1842,95 @@ async function fetchSysCrontab() {
   }
 }
 
-function renderSysCrontab() {
-  const container = document.getElementById("sysCrontabContainer");
-  if (!sysCrontabData) {
-    fetchSysCrontab().then(() => renderSysCrontab());
+async function fetchMcpServices() {
+  try {
+    const resp = await fetch("/api/services");
+    mcpServicesData = await resp.json();
+  } catch (e) {
+    mcpServicesData = [];
+  }
+  try {
+    const resp = await fetch("/api/start-all-status");
+    startAllStatus = await resp.json();
+  } catch {
+    startAllStatus = null;
+  }
+}
+
+function renderSystemServices() {
+  const container = document.getElementById("systemServicesContainer");
+  const needsFetch = !sysCrontabData || !mcpServicesData;
+  if (needsFetch) {
+    const promises = [];
+    if (!sysCrontabData) promises.push(fetchSysCrontab());
+    if (!mcpServicesData) promises.push(fetchMcpServices());
+    Promise.all(promises).then(() => renderSystemServices());
     container.innerHTML = '<div style="color:var(--dim);padding:12px">加载中...</div>';
     return;
   }
-  if (sysCrontabData.error) {
-    container.innerHTML = `<div style="color:var(--accent);padding:12px">Error: ${sysCrontabData.error}</div>`;
-    return;
+
+  // start-all.sh 上次运行状态
+  let startAllHtml = "";
+  if (startAllStatus) {
+    const s = startAllStatus;
+    const isRunning = s.status === "running";
+    const color = s.status === "ok" ? "var(--green)" : s.status === "partial" ? "#f59e0b" : isRunning ? "var(--yellow)" : "var(--dim)";
+    const label = s.status === "ok" ? "OK" : s.status === "partial" ? `${s.fail} 失败` : isRunning ? "RUNNING" : "NEVER";
+    const timeStr = s.finishedAt || s.startedAt || "";
+    const localTime = timeStr ? new Date(timeStr).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+    const detail = s.status !== "never" && s.status !== "running" ? ` ${s.ok}✓ ${s.fail}✗` : "";
+    startAllHtml = `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:8px;background:${color}11;border:1px solid ${color}33;border-radius:4px;font-size:11px">
+      <span style="color:${color};font-family:var(--pixel)">@REBOOT</span>
+      <span style="color:var(--dim);font-family:var(--cn)">start-all.sh</span>
+      <span style="color:${color};font-family:var(--pixel)">${label}${detail}</span>
+      ${localTime ? `<span style="color:var(--dim);margin-left:auto">${localTime}</span>` : ""}
+    </div>`;
   }
-  const entries = sysCrontabData.entries || [];
-  if (!entries.length) {
-    container.innerHTML = '<div style="color:var(--dim);padding:12px">无系统定时任务</div>';
-    return;
+
+  const rows = [];
+
+  // MCP services rows
+  for (const svc of (mcpServicesData || [])) {
+    const statusColor = svc.running ? "var(--green)" : "var(--accent)";
+    const statusText = svc.running ? "RUNNING" : "STOPPED";
+    const healthColor = !svc.running ? "var(--dim)" : svc.healthy ? "var(--green)" : "#f59e0b";
+    const healthText = !svc.running ? "—" : svc.healthy ? "HEALTHY" : "UNHEALTHY";
+    const btnColor = svc.running ? "var(--accent)" : "var(--green)";
+    const btnText = svc.running ? "STOP" : "START";
+    const action = svc.running ? "stop" : "start";
+    rows.push(`
+      <tr>
+        <td style="font-family:var(--cn);font-size:13px;white-space:nowrap">${svc.name} <span style="color:var(--dim);font-size:10px">MCP</span></td>
+        <td class="mono">:${svc.port}</td>
+        <td><span style="color:${statusColor};font-family:var(--pixel);font-size:10px">${statusText}</span>${svc.pid ? ` <span style="color:var(--dim);font-size:10px">PID ${svc.pid}</span>` : ""}</td>
+        <td><span style="color:${healthColor};font-family:var(--pixel);font-size:10px">${healthText}</span></td>
+        <td style="text-align:center">
+          <button onclick="toggleMcpService('${svc.id}','${action}')" style="
+            background:${btnColor}22;color:${btnColor};border:1px solid ${btnColor};
+            padding:2px 10px;font-family:var(--pixel);font-size:10px;cursor:pointer;border-radius:3px;
+          " ${mcpServicesLoading ? "disabled" : ""}>${btnText}</button>
+        </td>
+      </tr>
+    `);
   }
-  const rows = entries.map(e => {
+
+  // Crontab rows
+  for (const e of (sysCrontabData?.entries || [])) {
     const opacity = e.enabled ? "1" : "0.4";
+    const statusColor = e.enabled ? "var(--green)" : "var(--accent)";
+    const statusText = e.enabled ? "ACTIVE" : "DISABLED";
+    const healthColor = e.healthy === null ? "var(--dim)" : e.healthy ? "var(--green)" : "#f59e0b";
+    const lastRunAgo = e.lastRun ? timeAgo(new Date(e.lastRun)) : "";
+    const healthText = e.healthy === null ? "—" : e.healthy ? "OK" : "STALE";
     const btnColor = e.enabled ? "var(--accent)" : "var(--green)";
     const btnText = e.enabled ? "STOP" : "START";
     const descHtml = e.description ? `<span style="color:var(--dim);font-family:var(--cn);font-size:11px;margin-left:6px">${e.description}</span>` : "";
-    return `
+    rows.push(`
       <tr style="opacity:${opacity}">
-        <td style="font-family:var(--cn);font-size:13px;white-space:nowrap">${e.name}${descHtml}</td>
+        <td style="font-family:var(--cn);font-size:13px;white-space:nowrap">${e.name}${descHtml} <span style="color:var(--dim);font-size:10px">cron</span></td>
         <td class="mono">${e.schedule}</td>
-        <td style="max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--dim)" title="${e.command}">${e.command}</td>
+        <td><span style="color:${statusColor};font-family:var(--pixel);font-size:10px">${statusText}</span></td>
+        <td><span style="color:${healthColor};font-family:var(--pixel);font-size:10px">${healthText}</span>${lastRunAgo ? ` <span style="color:var(--dim);font-size:10px">${lastRunAgo}</span>` : ""}</td>
         <td style="text-align:center">
           <button onclick="toggleSysCrontab(${e.lineIndex}, ${!e.enabled})" style="
             background:${btnColor}22;color:${btnColor};border:1px solid ${btnColor};
@@ -1372,20 +1938,29 @@ function renderSysCrontab() {
           " ${sysCrontabLoading ? "disabled" : ""}>${btnText}</button>
         </td>
       </tr>
-    `;
-  }).join("");
+    `);
+  }
 
-  container.innerHTML = `
+  if (!rows.length) {
+    container.innerHTML = '<div style="color:var(--dim);padding:12px">无系统服务</div>';
+    return;
+  }
+
+  container.innerHTML = startAllHtml + `
     <table class="cron-table">
-      <thead><tr><th>任务</th><th>Schedule</th><th>命令</th><th>操作</th></tr></thead>
-      <tbody>${rows}</tbody>
+      <thead><tr><th>服务</th><th>端口 / Schedule</th><th>状态</th><th>健康</th><th>操作</th></tr></thead>
+      <tbody>${rows.join("")}</tbody>
     </table>
   `;
 }
 
+// Keep aliases for backward compat in render calls
+function renderSysCrontab() { renderSystemServices(); }
+function renderMcpServices() { renderSystemServices(); }
+
 async function toggleSysCrontab(lineIndex, enable) {
   sysCrontabLoading = true;
-  renderSysCrontab();
+  renderSystemServices();
   try {
     const resp = await fetch("/api/crontab/toggle", {
       method: "POST",
@@ -1401,7 +1976,28 @@ async function toggleSysCrontab(lineIndex, enable) {
   }
   sysCrontabLoading = false;
   await fetchSysCrontab();
-  renderSysCrontab();
+  renderSystemServices();
+}
+
+async function toggleMcpService(id, action) {
+  mcpServicesLoading = true;
+  renderSystemServices();
+  try {
+    const resp = await fetch("/api/services/toggle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, action })
+    });
+    const result = await resp.json();
+    if (result.status === "error") {
+      alert("操作失败: " + (result.error || "unknown"));
+    }
+  } catch (e) {
+    alert("请求失败: " + e.message);
+  }
+  mcpServicesLoading = false;
+  await fetchMcpServices();
+  renderSystemServices();
 }
 
 function renderPublished() {
@@ -1510,7 +2106,7 @@ function renderSessions() {
         <span style="color:${color};font-size:14px;font-weight:bold;font-family:var(--cn)">${dn(s.agent)} <span style="font-size:10px;opacity:0.5">${s.agent}</span></span>
         <span><button class="model-btn" onclick="event.stopPropagation();showModelPicker('${s.agent}')" title="${getModelFull(s.agent) || '未设置'}">${getModelShort(s.agent) || '---'}</button></span>
         <span><span class="source-badge ${s.source}">${s.source}</span></span>
-        <span style="font-size:11px"><a href="http://127.0.0.1:18789/chat?session=${encodeURIComponent(s.key)}" target="_blank" class="sess-id" title="${s.key}" style="font-size:11px">${s.sessionId.slice(0,8)}</a> <span style="color:var(--dim);font-size:10px;margin-left:4px">${shortKey}</span></span>
+        <span style="font-size:11px"><a href="${chatUrl(s.key)}" target="_blank" class="sess-id" title="${s.key}" style="font-size:11px">${s.sessionId.slice(0,8)}</a> <span style="color:var(--dim);font-size:10px;margin-left:4px">${shortKey}</span></span>
         <span style="display:flex;gap:4px">
           <button class="new-btn" onclick="event.stopPropagation();resetSession('${s.agent}','${s.sessionId}',this)" style="margin:0;font-size:8px;padding:3px 6px">/new</button>
           <button class="del-btn" onclick="event.stopPropagation();deleteSession('${s.agent}','${s.sessionId}','${s.key.replace(/'/g,"\\'")}',this)">DEL</button>
@@ -1710,21 +2306,41 @@ function timeAgo(date) {
 
 // Reset agent: send /new to all sessions
 async function resetAgent(agentId, btn) {
-  if (!confirm(`向 ${agentId} 的所有 session 发送 /new？`)) return;
+  if (!confirm(`向 ${dn(agentId)}(${agentId}) 的所有 session 发送 /new？`)) return;
   btn.disabled = true;
   btn.textContent = "...";
+  const t0 = Date.now();
   try {
     const resp = await fetch(`/api/agent/${agentId}/new`, { method: "POST" });
     const data = await resp.json();
-    const ok = (data.sessions || []).filter(s => s.status === "ok").length;
-    const fail = (data.sessions || []).filter(s => s.status === "error").length;
-    btn.textContent = `✓ ${ok}ok${fail ? " " + fail + "err" : ""}`;
-    btn.classList.add("success");
-    setTimeout(() => { btn.textContent = "/new"; btn.disabled = false; btn.classList.remove("success"); }, 3000);
+    const sessions = data.sessions || [];
+    const ok = sessions.filter(s => s.status === "ok");
+    const fail = sessions.filter(s => s.status === "error");
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+    // Button feedback
+    btn.textContent = fail.length ? `${ok.length}ok ${fail.length}err` : `✓ ${ok.length}ok`;
+    btn.classList.add(fail.length && !ok.length ? "error" : "success");
+    // Toast with details
+    const lines = [];
+    for (const s of ok) lines.push(`✓ ${s.key.replace('agent:'+agentId+':', '')}`);
+    for (const s of fail) lines.push(`✗ ${s.key.replace('agent:'+agentId+':', '')}${s.error ? ' — ' + s.error.split('\n')[0].slice(0, 60) : ''}`);
+    showResetToast(dn(agentId), lines, ok.length, fail.length, elapsed);
+    setTimeout(() => { btn.textContent = "/new"; btn.disabled = false; btn.classList.remove("success", "error"); }, 5000);
   } catch (e) {
     btn.textContent = "ERR";
+    showArmoryToast(`/new ${dn(agentId)} 失败: ${e.message}`, "err");
     setTimeout(() => { btn.textContent = "/new"; btn.disabled = false; }, 3000);
   }
+}
+
+function showResetToast(botName, lines, okCount, failCount, elapsed) {
+  const el = document.createElement("div");
+  el.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--card);border:2px solid " + (failCount && !okCount ? "var(--accent)" : "var(--green)") + ";border-radius:6px;padding:10px 16px;font-family:var(--cn);font-size:12px;color:var(--text);min-width:280px;max-width:480px;box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:toast-in 0.3s ease-out";
+  const header = `<div style="font-size:13px;font-weight:bold;margin-bottom:6px;color:${failCount ? 'var(--yellow)' : 'var(--green)'}">/new ${botName} — ${okCount + failCount} sessions, ${elapsed}s</div>`;
+  const body = lines.map(l => `<div style="font-size:11px;color:${l.startsWith('✓') ? 'var(--green)' : 'var(--accent)'};margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l}</div>`).join("");
+  el.innerHTML = header + `<div style="max-height:150px;overflow-y:auto">${body}</div>`;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity 0.3s"; setTimeout(() => el.remove(), 300); }, 6000);
 }
 
 // Reset single session: send /new
@@ -1751,9 +2367,1003 @@ async function resetSession(agentId, sessionId, btn) {
   }
 }
 
-// Auto-refresh
-fetchData();
+// ── Skill Armory ────────────────────────────────────────────────
+
+let armoryData = null;
+let armoryCurrentBot = "bot1";
+let armoryFilter = "all";
+let armorySubFilter = null; // null = show all within slot type
+let armoryDragging = null; // { skillId, fromSlot }
+
+const SLOT_LAYOUT = [
+  { label: "工种", slots: ["helm-1"] },
+  { label: "职业", slots: ["armor-1"] },
+  { label: "风格", slots: ["accessory-soul", "accessory-1", "accessory-2"], subLabels: ["灵魂", "内容风格", "画图风格"] },
+  { label: "通用技能", slots: ["utility-1", "utility-2", "utility-3", "utility-4"] },
+  { label: "研究技能", slots: ["research-1", "research-2", "research-3", "research-4", "research-5", "research-6"] },
+  { label: "策略", slots: ["boots-1"] },
+];
+
+async function fetchArmoryData() {
+  try {
+    const res = await fetch("/api/skills");
+    armoryData = await res.json();
+    if (armoryData.error) throw new Error(armoryData.error);
+    // If modal is open, re-render
+    if (document.getElementById("equipOverlay").classList.contains("show")) {
+      renderArmory();
+    }
+  } catch (e) {
+    console.error("Armory fetch error:", e);
+  }
+}
+
+function openEquipModal(botId) {
+  armoryCurrentBot = botId;
+  armoryFilter = "all";
+  gemStoreOpen = false;
+  document.getElementById("equipOverlay").classList.add("show");
+  if (armoryData) {
+    renderArmory();
+  } else {
+    fetchArmoryData();
+  }
+  // Refresh gem + plugin data for this bot
+  fetchGemData();
+  fetchGemHealth();
+  fetchPluginData();
+}
+
+function closeEquipModal(e) {
+  if (e.target === e.currentTarget) {
+    document.getElementById("equipOverlay").classList.remove("show");
+  }
+}
+
+function renderArmory() {
+  if (!armoryData || !armoryData.registry) return;
+  const { registry, equipment } = armoryData;
+  const botSlots = equipment?.bots?.[armoryCurrentBot]?.slots || {};
+
+  // Bot name
+  const botName = BOT_NAMES[armoryCurrentBot] || armoryCurrentBot;
+  document.getElementById("equipBotName").innerHTML = `<span style="color:var(--accent)">⚔️</span> <span style="font-family:var(--cn)">${botName}</span> <span style="color:var(--dim);font-size:12px">(${armoryCurrentBot})</span>`;
+
+  // Equipment slots
+  const slotsEl = document.getElementById("equipSlots");
+  slotsEl.innerHTML = "";
+  const equippedSkillIds = new Set(Object.values(botSlots).filter(Boolean));
+
+  // Permission: research slots require frontline helm
+  const hasFrontline = botSlots["helm-1"] === "frontline";
+
+  for (const row of SLOT_LAYOUT) {
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "slot-row";
+    const labelDiv = document.createElement("div");
+    labelDiv.className = "slot-row-label";
+    labelDiv.textContent = row.label;
+    rowDiv.appendChild(labelDiv);
+
+    for (let si = 0; si < row.slots.length; si++) {
+      const slotId = row.slots[si];
+      const slotType = slotId.replace(/-\d+$/, "");
+      const typeInfo = registry.slotTypes[slotType];
+      const subLabel = row.subLabels?.[si];
+      const subTypes = typeInfo?.subTypes;
+      const skillId = botSlots[slotId] || null;
+      const skill = skillId ? registry.skills[skillId] : null;
+
+      // Check if slot is locked by permissions
+      const isLocked = slotType === "research" && !hasFrontline;
+
+      const slotDiv = document.createElement("div");
+      slotDiv.className = "equip-slot" + (skillId ? " filled" : "") + (isLocked ? " locked" : "");
+      slotDiv.dataset.slot = slotId;
+      slotDiv.dataset.slotType = slotType;
+
+      // Soul slot: always filled, not removable
+      if (slotId === "accessory-soul") {
+        slotDiv.className = "equip-slot filled";
+        slotDiv.style.borderColor = "var(--purple)";
+        slotDiv.style.background = "rgba(162,155,254,0.08)";
+        const botName = BOT_NAMES[armoryCurrentBot] || armoryCurrentBot;
+        slotDiv.innerHTML = `<span class="slot-icon">👻</span><span class="slot-name">灵魂</span>`;
+        slotDiv.title = `${botName} 的 SOUL.md — 不可拆卸`;
+        slotDiv.style.cursor = "pointer";
+        slotDiv.onclick = () => openSoulMd(armoryCurrentBot);
+        rowDiv.appendChild(slotDiv);
+        continue;
+      }
+
+      if (isLocked) {
+        slotDiv.innerHTML = `<span class="slot-icon" style="opacity:0.2">${typeInfo?.icon || "?"}</span><span class="lock-icon">🔒</span>`;
+        slotDiv.title = "需要装备「前台」工种才能解锁研究插槽";
+        rowDiv.appendChild(slotDiv);
+        continue;
+      }
+
+      if (skill) {
+        const stBadge = skill.subType && subTypes?.[skill.subType] ? `<span class="sub-type-badge st-${skill.subType}">${subTypes[skill.subType].icon}</span>` : "";
+        slotDiv.innerHTML = `<span class="slot-icon">${skill.icon}</span><span class="slot-name">${skill.name}</span>${stBadge}`;
+        slotDiv.draggable = !skill.infrastructure;
+        slotDiv.onmouseenter = (e) => { if (skill.desc) showSkillTooltip(e, skill); };
+        slotDiv.onmousemove = (e) => moveSkillTooltip(e);
+        slotDiv.onmouseleave = () => hideSkillTooltip();
+        slotDiv.ondragstart = (e) => {
+          hideSkillTooltip();
+          armoryDragging = { skillId, fromSlot: slotId };
+          e.dataTransfer.setData("text/plain", JSON.stringify(armoryDragging));
+          e.target.style.opacity = "0.4";
+          highlightSlots(slotType);
+        };
+        slotDiv.ondragend = (e) => { e.target.style.opacity = ""; clearHighlights(); };
+      } else {
+        const emptyLabel = subLabel || typeInfo?.name || slotType;
+        const emptyIcon = subLabel && subTypes ? Object.values(subTypes).find(st => st.name === subLabel)?.icon || typeInfo?.icon : typeInfo?.icon;
+        slotDiv.innerHTML = `<span class="slot-icon" style="opacity:0.3">${emptyIcon || "?"}</span><span class="slot-empty">${emptyLabel}</span>`;
+      }
+
+      // Drop handlers
+      slotDiv.ondragover = (e) => {
+        e.preventDefault();
+        const data = getDragData(e);
+        if (data && canDropInSlot(data, slotId, registry)) {
+          slotDiv.classList.add("drop-ok");
+        }
+      };
+      slotDiv.ondragleave = () => { slotDiv.classList.remove("drop-ok"); };
+      slotDiv.ondrop = async (e) => {
+        e.preventDefault();
+        slotDiv.classList.remove("drop-ok");
+        clearHighlights();
+        const data = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
+        if (!data.skillId) return;
+        if (data.fromSlot && data.fromSlot !== slotId) {
+          // Swap or move between slots
+          const fromType = data.fromSlot.replace(/-\d+$/, "");
+          const toType = slotId.replace(/-\d+$/, "");
+          if (fromType === toType) {
+            await armorySwap(armoryCurrentBot, data.fromSlot, slotId);
+          } else {
+            // Cross-type: equip to new slot (will auto-unequip from old)
+            await armoryEquip(armoryCurrentBot, slotId, data.skillId);
+          }
+        } else if (!data.fromSlot) {
+          // From inventory
+          await armoryEquip(armoryCurrentBot, slotId, data.skillId);
+        }
+      };
+
+      // Click to unequip (not allowed for infrastructure skills)
+      if (skillId && !skill?.infrastructure) {
+        slotDiv.onclick = (e) => {
+          if (e.target.draggable && !e.defaultPrevented) {
+            if (confirm(`卸下「${skill.name}」?`)) {
+              armoryUnequip(armoryCurrentBot, slotId);
+            }
+          }
+        };
+      }
+
+      rowDiv.appendChild(slotDiv);
+    }
+
+    // One-click unequip button for this row
+    const unequippableSlots = row.slots.filter(sId => {
+      if (sId === "accessory-soul") return false;
+      const sType = sId.replace(/-\d+$/, "");
+      if (sType === "research" && !hasFrontline) return false;
+      const sSkillId = botSlots[sId];
+      if (!sSkillId) return false;
+      const sSkill = registry.skills[sSkillId];
+      return !sSkill?.infrastructure;
+    });
+    if (unequippableSlots.length > 0) {
+      const unequipBtn = document.createElement("button");
+      unequipBtn.className = "row-unequip-btn";
+      unequipBtn.textContent = "卸下";
+      unequipBtn.title = "一键卸下此行所有装备";
+      unequipBtn.onclick = (e) => {
+        e.stopPropagation();
+        armoryUnequipRow(armoryCurrentBot, unequippableSlots);
+      };
+      rowDiv.appendChild(unequipBtn);
+    }
+
+    slotsEl.appendChild(rowDiv);
+  }
+
+  // Inventory filters
+  const filtersEl = document.getElementById("inventoryFilters");
+  filtersEl.innerHTML = "";
+  const filterOptions = [
+    { key: "all", label: "ALL" },
+    { key: "helm", label: "⛑️ 工种" },
+    { key: "armor", label: "👔 职业" },
+    { key: "accessory", label: "💍 风格" },
+    { key: "utility", label: "🔧 通用技能" },
+    { key: "research", label: "⚔️ 研究技能" },
+    { key: "boots", label: "👢 策略" },
+  ];
+  for (const f of filterOptions) {
+    const btn = document.createElement("button");
+    btn.className = "inv-filter-btn" + (armoryFilter === f.key ? " active" : "");
+    btn.textContent = f.label;
+    btn.onclick = () => { armoryFilter = f.key; armorySubFilter = null; renderArmory(); };
+    filtersEl.appendChild(btn);
+  }
+
+  // Sub-type filters (show when a slot type with subTypes is selected)
+  const activeSlotType = registry.slotTypes[armoryFilter];
+  if (activeSlotType?.subTypes) {
+    const subRow = document.createElement("div");
+    subRow.style.cssText = "display:flex;gap:6px;margin-top:6px;flex-wrap:wrap";
+    const allBtn = document.createElement("button");
+    allBtn.className = "inv-filter-btn sub-filter" + (!armorySubFilter ? " active" : "");
+    allBtn.textContent = "全部";
+    allBtn.onclick = () => { armorySubFilter = null; renderArmory(); };
+    subRow.appendChild(allBtn);
+    for (const [stKey, stInfo] of Object.entries(activeSlotType.subTypes)) {
+      const btn = document.createElement("button");
+      btn.className = "inv-filter-btn sub-filter" + (armorySubFilter === stKey ? " active" : "");
+      btn.textContent = `${stInfo.icon} ${stInfo.name}`;
+      btn.onclick = () => { armorySubFilter = stKey; renderArmory(); };
+      subRow.appendChild(btn);
+    }
+    filtersEl.appendChild(subRow);
+  }
+
+  // Inventory list
+  const listEl = document.getElementById("inventoryList");
+  listEl.innerHTML = "";
+  const skillEntries = Object.entries(registry.skills)
+    .filter(([id, s]) => !id.startsWith("__") && typeof s === "object" && s.slot && !s.infrastructure)
+    .sort((a, b) => a[1].name.localeCompare(b[1].name, "zh"));
+  for (const [id, skill] of skillEntries) {
+    if (armoryFilter !== "all" && skill.slot !== armoryFilter) continue;
+    if (armorySubFilter && skill.subType !== armorySubFilter) continue;
+    const isEquipped = equippedSkillIds.has(id);
+    const hasSubs = skill.subSkills && skill.subSkills.length > 0;
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = "display:flex;flex-direction:column;";
+
+    const card = document.createElement("div");
+    card.className = "skill-card" + (isEquipped ? " equipped" : "") + (hasSubs ? " has-subs" : "");
+    card.draggable = !isEquipped;
+    let ownerHtml = "";
+    if (skill.source === "bot-specific" && skill.owner) {
+      ownerHtml = `<span class="owner-badge">${skill.owner}</span>`;
+    }
+    const slotType = registry.slotTypes[skill.slot];
+    let subTypeBadge = "";
+    if (skill.subType && slotType?.subTypes?.[skill.subType]) {
+      const st = slotType.subTypes[skill.subType];
+      subTypeBadge = `<span class="sub-type-badge st-${skill.subType}">${st.icon} ${st.name}</span>`;
+    }
+    card.innerHTML = `<span class="skill-icon">${skill.icon}</span><span class="skill-name">${skill.name}</span>${ownerHtml}${subTypeBadge}<span class="skill-slot-badge">${slotType?.icon || ""}</span>`;
+
+    // Tooltip on hover
+    card.onmouseenter = (e) => {
+      if (!skill.desc) return;
+      showSkillTooltip(e, skill);
+    };
+    card.onmousemove = (e) => moveSkillTooltip(e);
+    card.onmouseleave = () => hideSkillTooltip();
+
+    if (!isEquipped) {
+      card.ondragstart = (e) => {
+        hideSkillTooltip();
+        armoryDragging = { skillId: id, fromSlot: null };
+        e.dataTransfer.setData("text/plain", JSON.stringify(armoryDragging));
+        card.classList.add("dragging");
+        highlightSlots(skill.slot);
+      };
+      card.ondragend = () => { card.classList.remove("dragging"); clearHighlights(); };
+    }
+
+    // Click to view SKILL.md (for skills without sub-skills)
+    if (!hasSubs) {
+      card.style.cursor = "pointer";
+      card.onclick = (e) => { if (e.defaultPrevented) return; hideSkillTooltip(); openSkillMd(id, "SKILL.md"); };
+    }
+
+    // Click to expand/collapse sub-skills
+    if (hasSubs) {
+      card.onclick = (e) => {
+        if (e.defaultPrevented) return;
+        card.classList.toggle("expanded");
+        const existing = wrapper.querySelector(".sub-skills-panel");
+        if (existing) { existing.remove(); return; }
+        const panel = document.createElement("div");
+        panel.className = "sub-skills-panel";
+        // Add main SKILL.md as first entry
+        const mainTag = document.createElement("div");
+        mainTag.className = "sub-skill-tag";
+        mainTag.style.cssText = "cursor:pointer;border-color:var(--yellow);color:var(--yellow)";
+        mainTag.textContent = "SKILL.md";
+        mainTag.onclick = (ev) => { ev.stopPropagation(); openSkillMd(id, "SKILL.md"); };
+        panel.appendChild(mainTag);
+        for (const sub of skill.subSkills) {
+          const tag = document.createElement("div");
+          tag.className = "sub-skill-tag";
+          tag.textContent = sub.file || sub.name;
+          if (sub.desc) {
+            tag.onmouseenter = (ev) => showSkillTooltip(ev, sub);
+            tag.onmousemove = (ev) => moveSkillTooltip(ev);
+            tag.onmouseleave = () => hideSkillTooltip();
+          }
+          if (sub.file && sub.file.endsWith(".md")) {
+            tag.style.cursor = "pointer";
+            tag.onclick = (ev) => { ev.stopPropagation(); hideSkillTooltip(); openSkillMd(id, sub.file); };
+          }
+          panel.appendChild(tag);
+        }
+        wrapper.appendChild(panel);
+      };
+    }
+
+    wrapper.appendChild(card);
+    listEl.appendChild(wrapper);
+  }
+
+  // Base layer (per-bot, from disk)
+  const baseEl = document.getElementById("baseLayerSkills");
+  baseEl.innerHTML = "";
+  const botBase = armoryData.botBaseLayer?.[armoryCurrentBot] || [];
+  if (botBase.length === 0) {
+    baseEl.innerHTML = '<span style="color:var(--dim);font-size:11px;font-family:var(--cn)">无底层 skill</span>';
+  }
+  for (const id of botBase) {
+    const tag = document.createElement("span");
+    tag.className = "base-skill-tag";
+    const meta = armoryData.registry.skills[id];
+    tag.textContent = meta ? `${meta.icon} ${meta.name}` : id;
+    if (meta?.desc) {
+      tag.onmouseenter = (ev) => showSkillTooltip(ev, meta);
+      tag.onmousemove = moveSkillTooltip;
+      tag.onmouseleave = hideSkillTooltip;
+    }
+    baseEl.appendChild(tag);
+  }
+
+  // Render gem panel
+  renderGemPanel();
+}
+
+function getDragData(e) {
+  try { return armoryDragging; } catch { return null; }
+}
+
+// Tooltip helpers
+let _tooltip = null;
+function showSkillTooltip(e, skill) {
+  hideSkillTooltip();
+  const el = document.createElement("div");
+  el.className = "skill-tooltip";
+  const hasSubs = skill.subSkills && skill.subSkills.length > 0;
+  let html = `<div class="tt-name">${skill.icon || ""} ${skill.name}</div>`;
+  if (skill.desc) html += `<div class="tt-desc">${skill.desc}</div>`;
+  if (skill.requires && skill.requires.length > 0) {
+    html += `<div style="margin-top:4px;display:flex;gap:3px;flex-wrap:wrap">`;
+    for (const r of skill.requires) {
+      const gemInfo = gemData?.registry?.gems?.[r];
+      const bot = armoryCurrentBot;
+      const socketed = gemData?.bindings?.[bot]?.[r]?.socketed;
+      const dot = socketed ? '🟢' : '🔴';
+      const gemColor = gemInfo?.color || 'var(--accent)';
+      html += `<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:${gemColor}20;color:${gemColor}">${dot} ${gemInfo?.icon || ''} ${r}</span>`;
+    }
+    html += `</div>`;
+  }
+  if (hasSubs) html += `<div style="margin-top:4px;font-size:11px;color:var(--dim)">点击展开 ${skill.subSkills.length} 个子模块</div>`;
+  el.innerHTML = html;
+  document.body.appendChild(el);
+  _tooltip = el;
+  moveSkillTooltip(e);
+}
+function moveSkillTooltip(e) {
+  if (!_tooltip) return;
+  let x = e.clientX + 12, y = e.clientY + 12;
+  if (x + 290 > window.innerWidth) x = e.clientX - 290;
+  if (y + 100 > window.innerHeight) y = e.clientY - 80;
+  _tooltip.style.left = x + "px";
+  _tooltip.style.top = y + "px";
+}
+function hideSkillTooltip() {
+  if (_tooltip) { _tooltip.remove(); _tooltip = null; }
+}
+
+// Simple markdown to HTML (no external deps)
+function md2html(md) {
+  let html = md
+    .replace(/^---[\s\S]*?---\n*/m, "") // strip frontmatter
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+    .replace(/^&gt; (.+)$/gm, "<blockquote>$1</blockquote>")
+    .replace(/^---$/gm, "<hr>")
+    .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/^\| (.+)$/gm, (m, row) => {
+      const cells = row.split("|").map(c => c.trim());
+      return "<tr>" + cells.map(c => /^[-:]+$/.test(c) ? "" : `<td>${c}</td>`).join("") + "</tr>";
+    });
+  // Wrap consecutive <tr> in <table>
+  html = html.replace(/((?:<tr>.*<\/tr>\n?)+)/g, "<table>$1</table>");
+  // Remove separator rows
+  html = html.replace(/<tr><\/tr>/g, "");
+  // Code blocks
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>");
+  // Line breaks
+  html = html.replace(/\n\n/g, "<br><br>").replace(/\n/g, "\n");
+  return html;
+}
+
+async function openSoulMd(botId) {
+  const overlay = document.getElementById("skillMdOverlay");
+  const titleEl = document.getElementById("skillMdTitle");
+  const bodyEl = document.getElementById("skillMdBody");
+  const botName = BOT_NAMES[botId] || botId;
+  titleEl.textContent = `👻 ${botName} / SOUL.md`;
+  bodyEl.innerHTML = '<span style="color:var(--dim)">Loading...</span>';
+  overlay.classList.add("show");
+  try {
+    const res = await fetch(`/api/bot/soul?botId=${encodeURIComponent(botId)}`);
+    const data = await res.json();
+    if (data.error) { bodyEl.textContent = "Error: " + data.error; return; }
+    bodyEl.innerHTML = md2html(data.content);
+  } catch (e) {
+    bodyEl.textContent = "Failed to load: " + e.message;
+  }
+}
+
+async function openSkillMd(skillId, file) {
+  const overlay = document.getElementById("skillMdOverlay");
+  const titleEl = document.getElementById("skillMdTitle");
+  const bodyEl = document.getElementById("skillMdBody");
+  titleEl.textContent = `${skillId} / ${file}`;
+  bodyEl.innerHTML = '<span style="color:var(--dim)">Loading...</span>';
+  overlay.classList.add("show");
+  try {
+    const res = await fetch(`/api/skills/content?skill=${encodeURIComponent(skillId)}&file=${encodeURIComponent(file)}`);
+    const data = await res.json();
+    if (data.error) { bodyEl.textContent = "Error: " + data.error; return; }
+    bodyEl.innerHTML = md2html(data.content);
+  } catch (e) {
+    bodyEl.textContent = "Failed to load: " + e.message;
+  }
+}
+
+function canDropInSlot(data, slotId, registry) {
+  if (!data || !data.skillId) return false;
+  const skill = registry.skills[data.skillId];
+  if (!skill) return false;
+  const targetType = slotId.replace(/-\d+$/, "");
+  // If dragging from a slot of same type, allow swap
+  if (data.fromSlot) {
+    const fromType = data.fromSlot.replace(/-\d+$/, "");
+    if (fromType === targetType) return true;
+  }
+  return skill.slot === targetType;
+}
+
+function highlightSlots(slotType) {
+  document.querySelectorAll(".equip-slot").forEach(el => {
+    if (el.dataset.slotType === slotType) {
+      el.classList.add("drop-target");
+    }
+  });
+}
+
+function clearHighlights() {
+  document.querySelectorAll(".equip-slot").forEach(el => {
+    el.classList.remove("drop-target", "drop-ok");
+  });
+}
+
+function handleInventoryDrop(e) {
+  e.preventDefault();
+  clearHighlights();
+  try {
+    const data = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
+    if (data.fromSlot) {
+      // Dragged from slot to inventory = unequip
+      armoryUnequip(armoryCurrentBot, data.fromSlot);
+    }
+  } catch {}
+}
+
+async function armoryEquip(botId, slot, skillId) {
+  try {
+    const res = await fetch("/api/skills/equip", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ botId, slot, skillId })
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      showArmoryToast(`装备成功: ${armoryData.registry.skills[skillId]?.name || skillId}`, "ok");
+      await fetchArmoryData();
+    } else {
+      showArmoryToast("装备失败: " + (data.error || "unknown"), "err");
+    }
+  } catch (e) {
+    showArmoryToast("装备失败: " + e.message, "err");
+  }
+}
+
+async function armoryUnequip(botId, slot) {
+  try {
+    const res = await fetch("/api/skills/unequip", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ botId, slot })
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      showArmoryToast(`已卸下: ${armoryData.registry.skills[data.skillId]?.name || data.skillId}`, "ok");
+      await fetchArmoryData();
+    } else {
+      showArmoryToast("卸下失败: " + (data.error || "unknown"), "err");
+    }
+  } catch (e) {
+    showArmoryToast("卸下失败: " + e.message, "err");
+  }
+}
+
+async function armoryUnequipRow(botId, slotIds) {
+  let count = 0;
+  for (const slot of slotIds) {
+    try {
+      const res = await fetch("/api/skills/unequip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ botId, slot })
+      });
+      const data = await res.json();
+      if (data.status === "ok") count++;
+    } catch (e) {}
+  }
+  if (count > 0) {
+    showArmoryToast(`已卸下 ${count} 个装备`, "ok");
+    await fetchArmoryData();
+  }
+}
+
+async function armorySwap(botId, fromSlot, toSlot) {
+  try {
+    const res = await fetch("/api/skills/swap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ botId, fromSlot, toSlot })
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      showArmoryToast("交换成功", "ok");
+      await fetchArmoryData();
+    } else {
+      showArmoryToast("交换失败: " + (data.error || "unknown"), "err");
+    }
+  } catch (e) {
+    showArmoryToast("交换失败: " + e.message, "err");
+  }
+}
+
+function showArmoryToast(msg, type) {
+  const el = document.createElement("div");
+  el.className = "armory-toast " + type;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2500);
+}
+
+async function syncSkills() {
+  const btn = document.getElementById("syncSkillsBtn");
+  btn.textContent = "⏳ SYNCING...";
+  btn.disabled = true;
+  try {
+    const res = await fetch("/api/skills/sync", { method: "POST" });
+    const data = await res.json();
+    if (data.status === "ok") {
+      showArmoryToast("技能同步完成", "ok");
+      await fetchArmoryData();
+      if (armoryCurrentBot) renderArmory();
+    } else {
+      showArmoryToast("同步失败: " + (data.error || "unknown"), "err");
+    }
+  } catch (e) {
+    showArmoryToast("同步失败: " + e.message, "err");
+  }
+  btn.textContent = "🔄 SYNC";
+  btn.disabled = false;
+}
+
+// ── Plugin System ─────────────────────────────────────────────────────
+
+let pluginData = null;
+
+async function fetchPluginData() {
+  try {
+    const res = await fetch("/api/plugins");
+    pluginData = await res.json();
+    renderPluginPanel();
+  } catch (e) { console.error("Plugin fetch error:", e); }
+}
+
+function renderPluginPanel() {
+  const el = document.getElementById("pluginList");
+  if (!el || !pluginData || pluginData.error) return;
+  el.innerHTML = "";
+  for (const p of pluginData) {
+    const badge = document.createElement("span");
+    badge.className = "plugin-badge" + (p.enabled ? " active" : "");
+    badge.innerHTML = `${p.icon}<div class="plugin-tip"><div>${p.name}</div>${p.desc ? `<div class="tip-desc">${p.desc}</div>` : ""}</div>`;
+    el.appendChild(badge);
+  }
+}
+
+// ── Gem System (MCP Sockets) ──────────────────────────────────────────
+
+let gemData = null;      // { registry, bindings, skillGemDeps }
+let gemHealthData = null; // { gemId: { botId: { status, pid }, ... }, ... }
+let gemStoreOpen = false;
+
+function toggleGemStore() {
+  gemStoreOpen = !gemStoreOpen;
+  const btn = document.getElementById("gemStoreBtn");
+  const label = document.getElementById("gemPanelLabel");
+  if (btn) {
+    btn.style.borderColor = gemStoreOpen ? "var(--yellow)" : "var(--border)";
+    btn.textContent = gemStoreOpen ? "✕" : "📦";
+  }
+  if (label) label.textContent = "MCP GEM";
+  renderGemPanel();
+}
+
+async function fetchGemData() {
+  try {
+    const res = await fetch("/api/gems");
+    gemData = await res.json();
+    if (document.getElementById("equipOverlay").classList.contains("show")) {
+      renderGemPanel();
+    }
+    renderAgentStats(); // refresh gem badges on cards
+  } catch (e) {
+    console.error("Gem data fetch error:", e);
+  }
+}
+
+async function fetchGemHealth() {
+  try {
+    const res = await fetch("/api/gems/health");
+    gemHealthData = await res.json();
+    if (document.getElementById("equipOverlay").classList.contains("show")) {
+      renderGemPanel();
+    }
+    renderAgentStats();
+  } catch (e) {
+    console.error("Gem health fetch error:", e);
+  }
+}
+
+function getGemHealthStatus(gemId, botId) {
+  if (!gemHealthData) return "unknown";
+  const entry = gemHealthData[gemId];
+  if (!entry) return "unknown";
+  // perBot gems have sub-entries per bot
+  if (entry[botId]) return entry[botId].status || "unknown";
+  // shared gems have a top-level status
+  if (entry.status) return entry.status;
+  return "unknown";
+}
+
+function renderGemPanel() {
+  if (!gemData || !gemData.registry) return;
+  const listEl = document.getElementById("gemList");
+  const warnEl = document.getElementById("gemWarnings");
+  if (!listEl) return;
+  listEl.innerHTML = "";
+  warnEl.innerHTML = "";
+
+  const bot = armoryCurrentBot;
+  const bindings = gemData.bindings?.[bot] || {};
+  const registry = gemData.registry;
+  const deps = gemData.skillGemDeps || {};
+
+  // Find which gems are needed by equipped skills
+  const botSlots = armoryData?.equipment?.bots?.[bot]?.slots || {};
+  const equippedSkills = Object.values(botSlots).filter(Boolean);
+  const neededGems = new Set();
+  for (const skillId of equippedSkills) {
+    const skillDeps = deps[skillId];
+    if (skillDeps) skillDeps.forEach(g => neededGems.add(g));
+  }
+
+  // ── Collapsed mode: icon-only row with tooltips ──
+  if (!gemStoreOpen) {
+    const iconRow = document.createElement("div");
+    iconRow.style.cssText = "display:flex;gap:4px;flex-wrap:wrap;align-items:center";
+    for (const [gemId, gem] of Object.entries(registry.gems)) {
+      const binding = bindings[gemId] || { socketed: false };
+      if (!binding.socketed) continue;
+      const health = getGemHealthStatus(gemId, bot);
+      const healthLabel = health === "healthy" ? "HEALTHY" : health === "up" ? "UP" : health === "down" ? "DOWN" : health === "unhealthy" ? "WARN" : "???";
+      let portDisplay = "";
+      if (gem.perBot && gem.portMap && gem.portMap[bot]) portDisplay = ":" + gem.portMap[bot];
+      else if (gem.port) portDisplay = ":" + gem.port;
+
+      const span = document.createElement("span");
+      span.style.cssText = "font-size:18px;cursor:default;position:relative";
+      span.className = `gem-badge ${health}`;
+      span.textContent = gem.icon;
+      // Tooltip on hover
+      span.onmouseenter = (e) => {
+        hideSkillTooltip();
+        const el = document.createElement("div");
+        el.className = "skill-tooltip";
+        el.innerHTML = `<div class="tt-name" style="color:${gem.color || 'var(--green)'}">${gem.icon} ${gem.name}</div>` +
+          `<div class="tt-desc">${gem.desc || ''}</div>` +
+          (portDisplay ? `<div style="margin-top:3px;font-size:10px;color:var(--dim)">端口 ${portDisplay}</div>` : '') +
+          `<div style="margin-top:3px;font-size:10px"><span class="gem-health ${health}" style="display:inline-block">${healthLabel}</span></div>`;
+        document.body.appendChild(el);
+        _tooltip = el;
+        moveSkillTooltip(e);
+      };
+      span.onmousemove = (e) => moveSkillTooltip(e);
+      span.onmouseleave = () => hideSkillTooltip();
+      iconRow.appendChild(span);
+    }
+    if (!iconRow.children.length) {
+      iconRow.innerHTML = '<span style="font-size:10px;color:var(--dim);font-family:var(--cn)">无宝石</span>';
+    }
+    listEl.appendChild(iconRow);
+    return;
+  }
+
+  // ── Expanded mode: full rows with actions ──
+  const warnings = [];
+  for (const [gemId, gem] of Object.entries(registry.gems)) {
+    const binding = bindings[gemId] || { socketed: false };
+    const needed = neededGems.has(gemId);
+    const health = getGemHealthStatus(gemId, bot);
+
+    let portDisplay = "";
+    if (gem.perBot && gem.portMap && gem.portMap[bot]) portDisplay = ":" + gem.portMap[bot];
+    else if (gem.port) portDisplay = ":" + gem.port;
+
+    let healthClass = "unknown", healthText = "???";
+    if (binding.socketed) {
+      healthClass = health;
+      healthText = health === "healthy" ? "HEALTHY" : health === "up" ? "UP" : health === "down" ? "DOWN" : health === "unhealthy" ? "WARN" : "???";
+    } else { healthClass = "unknown"; healthText = "——"; }
+
+    let actionHtml = "";
+    if (binding.socketed) actionHtml = `<button class="gem-action remove" onclick="unsocketGem('${bot}','${gemId}')">✕</button>`;
+    else actionHtml = `<button class="gem-action add" onclick="socketGem('${bot}','${gemId}')">+</button>`;
+
+    let svcHtml = "";
+    if (gem.manageable) {
+      const svcRunning = health !== "down" && health !== "unknown" && health !== "planned";
+      const svcAction = svcRunning ? "stop" : "start";
+      const svcColor = svcRunning ? "var(--accent)" : "var(--green)";
+      svcHtml = `<button onclick="toggleGemService('${gemId}','${svcAction}')" title="${svcRunning ? '停止服务' : '启动服务'}" style="background:${svcColor}22;color:${svcColor};border:1px solid ${svcColor};padding:1px 6px;font-size:12px;cursor:pointer;border-radius:2px;margin-right:3px;line-height:1">${svcRunning ? "⏹" : "▶"}</button>`;
+    }
+
+    const gemColor = gem.color || "var(--dim)";
+    const row = document.createElement("div");
+    row.className = "gem-row";
+    if (binding.socketed) row.style.borderColor = gemColor + "40";
+    const hasSubTools = gem.subTools && gem.subTools.length > 0;
+    const subToolBtnHtml = hasSubTools
+      ? `<button type="button" class="gem-subtool-btn" id="subtool-btn-${bot}-${gemId}" onclick="toggleGemTools(event,this,'${bot}','${gemId}')" title="展开工具列表">▾</button>`
+      : "";
+    row.innerHTML = `
+      <span class="gem-icon">${gem.icon}</span>
+      <span class="gem-name" style="color:${gemColor}">${gem.name}</span>
+      <span class="gem-health ${healthClass}">${healthText}</span>
+      ${subToolBtnHtml}${svcHtml}${actionHtml}
+    `;
+    listEl.appendChild(row);
+
+    if (needed && !binding.socketed) {
+      const depSkills = equippedSkills.filter(s => deps[s]?.includes(gemId));
+      for (const s of depSkills) {
+        const skillName = armoryData?.registry?.skills?.[s]?.name || s;
+        const skillIcon = armoryData?.registry?.skills?.[s]?.icon || "";
+        warnings.push(`⚠️ ${skillIcon} ${skillName} 需要 ${gem.icon} ${gem.name}`);
+      }
+    }
+  }
+  if (warnings.length > 0) {
+    warnEl.innerHTML = warnings.map(w => `<div>${w}</div>`).join("");
+  }
+}
+
+function toggleGemTools(e, btn, botId, gemId) {
+  try {
+    e.preventDefault();
+    e.stopPropagation();
+    const panelId = `gem-tools-panel-${botId}-${gemId}`;
+    const existing = document.getElementById(panelId);
+    if (existing) {
+      existing.remove();
+      btn.classList.remove("open");
+      btn.textContent = "▾";
+      return;
+    }
+    btn.classList.add("open");
+    btn.textContent = "▴";
+
+    const gem = gemData?.registry?.gems?.[gemId];
+    if (!gem?.subTools) return;
+
+    // Current selections for this bot/gem (null = no override = role default)
+    const currentSelections = gemData?.toolSelections?.[botId];
+    const selected = new Set(currentSelections || gem.subTools.map(t => t.id));
+
+    const panel = document.createElement("div");
+    panel.id = panelId;
+    panel.className = "gem-tools-panel";
+
+    const grid = document.createElement("div");
+    grid.className = "gem-tools-grid";
+
+    for (const tool of gem.subTools) {
+      const item = document.createElement("label");
+      item.className = "gem-tool-item";
+      const checked = selected.has(tool.id) ? "checked" : "";
+      item.innerHTML = `<input type="checkbox" value="${tool.id}" ${checked}><span class="tool-name">${tool.name}</span><span class="tool-desc">— ${tool.desc}</span>`;
+      grid.appendChild(item);
+    }
+
+    const footer = document.createElement("div");
+    footer.className = "gem-tools-apply";
+    footer.innerHTML = `
+      <button type="button" class="reset-btn" onclick="resetGemTools('${botId}','${gemId}')">恢复默认</button>
+      <button type="button" class="apply-btn" onclick="applyGemTools('${botId}','${gemId}')">应用</button>
+    `;
+
+    panel.appendChild(grid);
+    panel.appendChild(footer);
+
+    // Insert after the row that contains the button
+    const row = btn.closest(".gem-row");
+    if (!row) { console.error("toggleGemTools: .gem-row not found"); return; }
+    row.insertAdjacentElement("afterend", panel);
+  } catch (err) {
+    console.error("toggleGemTools error:", err);
+  }
+}
+
+async function applyGemTools(botId, gemId) {
+  const panelId = `gem-tools-panel-${botId}-${gemId}`;
+  const panel = document.getElementById(panelId);
+  if (!panel) return;
+  const checkboxes = panel.querySelectorAll("input[type=checkbox]");
+  const toolIds = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+  try {
+    const r = await fetch("/api/gems/tools/select", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ botId, gemId, toolIds })
+    });
+    const data = await r.json();
+    if (data.status === "ok") {
+      showArmoryToast(`🟢 已更新 ${gemId} 工具 (${toolIds.length}个)，重启中…`, "ok");
+      await fetchGemData();
+    } else {
+      showArmoryToast(`❌ ${data.error}`, "err");
+    }
+  } catch (e) {
+    showArmoryToast(`❌ ${e.message}`, "err");
+  }
+}
+
+async function resetGemTools(botId, gemId) {
+  try {
+    const r = await fetch("/api/gems/tools/select", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ botId, gemId, toolIds: [] })
+    });
+    const data = await r.json();
+    if (data.status === "ok") {
+      showArmoryToast(`🟢 已恢复默认角色权限，重启中…`, "ok");
+      await fetchGemData();
+    } else {
+      showArmoryToast(`❌ ${data.error}`, "err");
+    }
+  } catch (e) {
+    showArmoryToast(`❌ ${e.message}`, "err");
+  }
+}
+
+async function toggleGemService(gemId, action) {
+  const gem = gemData?.registry?.gems?.[gemId];
+  const name = gem?.name || gemId;
+  try {
+    const resp = await fetch("/api/services/toggle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: gemId, action })
+    });
+    const result = await resp.json();
+    if (!resp.ok || result.status === "error" || result.error) {
+      showArmoryToast(`操作失败: ${result.error || "unknown"}`, "err");
+      return;
+    }
+    showArmoryToast(action === "start" ? `▶ 启动中 ${name}...` : `⏹ 已停止 ${name}`, "ok");
+    setTimeout(async () => { await fetchGemHealth(); }, action === "start" ? 2500 : 500);
+  } catch (e) {
+    showArmoryToast(`请求失败: ${e.message}`, "err");
+  }
+}
+
+async function socketGem(botId, gemId) {
+  try {
+    const res = await fetch("/api/gems/socket", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ botId, gemId })
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      showArmoryToast(`💎 已镶嵌: ${gemData.registry.gems[gemId]?.name || gemId}`, "ok");
+      await fetchGemData();
+    } else {
+      showArmoryToast("镶嵌失败: " + (data.error || "unknown"), "err");
+    }
+  } catch (e) {
+    showArmoryToast("镶嵌失败: " + e.message, "err");
+  }
+}
+
+async function unsocketGem(botId, gemId) {
+  try {
+    const res = await fetch("/api/gems/unsocket", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ botId, gemId })
+    });
+    const data = await res.json();
+    if (data.status === "warning") {
+      const skills = data.dependentSkills.join(", ");
+      if (!confirm(`以下技能依赖此宝石: ${skills}\n确认拔出?`)) return;
+      // Force unsocket
+      const res2 = await fetch("/api/gems/unsocket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ botId, gemId, force: true })
+      });
+      const data2 = await res2.json();
+      if (data2.status === "ok") {
+        showArmoryToast(`💎 已拔出: ${gemData.registry.gems[gemId]?.name || gemId}`, "ok");
+        await fetchGemData();
+      } else {
+        showArmoryToast("拔出失败: " + (data2.error || "unknown"), "err");
+      }
+      return;
+    }
+    if (data.status === "ok") {
+      showArmoryToast(`💎 已拔出: ${gemData.registry.gems[gemId]?.name || gemId}`, "ok");
+      await fetchGemData();
+    } else {
+      showArmoryToast("拔出失败: " + (data.error || "unknown"), "err");
+    }
+  } catch (e) {
+    showArmoryToast("拔出失败: " + e.message, "err");
+  }
+}
+
+// Preload armory data (for badge counts on cards), then initial fetch
+fetchArmoryData();
+fetchGemData();
+fetchGemHealth();
+fetchConfig().then(() => fetchData());
 setInterval(fetchData, 5000);
+setInterval(fetchGemHealth, 30000);
 </script>
 </body>
 </html>

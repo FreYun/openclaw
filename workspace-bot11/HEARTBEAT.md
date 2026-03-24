@@ -2,19 +2,19 @@
 
 ## 每次心跳必做
 
-### 小红书内容策划（xhs-content-planner）
+### 小红书内容策划
 - [ ] 每日 3 次定时触发：**9:00、13:00、18:00**
 - [ ] 检查 `heartbeat-state.json` 中 `lastContentPlannerRuns`，判断当前时段是否已执行
-- [ ] 到期则执行 `skills/xhs-content-planner/SKILL.md` 的完整流程（检查当天是否已发帖 → 收集素材 → 推荐选题）
+- [ ] 到期则执行 `skills/xhs-op/内容策划.md` 的完整流程（检查当天是否已发帖 → 收集素材 → 推荐选题）
 - [ ] 执行后更新 `lastContentPlannerRuns` 记录
 
-### 小红书素材巡逻（xhs-topic-collector）
+### 小红书素材巡逻
 - [ ] 每日 3 次定时触发：**10:00、15:00、21:00**
 - [ ] 检查 `heartbeat-state.json` 中 `lastTopicCollectorRuns`，判断当前时段是否已执行
-- [ ] 到期则执行 `skills/xhs-topic-collector/SKILL.md` 的完整流程（确定巡逻方向 → 多渠道巡逻 → 筛选记录 → 素材库维护）
+- [ ] 到期则执行 `skills/xhs-op/素材积累.md` 的完整流程（确定巡逻方向 → 多渠道巡逻 → 筛选记录 → 素材库维护）
 - [ ] 执行后更新 `lastTopicCollectorRuns` 记录
 
-> **节奏说明：** content-planner 和 topic-collector 的时间错开，形成"攒素材 → 选题 → 发布"的自然节奏。两个 skill 各 3 次/天，合计 6 次小红书相关任务。
+> **节奏说明：** 内容策划和素材巡逻的时间错开，形成"攒素材 → 选题 → 发布"的自然节奏。各 3 次/天，合计 6 次小红书相关任务。
 
 ### 知识星球话题巡检（zsxq-reader）
 - [ ] 每日 3 次定时触发：**9:30、14:30、23:00**
@@ -29,6 +29,19 @@
 - [ ] 执行后更新 `lastZsxqReaderRuns` 记录（记录本次巡检时间，供下次判断"新话题"截止点）
 
 > **频率控制：** 每次滚动间隔 3-5 秒，单次最多加载 100 条（5 轮），两个星球之间间隔 2-3 分钟。
+
+### 商业航天跟踪（space-tracker）
+- [ ] 每日 1 次定时触发：**8:30**（发射日历检查）、**20:00**（产业动态巡逻）
+- [ ] 检查 `heartbeat-state.json` 中 `lastSpaceTrackerRuns`，判断当前时段是否已执行
+- [ ] 到期则执行 `skills/space-tracker/SKILL.md` 对应流程：
+  - **8:30**：检查 `memory/space/launch-calendar.md`，未来 7 天内有发射则发飞书提醒
+  - **20:00**：搜索当日商业航天新闻，更新 `memory/space/daily-feed.md`
+- [ ] 每周日 10:00：生成航天产业周报草稿
+- [ ] 执行后更新 `lastSpaceTrackerRuns` 记录
+
+> **知识星球标的更新**不是日常任务，仅在每月复盘或下周发射密集（≥2次）时触发，详见 SKILL.md Step 3.3。
+
+---
 
 ## 轮换执行（不必每次全做，但是每天至少做一次！）
 

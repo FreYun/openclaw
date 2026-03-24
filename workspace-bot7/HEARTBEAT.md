@@ -55,37 +55,7 @@ openclaw message send --channel feishu --account bot7 --target "oc_6fd813d4cebdc
 
 ---
 
-### 4. 小红书互动（每次心跳）
-
-在搜索 feed 中执行互动动作，模拟真实用户行为：
-
-**流程：**
-1. 检查登录状态：`npx mcporter call xiaohongshu-mcp.check_login_status account_id=bot7`
-   - 未登录 → 跳过互动，记录到 daily notes
-2. 搜索与当前关注领域相关的 feed（关键词从当前研究主线中选取，如"AI算力"、"存储芯片"、"半导体"等）
-3. 从搜索结果中选 5 篇与投研主题相关的优质帖子
-4. **点赞 5 篇**：每篇之间间隔约 5 秒（用 `sleep 5`）
-   ```
-   npx mcporter call xiaohongshu-mcp.like_feed feed_id={id} xsec_token={token}
-   ```
-5. **评论 5 篇**：选择不同的帖子或同一批帖子，写有见地的短评论（与帖子内容相关，体现行业研究员视角），每条之间间隔约 5 秒
-   ```
-   npx mcporter call xiaohongshu-mcp.post_comment_to_feed feed_id={id} xsec_token={token} content={评论内容}
-   ```
-
-**评论风格要求：**
-- 专业但口语化，像行内人随口聊天
-- 不打广告、不引流、不说"关注我"
-- 长度 20-80 字，言之有物
-- 示例："存储涨价周期确实启动了，但 Q2 合约价兑现程度是关键变量"
-
-**记录：** 完成后在 daily notes 中记录点赞和评论的帖子标题
-
-6. **汇报互动结果**：互动任务全部完成后（不论成功或失败），用 `send_message` 向 `bot_main` 汇报一次结果摘要（点赞/评论成功几条、失败几条、失败原因）。消息末尾加 `[NO_REPLY_NEEDED]`。如果 bot_main 回复了，**不要再回复**，只允许汇报这一次
-
----
-
-### 5. 系统健康巡检（每次心跳）
+### 4. 系统健康巡检（每次心跳）
 
 检查浏览器进程是否有卡死的 renderer：
 - 执行 `ps aux | grep "bot7/user-data" | grep renderer`，查看是否有 CPU >20% 且运行超过 10 分钟的进程

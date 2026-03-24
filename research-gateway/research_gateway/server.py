@@ -395,6 +395,25 @@ def load_config() -> dict:
         return yaml.safe_load(f)
 
 
+def load_bot_tool_overrides() -> dict[str, list[str]]:
+    """读取 dashboard 写入的 per-bot 工具覆盖配置"""
+    override_path = os.path.join(os.path.dirname(__file__), "..", "bot-tool-overrides.json")
+    try:
+        with open(override_path) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def make_instance(name: str, tool_names: list[str]) -> FastMCP:
+    inst = FastMCP(name, instructions="Skill 部门网关。提供金融研究数据查询工具。")
+    for tool_name in tool_names:
+        if tool_name in TOOL_REGISTRY:
+            entry = TOOL_REGISTRY[tool_name]
+            inst.add_tool(entry["func"], name=entry["name"], description=entry["description"])
+    return inst
+
+
 def build_instances() -> dict[str, FastMCP]:
     """为每个角色创建一个 FastMCP 实例，只注册该角色允许的工具"""
     config = load_config()
@@ -402,15 +421,7 @@ def build_instances() -> dict[str, FastMCP]:
     instances = {}
 
     for role_name, tool_names in roles.items():
-        inst = FastMCP(
-            f"skill-gateway-{role_name}",
-            instructions=f"Skill 部门网关 ({role_name} 角色)。提供金融研究数据查询工具。",
-        )
-        for tool_name in tool_names:
-            if tool_name in TOOL_REGISTRY:
-                entry = TOOL_REGISTRY[tool_name]
-                inst.add_tool(entry["func"], name=entry["name"], description=entry["description"])
-        instances[role_name] = inst
+        instances[role_name] = make_instance(f"skill-gateway-{role_name}", tool_names)
         logger.info(f"Built instance for role '{role_name}' with {len(tool_names)} tools: {tool_names}")
 
     return instances
@@ -422,30 +433,37 @@ def build_bot_mapping(config: dict) -> dict[str, str]:
 
 
 def build_app() -> Starlette:
-    """构建 Starlette 应用：每个 bot 路径 → 对应角色的 FastMCP 实例"""
+    """构建 Starlette 应用：每个 bot 路径 → 对应角色的 FastMCP 实例（或自定义工具列表）"""
     from contextlib import asynccontextmanager
 
     config = load_config()
-    instances = build_instances()
+    role_instances = build_instances()
     bot_mapping = build_bot_mapping(config)
     default_role = bot_mapping.get("default", "content_creator")
+    overrides = load_bot_tool_overrides()
 
-    # 为每个角色获取 streamable_http_app（触发 session_manager 创建）
-    role_apps: dict[str, Starlette] = {}
-    for role_name, inst in instances.items():
-        role_apps[role_name] = inst.streamable_http_app()
+    # 为有自定义工具列表的 bot 创建独立实例
+    custom_instances: dict[str, FastMCP] = {}
+    for bot_id, tool_names in overrides.items():
+        if tool_names:
+            custom_instances[bot_id] = make_instance(f"skill-gateway-custom-{bot_id}", tool_names)
+            logger.info(f"Built custom instance for bot '{bot_id}' with tools: {tool_names}")
 
-    # 收集所有 session_manager，在外层 lifespan 中统一初始化
+    # 所有需要启动 session manager 的实例
+    all_instances = {**role_instances, **{f"custom-{k}": v for k, v in custom_instances.items()}}
+
+    # 为每个实例获取 streamable_http_app
+    role_apps = {r: inst.streamable_http_app() for r, inst in role_instances.items()}
+    custom_apps = {bot_id: inst.streamable_http_app() for bot_id, inst in custom_instances.items()}
+
     @asynccontextmanager
     async def lifespan(app):
-        # 启动所有 FastMCP 实例的 session manager
         import contextlib
         async with contextlib.AsyncExitStack() as stack:
-            for role_name, inst in instances.items():
+            for name, inst in all_instances.items():
                 if inst._session_manager is not None:
-                    cm = inst._session_manager.run()
-                    await stack.enter_async_context(cm)
-                    logger.info(f"Session manager started for role '{role_name}'")
+                    await stack.enter_async_context(inst._session_manager.run())
+                    logger.info(f"Session manager started for '{name}'")
             yield
 
     routes = []
@@ -454,13 +472,17 @@ def build_app() -> Starlette:
     for bot_id, role_name in bot_mapping.items():
         if bot_id == "default":
             continue
-        if role_name not in role_apps:
+        # 优先使用自定义工具列表，否则用角色
+        if bot_id in custom_apps:
+            routes.append(Mount(f"/mcp/{bot_id}", app=custom_apps[bot_id]))
+            registered_bots.add(bot_id)
+            logger.info(f"Mounted /mcp/{bot_id} → custom tools {overrides[bot_id]}")
+        elif role_name in role_apps:
+            routes.append(Mount(f"/mcp/{bot_id}", app=role_apps[role_name]))
+            registered_bots.add(bot_id)
+            logger.info(f"Mounted /mcp/{bot_id} → role '{role_name}'")
+        else:
             logger.warning(f"Bot '{bot_id}' maps to unknown role '{role_name}', skipping")
-            continue
-        # Mount 子应用（不带 lifespan，由外层管理）
-        routes.append(Mount(f"/mcp/{bot_id}", app=role_apps[role_name]))
-        registered_bots.add(bot_id)
-        logger.info(f"Mounted /mcp/{bot_id} → role '{role_name}'")
 
     if default_role in role_apps:
         routes.append(Mount("/mcp/default", app=role_apps[default_role]))
@@ -472,17 +494,22 @@ def build_app() -> Starlette:
             "status": "healthy",
             "service": "skill-gateway",
             "registered_bots": sorted(registered_bots),
-            "roles": list(instances.keys()),
-            "tools_per_role": {r: len(config["roles"].get(r, [])) for r in instances},
+            "roles": list(role_instances.keys()),
+            "tools_per_role": {r: len(config["roles"].get(r, [])) for r in role_instances},
+            "custom_bots": list(custom_instances.keys()),
         })
 
     # 根路由
     async def index(request: Request):
         lines = ["Skill 部门主网关", "", "连接方式: /mcp/{bot_id}", "", "已注册的 bot:"]
         for bot_id in sorted(registered_bots):
-            role = bot_mapping.get(bot_id, default_role)
-            tool_count = len(config["roles"].get(role, []))
-            lines.append(f"  /mcp/{bot_id} → {role} ({tool_count} tools)")
+            if bot_id in custom_instances:
+                tools = overrides[bot_id]
+                lines.append(f"  /mcp/{bot_id} → custom ({len(tools)} tools: {', '.join(tools)})")
+            else:
+                role = bot_mapping.get(bot_id, default_role)
+                tool_count = len(config["roles"].get(role, []))
+                lines.append(f"  /mcp/{bot_id} → {role} ({tool_count} tools)")
         lines.append(f"  /mcp/default → {default_role}")
         lines.append("")
         lines.append("健康检查: /health")

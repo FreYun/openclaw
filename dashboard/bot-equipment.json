@@ -1,0 +1,316 @@
+{
+  "bots": {
+    "bot1": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "laicaimeimei-writing-style",
+        "accessory-2": "laicaimeimei-cover-style",
+        "utility-1": "browser-base",
+        "utility-2": "report-incident",
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": "earnings-digest",
+        "research-2": "flow-watch",
+        "research-3": "laicaimeimei-fupan",
+        "research-4": "market-environment-analysis",
+        "research-5": "news-factcheck",
+        "research-6": "research-stock",
+        "boots-1": null
+      },
+      "overflow": [
+        "sector-pulse",
+        "stock-watcher",
+        "technical-analyst"
+      ]
+    },
+    "bot2": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": null,
+        "accessory-2": null,
+        "utility-1": "browser-base",
+        "utility-2": "report-incident",
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": "deepreasearch",
+        "research-2": "earnings-digest",
+        "research-3": "flow-watch",
+        "research-4": "industry-chain-breakdown",
+        "research-5": "market-environment-analysis",
+        "research-6": "news-factcheck",
+        "boots-1": null
+      },
+      "overflow": [
+        "research-mcp",
+        "research-stock",
+        "sector-pulse",
+        "stock-watcher",
+        "technical-analyst",
+        "tmt-landscape"
+      ]
+    },
+    "bot3": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "qingningmeng-style",
+        "accessory-2": "record-insight",
+        "utility-1": "compliance-review",
+        "utility-2": "browser-base",
+        "utility-3": "report-incident",
+        "utility-4": null,
+        "research-1": "news-factcheck",
+        "research-2": null,
+        "research-3": null,
+        "research-4": null,
+        "research-5": null,
+        "research-6": null,
+        "boots-1": null
+      },
+      "overflow": [
+        "self-review",
+        "visual-first-content"
+      ]
+    },
+    "bot4": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "record-insight",
+        "accessory-2": "self-review",
+        "utility-1": "browser-base",
+        "utility-2": "report-incident",
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": "report-digest",
+        "research-2": "report-compare",
+        "research-3": "report-critique",
+        "research-4": "report-to-image",
+        "research-5": "report-to-post",
+        "research-6": "flow-watch",
+        "boots-1": null
+      },
+      "overflow": [
+        "research-stock",
+        "sector-pulse",
+        "stock-watcher",
+        "technical-analyst"
+      ]
+    },
+    "bot5": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "xuanma-cover",
+        "accessory-2": "xuanma-style",
+        "utility-1": "browser-base",
+        "utility-2": "report-incident",
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": "earnings-digest",
+        "research-2": "flow-watch",
+        "research-3": "market-environment-analysis",
+        "research-4": "news-factcheck",
+        "research-5": "research-stock",
+        "research-6": "sector-pulse",
+        "boots-1": null
+      },
+      "overflow": [
+        "stock-watcher",
+        "technical-analyst"
+      ]
+    },
+    "bot6": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "james-cover",
+        "accessory-2": "james-style",
+        "utility-1": "compliance-review",
+        "utility-2": "browser-base",
+        "utility-3": "report-incident",
+        "utility-4": null,
+        "research-1": "earnings-digest",
+        "research-2": "flow-watch",
+        "research-3": "market-environment-analysis",
+        "research-4": "news-factcheck",
+        "research-5": "research-stock",
+        "research-6": "sector-pulse",
+        "boots-1": null
+      },
+      "overflow": [
+        "record-insight",
+        "self-review",
+        "stock-watcher",
+        "technical-analyst"
+      ]
+    },
+    "bot7": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "dae-fly-style",
+        "accessory-2": "laok-style",
+        "utility-1": "browser-base",
+        "utility-2": "report-incident",
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": "deepreasearch",
+        "research-2": "earnings-digest",
+        "research-3": "flow-watch",
+        "research-4": "market-environment-analysis",
+        "research-5": "news-factcheck",
+        "research-6": "research-stock",
+        "boots-1": null
+      },
+      "overflow": [
+        "sector-pulse",
+        "self-review",
+        "stock-watcher",
+        "technical-analyst"
+      ]
+    },
+    "bot8": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "record-insight",
+        "accessory-2": "self-review",
+        "utility-1": "compliance-review",
+        "utility-2": "browser-base",
+        "utility-3": "report-incident",
+        "utility-4": null,
+        "research-1": "earnings-digest",
+        "research-2": "flow-watch",
+        "research-3": "market-environment-analysis",
+        "research-4": "news-factcheck",
+        "research-5": "research-stock",
+        "research-6": "sector-pulse",
+        "boots-1": null
+      },
+      "overflow": [
+        "stock-watcher",
+        "technical-analyst"
+      ]
+    },
+    "bot9": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "gzh-publish",
+        "accessory-1": "daily-market-recap",
+        "accessory-2": null,
+        "utility-1": "browser-base",
+        "utility-2": "report-incident",
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": "stock-watcher",
+        "research-2": "technical-analyst",
+        "research-3": null,
+        "research-4": "research-mcp",
+        "research-5": "flow-watch",
+        "research-6": null,
+        "boots-1": null
+      }
+    },
+    "bot10": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-op",
+        "accessory-1": "qingningmeng-style",
+        "accessory-2": "record-insight",
+        "utility-1": "compliance-review",
+        "utility-2": "browser-base",
+        "utility-3": "report-incident",
+        "utility-4": null,
+        "research-1": "flow-watch",
+        "research-2": "market-environment-analysis",
+        "research-3": "news-factcheck",
+        "research-4": "stock-watcher",
+        "research-5": "space-tracker",
+        "research-6": null,
+        "boots-1": null
+      }
+    },
+    "bot11": {
+      "slots": {
+        "helm-1": "frontline",
+        "armor-1": "xhs-browser-publish",
+        "accessory-1": "mp-content-writer",
+        "accessory-2": null,
+        "utility-1": "zsxq-reader",
+        "utility-2": "browser-base",
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": "energy-chem-tracker",
+        "research-2": "lithium-battery-tracker",
+        "research-3": "memory-chip-tracker",
+        "research-4": "space-tracker",
+        "research-5": null,
+        "research-6": null,
+        "boots-1": null
+      },
+      "overflow": [
+        "xhs-op"
+      ]
+    },
+    "bot_main": {
+      "slots": {
+        "helm-1": "management",
+        "armor-1": "bot_main-mgm",
+        "accessory-1": null,
+        "accessory-2": null,
+        "utility-1": "claude-dev-reference",
+        "utility-2": "security-audit",
+        "utility-3": "browser-base",
+        "utility-4": "admin-ops",
+        "research-1": null,
+        "research-2": null,
+        "research-3": null,
+        "research-4": null,
+        "research-5": null,
+        "research-6": null,
+        "boots-1": null
+      }
+    },
+    "mcp_publisher": {
+      "slots": {
+        "helm-1": "ops",
+        "armor-1": "xhs-pub",
+        "accessory-1": null,
+        "accessory-2": null,
+        "utility-1": "compliance-review",
+        "utility-2": null,
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": null,
+        "research-2": null,
+        "research-3": null,
+        "research-4": null,
+        "research-5": null,
+        "research-6": null,
+        "boots-1": null
+      }
+    },
+    "coder": {
+      "slots": {
+        "helm-1": "ops",
+        "armor-1": "coding-agent",
+        "accessory-1": null,
+        "accessory-2": null,
+        "utility-1": "skill-generate",
+        "utility-2": null,
+        "utility-3": null,
+        "utility-4": null,
+        "research-1": null,
+        "research-2": null,
+        "research-3": null,
+        "research-4": null,
+        "research-5": null,
+        "research-6": null,
+        "boots-1": null
+      }
+    }
+  }
+}

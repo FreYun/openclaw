@@ -1,0 +1,26 @@
+{
+  "name": "公公运营术",
+  "icon": "🏛️",
+  "slot": "armor",
+  "desc": "印务局全流程运营：agent 通讯调度、飞书群管理、发布结果上报、各 agent 职能速查",
+  "subSkills": [
+    {
+      "name": "Agent 通讯",
+      "icon": "📡",
+      "file": "agent-messaging.md",
+      "desc": "消息总线用法、通知其他 agent、结果上报飞书"
+    },
+    {
+      "name": "飞书群管理",
+      "icon": "💬",
+      "file": "feishu-ops.md",
+      "desc": "飞书群聊告警、消息格式、上报规范"
+    },
+    {
+      "name": "Agent 职能表",
+      "icon": "👥",
+      "file": "agent-roster.md",
+      "desc": "各 agent 身份、职能、账号映射速查"
+    }
+  ]
+}

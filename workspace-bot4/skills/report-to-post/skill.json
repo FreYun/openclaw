@@ -1,0 +1,7 @@
+{
+  "name": "研报转帖",
+  "icon": "📲",
+  "slot": "research",
+  "desc": "研报内容转化为小红书帖子",
+  "subType": "general"
+}

@@ -16,7 +16,7 @@
 - 搜索笔记、查看详情、发布内容、回复评论
 - **必须通过 mcporter 调用，禁止 curl/浏览器**
 - 端口 18061，account_id: "bot1"
-- 使用前先读 `skills/xiaohongshu-mcp/SKILL.md`
+- 使用前先读 `skills/xhs-op/mcp-tools.md`
 
 ### financedata-mcp / choice-mcp
 - 深度金融数据，写干货帖时使用

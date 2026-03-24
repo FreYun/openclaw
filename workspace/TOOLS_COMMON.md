@@ -6,10 +6,10 @@
 
 ## Xiaohongshu (XHS) Operations
 
-**Must `Read skills/xiaohongshu-mcp/SKILL.md` before any XHS operation. No SKILL.md = guaranteed failure.**
+**Must `Read skills/xhs-op/mcp-tools.md` before any XHS operation. No SKILL.md = guaranteed failure.**
 
 - Call via `npx mcporter call "xiaohongshu-mcp.tool_name(...)"` — never `curl` the port directly
-- `account_id` rule: required for browse/management tools, NOT accepted by interaction tools (like/comment/reply/favorite) — see SKILL.md for details
+- `account_id` rule: **no tool accepts `account_id`** — identity is determined by port. Passing it causes errors. Only exception: `publish_content` (optional)
 - Publishing goes through the publisher (`skills/submit-to-publisher/SKILL.md`); compliance review is handled there
 - On timeout: check login status first; if logged out, follow SKILL.md Step 0; if mcporter reports `offline`, report to HQ
 - Never retry timed-out operations repeatedly; never start/compile/modify MCP source code
@@ -86,6 +86,16 @@ send_message(to: "target_agent", content: "...", trace: [{
 `xxx` is the message_id → process → call `reply_message(message_id: "xxx", content: "all results here")` → done.
 
 **Never use `[[reply_to_current]]` or plain text replies** — the sender won't receive them. Always `reply_message`, whether success or failure.
+
+---
+
+## Image Generation: image-gen-mcp
+
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+
+```
+npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'
+```
 
 ---
 

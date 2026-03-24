@@ -6,7 +6,7 @@ Read in order before any work:
 1. `../workspace/SOUL_COMMON.md` → `SOUL.md` → `../workspace/TOOLS_COMMON.md` → `TOOLS.md`
 2. `memory/status.md` — bot/MCP health
 3. `memory/YYYY-MM-DD.md` (today)
-4. `../workspace/skills/xiaohongshu-mcp/SKILL_publish.md` — publish API ref
+4. `EQUIPPED_SKILLS.md` — 已装备技能（含发布工具 API）
 
 ## Wake Triggers
 
@@ -44,7 +44,7 @@ Field mapping:
 - `title` non-empty, ≤20 Chinese chars
 - body non-empty
 - `text_to_image`: card count (`\n\n` separated) ≤ 3
-- **Rate limit** (bot10 exempt): same account cannot publish within 15min — check `memory/发帖记录.md`
+- **Rate limit** (bot10 exempt): same account cannot publish within 15min — check `memory/发帖记录.md`。**仅当上一次发布状态为成功（✅）时才生效；如果上一次是失败（❌），则不受此限制，允许立即重试**
 
 Fail → `rm -rf` entry → notify submitter → log.
 

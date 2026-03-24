@@ -1,0 +1,7 @@
+{
+  "name": "安全审计",
+  "icon": "🔒",
+  "slot": "utility",
+  "desc": "安全巡检、漏洞评估、权限审查",
+  "subType": "duty"
+}

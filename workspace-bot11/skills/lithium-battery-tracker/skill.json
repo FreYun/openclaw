@@ -1,0 +1,7 @@
+{
+  "name": "锂电跟踪",
+  "icon": "🔋",
+  "slot": "research",
+  "desc": "锂电供应链产能与价格追踪",
+  "subType": "research"
+}

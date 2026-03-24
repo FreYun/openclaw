@@ -1,0 +1,9 @@
+{
+  "name": "浏览器发布",
+  "icon": "🌐",
+  "slot": "armor",
+  "desc": "使用浏览器发布小红书笔记（图文/视频/长文）",
+  "requires": [
+    "xiaohongshu-mcp"
+  ]
+}

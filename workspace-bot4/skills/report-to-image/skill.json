@@ -1,0 +1,7 @@
+{
+  "name": "研报配图",
+  "icon": "🎨",
+  "slot": "research",
+  "desc": "研报解读内容生成信息图卡片",
+  "subType": "general"
+}

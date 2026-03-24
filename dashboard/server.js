@@ -5,13 +5,24 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { execSync, execFile } = require("child_process");
+const { execSync, execFile, spawn } = require("child_process");
 
 const PORT = parseInt(process.argv[2] || "18888");
 const PUBLISH_QUEUE = "/home/rooot/.openclaw/publish-queue";
 const AGENTS_DIR = "/home/rooot/.openclaw/agents";
 const CRON_DIR = "/home/rooot/.openclaw/cron";
 const OPENCLAW_JSON = "/home/rooot/.openclaw/openclaw.json";
+const OPENCLAW_DIR = "/home/rooot/.openclaw";
+const ARMORY_CONFIG_FILE = path.join(__dirname, "armory-config.json");
+const BOT_EQUIPMENT_FILE = path.join(__dirname, "bot-equipment.json");
+const GEM_REGISTRY_FILE = path.join(__dirname, "gem-registry.json");
+const EDITORIAL_BOTS = ["bot1","bot2","bot3","bot4","bot5","bot6","bot7","bot8","bot9","bot10","bot11"];
+const ALL_BOTS = [...EDITORIAL_BOTS, "bot_main", "mcp_publisher", "coder"];
+
+function botWorkspaceDir(botId) {
+  const mapping = { bot_main: "workspace-main", mcp_publisher: "workspace-mcp-publisher", coder: "workspace-coder" };
+  return mapping[botId] || `workspace-${botId}`;
+}
 
 function parseCronLine(line) {
   // Match: min hour dom month dow command
@@ -590,6 +601,40 @@ const server = http.createServer(async (req, res) => {
           entries.push({ ...parsed, enabled: true, lineIndex: i, description });
         }
       }
+      // Enrich entries with last-run info from log files or process checks
+      for (const entry of entries) {
+        entry.healthy = null; // unknown by default
+        entry.lastRun = null;
+        try {
+          // Check common log patterns for each cron job
+          if (entry.command.includes("daily_update.py")) {
+            const log = "/home/rooot/.openclaw/portfolio-service/data/cron.log";
+            const stat = fs.statSync(log);
+            entry.lastRun = stat.mtime.toISOString();
+            // If log was modified within 26 hours on weekdays, healthy
+            const ageH = (Date.now() - stat.mtime.getTime()) / 3600000;
+            const dow = new Date().getDay();
+            entry.healthy = (dow >= 1 && dow <= 5) ? ageH < 26 : true; // weekday check
+          } else if (entry.command.includes("update-monitor.py")) {
+            const monDir = "/home/rooot/.openclaw/workspace-main/monitor";
+            const idx = path.join(monDir, "INDEX.md");
+            if (fs.existsSync(idx)) {
+              const stat = fs.statSync(idx);
+              entry.lastRun = stat.mtime.toISOString();
+              const ageH = (Date.now() - stat.mtime.getTime()) / 3600000;
+              entry.healthy = ageH < 2; // should run every hour
+            }
+          } else if (entry.command.includes("healthcheck.sh")) {
+            const log = "/tmp/image-gen-mcp.log";
+            if (fs.existsSync(log)) {
+              const stat = fs.statSync(log);
+              entry.lastRun = stat.mtime.toISOString();
+              const ageH = (Date.now() - stat.mtime.getTime()) / 3600000;
+              entry.healthy = ageH < 3; // every 2 hours
+            }
+          }
+        } catch {}
+      }
       res.end(JSON.stringify({ entries, raw }));
     } catch (e) {
       res.end(JSON.stringify({ entries: [], error: e.message }));
@@ -636,6 +681,852 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify({ status: "ok", enable }));
     } catch (e) {
       res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // GET /api/config — expose gateway token for chat URL construction
+  if (url.pathname === "/api/config" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const conf = JSON.parse(fs.readFileSync(OPENCLAW_JSON, "utf8"));
+      const token = conf?.gateway?.auth?.token || "";
+      res.end(JSON.stringify({ gatewayToken: token }));
+    } catch (e) {
+      res.end(JSON.stringify({ gatewayToken: "" }));
+    }
+    return;
+  }
+
+  // GET /api/services — get MCP service status + health
+  if (url.pathname === "/api/services" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    const services = [
+      { id: "image-gen-mcp", name: "image-gen-mcp", port: 18085, cmd: "python3 server.py --transport streamable-http --port 18085", cwd: "/home/rooot/MCP/image-gen-mcp" },
+      { id: "compliance-mcp", name: "compliance-mcp", port: 18090, cmd: "./compliance-mcp -port=:18090", cwd: "/home/rooot/MCP/compliance-mcp" },
+    ];
+    const results = await Promise.all(services.map(svc => {
+      return new Promise(resolve => {
+        let running = false;
+        let pid = null;
+        try {
+          pid = execSync(`lsof -ti:${svc.port} 2>/dev/null`, { encoding: "utf8", timeout: 3000 }).trim();
+          running = !!pid;
+        } catch {}
+        if (!running) {
+          resolve({ ...svc, running, pid: null, healthy: false });
+          return;
+        }
+        // Health probe: MCP initialize handshake
+        execFile("curl", [
+          "-s", "-o", "/dev/null", "-w", "%{http_code}",
+          "-X", "POST", `http://localhost:${svc.port}/mcp`,
+          "-H", "Content-Type: application/json",
+          "-H", "Accept: application/json, text/event-stream",
+          "-d", '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"dashboard","version":"1.0"}}}',
+          "--max-time", "5"
+        ], { encoding: "utf8", timeout: 8000 }, (err, stdout) => {
+          const healthy = !err && stdout.trim() === "200";
+          resolve({ ...svc, running, pid: pid || null, healthy });
+        });
+      });
+    }));
+    res.end(JSON.stringify(results));
+    return;
+  }
+
+  // POST /api/services/toggle — start or stop an MCP service
+  if (url.pathname === "/api/services/toggle" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { id, action } = body; // action: "start" | "stop"
+    const services = {
+      "image-gen-mcp": { port: 18085, cmd: "python3 server.py --transport streamable-http --port 18085", cwd: "/home/rooot/MCP/image-gen-mcp" },
+      "compliance-mcp": { port: 18090, cmd: "./compliance-mcp -port=:18090", cwd: "/home/rooot/MCP/compliance-mcp" },
+    };
+    const svc = services[id];
+    if (!svc) {
+      res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: "Unknown service" }));
+      return;
+    }
+    try {
+      if (action === "stop") {
+        execSync(`lsof -ti:${svc.port} | xargs kill 2>/dev/null || true`, { encoding: "utf8", timeout: 5000 });
+        res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({ status: "ok", action: "stopped" }));
+      } else {
+        // Kill existing first
+        execSync(`lsof -ti:${svc.port} | xargs kill 2>/dev/null || true`, { encoding: "utf8", timeout: 5000 });
+        // Start
+        execSync(`cd ${svc.cwd} && nohup ${svc.cmd} >> /tmp/${id}.log 2>&1 &`, {
+          encoding: "utf8", timeout: 5000, shell: "/bin/bash"
+        });
+        // Wait a moment and check
+        await new Promise(r => setTimeout(r, 2000));
+        let pid = null;
+        try { pid = execSync(`lsof -ti:${svc.port} 2>/dev/null`, { encoding: "utf8", timeout: 3000 }).trim(); } catch {}
+        res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({ status: pid ? "ok" : "error", action: "started", pid }));
+      }
+    } catch (e) {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // GET /api/start-all-status — start-all.sh 上次运行结果
+  if (url.pathname === "/api/start-all-status" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const raw = fs.readFileSync("/home/rooot/.openclaw/logs/start-all-status.json", "utf8");
+      res.end(raw);
+    } catch {
+      res.end(JSON.stringify({ status: "never" }));
+    }
+    return;
+  }
+
+  // ── Skill Armory APIs ──────────────────────────────────────────
+
+  function readArmoryConfig() {
+    return JSON.parse(fs.readFileSync(ARMORY_CONFIG_FILE, "utf8"));
+  }
+
+  function readBotEquipment() {
+    try { return JSON.parse(fs.readFileSync(BOT_EQUIPMENT_FILE, "utf8")); }
+    catch { return { bots: {} }; }
+  }
+
+  function writeBotEquipment(data) {
+    fs.writeFileSync(BOT_EQUIPMENT_FILE, JSON.stringify(data, null, 2));
+  }
+
+  function getBotSkillsOnDisk(botId) {
+    const dir = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills");
+    try { return fs.readdirSync(dir).filter(f => !f.startsWith(".")); }
+    catch { return []; }
+  }
+
+  // Scan all skill.json files from disk to build unified registry
+  let _skillCache = null;
+  function scanAllSkills(force) {
+    if (_skillCache && !force) return _skillCache;
+
+    const config = readArmoryConfig();
+    const skills = {};
+    const baseLayer = [];
+
+    // 1. Scan universal skills: workspace/skills/*/skill.json
+    const universalDir = path.join(OPENCLAW_DIR, "workspace", "skills");
+    try {
+      for (const name of fs.readdirSync(universalDir)) {
+        const jsonPath = path.join(universalDir, name, "skill.json");
+        try {
+          const meta = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+          skills[name] = { ...meta, source: "universal", id: name };
+          if (meta.infrastructure) baseLayer.push(name);
+        } catch {}
+      }
+    } catch {}
+
+    // 2. Scan bot-specific skills: workspace-*/skills/*/skill.json (real dirs only)
+    for (const botId of ALL_BOTS) {
+      const botSkillDir = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills");
+      try {
+        for (const name of fs.readdirSync(botSkillDir)) {
+          if (skills[name]) continue; // universal already registered
+          const skillPath = path.join(botSkillDir, name);
+          try {
+            const stat = fs.lstatSync(skillPath);
+            if (stat.isSymbolicLink()) continue; // skip symlinks
+            const jsonPath = path.join(skillPath, "skill.json");
+            const meta = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+            skills[name] = { ...meta, source: "bot-specific", owner: botId, id: name };
+            if (meta.infrastructure) baseLayer.push(name);
+          } catch {}
+        }
+      } catch {}
+    }
+
+    _skillCache = { slotTypes: config.slotTypes, baseLayer, skills };
+    return _skillCache;
+  }
+
+  function clearSkillCache() { _skillCache = null; }
+
+  function makeEmptySlots() {
+    return { "helm-1": null,
+             "armor-1": null,
+             "accessory-1": null, "accessory-2": null,
+             "utility-1": null, "utility-2": null, "utility-3": null, "utility-4": null,
+             "research-1": null, "research-2": null, "research-3": null, "research-4": null, "research-5": null, "research-6": null,
+             "boots-1": null };
+  }
+
+  // Generate EQUIPPED_SKILLS.md for a bot — called after every equip/unequip/swap/sync
+  function generateSkillsManifest(botId) {
+    const registry = scanAllSkills();
+    const equipment = readBotEquipment();
+    const botData = equipment.bots?.[botId];
+    if (!botData) return;
+
+    const slots = botData.slots || {};
+    const equipped = [];
+    for (const [slotId, skillId] of Object.entries(slots)) {
+      if (!skillId) continue;
+      const skill = registry.skills[skillId];
+      if (!skill) continue;
+      const slotType = slotId.replace(/-\d+$/, "");
+      const typeInfo = registry.slotTypes[slotType];
+      equipped.push({ slotId, slotType, typeName: typeInfo?.name || slotType, skillId, skill });
+    }
+
+    // Group by slot type
+    const groups = {};
+    for (const e of equipped) {
+      if (!groups[e.slotType]) groups[e.slotType] = { typeName: e.typeName, items: [] };
+      groups[e.slotType].items.push(e);
+    }
+
+    let md = `# 已装备技能\n\n`;
+    md += `> 本文件由装备系统自动生成，请勿手动编辑。\n`;
+    md += `> 更新时间：${new Date().toISOString().replace("T", " ").slice(0, 19)}\n\n`;
+
+    if (equipped.length === 0) {
+      md += `当前无已装备技能。\n`;
+    } else {
+      // Ordered display
+      const order = ["armor", "accessory", "utility", "research", "boots"]; // helm shown in SOUL.md, not here
+      for (const type of order) {
+        const g = groups[type];
+        if (!g) continue;
+        const typeInfo = registry.slotTypes[type];
+        md += `## ${typeInfo?.icon || ""} ${g.typeName}\n\n`;
+        for (const item of g.items) {
+          const s = item.skill;
+          md += `### ${s.icon} ${s.name}（${item.skillId}）\n\n`;
+          if (s.desc) md += `${s.desc}\n\n`;
+          md += `**详细文档**：Read \`skills/${item.skillId}/SKILL.md\`\n\n`;
+          // List sub-skills if any
+          if (s.subSkills && s.subSkills.length > 0) {
+            md += `子模块：\n`;
+            for (const sub of s.subSkills) {
+              md += `- ${sub.icon} **${sub.name}**（\`skills/${item.skillId}/${sub.file}\`）`;
+              if (sub.desc) md += ` — ${sub.desc}`;
+              md += `\n`;
+            }
+            md += `\n`;
+          }
+        }
+      }
+    }
+
+    const filePath = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "EQUIPPED_SKILLS.md");
+    fs.writeFileSync(filePath, md, "utf8");
+  }
+
+  // Auto-insert helm/role info into SOUL.md between <!-- ROLE:START --> and <!-- ROLE:END --> markers
+  function updateSoulRole(botId) {
+    const equipment = readBotEquipment();
+    const registry = scanAllSkills();
+    const helmSkillId = equipment.bots?.[botId]?.slots?.["helm-1"];
+    const helmSkill = helmSkillId ? registry.skills[helmSkillId] : null;
+
+    const soulPath = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "SOUL.md");
+    let soul;
+    try { soul = fs.readFileSync(soulPath, "utf8"); } catch { return; }
+
+    const roleBlock = helmSkill
+      ? `<!-- ROLE:START -->\n> **工种：${helmSkill.name}** — ${helmSkill.desc}\n>\n> 详细职责定义：Read \`skills/${helmSkillId}/SKILL.md\`\n<!-- ROLE:END -->`
+      : `<!-- ROLE:START -->\n<!-- ROLE:END -->`;
+
+    if (soul.includes("<!-- ROLE:START -->")) {
+      soul = soul.replace(/<!-- ROLE:START -->[\s\S]*?<!-- ROLE:END -->/, roleBlock);
+    } else {
+      soul = roleBlock + "\n\n" + soul;
+    }
+    fs.writeFileSync(soulPath, soul, "utf8");
+  }
+
+  // GET /api/skills — registry + equipment + disk state
+  if (url.pathname === "/api/skills" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const registry = scanAllSkills();
+      const equipment = readBotEquipment();
+      const diskState = {};
+      const botBaseLayer = {};
+      for (const botId of ALL_BOTS) {
+        const onDisk = getBotSkillsOnDisk(botId);
+        const isEquippable = (s) => registry.skills[s] && !registry.skills[s].infrastructure && registry.skills[s].slot;
+        diskState[botId] = onDisk.filter(s => isEquippable(s));
+        botBaseLayer[botId] = onDisk.filter(s => registry.skills[s]?.infrastructure || !registry.skills[s]);
+      }
+      res.end(JSON.stringify({ registry, equipment, diskState, botBaseLayer }));
+    } catch (e) {
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/skills/sync — scan disk and rebuild bot-equipment.json
+  if (url.pathname === "/api/skills/sync" && req.method === "POST") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      clearSkillCache();
+      const registry = scanAllSkills(true);
+      const existing = readBotEquipment();
+      const equipment = { bots: {} };
+      for (const botId of ALL_BOTS) {
+        const onDisk = getBotSkillsOnDisk(botId);
+        const equippable = new Set(onDisk.filter(s => !registry.baseLayer.includes(s) && registry.skills[s] && !registry.skills[s].infrastructure && registry.skills[s].slot));
+
+        // Start from existing slots, remove skills no longer on disk/equippable
+        const prev = existing.bots?.[botId]?.slots || {};
+        const slots = makeEmptySlots();
+        const alreadyPlaced = new Set();
+        for (const [slotKey, skillId] of Object.entries(prev)) {
+          if (skillId && equippable.has(skillId) && slots.hasOwnProperty(slotKey)) {
+            // Verify slot type still matches
+            const skill = registry.skills[skillId];
+            const slotType = slotKey.replace(/-\d+$/, "");
+            if (skill && skill.slot === slotType) {
+              slots[slotKey] = skillId;
+              alreadyPlaced.add(skillId);
+            }
+          }
+        }
+
+        // Place new skills (on disk but not yet equipped) into empty slots
+        const overflow = [];
+        for (const skillId of equippable) {
+          if (alreadyPlaced.has(skillId)) continue;
+          const skill = registry.skills[skillId];
+          if (!skill || !skill.slot) continue;
+          const type = skill.slot;
+          // Find first empty slot of matching type
+          let placed = false;
+          for (const [k, v] of Object.entries(slots)) {
+            if (!v && k.startsWith(type + "-")) {
+              slots[k] = skillId;
+              placed = true;
+              break;
+            }
+          }
+          if (!placed) overflow.push(skillId);
+        }
+
+        equipment.bots[botId] = { slots, overflow: overflow.length ? overflow : undefined };
+      }
+      writeBotEquipment(equipment);
+      for (const botId of ALL_BOTS) {
+        generateSkillsManifest(botId);
+        updateSoulRole(botId);
+      }
+      res.end(JSON.stringify({ status: "ok", equipment }));
+    } catch (e) {
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/skills/equip — equip a skill to a bot slot
+  if (url.pathname === "/api/skills/equip" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { botId, slot, skillId } = body;
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const registry = scanAllSkills();
+      if (!ALL_BOTS.includes(botId)) throw new Error("Invalid botId");
+      const skill = registry.skills[skillId];
+      if (!skill) throw new Error("Unknown skill: " + skillId);
+      if (skill.infrastructure) throw new Error("Cannot equip infrastructure skill");
+      // Validate slot type
+      const slotType = slot.replace(/-\d+$/, "");
+      if (skill.slot !== slotType) throw new Error(`Skill type "${skill.slot}" cannot go in "${slotType}" slot`);
+      // Permission: research slots require frontline helm
+      if (slotType === "research") {
+        const curEquip = readBotEquipment();
+        const helmSkill = curEquip.bots?.[botId]?.slots?.["helm-1"];
+        if (helmSkill !== "frontline") throw new Error("研究插槽需要装备「前台」工种才能解锁");
+      }
+      const slots = makeEmptySlots();
+      if (!slots.hasOwnProperty(slot)) throw new Error("Invalid slot: " + slot);
+
+      const equipment = readBotEquipment();
+      if (!equipment.bots[botId]) equipment.bots[botId] = { slots: makeEmptySlots() };
+
+      // If slot is occupied, unequip existing skill first
+      const existing = equipment.bots[botId].slots[slot];
+      if (existing && existing !== skillId) {
+        const existingPath = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills", existing);
+        try {
+          const stat = fs.lstatSync(existingPath);
+          if (stat.isSymbolicLink()) fs.unlinkSync(existingPath);
+        } catch {}
+      }
+
+      // Check if skill is already equipped in another slot — remove from old slot
+      for (const [s, v] of Object.entries(equipment.bots[botId].slots)) {
+        if (v === skillId) equipment.bots[botId].slots[s] = null;
+      }
+
+      // Create symlink on disk
+      const targetPath = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills", skillId);
+      try { fs.lstatSync(targetPath); } catch {
+        if (skill.source === "universal") {
+          fs.symlinkSync(`../../workspace/skills/${skillId}`, targetPath);
+        } else if (skill.owner !== botId) {
+          const absSource = path.join(OPENCLAW_DIR, botWorkspaceDir(skill.owner), "skills", skillId);
+          fs.symlinkSync(absSource, targetPath);
+        }
+      }
+
+      equipment.bots[botId].slots[slot] = skillId;
+      writeBotEquipment(equipment);
+      clearSkillCache();
+      generateSkillsManifest(botId);
+      if (slot === "helm-1") updateSoulRole(botId);
+      res.end(JSON.stringify({ status: "ok", botId, slot, skillId }));
+    } catch (e) {
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/skills/unequip — remove a skill from a bot slot
+  if (url.pathname === "/api/skills/unequip" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { botId, slot } = body;
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      if (!ALL_BOTS.includes(botId)) throw new Error("Invalid botId");
+      const equipment = readBotEquipment();
+      if (!equipment.bots[botId]) throw new Error("Bot not initialized");
+      const skillId = equipment.bots[botId].slots[slot];
+      if (!skillId) throw new Error("Slot is empty");
+      const registry = scanAllSkills();
+      if (registry.skills[skillId]?.infrastructure) throw new Error("Cannot unequip infrastructure skill");
+
+      // Remove from disk (only symlinks, never real directories)
+      const targetPath = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills", skillId);
+      try {
+        const stat = fs.lstatSync(targetPath);
+        if (stat.isSymbolicLink()) fs.unlinkSync(targetPath);
+      } catch {}
+
+      equipment.bots[botId].slots[slot] = null;
+      writeBotEquipment(equipment);
+      clearSkillCache();
+      generateSkillsManifest(botId);
+      if (slot === "helm-1") updateSoulRole(botId);
+      res.end(JSON.stringify({ status: "ok", botId, slot, skillId }));
+    } catch (e) {
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/skills/swap — swap two slots for a bot
+  if (url.pathname === "/api/skills/swap" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let data = "";
+      req.on("data", c => data += c);
+      req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+    });
+    const { botId, fromSlot, toSlot } = body;
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      if (!ALL_BOTS.includes(botId)) throw new Error("Invalid botId");
+      // Validate same slot type
+      const fromType = fromSlot.replace(/-\d+$/, "");
+      const toType = toSlot.replace(/-\d+$/, "");
+      if (fromType !== toType) throw new Error("Can only swap same-type slots");
+      const equipment = readBotEquipment();
+      if (!equipment.bots[botId]) throw new Error("Bot not initialized");
+      const temp = equipment.bots[botId].slots[fromSlot];
+      equipment.bots[botId].slots[fromSlot] = equipment.bots[botId].slots[toSlot];
+      equipment.bots[botId].slots[toSlot] = temp;
+      writeBotEquipment(equipment);
+      generateSkillsManifest(botId);
+      res.end(JSON.stringify({ status: "ok", botId, fromSlot, toSlot }));
+    } catch (e) {
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // GET /api/skills/content?skill=xxx&file=yyy.md — read skill MD file content
+  if (url.pathname === "/api/skills/content" && req.method === "GET") {
+    const skillId = url.searchParams.get("skill");
+    const file = url.searchParams.get("file") || "SKILL.md";
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    if (!skillId || /[\/\\]/.test(skillId) || /[\/\\]/.test(file)) {
+      res.end(JSON.stringify({ error: "Invalid parameters" }));
+      return;
+    }
+    try {
+      // Try universal skill first, then bot-specific
+      let filePath = path.join(OPENCLAW_DIR, "workspace", "skills", skillId, file);
+      if (!fs.existsSync(filePath)) {
+        for (const botId of ALL_BOTS) {
+          const alt = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills", skillId, file);
+          if (fs.existsSync(alt)) { filePath = alt; break; }
+        }
+      }
+      if (!fs.existsSync(filePath)) {
+        res.end(JSON.stringify({ error: "File not found" }));
+        return;
+      }
+      const content = fs.readFileSync(filePath, "utf8");
+      res.end(JSON.stringify({ skill: skillId, file, content }));
+    } catch (e) {
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // GET /api/bot/soul?botId=xxx — read bot's SOUL.md
+  if (url.pathname === "/api/bot/soul" && req.method === "GET") {
+    const botId = url.searchParams.get("botId");
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    if (!botId || !ALL_BOTS.includes(botId)) {
+      res.end(JSON.stringify({ error: "Invalid botId" }));
+      return;
+    }
+    try {
+      const filePath = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "SOUL.md");
+      if (!fs.existsSync(filePath)) {
+        res.end(JSON.stringify({ error: "SOUL.md not found" }));
+        return;
+      }
+      const content = fs.readFileSync(filePath, "utf8");
+      res.end(JSON.stringify({ botId, content }));
+    } catch (e) {
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // GET /api/skills/registry — return full scanned skill list (debug/admin)
+  if (url.pathname === "/api/skills/registry" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      clearSkillCache();
+      const registry = scanAllSkills(true);
+      res.end(JSON.stringify(registry, null, 2));
+    } catch (e) {
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // ── Gem System (MCP hot-plug) ─────────────────────────────────
+
+  function readGemRegistry() {
+    return JSON.parse(fs.readFileSync(GEM_REGISTRY_FILE, "utf8"));
+  }
+
+  function readGemToolOverrides(filePath) {
+    // If no path given, find from registry
+    if (!filePath) {
+      const registry = readGemRegistry();
+      for (const gem of Object.values(registry.gems)) {
+        if (gem.toolOverridesFile) { filePath = gem.toolOverridesFile; break; }
+      }
+    }
+    if (!filePath) return {};
+    try { return JSON.parse(fs.readFileSync(filePath, "utf8")); }
+    catch { return {}; }
+  }
+
+  function readMcporter(botId) {
+    const p = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "config", "mcporter.json");
+    try { return JSON.parse(fs.readFileSync(p, "utf8")); }
+    catch { return { mcpServers: {}, imports: [] }; }
+  }
+
+  function writeMcporter(botId, data) {
+    const dir = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "config");
+    try { fs.mkdirSync(dir, { recursive: true }); } catch {}
+    fs.writeFileSync(path.join(dir, "mcporter.json"), JSON.stringify(data, null, 4));
+  }
+
+  function resolveGemUrl(gemId, botId, registry) {
+    const gem = registry.gems[gemId];
+    if (!gem) return null;
+    const special = gem.specialBots?.[botId];
+    if (special && !special.multi && special.url) return special.url;
+    if (gem.perBot && gem.portMap) {
+      const port = gem.portMap[botId];
+      if (!port) return null;
+      return gem.urlTemplate.replace("${port}", port);
+    }
+    if (gem.perBot && gem.urlTemplate?.includes("${botId}")) {
+      return gem.urlTemplate.replace("${botId}", botId);
+    }
+    return gem.urlTemplate || null;
+  }
+
+  function getBotGemBindings(botId, registry) {
+    const mcporter = readMcporter(botId);
+    const bindings = {};
+    for (const [gemId, gem] of Object.entries(registry.gems)) {
+      const special = gem.specialBots?.[botId];
+      if (special?.multi) {
+        const expectedKeys = Object.keys(special.entries);
+        const found = expectedKeys.filter(k => mcporter.mcpServers[k]);
+        bindings[gemId] = { socketed: found.length > 0, entries: found.length, expectedEntries: expectedKeys.length };
+      } else {
+        const key = gemId;
+        const entry = mcporter.mcpServers[key];
+        bindings[gemId] = { socketed: !!entry, url: entry?.url || entry?.baseUrl || null };
+      }
+    }
+    return bindings;
+  }
+
+  function checkGemHealth(port, gem) {
+    return new Promise(resolve => {
+      if (!port) { resolve({ status: "unknown", reason: "no-port" }); return; }
+      try {
+        const pid = execSync(`lsof -ti:${port} 2>/dev/null`, { encoding: "utf8", timeout: 3000 }).trim();
+        if (!pid) { resolve({ status: "down", pid: null }); return; }
+        if (!gem.healthMethod || gem.healthMethod === "port-check") {
+          resolve({ status: "up", pid }); return;
+        }
+        if (gem.healthMethod === "mcp-initialize") {
+          execFile("curl", [
+            "-s", "-o", "/dev/null", "-w", "%{http_code}",
+            "-X", "POST", `http://localhost:${port}${gem.healthEndpoint || "/mcp"}`,
+            "-H", "Content-Type: application/json",
+            "-H", "Accept: application/json, text/event-stream",
+            "-d", '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"dashboard","version":"1.0"}}}',
+            "--max-time", "5"
+          ], { encoding: "utf8", timeout: 8000 }, (err, stdout) => {
+            resolve({ status: (!err && stdout.trim() === "200") ? "healthy" : "unhealthy", pid });
+          });
+          return;
+        }
+        if (gem.healthMethod === "http-get") {
+          execFile("curl", [
+            "-s", "-o", "/dev/null", "-w", "%{http_code}",
+            `http://localhost:${port}${gem.healthEndpoint || "/health"}`,
+            "--max-time", "5"
+          ], { encoding: "utf8", timeout: 8000 }, (err, stdout) => {
+            resolve({ status: (!err && stdout.trim() === "200") ? "healthy" : "unhealthy", pid });
+          });
+          return;
+        }
+        resolve({ status: "up", pid });
+      } catch {
+        resolve({ status: "down", pid: null });
+      }
+    });
+  }
+
+  // GET /api/plugins — system plugin list
+  if (url.pathname === "/api/plugins" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const conf = JSON.parse(fs.readFileSync(OPENCLAW_JSON, "utf8"));
+      const entries = conf.plugins?.entries || {};
+      const meta = {
+        "agent-messaging": { name: "Agent 通讯", icon: "📡", desc: "Agent 间消息传递与协调" },
+        "feishu":           { name: "飞书通道",   icon: "💬", desc: "飞书群聊与私信通道" },
+        "tushare-openclaw": { name: "Tushare 数据", icon: "📈", desc: "A股行情与财务数据" },
+      };
+      const result = Object.entries(entries).map(([id, e]) => ({
+        id, name: meta[id]?.name || id, icon: meta[id]?.icon || "🔌", desc: meta[id]?.desc || "", enabled: !!e.enabled
+      }));
+      res.end(JSON.stringify(result));
+    } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    return;
+  }
+
+  // GET /api/gems — registry + bindings + skill deps + tool selections
+  if (url.pathname === "/api/gems" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const registry = readGemRegistry();
+      const bindings = {};
+      for (const botId of ALL_BOTS) {
+        bindings[botId] = getBotGemBindings(botId, registry);
+      }
+      const skillRegistry = scanAllSkills();
+      const skillGemDeps = {};
+      for (const [skillId, skill] of Object.entries(skillRegistry.skills)) {
+        if (skill.requires && skill.requires.length > 0) {
+          skillGemDeps[skillId] = skill.requires;
+        }
+      }
+      // Per-bot tool selections for gems with subTools
+      const toolSelections = readGemToolOverrides();
+      res.end(JSON.stringify({ registry, bindings, skillGemDeps, toolSelections }));
+    } catch (e) {
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/gems/tools/select — set per-bot tool list for a gem with subTools
+  if (url.pathname === "/api/gems/tools/select" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let d = ""; req.on("data", c => d += c);
+      req.on("end", () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+    });
+    const { botId, gemId, toolIds } = body;
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      if (!ALL_BOTS.includes(botId)) throw new Error("Invalid botId");
+      const registry = readGemRegistry();
+      const gem = registry.gems[gemId];
+      if (!gem || !gem.subTools) throw new Error("Gem has no subTools: " + gemId);
+      if (!gem.toolOverridesFile) throw new Error("Gem has no toolOverridesFile configured");
+      // Validate tool IDs
+      const validIds = new Set(gem.subTools.map(t => t.id));
+      const filtered = (toolIds || []).filter(id => validIds.has(id));
+      // Write to overrides file
+      const overrides = readGemToolOverrides(gem.toolOverridesFile);
+      if (filtered.length === 0) {
+        delete overrides[botId];
+      } else {
+        overrides[botId] = filtered;
+      }
+      fs.writeFileSync(gem.toolOverridesFile, JSON.stringify(overrides, null, 2));
+      // Restart gateway
+      if (gem.restartCmd) {
+        try {
+          execSync(gem.restartCmd, { timeout: 10000 });
+        } catch (e) {
+          // restart might exit non-zero but still work
+        }
+      }
+      res.end(JSON.stringify({ status: "ok", botId, gemId, toolIds: filtered }));
+    } catch (e) {
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // GET /api/gems/health — parallel health checks
+  if (url.pathname === "/api/gems/health" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      const registry = readGemRegistry();
+      const health = {};
+      const checks = [];
+      for (const [gemId, gem] of Object.entries(registry.gems)) {
+        if (gem.perBot && gem.portMap) {
+          health[gemId] = {};
+          for (const [botId, port] of Object.entries(gem.portMap)) {
+            checks.push(checkGemHealth(port, gem).then(r => { health[gemId][botId] = r; }));
+          }
+        } else if (gem.port) {
+          checks.push(checkGemHealth(gem.port, gem).then(r => { health[gemId] = r; }));
+        } else {
+          health[gemId] = { status: "unknown", reason: "no-port" };
+        }
+      }
+      await Promise.all(checks);
+      res.end(JSON.stringify(health));
+    } catch (e) {
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/gems/socket — add MCP to bot's mcporter.json
+  if (url.pathname === "/api/gems/socket" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let d = ""; req.on("data", c => d += c);
+      req.on("end", () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+    });
+    const { botId, gemId } = body;
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      if (!ALL_BOTS.includes(botId)) throw new Error("Invalid botId");
+      const registry = readGemRegistry();
+      const gem = registry.gems[gemId];
+      if (!gem) throw new Error("Unknown gem: " + gemId);
+      const mcporter = readMcporter(botId);
+      const special = gem.specialBots?.[botId];
+      if (special?.multi) {
+        for (const [key, url] of Object.entries(special.entries)) {
+          mcporter.mcpServers[key] = { url };
+        }
+      } else {
+        const url = resolveGemUrl(gemId, botId, registry);
+        if (!url) throw new Error(`Cannot resolve URL for ${gemId} on ${botId}`);
+        const urlKey = special?.urlKey || "url";
+        mcporter.mcpServers[gemId] = { [urlKey]: url };
+      }
+      if (!mcporter.imports) mcporter.imports = [];
+      writeMcporter(botId, mcporter);
+      res.end(JSON.stringify({ status: "ok", botId, gemId }));
+    } catch (e) {
+      res.end(JSON.stringify({ status: "error", error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/gems/unsocket — remove MCP from bot's mcporter.json
+  if (url.pathname === "/api/gems/unsocket" && req.method === "POST") {
+    const body = await new Promise(resolve => {
+      let d = ""; req.on("data", c => d += c);
+      req.on("end", () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+    });
+    const { botId, gemId, force } = body;
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    try {
+      if (!ALL_BOTS.includes(botId)) throw new Error("Invalid botId");
+      const registry = readGemRegistry();
+      const gem = registry.gems[gemId];
+      if (!gem) throw new Error("Unknown gem: " + gemId);
+      // Dependency check
+      if (!force) {
+        const equipment = readBotEquipment();
+        const skillRegistry = scanAllSkills();
+        const botSlots = equipment.bots?.[botId]?.slots || {};
+        const dependentSkills = [];
+        for (const skillId of Object.values(botSlots)) {
+          if (!skillId) continue;
+          const skill = skillRegistry.skills[skillId];
+          if (skill?.requires?.includes(gemId)) {
+            dependentSkills.push({ id: skillId, name: skill.name });
+          }
+        }
+        if (dependentSkills.length > 0) {
+          res.end(JSON.stringify({ status: "warning", message: "equipped-skills-depend", dependentSkills }));
+          return;
+        }
+      }
+      const mcporter = readMcporter(botId);
+      const special = gem.specialBots?.[botId];
+      if (special?.multi) {
+        for (const key of Object.keys(special.entries)) {
+          delete mcporter.mcpServers[key];
+        }
+      } else {
+        delete mcporter.mcpServers[gemId];
+      }
+      writeMcporter(botId, mcporter);
+      res.end(JSON.stringify({ status: "ok", botId, gemId }));
+    } catch (e) {
       res.end(JSON.stringify({ status: "error", error: e.message }));
     }
     return;

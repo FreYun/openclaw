@@ -111,7 +111,7 @@ find /home/rooot/.openclaw/workspace-main/skills/ -type f \( -name "*.md" -o -na
 |------|-----------|------|
 | `workspace-main/skills/admin-ops/SKILL.md` | 端口、pkill、nohup、auth-profiles.json | 管理员运维职责所需 |
 | `workspace-main/skills/claude-dev-reference/SKILL.md` | localhost、端口、pkill | 开发参考文档 |
-| `workspace/skills/xiaohongshu-mcp/SKILL.md` | `localhost:1806N` | MCP 调用说明 |
+| `workspace/skills/xhs-op/mcp-tools.md` | `localhost:1806N` | MCP 调用说明 |
 | `workspace*/TOOLS.md` | `localhost:1806N`、端口号 | 工具配置必须包含端口 |
 | `CLAUDE.md` | 所有调试相关内容 | 开发文档 |
 

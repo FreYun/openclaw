@@ -3,7 +3,7 @@
   "icon": "📮",
   "slot": "armor",
   "desc": "印务局专属：MCP 服务管理、端口健康监控、发布流水线执行、合规审核",
-  "requires": ["xiaohongshu-mcp"],
+  "requiresMcp": ["xiaohongshu-mcp"],
   "subSkills": [
     {
       "name": "发布工具 API",

@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -22,25 +22,25 @@
 
 ## 💍 风格
 
-### 🍋 清柠檬风格（qingningmeng-style）
+### 🐱 meme发帖风格（meme-content-style）
 
-清新可爱、meme 风格内容创作
+meme爱理财内容风格：persona、写作语气、行情反应模板、日常科普模板
 
-**详细文档**：Read `skills/qingningmeng-style/SKILL.md`
+**详细文档**：Read `skills/meme-content-style/SKILL.md`
 
-### 💡 记录灵感（record-insight）
+### 🎨 meme绘图风格（visual-first-content）
 
-捕捉日常观察与灵感洞察
+图片主导的内容创作框架
 
-**详细文档**：Read `skills/record-insight/SKILL.md`
+**详细文档**：Read `skills/visual-first-content/SKILL.md`
 
 ## 🔧 通用技能
 
-### 🛡️ 合规审核（compliance-review）
+### 📮 定时发稿（scheduled-post）
 
-内置 Sonnet 的独立合规审核服务
+草稿审批 + 投稿管道：合规 → draft-review → 魏忠贤 → 印务局
 
-**详细文档**：Read `skills/compliance-review/SKILL.md`
+**详细文档**：Read `skills/scheduled-post/SKILL.md`
 
 ### 🌐 浏览器基础（browser-base）
 
@@ -48,11 +48,17 @@
 
 **详细文档**：Read `skills/browser-base/SKILL.md`
 
-### 🚨 异常上报（report-incident）
+### ✍️ 小红书写稿经验（xhs-writing）
 
-运行时异常记录与通知魏忠贤
+通用排版、标题、限流防范
 
-**详细文档**：Read `skills/report-incident/SKILL.md`
+**详细文档**：Read `skills/xhs-writing/SKILL.md`
+
+### 🏀 詹姆斯话题库（james-topic-research）
+
+小红书詹姆斯话题热点、评论阵营与蹭热度角度
+
+**详细文档**：Read `skills/james-topic-research/SKILL.md`
 
 ## ⚔️ 研究技能
 
@@ -61,4 +67,22 @@
 新闻数据交叉验证与逻辑检查
 
 **详细文档**：Read `skills/news-factcheck/SKILL.md`
+
+### 💰 资金流向（flow-watch）
+
+北向资金、融资融券、主力流向监控
+
+**详细文档**：Read `skills/flow-watch/SKILL.md`
+
+### 📈 技术分析（technical-analyst）
+
+K线形态、均线、支撑阻力、量价
+
+**详细文档**：Read `skills/technical-analyst/SKILL.md`
+
+### 🗄️ 研究数据库（research-mcp）
+
+金融研究 MCP 数据接口（行情/基金/宏观）
+
+**详细文档**：Read `skills/research-mcp/SKILL.md`
 

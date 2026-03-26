@@ -1,7 +1,7 @@
 {
-  "name": "视觉优先",
+  "name": "meme绘图风格",
   "icon": "🎨",
   "slot": "accessory",
-  "subType": "content",
+  "subType": "image",
   "desc": "图片主导的内容创作框架"
 }

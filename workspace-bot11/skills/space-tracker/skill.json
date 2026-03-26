@@ -1,7 +1,53 @@
 {
-  "name": "航天跟踪",
+  "name": "航天产业链",
   "icon": "🚀",
   "slot": "research",
   "desc": "商业航天发射日历与产业链追踪",
-  "subType": "research"
+  "subType": "research",
+  "subSkills": [
+    {
+      "name": "发射日历维护",
+      "icon": "📅",
+      "file": "launch-calendar-guide.md",
+      "desc": "数据源优先级、日历格式、更新规则"
+    },
+    {
+      "name": "标的跟踪",
+      "icon": "📊",
+      "file": "watchlist-guide.md",
+      "desc": "核心/重点/关注三级标的 + 异动监控 + 星球更新"
+    },
+    {
+      "name": "产业链地图",
+      "icon": "🗺️",
+      "file": "industry-chain-map.md",
+      "desc": "上中下游全景 + 参股关系"
+    },
+    {
+      "name": "市场共识",
+      "icon": "💬",
+      "file": "market-consensus.md",
+      "desc": "雪球/星球核心共识 + 催化节点 + 风险提示"
+    },
+    {
+      "name": "火箭公司速览",
+      "icon": "🏭",
+      "file": "rocket-companies.md",
+      "desc": "六大民营火箭公司估值、进度、节点"
+    },
+    {
+      "name": "内容模板",
+      "icon": "✍️",
+      "file": "content-templates.md",
+      "desc": "发射提醒/周报/事件点评三种模板",
+      "readBefore": "write"
+    },
+    {
+      "name": "质量自检",
+      "icon": "✅",
+      "file": "quality-checklist.md",
+      "desc": "发布前检查清单 + 内容红线",
+      "readBefore": "write"
+    }
+  ]
 }

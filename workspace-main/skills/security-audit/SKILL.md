@@ -198,7 +198,7 @@ find /home/rooot/.openclaw/workspace*/skills/ -name "*.md" -executable 2>/dev/nu
 
 ## 六、注意事项
 
-- **此 skill 仅限咱家（bot_main）使用**，其他 bot 无权执行安全审计
+- **此 skill 仅限咱家（mag1）使用**，其他 bot 无权执行安全审计
 - 发现高危项时**立即上报圣上**，不自行处理
 - 扫描过程中**只读不写**（除了最终报告存档）
 - 白名单需定期更新，新增 admin skill 后记得加入白名单

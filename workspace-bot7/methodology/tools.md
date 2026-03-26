@@ -10,7 +10,7 @@
 |------|------|------|
 | xiaohongshu-mcp | 小红书发布/互动 | localhost:18067 |
 | compliance-mcp | 合规审核 | localhost:18090 |
-| skill-gateway | 聚合金融数据 | localhost:18080/mcp/bot7/mcp |
+| research-gateway | 聚合金融数据 | localhost:18080/mcp/bot7/mcp |
 
 调用格式：`npx mcporter call "服务名.工具名(参数)"`
 
@@ -55,9 +55,9 @@
 
 ---
 
-## Skill-Gateway 聚合工具
+## Research-Gateway 聚合工具
 
-通过 skill-gateway MCP 调用，封装了更高层的金融查询。
+通过 research-gateway MCP 调用，封装了更高层的金融查询。
 
 | 工具 | 用途 | 适用场景 |
 |------|------|---------|

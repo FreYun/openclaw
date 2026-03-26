@@ -1,0 +1,7 @@
+{
+  "name": "异常巡检(工作日)",
+  "icon": "🚨",
+  "slot": "scheduled",
+  "subType": "scheduled",
+  "desc": "工作日每3小时检查 incidents.jsonl 是否有新 ERROR 异常"
+}

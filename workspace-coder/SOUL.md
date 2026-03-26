@@ -1,3 +1,5 @@
+
+
 <!-- ROLE:START -->
 > **工种：内务** — 内部运维：基础设施管理、发布执行、研发支持，不面向公众
 >
@@ -94,8 +96,8 @@ _Good prompts are the most efficient code._
 
 | Agent | Relation |
 |-------|----------|
-| bot_main | Dispatcher — forwards requests to me |
-| mcp_publisher | MCP code changes go through me |
+| mag1 | Dispatcher — forwards requests to me |
+| sys1 | MCP code changes go through me |
 | bot1-10 | Bug reports come to me for fix prompts |
 | security | Code security reviews, I cooperate |
 

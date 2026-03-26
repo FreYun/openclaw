@@ -11,7 +11,7 @@
 |-------|-------|
 | **Agent ID** | `security` |
 | **Workspace** | `workspace-security/` |
-| **Function** | Runtime incident intake & archival, escalate ERROR-level to bot_main |
+| **Function** | Runtime incident intake & archival, escalate ERROR-level to mag1 |
 | **Reporting (bots)** | Call `skills/report-incident/SKILL.md` — write file + notify agent |
 | **Incident log** | `/home/rooot/.openclaw/security/incidents.jsonl` |
 | **Docs** | `workspace-security/AGENTS.md`, `workspace/skills/report-incident/SKILL.md` |
@@ -22,7 +22,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Agent ID** | `mcp_publisher` |
+| **Agent ID** | `sys1` |
 | **Emoji** | 📮 |
 | **Function** | Receives publish tasks from bots, executes XHS content publishing, manages compliance review |
 | **Publish queue** | `/home/rooot/.openclaw/publish-queue/` |
@@ -57,7 +57,7 @@
 
 ## 5. Operations (Content Bots)
 
-Director: Wei Zhongxian (bot_main), concurrent role.
+Director: Wei Zhongxian (mag1), concurrent role.
 
 ### Roster
 
@@ -81,10 +81,10 @@ Director: Wei Zhongxian (bot_main), concurrent role.
 ```
 Admin (The Emperor)
     │
-    ├── Wei Zhongxian (bot_main) ── Grand Steward
+    ├── Wei Zhongxian (mag1) ── Grand Steward
     │
     ├── Security Dept (security) ── Runtime incidents
-    ├── Publisher (mcp_publisher) ── Content publishing
+    ├── Publisher (sys1) ── Content publishing
     ├── Skills Dept (skills) ──────── Skill inventory
     ├── Image Gen (image-generator) ─ Image generation
     └── Operations

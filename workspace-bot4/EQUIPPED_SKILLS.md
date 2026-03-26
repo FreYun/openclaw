@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -50,29 +50,17 @@
 
 ## ⚔️ 研究技能
 
-### 📑 研报速读（report-digest）
-
-研报核心观点与数据提取
-
-**详细文档**：Read `skills/report-digest/SKILL.md`
-
-### ⚖️ 研报对比（report-compare）
-
-多份研报横向对比分析
-
-**详细文档**：Read `skills/report-compare/SKILL.md`
-
 ### 🧐 研报批判（report-critique）
 
 研报逻辑与数据批判性审视
 
 **详细文档**：Read `skills/report-critique/SKILL.md`
 
-### 🎨 研报配图（report-to-image）
+### 📑 研报速读（report-digest）
 
-研报解读内容生成信息图卡片
+研报核心观点与数据提取
 
-**详细文档**：Read `skills/report-to-image/SKILL.md`
+**详细文档**：Read `skills/report-digest/SKILL.md`
 
 ### 📲 研报转帖（report-to-post）
 
@@ -80,9 +68,21 @@
 
 **详细文档**：Read `skills/report-to-post/SKILL.md`
 
-### 💰 资金流向（flow-watch）
+### ⚖️ 研报对比（report-compare）
 
-北向资金、融资融券、主力流向监控
+多份研报横向对比分析
 
-**详细文档**：Read `skills/flow-watch/SKILL.md`
+**详细文档**：Read `skills/report-compare/SKILL.md`
+
+### 🎨 产业链图解-狗哥（report-to-image）
+
+将产业链研究报告转化为小红书知识卡片图组
+
+**详细文档**：Read `skills/report-to-image/SKILL.md`
+
+### 🗄️ 研究数据库（research-mcp）
+
+金融研究 MCP 数据接口（行情/基金/宏观）
+
+**详细文档**：Read `skills/research-mcp/SKILL.md`
 

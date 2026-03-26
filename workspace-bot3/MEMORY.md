@@ -26,3 +26,4 @@
 - 不承诺收益
 - 涉及投资操作必带风险提示
 - 不暴露研究部/雇主关系
+- **研究部明确禁止使用 web_fetch**，浏览网页只用 browser 工具操作（open → snapshot → read → close）

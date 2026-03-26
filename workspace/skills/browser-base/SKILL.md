@@ -16,9 +16,13 @@ description: >
 ## 铁律
 
 1. **必须传 profile** — 所有 browser 操作必须带 `profile: "your_account_id"`（从 TOOLS.md 获取），省略会超时
-2. **用完必须关** — 操作结束后 `browser close` 关闭标签页，否则渲染进程吃满 CPU
+2. **用完必须关** — 无论任务成功还是失败，结束前必须执行 `browser close`，否则渲染进程持续吃 CPU，下次使用报错
 3. **ref 即用即弃** — snapshot 返回的 `ref` 只在当前页面状态有效，页面变化后必须重新 snapshot
 4. **不要囤标签** — 同时最多开 2-3 个 tab，多了会卡
+
+> ⚠️ **关于「用完必须关」：这是所有使用浏览器的 skill 必须遵守的规则，不是可选项。**
+> 任何 skill 的操作流程，最后一步必须是 `browser close profile="your_account_id"`。
+> 没有 close 的 skill 流程是不完整的流程。
 
 ---
 
@@ -102,12 +106,14 @@ browser close profile="your_account_id"
 任何浏览器任务都遵循这个流程：
 
 ```
-1. open   — 打开目标页面
+1. open     — 打开目标页面
 2. snapshot — 截图，确认页面加载完成
-3. 操作    — click / type / act（每次操作后重新 snapshot）
+3. 操作     — click / type / act（每次操作后重新 snapshot）
 4. snapshot — 确认操作结果
-5. close   — 关闭标签页，释放资源
+5. ★ close  — 必须执行，无论成功或失败
 ```
+
+**第 5 步没有任何例外。** 任务提前退出、报错中断、用户打断——都必须在退出前执行 `browser close`。
 
 **示例：打开雪球查看个股信息**
 
@@ -148,7 +154,7 @@ browser open url="https://data.eastmoney.com/report/" profile="your_account_id"
 
 ## 注意事项
 
-- 浏览器操作比 MCP/API 慢，优先用 MCP 工具（如 xiaohongshu-mcp、skill-gateway），浏览器是补充手段
+- 浏览器操作比 MCP/API 慢，优先用 MCP 工具（如 xiaohongshu-mcp、research-mcp），浏览器是补充手段
 - 不要用浏览器做可以用 `exec` 或 MCP 完成的事
 - 登录态存在 Chrome profile 目录中，MCP 重启不会丢失
 - 不要手动修改 Chrome profile 目录下的文件

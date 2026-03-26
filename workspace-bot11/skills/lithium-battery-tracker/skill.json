@@ -1,7 +1,53 @@
 {
-  "name": "锂电跟踪",
+  "name": "锂电产业链",
   "icon": "🔋",
   "slot": "research",
   "desc": "锂电供应链产能与价格追踪",
-  "subType": "research"
+  "subType": "research",
+  "subSkills": [
+    {
+      "name": "产业链地图",
+      "icon": "🗺️",
+      "file": "industry-chain-map.md",
+      "desc": "上中下游全景 + 价格传导链 + 成本拆解 + 全球锂资源"
+    },
+    {
+      "name": "品种跟踪",
+      "icon": "📊",
+      "file": "variety-tracking-guide.md",
+      "desc": "核心/重点/关注三级品种 + 五维度数据 + 碳酸锂期货速查"
+    },
+    {
+      "name": "分析框架",
+      "icon": "🧠",
+      "file": "analysis-framework.md",
+      "desc": "碳酸锂供需分析 + 四大材料框架 + 季节性 + 个股框架"
+    },
+    {
+      "name": "投资跟踪",
+      "icon": "📈",
+      "file": "investment-tracking-guide.md",
+      "desc": "投资主题 + 股票标的 + 异动监控 + 周期定位"
+    },
+    {
+      "name": "知识库维护",
+      "icon": "📁",
+      "file": "knowledge-base-guide.md",
+      "desc": "memory/lithium-battery/ 文件结构 + price-tracker格式 + 维护规则"
+    },
+    {
+      "name": "内容模板",
+      "icon": "✍️",
+      "file": "content-templates.md",
+      "desc": "每日快讯/周报/品种深度三种模板",
+      "readBefore": "write"
+    },
+    {
+      "name": "质量自检",
+      "icon": "✅",
+      "file": "quality-checklist.md",
+      "desc": "发布前检查清单 + 内容红线",
+      "readBefore": "write"
+    }
+  ]
 }

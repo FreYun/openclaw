@@ -1,0 +1,8 @@
+{
+  "name": "小天封面生成",
+  "icon": "🎨",
+  "slot": "accessory",
+  "subType": "image",
+  "desc": "小天爱黄金专属封面图生成：猫咪角色形象、卡片/场景两套模板、配色表情速查、生图调用",
+  "requiresMcp": ["image-gen-mcp"]
+}

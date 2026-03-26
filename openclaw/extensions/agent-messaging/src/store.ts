@@ -10,6 +10,7 @@ export interface MessageStore {
   get(messageId: string): Promise<AgentMessage | null>;
   updateStatus(messageId: string, status: MessageStatus): Promise<void>;
   listInbox(agentId: string, limit?: number): Promise<AgentMessage[]>;
+  listConversation(agentA: string, agentB: string, limit?: number): Promise<AgentMessage[]>;
   disconnect(): Promise<void>;
 }
 
@@ -18,6 +19,11 @@ export function createStore(redisUrl = "redis://127.0.0.1:6379"): MessageStore {
 
   function detailKey(id: string) {
     return `${PREFIX}:detail:${id}`;
+  }
+
+  function convStreamKey(a: string, b: string): string {
+    const [lo, hi] = [a, b].sort();
+    return `${PREFIX}:conv:${lo}:${hi}`;
   }
 
   async function save(msg: AgentMessage): Promise<void> {
@@ -48,6 +54,16 @@ export function createStore(redisUrl = "redis://127.0.0.1:6379"): MessageStore {
     );
     pipeline.xadd(
       `${PREFIX}:outbox:${msg.from}`,
+      "MAXLEN",
+      "~",
+      String(STREAM_MAXLEN),
+      "*",
+      "message_id",
+      msg.message_id,
+    );
+    // Append to per-pair conversation stream for shared history
+    pipeline.xadd(
+      convStreamKey(msg.from, msg.to),
       "MAXLEN",
       "~",
       String(STREAM_MAXLEN),
@@ -99,9 +115,28 @@ export function createStore(redisUrl = "redis://127.0.0.1:6379"): MessageStore {
     return messages;
   }
 
+  async function listConversation(agentA: string, agentB: string, limit = 10): Promise<AgentMessage[]> {
+    const entries = await redis.xrevrange(
+      convStreamKey(agentA, agentB),
+      "+",
+      "-",
+      "COUNT",
+      limit,
+    );
+    const messages: AgentMessage[] = [];
+    for (const [, fields] of entries) {
+      const msgId = fields[1];
+      if (msgId) {
+        const msg = await get(msgId);
+        if (msg) messages.push(msg);
+      }
+    }
+    return messages.reverse(); // chronological order
+  }
+
   async function disconnect(): Promise<void> {
     await redis.quit();
   }
 
-  return { save, get, updateStatus, listInbox, disconnect };
+  return { save, get, updateStatus, listInbox, listConversation, disconnect };
 }

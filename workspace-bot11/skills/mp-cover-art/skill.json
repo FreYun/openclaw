@@ -1,0 +1,10 @@
+{
+  "name": "公众号配图生成",
+  "icon": "🖼️",
+  "slot": "accessory",
+  "subType": "image",
+  "desc": "公众号投资文章封面配图：图解信息图风格、四种文章类型模板、产业主题配色、生图调用流程",
+  "requiresMcp": [
+    "image-gen-mcp"
+  ]
+}

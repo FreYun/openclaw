@@ -36,7 +36,7 @@
 
 
 ### 4. 行业分析贴
-- 基于 `workspace/reports/hotspot/YYYY-MM-DD-帖子内容.md` 中的雪球讨论，整理行业观点和市场情绪。
+- 基于 `memory/posts/YYYY-MM-DD-帖子内容.md` 中的雪球讨论，整理行业观点和市场情绪。
 
 
 ### 5. 明日展望
@@ -72,16 +72,16 @@
 - 在搜索结果中点击"讨论"标签
 - 逐个点击帖子阅读内容，**至少阅读5个讨论帖**
 - 每读完一个帖子，记录帖子的所有内容
-- 所有帖子读完后，将讨论记录保存到 `workspace/reports/hotspot/YYYY-MM-DD-帖子内容.md`
+- 所有帖子读完后，将讨论记录保存到 `memory/posts/YYYY-MM-DD-帖子内容.md`
 
 ### Step 5：生成报告
 
 - 按上方「报告结构」组装完整报告
-- 保存到 `workspace/reports/hotspot/YYYY-MM-DD.md`
+- 保存到 `memory/posts/YYYY-MM-DD.md`
 
 ## 输出格式
 
-报告以 Markdown 格式输出，存放路径：`workspace/reports/hotspot/YYYY-MM-DD.md`
+报告以 Markdown 格式输出，存放路径：`memory/posts/YYYY-MM-DD.md`
 
 标题格式：`# 每日热点解读 - YYYY年MM月DD日`
 
@@ -93,7 +93,7 @@
 5. 报告时间建议在收盘后（15:00之后）生成，确保数据完整
 
 ## 相关文件
-- 报告存放目录：`workspace/reports/hotspot/`
+- 报告存放目录：`memory/posts/`
 
 ---
 

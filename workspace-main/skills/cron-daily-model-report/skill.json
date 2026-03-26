@@ -1,0 +1,7 @@
+{
+  "name": "模型日报",
+  "icon": "🧠",
+  "slot": "scheduled",
+  "subType": "scheduled",
+  "desc": "每天通报各 bot 当前使用的模型序列号"
+}

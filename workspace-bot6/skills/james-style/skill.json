@@ -4,5 +4,5 @@
   "slot": "accessory",
   "subType": "content",
   "desc": "老詹小红书写稿手册：硬卡点、写作心法、正文模板、语气措辞、排版、标签、评论互动",
-  "requires": []
+  "requiresMcp": []
 }

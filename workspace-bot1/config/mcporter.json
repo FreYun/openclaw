@@ -1,13 +1,13 @@
 {
     "mcpServers": {
         "xiaohongshu-mcp": {
-            "url": "http://localhost:18061/mcp"
+            "url": "http://localhost:18060/mcp/bot1"
         },
         "image-gen-mcp": {
             "url": "http://localhost:18085/mcp"
         },
-        "research-gateway": {
-            "url": "http://localhost:18080/mcp/bot1/mcp"
+        "research-mcp": {
+            "url": "http://research-mcp.jijinmima.cn/mcp"
         }
     },
     "imports": []

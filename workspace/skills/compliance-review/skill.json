@@ -3,7 +3,7 @@
   "icon": "🛡️",
   "slot": "utility",
   "desc": "内置 Sonnet 的独立合规审核服务",
-  "requires": [
+  "requiresMcp": [
     "compliance-mcp"
   ],
   "subType": "duty"

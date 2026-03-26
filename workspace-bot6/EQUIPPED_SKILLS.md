@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -36,12 +36,6 @@
 
 ## 🔧 通用技能
 
-### 🛡️ 合规审核（compliance-review）
-
-内置 Sonnet 的独立合规审核服务
-
-**详细文档**：Read `skills/compliance-review/SKILL.md`
-
 ### 🌐 浏览器基础（browser-base）
 
 浏览器使用规范：profile 管理、标签页生命周期、超时处理
@@ -53,6 +47,18 @@
 运行时异常记录与通知魏忠贤
 
 **详细文档**：Read `skills/report-incident/SKILL.md`
+
+### ✍️ 小红书写稿经验（xhs-writing）
+
+通用排版、标题、限流防范
+
+**详细文档**：Read `skills/xhs-writing/SKILL.md`
+
+### 🏀 詹姆斯话题库（james-topic-research）
+
+小红书詹姆斯话题热点、评论阵营与蹭热度角度
+
+**详细文档**：Read `skills/james-topic-research/SKILL.md`
 
 ## ⚔️ 研究技能
 

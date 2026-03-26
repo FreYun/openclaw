@@ -1,0 +1,23 @@
+{
+  "name": "黄金盯盘",
+  "icon": "🪙",
+  "slot": "research",
+  "subType": "research",
+  "desc": "黄金实时行情追踪与收盘复盘，区分盘中/收盘数据源",
+  "requiresMcp": ["research-mcp"],
+  "subSkills": [
+    {
+      "name": "数据源与时效",
+      "icon": "⏱️",
+      "file": "data-sources.md",
+      "desc": "盘中实时 vs 收盘延迟数据源对照表，避免用错数据"
+    },
+    {
+      "name": "内容模板",
+      "icon": "✍️",
+      "file": "content-templates.md",
+      "desc": "盘中快报、收盘复盘、周度总结三种模板",
+      "readBefore": "write"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -85,4 +85,10 @@
 估值、财务、市场情绪快照
 
 **详细文档**：Read `skills/research-stock/SKILL.md`
+
+## 👢 靴子
+
+### 📝 老K发帖SOP（laok-posting-sop）
+
+**详细文档**：Read `skills/laok-posting-sop/SKILL.md`
 

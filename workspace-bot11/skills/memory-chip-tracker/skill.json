@@ -1,7 +1,53 @@
 {
-  "name": "存储芯片跟踪",
+  "name": "存储芯片产业链",
   "icon": "💾",
   "slot": "research",
   "desc": "存储芯片产业周期与供需追踪",
-  "subType": "research"
+  "subType": "research",
+  "subSkills": [
+    {
+      "name": "产业链地图",
+      "icon": "🗺️",
+      "file": "industry-chain-map.md",
+      "desc": "上中下游全景 + AI存储分层 + 价格传导链 + 全球竞争格局"
+    },
+    {
+      "name": "品种跟踪",
+      "icon": "📊",
+      "file": "variety-tracking-guide.md",
+      "desc": "核心/重点/关注三级品种 + 五维度数据 + DRAM/NAND/HBM/NOR"
+    },
+    {
+      "name": "分析框架",
+      "icon": "🧠",
+      "file": "analysis-framework.md",
+      "desc": "周期分析逻辑 + 三重超级周期 + 国产替代框架 + 季节性 + 周期定位"
+    },
+    {
+      "name": "投资跟踪",
+      "icon": "📈",
+      "file": "investment-tracking-guide.md",
+      "desc": "五大投资主题 + 股票标的 + 个股框架 + 异动监控"
+    },
+    {
+      "name": "知识库维护",
+      "icon": "📁",
+      "file": "knowledge-base-guide.md",
+      "desc": "memory/memory-chip/ 文件结构 + price-tracker格式 + 维护规则 + 数据日历"
+    },
+    {
+      "name": "内容模板",
+      "icon": "✍️",
+      "file": "content-templates.md",
+      "desc": "每日快讯/周报/品类深度三种模板",
+      "readBefore": "write"
+    },
+    {
+      "name": "质量自检",
+      "icon": "✅",
+      "file": "quality-checklist.md",
+      "desc": "发布前检查清单 + 内容红线",
+      "readBefore": "write"
+    }
+  ]
 }

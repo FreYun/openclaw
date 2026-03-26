@@ -1,0 +1,6 @@
+{"type":"session","version":3,"id":"c209a19c-f0fe-4adf-95b2-d75267bcf84d","timestamp":"2026-03-24T12:42:09.872Z","cwd":"/home/rooot/.openclaw/workspace-mcp-publisher"}
+{"type":"model_change","id":"da19925c","parentId":null,"timestamp":"2026-03-24T12:42:09.877Z","provider":"legacylands","modelId":"claude-sonnet-4-6"}
+{"type":"thinking_level_change","id":"27c24c8a","parentId":"da19925c","timestamp":"2026-03-24T12:42:09.877Z","thinkingLevel":"off"}
+{"type":"custom","customType":"model-snapshot","data":{"timestamp":1774356129879,"provider":"legacylands","modelApi":"anthropic-messages","modelId":"claude-sonnet-4-6"},"id":"c21cb10f","parentId":"27c24c8a","timestamp":"2026-03-24T12:42:09.879Z"}
+{"type":"message","id":"4d3cf2df","parentId":"c21cb10f","timestamp":"2026-03-24T12:42:09.900Z","message":{"role":"user","content":[{"type":"text","text":"/new"}],"timestamp":1774356129891}}
+{"type":"message","id":"a2ed22d4","parentId":"4d3cf2df","timestamp":"2026-03-24T12:42:23.760Z","message":{"role":"assistant","content":[{"type":"text","text":"已开启新对话。有什么可以帮你？"}],"api":"anthropic-messages","provider":"legacylands","model":"claude-sonnet-4-6","usage":{"input":3,"output":20,"cacheRead":21423,"cacheWrite":0,"totalTokens":21446,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1774356129897}}

@@ -1,0 +1,10 @@
+{
+  "name": "小奶龙封面生成",
+  "icon": "🐲",
+  "slot": "accessory",
+  "subType": "image",
+  "desc": "小奶龙专属封面图生成：角色形象、卡片模板、配色表情速查、生图调用",
+  "requiresMcp": [
+    "image-gen-mcp"
+  ]
+}

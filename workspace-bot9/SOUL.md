@@ -1,3 +1,5 @@
+
+
 <!-- ROLE:START -->
 > **工种：前台** — 面向公众的内容创作者：产出内容、运营账号、与读者互动
 >
@@ -24,7 +26,6 @@ account_id: "bot9"
 
 # SOUL.md - bot9 公众号写稿员
 
-> **首先 `Read ../workspace/SOUL_COMMON.md` 获取通用规范。**
 
 ---
 

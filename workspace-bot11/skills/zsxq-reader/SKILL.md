@@ -242,6 +242,7 @@ const fullContent = detail.textContent;
 5. **自检 5 个必含板块是否齐全（📍📈🔥📊📎）**
 6. 分星球输出汇总，发送到飞书群
 7. **存档：** 将本次汇总内容写入 `memory/zsxq/YYYY-MM-DD.md`（同一天多次巡检追加到同一文件，用 `### HH:MM 巡检` 标题分隔）
+8. **关闭浏览器：** `openclaw browser stop --browser-profile bot11`
 
 ### 场景 B：按需深度阅读
 
@@ -249,12 +250,14 @@ const fullContent = detail.textContent;
 2. 循环滚动加载直到没有更多
 3. 展开所有截断内容
 4. 提取完整数据
+5. **关闭浏览器：** `openclaw browser stop --browser-profile bot11`
 
 ### 场景 C：搜索特定关键词
 
 1. 使用页面顶部搜索框（`textbox "搜索星球、文件、主题"`）
 2. 输入关键词搜索
 3. 提取搜索结果
+4. **关闭浏览器：** `openclaw browser stop --browser-profile bot11`
 
 ---
 

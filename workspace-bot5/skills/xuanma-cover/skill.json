@@ -4,7 +4,7 @@
   "slot": "accessory",
   "subType": "image",
   "desc": "宣妈专属封面图生成：角色形象、卡片/写实两套模板、配色表情速查、生图调用",
-  "requires": [
+  "requiresMcp": [
     "image-gen-mcp"
   ]
 }

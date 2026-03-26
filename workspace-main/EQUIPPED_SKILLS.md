@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -18,27 +18,15 @@
 
 ## 🔧 通用技能
 
-### 📖 Claude 开发参考（claude-dev-reference）
+### 📋 管理运维（admin-ops）
 
-XHS MCP 源码结构、调试方法、数据路径速查
+agent 状态巡检、异常处理、变更建议撰写
 
-**详细文档**：Read `skills/claude-dev-reference/SKILL.md`
+**详细文档**：Read `skills/admin-ops/SKILL.md`
 
 ### 🔒 安全审计（security-audit）
 
 安全巡检、漏洞评估、权限审查
 
 **详细文档**：Read `skills/security-audit/SKILL.md`
-
-### 🌐 浏览器基础（browser-base）
-
-浏览器使用规范：profile 管理、标签页生命周期、超时处理
-
-**详细文档**：Read `skills/browser-base/SKILL.md`
-
-### 📋 管理运维（admin-ops）
-
-agent 状态巡检、异常处理、变更建议撰写
-
-**详细文档**：Read `skills/admin-ops/SKILL.md`
 

@@ -1,7 +1,7 @@
 {
   "name": "知识星球",
   "icon": "🌐",
-  "slot": "utility",
+  "slot": "scheduled",
   "desc": "知识星球情报采集与摘要",
   "subType": "scheduled"
 }

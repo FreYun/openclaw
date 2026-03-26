@@ -226,7 +226,7 @@ TRACE_JSON="[{\"agent\":\"${ACCOUNT_ID}\",\"reply_channel\":\"feishu\",\"reply_t
 redis-cli HSET "agentmsg:detail:${MSG_ID}" \
     message_id "$MSG_ID" \
     from "$ACCOUNT_ID" \
-    to "mcp_publisher" \
+    to "sys1" \
     content "$MSG_CONTENT" \
     type "request" \
     trace "$TRACE_JSON" \
@@ -236,12 +236,12 @@ redis-cli HSET "agentmsg:detail:${MSG_ID}" \
     status "pending" > /dev/null 2>&1
 
 redis-cli EXPIRE "agentmsg:detail:${MSG_ID}" 604800 > /dev/null 2>&1
-redis-cli XADD "agentmsg:inbox:mcp_publisher" MAXLEN "~" 1000 "*" message_id "$MSG_ID" > /dev/null 2>&1
+redis-cli XADD "agentmsg:inbox:sys1" MAXLEN "~" 1000 "*" message_id "$MSG_ID" > /dev/null 2>&1
 redis-cli XADD "agentmsg:outbox:${ACCOUNT_ID}" MAXLEN "~" 1000 "*" message_id "$MSG_ID" > /dev/null 2>&1
 
-# Wake mcp_publisher agent (fire-and-forget, dedicated per-peer session)
-nohup openclaw agent --agent mcp_publisher \
-    --session-key "agent:mcp_publisher:agent:${ACCOUNT_ID}" \
+# Wake sys1 agent (fire-and-forget, dedicated per-peer session)
+nohup openclaw agent --agent sys1 \
+    --session-key "agent:sys1:agent:${ACCOUNT_ID}" \
     --message "[MSG:${MSG_ID}] from=${ACCOUNT_ID}: ${MSG_CONTENT}" \
     > /dev/null 2>&1 &
 

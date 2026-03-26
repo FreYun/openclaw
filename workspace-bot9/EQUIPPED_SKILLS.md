@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -26,7 +26,11 @@
 **详细文档**：Read `skills/daily-market-recap/SKILL.md`
 
 子模块：
-- ✍️ **写作指南**（`skills/daily-market-recap/每日复盘-写作指南.md`） — 信息采集流程、四段式结构详解、新闻摘录铁律、语言风格、质量自检
+- ✍️ **写作指南**（`skills/daily-market-recap/每日复盘-写作指南.md`） — 四段式结构详解、新闻摘录铁律、语言风格、质量自检（写稿必读）
+- 📈 **行情数据获取**（`skills/daily-market-recap/行情数据获取.md`） — Tushare API + 浏览器 + research-mcp 三步取数流程（16:00前后策略不同）
+- 💰 **基金推荐规则**（`skills/daily-market-recap/基金推荐规则.md`） — 基金选取规则、优先级、展示格式
+- 🏦 **基金池**（`skills/daily-market-recap/基金池.md`） — 天天基金研究部基金池本地副本（每月更新）
+- 📎 **引用来源管理**（`skills/daily-market-recap/引用来源管理.md`） — 观点归因规则、引用清单格式
 
 ## 🔧 通用技能
 

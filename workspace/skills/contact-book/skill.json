@@ -1,0 +1,6 @@
+{
+  "name": "通讯小本本",
+  "icon": "📇",
+  "desc": "通讯录：群聊 Chat ID、Agent ID、用户飞书 open_id 对照表",
+  "infrastructure": true
+}

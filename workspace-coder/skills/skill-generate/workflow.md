@@ -2,154 +2,103 @@
 
 ---
 
-## Step 1: 需求分析
-
-收到"创建 skill"需求后，先确认以下信息：
+## Step 1: 确认需求
 
 | 必确认 | 说明 | 示例 |
 |--------|------|------|
-| **skill 名称** | 英文小写 + 连字符 | `earnings-digest`, `xuanma-cover` |
-| **中文名** | 4-8 字 | 财报横评, 宣妈封面生成 |
-| **slot** | 6 种枚举之一 | `research` |
-| **subType** | accessory/utility/research 必填 | `research` |
-| **scope** | 通用（workspace/skills/）还是 bot 专属（workspace-botN/skills/） | 通用 |
-| **是否依赖 MCP** | requires 字段 | `["xiaohongshu-mcp"]` 或 `[]` |
-| **是否需要 subSkills** | 内容多时拆分 | 有/无 |
+| **skill ID** | 英文小写+连字符，即目录名 | `earnings-digest` |
+| **中文名** | 4-8 字 | 财报横评 |
+| **slot** | 7 种之一 | `research` |
+| **subType** | accessory/utility/research/scheduled 必填 | `research` |
+| **scope** | 通用 or bot 专属 | 通用 |
+| **MCP 依赖** | requires 字段 | `["xiaohongshu-mcp"]` 或无 |
+| **是否需要 subSkills** | 内容多时拆分子文档 | 有/无 |
 
-**如果 Admin 没给完整信息** → 用 Scope Lock 格式确认后再执行。
+如果信息不全，先问 Admin 确认。
 
 ---
 
-## Step 2: 扫描现有 skill
+## Step 2: 创建 skill.json（必须第一步）
 
-避免重复造轮子：
+**这是最关键的步骤，没有 skill.json 的技能不会被系统识别。**
+
+确定目标目录：
+- 通用 skill → `/home/rooot/.openclaw/workspace/skills/{skill-id}/`
+- bot 专属 → `/home/rooot/.openclaw/workspace-botN/skills/{skill-id}/`
+
+直接创建 skill.json：
+
+```json
+{
+  "name": "中文名",
+  "icon": "📊",
+  "slot": "research",
+  "subType": "research",
+  "desc": "一句话描述"
+}
+```
+
+字段规则：
+- `name` — 必填，中文简称
+- `icon` — 必填，单个 Emoji，不要和现有技能重复
+- `slot` — 必填，7 种之一：helm/armor/accessory/utility/research/boots/scheduled
+- `subType` — accessory、utility、research、scheduled 的技能必填，helm/armor/boots 不填
+- `desc` — 必填，一句话，不超过 30 字
+- `requires` — 可选，依赖的宝石 ID 数组
+- `infrastructure` — 可选，true 表示基础层不可装备
+- `subSkills` — 可选，子文档列表
+
+**创建后立即验证：**
+```bash
+python3 -c "import json; print(json.load(open('skill.json')))"
+```
+
+---
+
+## Step 3: 创建 SKILL.md
+
+这是 bot 执行技能时实际读取的文档。
+
+结构要求：
+1. 标题 + 一句话简介（与 skill.json desc 一致）
+2. 子文档索引表（如有 subSkills）
+3. 铁律/规则
+4. 具体步骤/流程（可执行的，不是概念描述）
+5. 安全/注意事项
+
+控制在 200 行以内。
+
+---
+
+## Step 4: 创建 SubSkill 文件（如有）
+
+每个 subSkill 文件：
+- 标题匹配 skill.json 中的 subSkill name
+- 包含可执行的具体步骤
+- 不重复 SKILL.md 的内容
+- 控制在 150 行以内
+
+---
+
+## Step 5: 创建 symlink（通用 skill 时）
 
 ```bash
-# 查看现有 skill 列表
-ls /home/rooot/.openclaw/workspace/skills/
-ls /home/rooot/.openclaw/workspace-bot*/skills/
-
-# 看是否已有类似 skill
-grep -r "desc.*关键词" /home/rooot/.openclaw/workspace/skills/*/skill.json
-```
-
----
-
-## Step 3: 生成文件
-
-通过 Claude Code (tmux) 生成以下文件：
-
-### 3a. skill.json
-
-Prompt 模板：
-
-```
-Goal: Create skill.json for a new skill called "{skill-id}" in {target-dir}.
-
-Files: {target-dir}/{skill-id}/skill.json
-
-Context:
-- This is an OpenClaw skill definition file
-- Follow the schema from META-SKILL-README.md exactly
-
-Constraint:
-- name: "{中文名}"
-- icon: "{emoji}"
-- slot: "{slot}"
-- subType: "{subType}"  (omit for helm/armor/boots)
-- desc: "{一句话描述}"
-- requires: [{依赖}]  (omit if none)
-{如果有 subSkills:}
-- subSkills: [每个子文档的 name/icon/file/desc]
-
-Don't:
-- Do NOT add any fields not in the META-SKILL-README schema
-- Do NOT create any other files yet
-
-Acceptance: `python3 -c "import json; json.load(open('{target-dir}/{skill-id}/skill.json'))"` succeeds.
-```
-
-### 3b. SKILL.md
-
-Prompt 模板：
-
-```
-Goal: Create SKILL.md for the "{skill-id}" skill in {target-dir}/{skill-id}/.
-
-Files: {target-dir}/{skill-id}/SKILL.md
-
-Context:
-- skill.json already exists: {粘贴 skill.json 内容}
-- This is the main documentation file that bots read when executing the skill
-- Follow the structure: 简介 → 子文档索引(如有) → 铁律 → 流程/用法 → 安全/注意事项
-
-Constraint:
-- Start with a one-line description matching skill.json desc
-- If subSkills exist, include a 子文档索引 table
-- Include practical step-by-step instructions, not just concepts
-- Include code examples where relevant (MCP calls, scripts, etc.)
-- Keep it under 200 lines
-
-Don't:
-- Do NOT create subSkill files yet (will do separately)
-- Do NOT include content that belongs in subSkill files
-- Do NOT add placeholder/TODO sections
-```
-
-### 3c. SubSkill 文件（如有）
-
-逐个生成，每个文件一个 prompt：
-
-```
-Goal: Create "{subskill-file}" for the "{skill-id}" skill.
-
-Files: {target-dir}/{skill-id}/{subskill-file}
-
-Context:
-- Parent skill: {粘贴 skill.json}
-- Main SKILL.md: {粘贴 SKILL.md 关键段落}
-- This subSkill covers: {子文档描述}
-
-Constraint:
-- Start with 标题（匹配 skill.json 中的 subSkill name）
-- Include actionable steps, not just guidelines
-- Reference parent SKILL.md for cross-cutting rules
-- Keep it under 150 lines
-
-Don't:
-- Do NOT duplicate content from SKILL.md
-- Do NOT create additional files
-```
-
----
-
-## Step 4: 创建 symlink（通用 skill 时）
-
-如果是通用 skill，给需要的 bot 创建 symlink：
-
-```bash
-# 示例：给所有 bot 添加
+# 给所有 bot 添加
 for i in 1 2 3 4 5 6 7 8 9 10; do
   ln -s ../../workspace/skills/{skill-id} \
     /home/rooot/.openclaw/workspace-bot${i}/skills/{skill-id}
 done
-
-# 或只给特定 bot
-ln -s ../../workspace/skills/{skill-id} \
-  /home/rooot/.openclaw/workspace-bot7/skills/{skill-id}
 ```
 
 ---
 
-## Step 5: 验证
+## Step 6: 验证
 
-Read [validation.md](validation.md) — 跑验收清单。
+Read [validation.md](validation.md)，逐条检查。
 
----
-
-## Step 6: 通知
-
-告诉 Admin：
-- 生成了哪些文件
-- 放在哪个目录
-- 需要在 dashboard 点 SYNC 才能装备
+重点：
+- [ ] skill.json 存在且可被 JSON.parse
+- [ ] slot 值在 7 种枚举内
+- [ ] 需要 subType 的 slot 已填 subType
+- [ ] SKILL.md 存在
+- [ ] 告诉 Admin 去 dashboard 点 SYNC

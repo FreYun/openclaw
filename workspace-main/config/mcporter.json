@@ -1,7 +1,7 @@
 {
     "mcpServers": {
         "xiaohongshu-mcp": {
-            "url": "http://localhost:18060/mcp"
+            "url": "http://localhost:18060/mcp/bot_main"
         }
     },
     "imports": []

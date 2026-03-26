@@ -1,6 +1,6 @@
 # Meta Skill README — 技能创建指南
 
-> 本文档是装备系统的完整参考手册。新建技能时，照着 `skill.json` 模板填写即可。
+> 本文档是EQS的完整参考手册。新建技能时，照着 `skill.json` 模板填写即可。
 
 ---
 
@@ -13,7 +13,8 @@
   "slot": "research",             // 必填（除非 infrastructure），见下方枚举
   "desc": "一句话描述这个技能做什么",  // 必填
   "subType": "research",          // 部分 slot 必填，见下方枚举
-  "requires": ["xiaohongshu-mcp"],// 可选，依赖的宝石（MCP 服务）
+  "requiresMcp": ["xiaohongshu-mcp"],// 可选，依赖的宝石（MCP 服务）
+  "requiresSkills": ["contact-book"], // 可选，依赖的其他 skill（装备时校验）
   "infrastructure": true,         // 可选，true = 基础层，不可装备
   "subSkills": [                  // 可选，技能子文档
     {
@@ -38,11 +39,14 @@
 | `helm` | 头盔 | ⛑️ | 1 | 无 | 工种：决定 bot 的角色定位 |
 | `armor` | 衣服 | 👔 | 1 | 无 | 职业：主要工作能力 |
 | `accessory` | 风格 | 💍 | 2 | **必填** | 内容风格 / 画图风格 |
-| `utility` | 通用技能 | 🔧 | 4 | **必填** | 职能工具 / 定时任务 |
+| `utility` | 通用技能 | 🔧 | 4 | **必填** | 职能工具 |
 | `research` | 研究技能 | ⚔️ | 6 | **必填** | 研究分析 / 通识参考 |
 | `boots` | 靴子 | 👢 | 1 | 无 | 策略：行为策略或运营方针 |
+| `scheduled` | 定时任务 | ⏰ | 6/20 | `scheduled` | 定时执行的技能，不在装备UI显示，通过⏰面板管理 |
 
 > 特殊槽 `accessory-soul`（灵魂）自动填充 SOUL.md，不可拆卸，不需要 skill.json。
+>
+> `scheduled` 槽数动态：管理工种（helm=management）20个，其他工种 6 个。
 
 ### subType 枚举
 
@@ -51,9 +55,11 @@
 | **accessory** | `content` | 内容风格 | ✍️ |
 | **accessory** | `image` | 画图风格 | 🎨 |
 | **utility** | `duty` | 职能 | ⚙️ |
-| **utility** | `scheduled` | 定时任务 | ⏰ |
+| **utility** | `material` | 素材 | 📦 |
+| **utility** | `craft` | 手艺 | ✏️ |
 | **research** | `research` | 研究分析 | 📊 |
 | **research** | `general` | 通识参考 | 📚 |
+| **scheduled** | `scheduled` | 定时任务 | ⏰ |
 
 > `helm`、`armor`、`boots` 无 subType，不要填。
 
@@ -71,9 +77,21 @@
 | `xiaohongshu-mcp` | 小红书 MCP | per-bot（端口 18060-18070） |
 | `image-gen-mcp` | 图片生成 MCP | shared（端口 18085） |
 | `compliance-mcp` | 合规审核 MCP | shared（端口 18090） |
-| `research-gateway` | 研究数据网关 | per-bot（端口 18080） |
+| `research-mcp` | 研究数据网关 | per-bot（端口 18080） |
 
-不依赖任何 MCP 的技能可以省略 `requires` 或写 `"requires": []`。
+不依赖任何 MCP 的技能可以省略 `requiresMcp` 或写 `"requiresMcp": []`。
+
+### 技能间依赖（requiresSkills）
+
+当 skill A 需要引用 skill B 的内容时，用 `requiresSkills` 声明：
+
+```json
+"requiresSkills": ["contact-book"]
+```
+
+- 装备时校验：依赖的 skill 必须在该 bot 的 `workspace-botN/skills/` 下存在（symlink 或真实目录）
+- 卸装保护：被依赖的 skill 不能在依赖方还装备时被卸下
+- Tooltip 展示：依赖的 skill 以 icon + name 徽章显示
 
 ---
 
@@ -132,11 +150,15 @@
 | `compliance-review` | 合规审核 | 独立合规审核服务 | compliance-mcp |
 | `report-incident` | 异常上报 | 运行时异常记录与通知 | — |
 
-**subType: `scheduled`（定时任务 ⏰）**
+**subType: `material`（素材 📦）**
 
 | skill ID | name | desc |
 |----------|------|------|
-| `zsxq-reader` | 知识星球 | 知识星球情报采集与摘要 |
+| `james-topic-research` | 詹姆斯话题库 | 小红书詹姆斯话题热点与蹭热度角度（bot6 专属） |
+
+**subType: `craft`（手艺 ✏️）**
+
+> 暂无，写稿经验、踩坑教训等技能可归入此类。
 
 ### ⚔️ research（研究技能）— 6 槽
 
@@ -175,6 +197,19 @@
 ### 👢 boots（策略）— 1 槽
 
 目前无现有技能。
+
+### ⏰ scheduled（定时任务）— 6/20 槽
+
+> 不在装备 UI 显示，通过 agent chip 上的 ⏰ 按钮管理。管理工种（management）20 槽，其他 6 槽。
+
+| skill ID | name | desc |
+|----------|------|------|
+| `cron-bot-main-patrol` | 全面巡查 | 印务局登录状态、技能部汇报、编辑部研究状态 |
+| `cron-daily-model-report` | 模型日报 | 每天通报各 bot 的模型序列号 |
+| `cron-incidents-check` | 异常巡检(工作日) | 工作日每3小时检查 incidents.jsonl |
+| `cron-incidents-check-weekend` | 异常巡检(周末) | 周末早晚各一次检查异常 |
+| `cron-xhs-nurture-dispatch` | 养号调度 | 每天5轮随机挑3个bot养号 |
+| `zsxq-reader` | 知识星球 | 知识星球情报采集与摘要 |
 
 ### 🏗️ infrastructure（基础层，不可装备）
 
@@ -228,7 +263,7 @@ mkdir -p /home/rooot/.openclaw/workspace-bot7/skills/你的技能名
   "icon": "📕",
   "slot": "armor",
   "desc": "全流程运营",
-  "requires": ["xiaohongshu-mcp"],
+  "requiresMcp": ["xiaohongshu-mcp"],
   "subSkills": [
     { "name": "MCP 工具", "icon": "🔧", "file": "mcp-tools.md", "desc": "工具列表" },
     { "name": "发帖前必读", "icon": "⚠️", "file": "发帖前必读.md", "desc": "红线自检", "readBefore": "write" }
@@ -255,9 +290,9 @@ mkdir -p /home/rooot/.openclaw/workspace-bot7/skills/你的技能名
 新建技能后检查：
 
 - [ ] `skill.json` 可被 `JSON.parse()` 成功（注意逗号、引号）
-- [ ] `slot` 值在 6 种枚举内
+- [ ] `slot` 值在 7 种枚举内（helm/armor/accessory/utility/research/boots/scheduled）
 - [ ] 有 subType 的槽位（accessory/utility/research）已填 subType
 - [ ] helm/armor/boots 没有填 subType
-- [ ] `requires` 里的宝石 ID 在 gem-registry.json 中存在
+- [ ] `requiresMcp` 里的宝石 ID 在 gem-registry.json 中存在
 - [ ] 目录下有 SKILL.md（bot 执行时的实际文档）
 - [ ] Dashboard 点 SYNC 后能看到新技能出现在仓库中

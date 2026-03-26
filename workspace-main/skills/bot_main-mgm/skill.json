@@ -3,6 +3,7 @@
   "icon": "🏛️",
   "slot": "armor",
   "desc": "印务局全流程运营：agent 通讯调度、飞书群管理、发布结果上报、各 agent 职能速查",
+  "requiresSkills": ["contact-book"],
   "subSkills": [
     {
       "name": "Agent 通讯",

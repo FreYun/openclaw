@@ -22,4 +22,4 @@ echo "$(date '+%Y-%m-%d %H:%M') HEARTBEAT_OK - 状态摘要" >> /home/rooot/.ope
 ```
 
 - 一切正常 → 写一行 HEARTBEAT_OK + 状态摘要
-- 发现严重异常（如进程崩溃）→ 才用 `send_message` 通知 `bot_main`，且消息末尾加 `[NO_REPLY_NEEDED]`
+- 发现严重异常（如进程崩溃）→ 才用 `send_message` 通知 `mag1`，且消息末尾加 `[NO_REPLY_NEEDED]`

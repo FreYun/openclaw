@@ -56,10 +56,10 @@ UserProfileResponse { UserBasicInfo, Interactions[], Feeds[] }
 
 ```bash
 # 先停掉已有的无头服务
-pkill -f "xhs-mcp"
+lsof -ti:18060 | xargs kill 2>/dev/null
 
-# 启动有头模式（-headless=false），从源码目录直接运行
-cd /home/rooot/MCP/xiaohongshu-mcp && XHS_PROFILES_DIR=/home/rooot/.xhs-profiles go run . -headless=false -port=:18060 > /tmp/xiaohongshu-mcp.log 2>&1 &
+# 启动有头模式（-headless=false），单进程多租户
+cd /home/rooot/MCP/xiaohongshu-mcp && go run . -headless=false -port=:18060 -profiles-base=/home/rooot/.xhs-profiles > /tmp/xhs-mcp-unified.log 2>&1 &
 
 # 等待启动后验证
 sleep 3 && curl -s http://localhost:18060/health
@@ -70,16 +70,16 @@ sleep 3 && curl -s http://localhost:18060/health
 MCP 使用 SSE 有状态会话，调试时需先 initialize 获取 session ID：
 
 ```bash
-# 1. 初始化会话，获取 Mcp-Session-Id
-SESSION=$(curl -sv -X POST http://localhost:18060/mcp \
+# 1. 初始化会话，获取 Mcp-Session-Id（URL path 指定 bot）
+SESSION=$(curl -sv -X POST http://localhost:18060/mcp/bot10 \
   -H 'Content-Type: application/json' \
   -d '{
     "jsonrpc": "2.0", "id": 1, "method": "initialize",
     "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test", "version": "1.0"}}
   }' 2>&1 | grep -i 'mcp-session' | sed 's/.*: //' | tr -d '\r\n')
 
-# 2. 用 session ID 调用工具（以 botN 为例）
-curl -s -X POST http://localhost:18060/mcp \
+# 2. 用 session ID 调用工具（bot 身份已由 URL path 确定）
+curl -s -X POST http://localhost:18060/mcp/bot10 \
   -H 'Content-Type: application/json' \
   -H "Mcp-Session-Id: $SESSION" \
   -d '{
@@ -87,7 +87,6 @@ curl -s -X POST http://localhost:18060/mcp \
     "params": {
       "name": "publish_content",
       "arguments": {
-        "account_id": "bot10",
         "title": "测试标题",
         "content": "测试内容",
         "images": ["https://example.com/test.jpg"],
@@ -101,7 +100,7 @@ curl -s -X POST http://localhost:18060/mcp \
 ### 查看实时日志
 
 ```bash
-tail -f /tmp/xiaohongshu-mcp.log
+tail -f /tmp/xhs-mcp-unified.log
 ```
 
 ### 调试要点
@@ -244,7 +243,7 @@ done
 
 ### 4.3 TOOLS.md — 工具配置
 
-**作用**：bot 专属的工具配置，包括 account_id、MCP 端口、浏览器 profile、搜索工具等。
+**作用**：bot 专属的工具配置，包括 account_id、MCP 连接配置、浏览器 profile、搜索工具等。
 
 **结构**：
 ```markdown
@@ -252,7 +251,7 @@ done
 
 ## Bot 专属配置
 - account_id: botN
-- 小红书 MCP 端口: 1806N
+- 小红书 MCP: 单进程多租户（:18060），mcporter.json 中 URL path 区分 bot
 
 ## 联网搜索（各 bot 可能不同）
 ## 网页浏览
@@ -261,7 +260,7 @@ done
 
 **管理规则**：
 - 开头必须引用 `../workspace/TOOLS_COMMON.md`
-- `account_id` 和端口号是 bot 专属，不可混用
+- `account_id` 是 bot 专属，不可混用
 - 工具类 bot（如 bot7/bot8）会有额外的技能地图和信息源列表
 
 **通用工具规范**：`workspace/TOOLS_COMMON.md` 是全体 bot 共享的工具铁律，修改它会影响所有 bot。

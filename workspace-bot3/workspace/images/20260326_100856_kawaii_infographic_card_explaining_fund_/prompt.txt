@@ -1,0 +1,5 @@
+Style: kawaii pixel art infographic style, flat 2D illustration, bold outlines, bright warm colors with cream white base (#FFF8EE), orange (#FF8C42), gold (#FFD700), sky blue (#5BC4F5) accents, clean grid layout, retro cute aesthetic, all text in Chinese only
+
+Content: kawaii infographic card explaining fund NAV vs shares concept. Top title area: "净值 × 份额 = 你的基金" in bold dark text. Middle section divided into two colored columns side by side: Left column header "净值" with orange background, icon of a single fish price tag, text "每份基金的价格" below. Right column header "份额" with sky blue background, icon of multiple stacked fish bags, text "你持有多少份" below. Bottom section: large equals sign connecting to a gold box with "总资产" text and coin icon. Example calculation shown in small text: "2元 × 50份 = 100元". Small chibi pixel orange cat head icon (golden coin eyes, red UP coin on forehead) in bottom-right corner at ~1/10 image size as guide/pointer, cat looking up at the formula with curious expression. Clean readable layout, adequate white space, all labels in Chinese.
+
+Image size: 960x1280

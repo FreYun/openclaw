@@ -3,7 +3,7 @@
   "icon": "🌐",
   "slot": "armor",
   "desc": "微信公众号发文流程：登录、浏览器操作、排版、保存草稿、发表、留言互动",
-  "requires": [],
+  "requiresMcp": [],
   "subSkills": [
     {
       "name": "发文前必读",

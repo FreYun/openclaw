@@ -17,7 +17,8 @@ description: >
 |------|----------|
 | [agent-messaging.md](agent-messaging.md) | 需要通知 agent / 上报结果 / 处理 `[MSG:xxx]` 消息时 |
 | [feishu-ops.md](feishu-ops.md) | 需要向飞书群发告警 / 管理群消息时 |
-| [agent-roster.md](agent-roster.md) | 需要查某个 agent 的职能、账号、负责领域时 |
+| [agent-roster.md](agent-roster.md) | 需要查某个 agent 的职能、负责领域时 |
+| 📇 通讯小本本 (`workspace/skills/contact-book/SKILL.md`) | 需要查 agent ID↔名字、飞书群 ID、用户 open_id 时 |
 
 ---
 

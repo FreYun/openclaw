@@ -4,8 +4,9 @@
     "helm":      { "name": "头盔", "icon": "⛑️", "desc": "工种", "count": 1 },
     "armor":     { "name": "衣服", "icon": "👔", "desc": "职业", "count": 1 },
     "accessory": { "name": "风格", "icon": "💍", "desc": "风格", "count": 2, "subTypes": { "content": { "name": "内容风格", "icon": "✍️" }, "image": { "name": "画图风格", "icon": "🎨" } } },
-    "utility":   { "name": "通用技能", "icon": "🔧", "desc": "通用技能", "count": 4, "subTypes": { "duty": { "name": "职能", "icon": "⚙️" }, "scheduled": { "name": "定时任务", "icon": "⏰" } } },
+    "utility":   { "name": "通用技能", "icon": "🔧", "desc": "通用技能", "count": 4, "subTypes": { "duty": { "name": "职能", "icon": "⚙️" } } },
     "research":  { "name": "研究技能", "icon": "⚔️", "desc": "研究技能", "count": 6, "subTypes": { "research": { "name": "研究", "icon": "📊" }, "general": { "name": "通识", "icon": "📚" } } },
-    "boots":     { "name": "靴子", "icon": "👢", "desc": "策略", "count": 1 }
+    "boots":     { "name": "靴子", "icon": "👢", "desc": "策略", "count": 1 },
+    "scheduled": { "name": "定时任务", "icon": "⏰", "desc": "定时执行的技能", "count": 6, "managementCount": 20, "hidden": true, "subTypes": { "scheduled": { "name": "定时任务", "icon": "⏰" } } }
   }
 }

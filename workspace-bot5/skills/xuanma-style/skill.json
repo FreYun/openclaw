@@ -4,5 +4,5 @@
   "slot": "accessory",
   "subType": "content",
   "desc": "宣妈小红书内容形式与风格规范：日常简评、月度复盘、排版、封面、通用红线",
-  "requires": []
+  "requiresMcp": []
 }

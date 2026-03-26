@@ -27,7 +27,7 @@ openclaw agent --agent <部门id> \
 
 | 部门 | agent_id |
 |------|----------|
-| 印务局 | `mcp_publisher` |
+| 印务局 | `sys1` |
 | 安全部 | `security` |
 | 技能部 | `skills` |
 
@@ -47,7 +47,7 @@ openclaw agent --agent skills \
   --json
 
 # /new 印务局 — 重置印务局
-openclaw agent --agent mcp_publisher \
+openclaw agent --agent sys1 \
   --session-id $(uuidgen) \
   --message "准备好接收新的发布任务。" \
   --json
@@ -66,7 +66,7 @@ openclaw agent --agent mcp_publisher \
 /home/rooot/.openclaw/agents/<bot_id>/agent/auth-profiles.json
 ```
 
-其中 `<bot_id>` 可以是：`bot1`、`bot2`、…、`bot10`、`bot_main`、`main`。
+其中 `<bot_id>` 可以是：`bot1`、`bot2`、…、`bot10`、`mag1`、`main`。
 
 ### JSON 结构
 
@@ -103,7 +103,7 @@ openclaw agent --agent mcp_publisher \
 
 ```bash
 # 示例：给所有 bot 换 legacylands key
-for bot_id in bot1 bot2 bot3 bot4 bot5 bot6 bot7 bot8 bot9 bot10 bot_main main; do
+for bot_id in bot1 bot2 bot3 bot4 bot5 bot6 bot7 bot8 bot9 bot10 mag1 main; do
   f="/home/rooot/.openclaw/agents/${bot_id}/agent/auth-profiles.json"
   if [ -f "$f" ]; then
     # 用 jq 替换 key

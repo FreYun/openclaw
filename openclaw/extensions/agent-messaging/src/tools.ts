@@ -63,7 +63,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
         "Send a message to another agent and wake it up. " +
         "The trace array carries routing context for reply chain.",
       parameters: Type.Object({
-        to: Type.String({ description: "Target agent ID (e.g. 'mcp_publisher', 'bot7')" }),
+        to: Type.String({ description: "Target agent ID (e.g. 'sys1', 'bot7')" }),
         content: Type.String({ description: "Message content" }),
         trace: Type.Array(TraceEntrySchema, {
           description:
@@ -106,6 +106,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           msg.message_id,
           msg.from,
           content,
+          store,
         ).then(
           (result) => store.updateStatus(msg.message_id, result.ok ? "delivered" : "failed"),
           () => store.updateStatus(msg.message_id, "failed"),
@@ -181,6 +182,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           reply.message_id,
           reply.from,
           content,
+          store,
         );
 
         await store.updateStatus(reply.message_id, result.ok ? "delivered" : "failed");
@@ -199,6 +201,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
             reply.message_id,
             reply.from,
             content,
+            store,
           ).catch(() => {}); // fire-and-forget
           agentNotified = true;
         }
@@ -274,6 +277,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           fwd.message_id,
           fwd.from,
           content,
+          store,
         ).then(
           (result) => store.updateStatus(fwd.message_id, result.ok ? "delivered" : "failed"),
           () => store.updateStatus(fwd.message_id, "failed"),
@@ -346,6 +350,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           msg.message_id,
           msg.from,
           content,
+          store,
         );
 
         await store.updateStatus(msg.message_id, result.ok ? "delivered" : "failed");

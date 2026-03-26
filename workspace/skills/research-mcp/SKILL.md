@@ -1,12 +1,26 @@
 ---
 name: research-mcp
-description: 金融研究数据 MCP — 基金、股票、指数、债券、宏观、商品、新闻研报。按需 Read 子模块获取工具详情。
+description: 金融研究数据 MCP — 92 个工具，分 10 个类别。按需 Read 子模块获取工具详情。
 ---
 
 # Research MCP（金融研究数据）
 
-MCP 地址：`http://research-mcp.jijinmima.cn/mcp`
-协议：Streamable HTTP（需要 `Accept: text/event-stream, application/json`）
+直连 MCP，92 个原子工具，分 10 个类别（工具箱）。调用方式：`npx mcporter call "research-mcp.tool_name(...)"`
+
+## 10 个工具箱
+
+| 类别 | 工具数 | 说明 | 详见 |
+|------|--------|------|------|
+| market_ashares | 8 | A股行情、指数、估值、恐慌指数 | `market.md` |
+| market_hk | 6 | 港股行情、恒生指数、南向资金 | `market.md` |
+| market_us | 5 | 美股指数（道琼斯/标普/纳指） | `market.md` |
+| stock | 29 | 个股基本面、行情、估值、资金、因子 | `stock.md` |
+| fund | 22 | 基金分析、净值、经理、风格、持仓 | `fund.md` |
+| fund_screen | 7 | 基金筛选（类型/主题/持仓/换手率） | `fund.md` |
+| bond | 5 | 国债/信用债收益率、利差 | `bond.md` |
+| macro | 3 | 中国/美国宏观经济数据 | `macro.md` |
+| commodity | 2 | 商品现货与期货行情 | `macro.md` |
+| news_report | 5 | 新闻/研报搜索、实体识别 | `news.md` |
 
 ## 格式铁律
 

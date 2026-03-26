@@ -10,7 +10,7 @@ description: Operate Xiaohongshu (小红书) via MCP tools — login, browse fee
 
 ## ⚠️ 最重要的规则：不传 account_id
 
-**所有工具都不需要传 `account_id`。** 每个 bot 通过独立端口连接 MCP，身份由端口自动识别。
+**所有工具都不需要传 `account_id`。** 每个 bot 通过 mcporter.json 中的 URL path 自动识别身份。
 
 传 `account_id` 会报错 `unexpected additional properties ["account_id"]`。
 
@@ -20,11 +20,8 @@ description: Operate Xiaohongshu (小红书) via MCP tools — login, browse fee
 
 ## Step -1: 确认服务在运行（每次使用前先检查）
 
-**端口号在你自己的 TOOLS.md 里查**（每个 bot 端口不同，不要用别人的端口）。
-
 ```bash
-# 把 PORT 替换成你 TOOLS.md 里的端口号（如 bot1=18061, bot5=18065, bot7=18067）
-curl -s http://localhost:PORT/health
+curl -s http://localhost:18060/health
 ```
 
 - 返回 `{"success":true,...}` → 服务正常，直接使用
@@ -94,7 +91,7 @@ npx mcporter call "xiaohongshu-mcp.delete_cookies()"
 
 ## Calling Convention
 
-**所有工具都不传 `account_id`**，身份由端口自动识别：
+**所有工具都不传 `account_id`**，身份由 mcporter URL path 自动识别：
 
 ```bash
 npx mcporter call "xiaohongshu-mcp.list_notes()"
@@ -153,7 +150,7 @@ npx mcporter call "xiaohongshu-mcp.post_comment_to_feed(feed_id: '...', xsec_tok
 
 ## Important Notes
 
-- **不传 `account_id`**：所有工具身份由端口自动识别，传了会报错（唯一例外：`publish_content` 可选）
+- **不传 `account_id`**：所有工具身份由 mcporter URL path 自动识别，传了会报错（唯一例外：`publish_content` 可选）
 - **`feed_id` 和 `xsec_token`** 只能从 feed 列表获取，不要编造
 - **通知回复** 用 `comment_index`（从 0 开始），必须先 `get_notification_comments`
 - **删帖前** 先 `list_notes` 获取 feed_id，再 `manage_note` 操作

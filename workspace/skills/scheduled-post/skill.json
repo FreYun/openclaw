@@ -1,0 +1,8 @@
+{
+  "name": "定时发稿",
+  "icon": "📮",
+  "slot": "utility",
+  "subType": "duty",
+  "desc": "草稿审批 + 投稿管道：合规 → draft-review → 魏忠贤 → 印务局",
+  "requiresMcp": ["compliance-mcp"]
+}

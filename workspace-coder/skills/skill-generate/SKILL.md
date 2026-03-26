@@ -1,10 +1,10 @@
 # 🧬 技能生成器（skill-generate）
 
-> 按照 META-SKILL-README.md 规范，通过 Claude Code 自动生成 skill 文件。
+> 按照 META-SKILL-README.md 规范创建新 skill。
 
 ## 前置知识
 
-**必读：** `workspace/skills/META-SKILL-README.md` — skill 系统完整规范（slot 枚举、subType、命名约定、验证清单）
+**必读：** `workspace/skills/META-SKILL-README.md` — 完整规范（slot 枚举、subType、命名约定、验证清单）
 
 ---
 
@@ -19,23 +19,24 @@
 
 ## 铁律
 
-1. **所有 skill 文件通过 Claude Code 生成** — 不直接写文件
+1. **skill.json 是第一步也是必须步骤** — 没有 skill.json 的 skill 不会被系统识别
 2. **生成前先确认 slot 和 scope** — 通用 skill 放 `workspace/skills/`，bot 专属放 `workspace-botN/skills/`
 3. **生成后必须跑验证** — 见 validation.md
 4. **不自动装备** — 生成文件后提醒 Admin 在 dashboard 点 SYNC
 
 ---
 
-## 快速参考：slot 枚举
+## 快速参考：slot 枚举（7 种）
 
 | slot | 部位 | 槽数 | subType |
 |------|------|------|---------|
 | `helm` | 工种 | 1 | 无 |
 | `armor` | 职业 | 1 | 无 |
 | `accessory` | 风格 | 2 | `content` / `image` |
-| `utility` | 通用技能 | 4 | `duty` / `scheduled` |
+| `utility` | 通用技能 | 4 | `duty` |
 | `research` | 研究技能 | 6 | `research` / `general` |
 | `boots` | 策略 | 1 | 无 |
+| `scheduled` | 定时任务 | 6/20 | `scheduled` |
 
 ## 快速参考：宝石依赖
 

@@ -4,7 +4,7 @@
 
 基于每日热点解读的分析结果，完成从内容生成 → 封面生图 → 投稿发布的完整小红书发帖流程。
 
-- 发帖风格参考「Bool 资本不眠」（详见 `memory/xiaohongshu/Bool 资本不眠 - 发帖风格分析.md`）
+- 发帖风格参考「Bool 资本不眠」（详见 `memory/long_term/Bool 资本不眠 - 发帖风格分析.md`）
 - 封面生图参考 `skills/laicaimeimei-fupan/SKILL-image.md`
 - 投稿发布参考 `skills/submit-to-publisher/SKILL.md`
 
@@ -25,9 +25,9 @@
 
 #### Step 1：选题
 
-1. 读取当日热点解读报告（`workspace/reports/hotspot/YYYY-MM-DD.md`）
-2. 读取雪球讨论原文（`workspace/reports/hotspot/YYYY-MM-DD-帖子内容.md`）
-3. 读取风格参考（`memory/xiaohongshu/Bool 资本不眠 - 发帖风格分析.md`）
+1. 读取当日热点解读报告（`memory/posts/YYYY-MM-DD.md`）
+2. 读取雪球讨论原文（`memory/posts/YYYY-MM-DD-帖子内容.md`）
+3. 读取风格参考（`memory/long_term/Bool 资本不眠 - 发帖风格分析.md`）
 4. 调用 `list_notes` 获取最近一篇已发帖子，读取其内容，对照风格
 5. 从热点中选择最有传播力的 1-2 个话题
 
@@ -124,11 +124,11 @@
 
 #### Step 9：保存封面图
 
-将生成的图片复制到 `workspace/reports/hotspot/`：
+将生成的图片复制到 `memory/posts/`：
 
 ```bash
 DATE=$(date +%Y-%m-%d)
-DEST_DIR="workspace/reports/hotspot"
+DEST_DIR="memory/posts"
 BASE="${DEST_DIR}/${DATE}-封面图"
 if [ ! -f "${BASE}.png" ]; then
   DEST="${BASE}.png"
@@ -207,7 +207,7 @@ echo "FOLDER: $folder"
 - 封面生图 skill：`skills/laicaimeimei-fupan/SKILL-image.md`
 - 封面 prompt 模板：`memory/branding/cover-prompt.md`
 - 投稿发布 skill：`skills/submit-to-publisher/SKILL.md`
-- 风格参考：`memory/xiaohongshu/Bool 资本不眠 - 发帖风格分析.md`
+- 风格参考：`memory/long_term/Bool 资本不眠 - 发帖风格分析.md`
 
 ---
 

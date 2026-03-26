@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -80,9 +80,24 @@
 
 **详细文档**：Read `skills/stock-watcher/SKILL.md`
 
-### 🚀 航天跟踪（space-tracker）
+### 🚀 航天产业链（space-tracker）
 
 商业航天发射日历与产业链追踪
 
 **详细文档**：Read `skills/space-tracker/SKILL.md`
+
+子模块：
+- 📅 **发射日历维护**（`skills/space-tracker/launch-calendar-guide.md`） — 数据源优先级、日历格式、更新规则
+- 📊 **标的跟踪**（`skills/space-tracker/watchlist-guide.md`） — 核心/重点/关注三级标的 + 异动监控 + 星球更新
+- 🗺️ **产业链地图**（`skills/space-tracker/industry-chain-map.md`） — 上中下游全景 + 参股关系
+- 💬 **市场共识**（`skills/space-tracker/market-consensus.md`） — 雪球/星球核心共识 + 催化节点 + 风险提示
+- 🏭 **火箭公司速览**（`skills/space-tracker/rocket-companies.md`） — 六大民营火箭公司估值、进度、节点
+- ✍️ **内容模板**（`skills/space-tracker/content-templates.md`） — 发射提醒/周报/事件点评三种模板
+- ✅ **质量自检**（`skills/space-tracker/quality-checklist.md`） — 发布前检查清单 + 内容红线
+
+### 🗄️ 研究数据库（research-mcp）
+
+金融研究 MCP 数据接口（行情/基金/宏观）
+
+**详细文档**：Read `skills/research-mcp/SKILL.md`
 

@@ -28,7 +28,7 @@ print('✓ Required fields present')
 python3 -c "
 import json, sys
 d = json.load(open('$SKILL_DIR/skill.json'))
-valid_slots = {'helm', 'armor', 'accessory', 'utility', 'research', 'boots'}
+valid_slots = {'helm', 'armor', 'accessory', 'utility', 'research', 'boots', 'scheduled'}
 if d['slot'] not in valid_slots:
     print(f'✗ Invalid slot: {d[\"slot\"]}')
     sys.exit(1)
@@ -39,7 +39,7 @@ print(f'✓ Slot: {d[\"slot\"]}')
 python3 -c "
 import json, sys
 d = json.load(open('$SKILL_DIR/skill.json'))
-needs_subtype = {'accessory', 'utility', 'research'}
+needs_subtype = {'accessory', 'utility', 'research', 'scheduled'}
 no_subtype = {'helm', 'armor', 'boots'}
 slot = d['slot']
 has_sub = 'subType' in d
@@ -96,8 +96,8 @@ print(f'✓ All {len(d[\"subSkills\"])} subSkill files exist')
 | 错误 | 症状 | 修复 |
 |------|------|------|
 | JSON 逗号多余 | `skill.json` parse 失败 | 删除最后一个属性后面的逗号 |
-| helm/armor/boots 加了 subType | 装备系统报错 | 删除 subType 字段 |
-| accessory/utility/research 没加 subType | 装备系统报错 | 按枚举表补上 |
+| helm/armor/boots 加了 subType | EQS报错 | 删除 subType 字段 |
+| accessory/utility/research 没加 subType | EQS报错 | 按枚举表补上 |
 | subSkill file 路径错误 | dashboard 找不到子文档 | 用相对路径，相对于 skill 目录 |
 | SKILL.md 太长（>300行） | bot 读不完、上下文浪费 | 拆成 subSkills |
 | 重复的 icon | dashboard 不好区分 | 换一个 |

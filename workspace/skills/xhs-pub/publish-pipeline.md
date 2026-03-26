@@ -18,6 +18,8 @@
 ```
 收到投稿 [MSG:xxx]
   ↓
+0. Read MEMORY.md → 特殊关怀面板（匹配 account_id，记下本次适用的指令）
+  ↓
 1. ACK：回复提交者队列位置
   ↓
 2. 解析 post.md：提取 title, content, mode, account_id, images, tags, etc.
@@ -55,6 +57,8 @@
 10. 记录日志
     python3 ~/.openclaw/scripts/log-publish.py ...
     更新 memory/发帖记录.md
+  ↓
+11. 清理一次性指令：步骤 0 中匹配到的「一次性」指令，从 MEMORY.md 特殊关怀面板中删除
 ```
 
 ---

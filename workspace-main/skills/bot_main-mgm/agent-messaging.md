@@ -7,10 +7,10 @@
 ```
 Bot (投稿者)
   ↓ submit-to-publisher.sh
-  ↓ Redis: agentmsg:inbox:mcp_publisher (XADD)
-  ↓ openclaw agent --agent mcp_publisher --message "[MSG:xxx]..."
+  ↓ Redis: agentmsg:inbox:sys1 (XADD)
+  ↓ openclaw agent --agent sys1 --message "[MSG:xxx]..."
   ↓
-印务局 (mcp_publisher)
+印务局 (sys1)
   ├─ 解析 [MSG:xxx] → 提取 message_id
   ├─ ACK 确认
   ├─ 处理发布队列
@@ -106,12 +106,39 @@ send_message(
   to: "bot5",
   content: "⚠️ 你的 MCP 服务（端口 18065）已离线，请检查",
   trace: [{
-    agent: "mcp_publisher",
+    agent: "sys1",
     reply_channel: "feishu",
     reply_to: "ou_db93023b3f5d5492af130c8a8a7320c4",
-    reply_account: "mcp_publisher"
+    reply_account: "sys1"
   }]
 )
 ```
 
 注意：主动通知会唤醒目标 agent 的会话，谨慎使用。
+
+## 印务局特殊关怀面板
+
+当需要对某个 bot 的下一次投稿做特殊处理（如跳过合规、优先发布、特别审核等），直接编辑印务局的 MEMORY.md：
+
+```
+文件：/home/rooot/.openclaw/workspace-mcp-publisher/MEMORY.md
+位置：## 特殊关怀面板 section 内
+```
+
+格式：
+```markdown
+### {botN} — {简要说明}
+- **生效时间**：YYYY-MM-DD HH:MM
+- **圣上旨意**：{具体指令}
+- **有效期**：一次性 / 永久 / 至 YYYY-MM-DD
+```
+
+示例：
+```markdown
+### bot1 — 下次投稿免审直发
+- **生效时间**：2026-03-26 15:00
+- **圣上旨意**：bot1 下一次投稿跳过合规审核，直接发布
+- **有效期**：一次性
+```
+
+印务局在处理每篇投稿前会检查此面板，匹配 `account_id` 后执行指令。一次性指令用后自动删除。

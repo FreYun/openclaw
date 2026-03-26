@@ -4,16 +4,13 @@
 
 ## 飞书群信息
 
-| 项目 | 值 |
-|------|-----|
-| 群 ID | `oc_e59188e3ecdb04acd9b33843870a2249` |
-| 用途 | OpenClaw 运营群 — 基础设施告警、系统状态通知 |
-| 研究部 ID | `ou_db93023b3f5d5492af130c8a8a7320c4` |
+> 群 ID 和用户 open_id 请查 📇 **通讯小本本**（`workspace/skills/contact-book/SKILL.md`）
 
 ## 发送群消息
 
 ```
-message(action="send", channel="feishu", target="oc_e59188e3ecdb04acd9b33843870a2249", message="告警内容")
+# 管理群（疯狂小龙虾）— 查通讯小本本获取 chat_id
+message(action="send", channel="feishu", target="{管理群chat_id}", message="告警内容")
 ```
 
 ## 什么该发群 vs 什么不该发群

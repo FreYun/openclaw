@@ -166,8 +166,8 @@
 
 ## 参考文件
 
-- 风格参考：`memory/xiaohongshu/Bool 资本不眠 - 发帖风格分析.md`
-- 发帖规范：`memory/xiaohongshu/发帖规范.md`
+- 风格参考：`memory/long_term/Bool 资本不眠 - 发帖风格分析.md`
+- 发帖规范：`memory/long_term/发帖规范.md`
 
 ---
 

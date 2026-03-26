@@ -6,41 +6,14 @@
       "color": "#e94560",
       "desc": "小红书平台操作（浏览、发布、互动）",
       "perBot": true,
-      "portMap": {
-        "bot_main": 18060,
-        "bot1": 18061,
-        "bot2": 18062,
-        "bot3": 18063,
-        "bot4": 18064,
-        "bot5": 18065,
-        "bot6": 18066,
-        "bot7": 18067,
-        "bot8": 18068,
-        "bot9": 18069,
-        "bot10": 18070,
-        "bot11": 18811
-      },
-      "urlTemplate": "http://localhost:${port}/mcp",
-      "healthEndpoint": "/mcp",
-      "healthMethod": "mcp-initialize",
+      "port": 18060,
+      "urlTemplate": "http://localhost:18060/mcp/${botId}",
+      "healthEndpoint": "/health",
+      "healthMethod": "GET",
       "specialBots": {
-        "bot11": {
-          "urlKey": "baseUrl"
-        },
-        "mcp_publisher": {
+        "sys1": {
           "multi": true,
-          "entries": {
-            "xhs-bot1": "http://localhost:18061/mcp",
-            "xhs-bot2": "http://localhost:18062/mcp",
-            "xhs-bot3": "http://localhost:18063/mcp",
-            "xhs-bot4": "http://localhost:18064/mcp",
-            "xhs-bot5": "http://localhost:18065/mcp",
-            "xhs-bot6": "http://localhost:18066/mcp",
-            "xhs-bot7": "http://localhost:18067/mcp",
-            "xhs-bot8": "http://localhost:18068/mcp",
-            "xhs-bot9": "http://localhost:18069/mcp",
-            "xhs-bot10": "http://localhost:18070/mcp"
-          }
+          "urlTemplate": "http://localhost:18060/mcp/${targetBotId}"
         }
       }
     },
@@ -68,35 +41,15 @@
       "healthMethod": "mcp-initialize",
       "manageable": true
     },
-    "research-gateway": {
+    "research-mcp": {
       "name": "研究数据",
       "icon": "🟢",
       "color": "#00d2d3",
-      "desc": "金融研究数据（行情、新闻、研报、估值）",
-      "perBot": true,
-      "port": 18080,
-      "urlTemplate": "http://localhost:18080/mcp/${botId}/mcp",
-      "healthEndpoint": "/health",
-      "healthMethod": "http-get",
-      "toolOverridesFile": "/home/rooot/.openclaw/research-gateway/bot-tool-overrides.json",
-      "restartCmd": "bash /home/rooot/.openclaw/research-gateway/run.sh restart",
-      "subTools": [
-        {"id": "market_snapshot", "name": "市场快照", "desc": "A股/港股/美股指数行情+情绪"},
-        {"id": "index_valuation", "name": "指数估值", "desc": "A股PE百分位+近期走势"},
-        {"id": "bond_monitor",    "name": "债券利率", "desc": "中美国债收益率与利差"},
-        {"id": "macro_overview",  "name": "宏观经济", "desc": "GDP/CPI/PPI/M2/PMI等"},
-        {"id": "commodity_quote", "name": "商品行情", "desc": "黄金白银等大宗商品"},
-        {"id": "stock_research",  "name": "个股研究", "desc": "基本面/K线/估值/资金流"},
-        {"id": "fund_analysis",   "name": "基金分析", "desc": "净值/业绩/经理/持仓/费率"},
-        {"id": "fund_screen",     "name": "基金筛选", "desc": "按类型/主题/持仓股票筛选"},
-        {"id": "search_news",     "name": "新闻搜索", "desc": "语义搜索最新财经新闻"},
-        {"id": "search_report",   "name": "研报搜索", "desc": "语义搜索券商研报"}
-      ],
-      "specialBots": {
-        "mcp_publisher": {
-          "url": "http://localhost:18080/mcp/default/mcp"
-        }
-      }
+      "desc": "金融研究数据直连（行情、基金、宏观、新闻）",
+      "perBot": false,
+      "urlTemplate": "http://research-mcp.jijinmima.cn/mcp",
+      "healthUrl": "http://research-mcp.jijinmima.cn/mcp",
+      "healthMethod": "mcp-initialize"
     }
   }
 }

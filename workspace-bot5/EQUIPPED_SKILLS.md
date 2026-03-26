@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-24 12:09:55
+> 更新时间：2026-03-26 10:00:18
 
 ## 👔 衣服
 
@@ -48,41 +48,27 @@
 
 **详细文档**：Read `skills/report-incident/SKILL.md`
 
+### ✍️ 小红书写稿经验（xhs-writing）
+
+通用排版、标题、限流防范
+
+**详细文档**：Read `skills/xhs-writing/SKILL.md`
+
 ## ⚔️ 研究技能
 
-### 📊 财报横评（earnings-digest）
+### 🪙 黄金盯盘（gold-tracker）
 
-行业财报横向对比与核心观点提取
+黄金实时行情追踪与收盘复盘，区分盘中/收盘数据源
 
-**详细文档**：Read `skills/earnings-digest/SKILL.md`
+**详细文档**：Read `skills/gold-tracker/SKILL.md`
 
-### 💰 资金流向（flow-watch）
+子模块：
+- ⏱️ **数据源与时效**（`skills/gold-tracker/data-sources.md`） — 盘中实时 vs 收盘延迟数据源对照表，避免用错数据
+- ✍️ **内容模板**（`skills/gold-tracker/content-templates.md`） — 盘中快报、收盘复盘、周度总结三种模板
 
-北向资金、融资融券、主力流向监控
+### 🗄️ 研究数据库（research-mcp）
 
-**详细文档**：Read `skills/flow-watch/SKILL.md`
+金融研究 MCP 数据接口（行情/基金/宏观）
 
-### 🌍 宏观环境（market-environment-analysis）
-
-全球市场、汇率、商品、风险偏好
-
-**详细文档**：Read `skills/market-environment-analysis/SKILL.md`
-
-### ✅ 事实核查（news-factcheck）
-
-新闻数据交叉验证与逻辑检查
-
-**详细文档**：Read `skills/news-factcheck/SKILL.md`
-
-### 🔬 个股分析（research-stock）
-
-估值、财务、市场情绪快照
-
-**详细文档**：Read `skills/research-stock/SKILL.md`
-
-### 🏭 行业研究（sector-pulse）
-
-行业竞争格局、供需与资金流向
-
-**详细文档**：Read `skills/sector-pulse/SKILL.md`
+**详细文档**：Read `skills/research-mcp/SKILL.md`
 

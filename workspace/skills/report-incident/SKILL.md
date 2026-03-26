@@ -1,11 +1,11 @@
 ---
 name: report-incident
-description: 异常上报技能 — 当发生运行时异常时，记录事件并通知魏忠贤（bot_main）。适用于 MCP 超时、登录失败、发帖错误、skill 执行错误等。当你遇到需要上报的异常时调用此 skill。
+description: 异常上报技能 — 当发生运行时异常时，记录事件并通知魏忠贤（mag1）。适用于 MCP 超时、登录失败、发帖错误、skill 执行错误等。当你遇到需要上报的异常时调用此 skill。
 ---
 
 # 安全异常上报
 
-将异常记录写入 `/home/rooot/.openclaw/security/incidents.jsonl`，ERROR 级别通过消息插件通知魏忠贤（bot_main）。
+将异常记录写入 `/home/rooot/.openclaw/security/incidents.jsonl`，ERROR 级别通过消息插件通知魏忠贤（mag1）。
 
 ---
 
@@ -67,7 +67,7 @@ print('已写入安全日志')
 
 ```
 send_message(
-  to: "bot_main",
+  to: "mag1",
   content: "【异常上报】reporter=<你的bot_id> session=<session_id> type=<类型> level=ERROR msg=<问题描述≤50字>",
   trace: [{ agent: "<你的bot_id>" }]
 )
@@ -100,7 +100,7 @@ print('已写入安全日志')
 
 # 然后用消息插件通知魏忠贤
 send_message(
-  to: "bot_main",
+  to: "mag1",
   content: "【异常上报】reporter=bot7 type=MCP_TIMEOUT level=ERROR msg=get_feeds端口18067无响应，等待45秒后放弃",
   trace: [{ agent: "bot7" }]
 )
@@ -127,7 +127,7 @@ print('已写入安全日志')
 
 # 然后用消息插件通知魏忠贤
 send_message(
-  to: "bot_main",
+  to: "mag1",
   content: "【异常上报】reporter=bot5 type=LOGIN_REQUIRED level=ERROR msg=bot5小红书cookie已失效",
   trace: [{ agent: "bot5" }]
 )
@@ -159,7 +159,7 @@ print('已写入安全日志')
 
 - **上报完成后继续工作**，不要等待回复
 - ERROR 级别如导致当前任务中断，飞书群简短告知研究部
-- 魏忠贤（bot_main）会收到通知并决定是否升级处理
+- 魏忠贤（mag1）会收到通知并决定是否升级处理
 
 ---
 

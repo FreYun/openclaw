@@ -3,7 +3,7 @@
   "icon": "📕",
   "slot": "armor",
   "desc": "小红书全流程运营：登录、浏览、互动、养号、选题、内容生成、投稿发布",
-  "requires": [
+  "requiresMcp": [
     "xiaohongshu-mcp"
   ],
   "subSkills": [

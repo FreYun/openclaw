@@ -1,0 +1,62 @@
+{
+  "bot1": [
+    "market_snapshot",
+    "index_valuation",
+    "bond_monitor",
+    "macro_overview",
+    "commodity_quote",
+    "stock_research",
+    "fund_analysis",
+    "fund_screen",
+    "search_news",
+    "search_report"
+  ],
+  "bot7": [
+    "market_snapshot",
+    "index_valuation",
+    "bond_monitor",
+    "macro_overview",
+    "commodity_quote",
+    "stock_research",
+    "fund_analysis",
+    "fund_screen",
+    "search_news",
+    "search_report"
+  ],
+  "bot8": [
+    "market_snapshot",
+    "index_valuation",
+    "bond_monitor",
+    "macro_overview",
+    "commodity_quote",
+    "stock_research",
+    "fund_analysis",
+    "fund_screen",
+    "search_news",
+    "search_report"
+  ],
+  "bot2": [
+    "market_snapshot",
+    "index_valuation",
+    "bond_monitor",
+    "macro_overview",
+    "commodity_quote",
+    "stock_research",
+    "fund_analysis",
+    "fund_screen",
+    "search_news",
+    "search_report"
+  ],
+  "bot9": [
+    "market_snapshot",
+    "index_valuation",
+    "bond_monitor",
+    "macro_overview",
+    "commodity_quote",
+    "stock_research",
+    "fund_analysis",
+    "fund_screen",
+    "search_news",
+    "search_report"
+  ]
+}

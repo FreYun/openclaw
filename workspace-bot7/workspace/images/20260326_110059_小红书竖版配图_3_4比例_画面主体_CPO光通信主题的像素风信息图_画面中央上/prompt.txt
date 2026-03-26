@@ -1,0 +1,5 @@
+Style: 16-bit pixel art illustration, visible pixel grid, retro game aesthetic meets modern fintech, dark moody palette, crisp clean pixel rendering, all text labels in Chinese only no English
+
+Content: 小红书竖版配图，3:4比例。画面主体：CPO光通信主题的像素风信息图。画面中央上方有大标题：CPO业绩兑现。周围环绕像素风光模块/光纤/数据中心元素，红绿像素K线图显示连续上涨趋势（红涨绿跌），像素风光粒子从左侧射向右侧代表光信号传输。三张像素风信息卡片：1.海外订单落地，显示一个像素风的全球地图和订单图标 2.逆势连涨三天，显示像素风K线图和向上箭头 3.算力扩产加速，显示像素风GPU/芯片图标。底部结论区：别追高 回调值得关注。右上角（画面约1/6）有一个小像素风黑桃K扑克牌作为品牌水印，冰蓝色黑桃符号发光，金色王冠。背景深藏青色(#1a2744)，冰蓝色(#00d4ff)像素粒子散落，金色(#c8a84e)点缀。所有文字必须使用中文字符，禁止出现英文字母
+
+Image size: 960x1280

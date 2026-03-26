@@ -1,7 +1,53 @@
 {
-  "name": "能化跟踪",
+  "name": "能化产业链",
   "icon": "⛽",
   "slot": "research",
   "desc": "能源化工产业供需与价格追踪",
-  "subType": "research"
+  "subType": "research",
+  "subSkills": [
+    {
+      "name": "产业链地图",
+      "icon": "🗺️",
+      "file": "chain-map.md",
+      "desc": "石化/煤化/盐化三大链路 + 跨链联动 + 成本比较"
+    },
+    {
+      "name": "品种跟踪指南",
+      "icon": "📋",
+      "file": "varieties-guide.md",
+      "desc": "核心/重点/关注三级品种清单 + 五维度数据框架"
+    },
+    {
+      "name": "分析框架",
+      "icon": "🧠",
+      "file": "analysis-framework.md",
+      "desc": "供需逻辑链 + 品种分析模板 + 季节性 + 价格表格式"
+    },
+    {
+      "name": "股票投资框架",
+      "icon": "📈",
+      "file": "investment-framework.md",
+      "desc": "商品→利润→个股传导链 + 异动监控"
+    },
+    {
+      "name": "内容输出模板",
+      "icon": "✍️",
+      "file": "content-templates.md",
+      "desc": "日报/周报/深度/事件点评四种模板",
+      "readBefore": "write"
+    },
+    {
+      "name": "质量自检",
+      "icon": "✅",
+      "file": "quality-checklist.md",
+      "desc": "发布前检查清单 + 内容红线",
+      "readBefore": "write"
+    },
+    {
+      "name": "参考速查",
+      "icon": "📖",
+      "file": "reference-tables.md",
+      "desc": "期货品种速查 + 数据发布日历"
+    }
+  ]
 }

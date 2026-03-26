@@ -1,0 +1,7 @@
+{
+  "name": "全面巡查",
+  "icon": "🔍",
+  "slot": "scheduled",
+  "subType": "scheduled",
+  "desc": "临时性全面巡查：印务局登录状态、技能部汇报、编辑部研究状态"
+}

@@ -52,7 +52,7 @@
 
 ### Step 4：复制到 hotspot 目录
 
-将生成的图片复制到 `workspace/reports/hotspot/`，统一命名：
+将生成的图片复制到 `memory/posts/`，统一命名：
 
 **命名规则：** `YYYY-MM-DD-封面图.png`
 
@@ -64,7 +64,7 @@
 ```bash
 # 确定目标文件名（自动处理同名递增）
 DATE=$(date +%Y-%m-%d)
-DEST_DIR="workspace/reports/hotspot"
+DEST_DIR="memory/posts"
 BASE="${DEST_DIR}/${DATE}-封面图"
 if [ ! -f "${BASE}.png" ]; then
   DEST="${BASE}.png"
@@ -78,7 +78,7 @@ cp "{generate_image 返回的 files[0] 路径}" "$DEST"
 
 ### Step 5：保存生图 Prompt
 
-将本次实际使用的 prompt 存档到 `workspace/reports/hotspot/`，命名规则与封面图一致：
+将本次实际使用的 prompt 存档到 `memory/posts/`，命名规则与封面图一致：
 
 - `YYYY-MM-DD-封面图.txt`（与 `.png` 同名，扩展名不同）
 - 同日多张时同样加序号：`YYYY-MM-DD-封面图-1.txt`
@@ -96,7 +96,7 @@ Content: {实际传给 generate_image 的 content}
 
 ### Step 6：检查与确认
 
-1. 告知用户封面图已保存到 `workspace/reports/hotspot/YYYY-MM-DD-封面图.png`
+1. 告知用户封面图已保存到 `memory/posts/YYYY-MM-DD-封面图.png`
 2. 用户确认封面图是否满意
 3. **如果中文渲染乱码**：这是常见情况，告知用户需要后期用编辑工具叠字（图片保留角色和装饰元素即可）
 4. 不满意可调整 content 描述后重新生成
@@ -119,7 +119,7 @@ folder=$(bash ~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh \
 2. **角色一致性**：所有封面图的来财妹妹角色固定在右下角，形成系列辨识度
 3. **不要自行修改 base prompt**：prompt 模板统一维护在 `memory/branding/cover-prompt.md`，只替换文字部分
 4. **竖版比例**：size 固定用 `1024x1536`（3:4 竖版），不要用正方形
-5. **封面图归档**：所有封面图统一存放在 `workspace/reports/hotspot/`，与当日热点报告在同一目录，方便关联查找
+5. **封面图归档**：所有封面图统一存放在 `memory/posts/`，与当日热点报告在同一目录，方便关联查找
 
 ---
 

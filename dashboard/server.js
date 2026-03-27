@@ -1417,10 +1417,14 @@ const server = http.createServer(async (req, res) => {
     const bindings = {};
     for (const [gemId, gem] of Object.entries(registry.gems)) {
       const special = gem.specialBots?.[botId];
-      if (special?.multi) {
+      if (special?.multi && special.entries) {
         const expectedKeys = Object.keys(special.entries);
         const found = expectedKeys.filter(k => mcporter.mcpServers[k]);
         bindings[gemId] = { socketed: found.length > 0, entries: found.length, expectedEntries: expectedKeys.length };
+      } else if (special?.multi && !special.entries) {
+        // multi without entries (urlTemplate mode) — check if gem key exists in mcporter
+        const entry = mcporter.mcpServers[gemId];
+        bindings[gemId] = { socketed: !!entry, url: entry?.url || entry?.baseUrl || null };
       } else {
         const key = gemId;
         const entry = mcporter.mcpServers[key];
@@ -1634,7 +1638,7 @@ const server = http.createServer(async (req, res) => {
       if (!gem) throw new Error("Unknown gem: " + gemId);
       const mcporter = readMcporter(botId);
       const special = gem.specialBots?.[botId];
-      if (special?.multi) {
+      if (special?.multi && special.entries) {
         for (const [key, url] of Object.entries(special.entries)) {
           mcporter.mcpServers[key] = { url };
         }

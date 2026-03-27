@@ -1,0 +1,16 @@
+{
+  "name": "小红书智能发帖",
+  "icon": "🚀",
+  "slot": "scheduled",
+  "subType": "scheduled",
+  "desc": "每日定时自动发帖：素材→选题→行情→生图→发帖→数据驱动重试→低效清理",
+  "requiresMcp": ["xiaohongshu-mcp", "image-gen-mcp"],
+  "params": {
+    "start_time": {
+      "type": "string",
+      "desc": "每日首次触发时间（HH:MM），各 bot 自行配置",
+      "default": "09:30",
+      "examples": ["09:30", "10:00", "13:00"]
+    }
+  }
+}

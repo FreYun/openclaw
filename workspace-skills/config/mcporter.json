@@ -1,4 +1,13 @@
 {
-    "mcpServers": {},
+    "mcpServers": {
+        "openspace": {
+            "command": "/home/rooot/OpenSpace/.venv/bin/openspace-mcp",
+            "toolTimeout": 600,
+            "env": {
+                "OPENSPACE_HOST_SKILL_DIRS": "/home/rooot/.openclaw/skills-sandbox",
+                "OPENSPACE_WORKSPACE": "/home/rooot/OpenSpace"
+            }
+        }
+    },
     "imports": []
 }

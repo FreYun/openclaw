@@ -2,5 +2,7 @@
   "name": "来财妹妹封面风格",
   "icon": "🎨",
   "slot": "accessory",
-  "desc": "品牌视觉体系与封面图生成标准"
+  "subType": "image",
+  "desc": "品牌视觉体系与封面图生成标准",
+  "requiresMcp": ["image-gen-mcp"]
 }

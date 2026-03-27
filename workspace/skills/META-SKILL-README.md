@@ -125,7 +125,6 @@
 | `james-style` | 老詹内容风格 | 硬卡点、写作心法、正文模板、语气措辞 |
 | `dae-fly-style` | 大E飞风格 | 犀利直接、数据驱动的投研写作 |
 | `qingningmeng-style` | 清柠檬风格 | 清新可爱、meme 风格 |
-| `visual-first-content` | 视觉优先 | 图片主导的内容创作框架 |
 | `mp-content-writer` | 公众号写作 | 公众号投资文章框架 |
 | `daily-market-recap` | 每日盘面复盘 | 公众号四段式推送 |
 | `record-insight` | 记录灵感 | 捕捉日常观察与灵感洞察 |
@@ -137,8 +136,9 @@
 |----------|------|------|----------|
 | `xuanma-cover` | 宣妈封面生成 | 角色形象、卡片/写实模板 | image-gen-mcp |
 | `james-cover` | 老詹封面生成 | 角色形象、卡片模板 | image-gen-mcp |
-| `laicaimeimei-cover-style` | 来财妹妹封面风格 | 品牌视觉体系 | — |
-| `laok-style` | 老K画图风格 | IP 形象与配图 prompt 模板 | — |
+| `laicaimeimei-cover-style` | 来财妹妹封面风格 | 品牌视觉体系 | image-gen-mcp |
+| `visual-first-content` | meme绘图风格 | 贪财猫像素风 IP 画图框架 | image-gen-mcp |
+| `laok-style` | 老K画图风格 | IP 形象与配图 prompt 模板 | image-gen-mcp |
 
 ### 🔧 utility（通用技能）— 4 槽
 

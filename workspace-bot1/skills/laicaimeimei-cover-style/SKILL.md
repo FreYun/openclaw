@@ -70,20 +70,40 @@ A minimalist social media post cover in vertical 3:4 ratio, clean warm off-white
 A minimalist social media post cover in vertical 3:4 ratio, clean off-white background with a very subtle soft mint green gradient at the edges, large bold rounded sans-serif text "{配图文字}" in dark charcoal gray color centered in the middle as the main focus, the text style is warm and slightly playful matching a cute illustration aesthetic, top-left corner has a small golden quotation mark symbol as decoration, bottom-right corner has a small cute chibi girl character (short bob hair, golden coin hairpin slightly tilted, wearing a green hoodie with a small declining downward candlestick chart pattern printed on it) peeking up from the edge with comically teary eyes streaming waterfall tears and mouth wide open crying, her hands grabbing the edge in despair, a few small green downward arrows and a broken gold coin scattered near the character, overall style is clean flat illustration with minimal details, plenty of white space, soft color palette of off-white mint green and gold accents
 ```
 
+### STYLE 参数（三个版本，直接复制对应版本，不要改动）
+
+#### 通用版 STYLE
+```
+A minimalist social media post cover in vertical 3:4 ratio, clean warm off-white background with a very subtle soft warm yellow and gold gradient at the edges, large bold rounded sans-serif text in dark charcoal gray color centered in the middle as the main focus, the text style is warm and slightly playful matching a cute illustration aesthetic, top-left corner has a small golden quotation mark symbol as decoration, bottom-right corner has a small cute chibi girl character (short bob hair, golden coin hairpin, wearing a yellow hoodie with a small flat sideways candlestick chart pattern printed on it) peeking up from the edge with only her head and hands visible, a few tiny gold sparkles scattered near the character, overall style is clean flat illustration with minimal details, plenty of white space, the text dominates the composition, the character is small and subtle like a watermark or signature element, soft and elegant color palette of warm off-white yellow and gold accents
+```
+
+#### 大涨版 STYLE
+```
+A minimalist social media post cover in vertical 3:4 ratio, clean warm off-white background with a very subtle soft red and pink gradient at the edges, large bold rounded sans-serif text in dark charcoal gray color centered in the middle as the main focus, the text style is warm and slightly playful matching a cute illustration aesthetic, top-left corner has a small golden quotation mark symbol as decoration, bottom-right corner has a small cute chibi girl character (short bob hair, golden coin hairpin, wearing a red hoodie) peeking up from the edge with sparkling excited eyes and wide open mouth laughing with joy, both hands raised in celebration, a few small red upward arrows and glowing gold coins scattered near the character, overall style is clean flat illustration with minimal details, plenty of white space, soft color palette of warm off-white light red pink and gold accents
+```
+
+#### 大跌版 STYLE
+```
+A minimalist social media post cover in vertical 3:4 ratio, clean off-white background with a very subtle soft mint green gradient at the edges, large bold rounded sans-serif text in dark charcoal gray color centered in the middle as the main focus, the text style is warm and slightly playful matching a cute illustration aesthetic, top-left corner has a small golden quotation mark symbol as decoration, bottom-right corner has a small cute chibi girl character (short bob hair, golden coin hairpin slightly tilted, wearing a green hoodie with a small declining downward candlestick chart pattern printed on it) peeking up from the edge with comically teary eyes streaming waterfall tears and mouth wide open crying, her hands grabbing the edge in despair, a few small green downward arrows and a broken gold coin scattered near the character, overall style is clean flat illustration with minimal details, plenty of white space, soft color palette of off-white mint green and gold accents
+```
+
 ### 生图调用
 
+**关键原则：STYLE 参数直接从上方对应版本整段复制，不要修改。CONTENT 参数只放配图文字。**
+
 ```
-工具：image-gen-mcp.generate_image
-参数：
-  style: "{替换好配图文字的完整 base prompt}"
-  content: "{替换好配图文字的完整 base prompt}"
-  size: "1024x1536"
-  model: "banana2"
+npx mcporter call 'image-gen-mcp.generate_image(
+  style: "{直接复制上方对应版本的完整 STYLE}",
+  content: "Chinese text on card: 「{配图文字}」",
+  size: "1024x1536",
+  model: "banana2",
+  workspace: "/home/rooot/.openclaw/workspace-bot1"
+)'
 ```
 
 ### 文字替换规则
 
-将 `{配图文字}` 替换为帖子实际的配图文字即可。通用模板需在 `text` 后插入带引号的配图文字。
+将 `{配图文字}` 替换为帖子实际的配图文字即可。根据当日行情选择对应的 STYLE 版本（通用/大涨/大跌）。
 
 ---
 
@@ -127,13 +147,15 @@ A wide banner illustration in cute chibi flat style, soft pastel gradient backgr
 
 ---
 
-## 注意事项
+## 铁律
 
-1. **中文渲染**：AI 生图对中文支持不稳定，乱码时保留图片（角色+装饰有价值），文字后期叠加
-2. **角色一致性**：所有封面图角色固定在右下角，形成系列辨识度
-3. **不要自行修改 base prompt**：如需调整，更新本文件和 `memory/branding/cover-prompt.md`
-4. **竖版比例**：封面图固定 1024x1536（3:4 竖版），不要用正方形
-5. **生图 prompt 存档**：每次生图后将实际使用的 prompt 保存到 `workspace/reports/hotspot/YYYY-MM-DD-封面图.txt`
+1. **每次生图必须先 Read 本文件** — 禁止凭记忆写 prompt，必须从本文件中复制 STYLE 模板，以文件内容为准
+2. **STYLE 参数直接从对应章节整段复制** — 里面包含完整角色描述，改了角色就不一致
+3. **CONTENT 参数只放变量** — 配图文字，不要重复写角色描述
+4. **角色一致性**：所有封面图角色固定在右下角，形成系列辨识度
+5. **竖版比例**：封面图固定 1024x1536（3:4 竖版），不要用正方形
+6. **中文渲染**：AI 生图对中文支持不稳定，乱码时保留图片（角色+装饰有价值），文字后期叠加
+7. **生图 prompt 存档**：每次生图后将实际使用的 prompt 保存到 `workspace/reports/hotspot/YYYY-MM-DD-封面图.txt`
 
 ---
 

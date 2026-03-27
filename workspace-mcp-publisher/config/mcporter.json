@@ -1,34 +1,34 @@
 {
     "mcpServers": {
         "xhs-bot1": {
-            "url": "http://localhost:18061/mcp"
+            "url": "http://localhost:18060/mcp/bot1"
         },
         "xhs-bot2": {
-            "url": "http://localhost:18062/mcp"
+            "url": "http://localhost:18060/mcp/bot2"
         },
         "xhs-bot3": {
-            "url": "http://localhost:18063/mcp"
+            "url": "http://localhost:18060/mcp/bot3"
         },
         "xhs-bot4": {
-            "url": "http://localhost:18064/mcp"
+            "url": "http://localhost:18060/mcp/bot4"
         },
         "xhs-bot5": {
-            "url": "http://localhost:18065/mcp"
+            "url": "http://localhost:18060/mcp/bot5"
         },
         "xhs-bot6": {
-            "url": "http://localhost:18066/mcp"
+            "url": "http://localhost:18060/mcp/bot6"
         },
         "xhs-bot7": {
-            "url": "http://localhost:18067/mcp"
+            "url": "http://localhost:18060/mcp/bot7"
         },
         "xhs-bot8": {
-            "url": "http://localhost:18068/mcp"
+            "url": "http://localhost:18060/mcp/bot8"
         },
         "xhs-bot9": {
-            "url": "http://localhost:18069/mcp"
+            "url": "http://localhost:18060/mcp/bot9"
         },
         "xhs-bot10": {
-            "url": "http://localhost:18070/mcp"
+            "url": "http://localhost:18060/mcp/bot10"
         },
         "compliance-mcp": {
             "url": "http://localhost:18090/mcp"

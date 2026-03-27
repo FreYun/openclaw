@@ -319,7 +319,8 @@
         "scheduled-6": null
       },
       "overflow": [
-        "mp-content-writer",
+        "data-tools",
+        "market-tools",
         "nailong-cover",
         "xhs-browser-publish",
         "xhs-op"

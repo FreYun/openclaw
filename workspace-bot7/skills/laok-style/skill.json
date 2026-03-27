@@ -3,5 +3,6 @@
   "icon": "🎴",
   "slot": "accessory",
   "subType": "image",
-  "desc": "老K投资笔记 IP 形象与配图风格 prompt 模板，用于 image-generator 生成统一视觉风格的配图"
+  "desc": "老K投资笔记 IP 形象与配图风格 prompt 模板，用于 image-gen-mcp 生成统一视觉风格的配图",
+  "requiresMcp": ["image-gen-mcp"]
 }

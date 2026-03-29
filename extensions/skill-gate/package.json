@@ -1,0 +1,14 @@
+{
+  "name": "@openclaw/skill-gate",
+  "version": "1.0.0",
+  "description": "Block tool calls when the agent lacks the required equipped skill",
+  "type": "module",
+  "peerDependencies": {
+    "openclaw": "*"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

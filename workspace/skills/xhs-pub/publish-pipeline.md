@@ -5,7 +5,7 @@
 ## 队列目录
 
 ```
-/home/rooot/.openclaw/publish-queue/
+/home/rooot/.openclaw/workspace-sys1/publish-queue/
 ├── pending/      ← 待处理（folder 格式：post.md + 媒体文件）
 ├── publishing/   ← 处理中（mv 锁定）
 └── published/    ← 归档（仅成功的；失败的删除 + 通知提交者）
@@ -25,9 +25,10 @@
 2. 解析 post.md：提取 title, content, mode, account_id, images, tags, etc.
   ↓
 3. 校验
-   - account_id 必须是 bot1-bot10
+   - account_id 必须是 bot1-bot18
    - title 非空，≤20 中文字
-   - 频率限制：同账号 15 分钟内不可重复发布（bot10 豁免）
+   - 频率限制：同账号 5 分钟内不可重复发布（bot10 豁免）
+     检查方法：`ls -1t published/ | grep "_${account_id}_" | head -1` 取最近一条的时间戳，不要读发帖记录文件
    - 上次失败的不受频率限制
   ↓
 4. Tag 预处理
@@ -36,29 +37,24 @@
    - 去重
    - 最多 5 个
   ↓
-5. 合规审核
-   npx mcporter call "compliance-mcp.review_content(title: '...', content: '...', tags: '...')"
-   - passed: true → 继续
-   - passed: false → 通知提交者修改原因，删除投稿
-  ↓
-6. 登录检查
+5. 登录检查
    npx mcporter call "xhs-botN.check_login_status(account_id: 'botN')"
    - 创作者平台必须已登录
    - 未登录 → 通知提交者 + 通知研究部
   ↓
-7. mv pending/ → publishing/（锁定）
+6. mv pending/ → publishing/（锁定）
   ↓
-8. 执行发布（Read publish-tools.md 查看 API 参数）
+7. 执行发布（Read publish-tools.md 查看 API 参数）
    npx mcporter call --timeout 180000 "xhs-botN.publish_content(...)"
   ↓
-9. 成功 → mv publishing/ → published/（归档）
+8. 成功 → mv publishing/ → published/（归档）
    失败 → 删除投稿 + 通知提交者错误信息
   ↓
-10. 记录日志
-    python3 ~/.openclaw/scripts/log-publish.py ...
-    更新 memory/发帖记录.md
+9. 记录日志
+   python3 ~/.openclaw/scripts/log-publish.py ...
+   更新 memory/发帖记录.md
   ↓
-11. 清理一次性指令：步骤 0 中匹配到的「一次性」指令，从 MEMORY.md 特殊关怀面板中删除
+10. 清理一次性指令：步骤 0 中匹配到的「一次性」指令，从 MEMORY.md 特殊关怀面板中删除
 ```
 
 ---
@@ -117,7 +113,7 @@ is_original: true  # 可选
 
 | 规则 | 值 |
 |------|-----|
-| 同账号最短发布间隔 | 15 分钟 |
+| 同账号最短发布间隔 | 5 分钟 |
 | bot10 | 豁免（测试账号）|
 | 上次失败 | 不计入间隔 |
 

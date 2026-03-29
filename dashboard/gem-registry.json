@@ -50,6 +50,15 @@
       "urlTemplate": "http://research-mcp.jijinmima.cn/mcp",
       "healthUrl": "http://research-mcp.jijinmima.cn/mcp",
       "healthMethod": "mcp-initialize"
+    },
+    "openspace": {
+      "name": "技能进化",
+      "icon": "🟣",
+      "color": "#a55eea",
+      "desc": "OpenSpace 技能进化引擎（fix_skill / search_skills）",
+      "perBot": false,
+      "command": "/home/rooot/OpenSpace/.venv/bin/openspace-mcp",
+      "mcporterKey": "openspace"
     }
   }
 }

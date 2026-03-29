@@ -57,5 +57,5 @@ Results are auto-delivered to user via Feishu. Usually no action needed. If you 
 
 ## Misc
 
-- **Check publish status**: `ls /home/rooot/.openclaw/publish-queue/published/ | grep ${account_id}`
+- **Check publish status**: `ls /home/rooot/.openclaw/workspace-sys1/publish-queue/published/ | grep ${account_id}`
 - **Fallback (direct publish)**: If publisher is down, read `skills/xhs-op/mcp-tools.md` first

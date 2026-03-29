@@ -3,14 +3,14 @@
 # 用法见下方 usage()，bot 只需传参数，自动在 pending/ 创建队列文件夹
 set -euo pipefail
 
-QUEUE_DIR="/home/rooot/.openclaw/publish-queue/pending"
+QUEUE_DIR="/home/rooot/.openclaw/workspace-sys1/publish-queue/pending"
 
 usage() {
     cat >&2 << 'EOF'
 用法: submit-to-publisher.sh [选项]
 
 必填:
-  -a ACCOUNT_ID    bot1-bot10
+  -a ACCOUNT_ID    bot1-bot18
   -t TITLE         标题（≤20中文字）
   -b BODY_FILE     正文文件路径（避免 shell 转义）
   -m MODE          text_to_image | image | longform | video

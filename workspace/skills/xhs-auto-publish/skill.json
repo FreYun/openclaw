@@ -1,8 +1,8 @@
 {
   "name": "小红书智能发帖",
   "icon": "🚀",
-  "slot": "scheduled",
-  "subType": "scheduled",
+  "slot": "xxx",
+  "subType": "xxx",
   "desc": "每日定时自动发帖：素材→选题→行情→生图→发帖→数据驱动重试→低效清理",
   "requiresMcp": ["xiaohongshu-mcp", "image-gen-mcp"],
   "params": {

@@ -2,7 +2,7 @@
   "name": "小红书发布中心",
   "icon": "📮",
   "slot": "armor",
-  "desc": "印务局专属：MCP 服务管理、端口健康监控、发布流水线执行、合规审核",
+  "desc": "印务局专属：MCP 服务管理、端口健康监控、发布流水线执行",
   "requiresMcp": ["xiaohongshu-mcp"],
   "subSkills": [
     {
@@ -15,7 +15,7 @@
       "name": "发布流水线",
       "icon": "🔄",
       "file": "publish-pipeline.md",
-      "desc": "pending → 校验 → 合规 → 登录检查 → 发布 → 归档"
+      "desc": "pending → 校验 → 登录检查 → 发布 → 归档"
     },
     {
       "name": "MCP 服务管理",

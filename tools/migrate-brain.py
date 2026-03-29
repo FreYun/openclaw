@@ -98,7 +98,7 @@ CREATE INDEX IF NOT EXISTS idx_long_term_active ON long_term(is_active);
 
 def create_db(bot_id, bot_name):
     if bot_id == "bot_main":
-        ws = "workspace-main"
+        ws = "workspace-mag1"
     else:
         ws = f"workspace-{bot_id}"
     db_path = os.path.join(OPENCLAW, ws, "memory", "brain.db")

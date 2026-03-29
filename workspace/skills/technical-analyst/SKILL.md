@@ -1,238 +1,340 @@
 ---
 name: technical-analyst
-description: This skill should be used when analyzing weekly price charts for stocks, stock indices, cryptocurrencies, or forex pairs. Use this skill when the user provides chart images and requests technical analysis, trend identification, support/resistance levels, scenario planning, or probability assessments based purely on chart data without consideration of news or fundamental factors.
+description: 用于分析股票、股票指数、加密货币或外汇对的价格图表（支持日线、周线、月线等多周期）。当用户提供图表图片并请求技术分析、趋势识别、支撑阻力位、情景规划或基于纯图表数据的概率评估时使用本技能。
 ---
 
-# Technical Analyst
+# 技术分析师
 
-## Overview
+## 概述
 
-This skill enables comprehensive technical analysis of weekly price charts. Analyze chart images to identify trends, support and resistance levels, moving average relationships, volume patterns, and develop probabilistic scenarios for future price movement. All analysis is conducted objectively using only chart data, without influence from news, fundamentals, or market sentiment.
+本技能支持对价格图表进行全面技术分析，适用于日线、周线、月线等多个时间周期。通过分析图表图片识别趋势、支撑阻力位、均线关系、成交量形态，并为未来价格走势制定概率加权情景。所有分析严格基于图表数据，不受新闻、基本面或市场情绪影响。
 
-## Core Principles
+**重要**：所有分析报告均以**中文**输出。
 
-1. **Pure Chart Analysis**: Base all conclusions exclusively on technical data visible in the chart
-2. **Systematic Approach**: Follow a structured methodology for each chart analysis
-3. **Objective Assessment**: Avoid subjective bias; focus on observable patterns and data
-4. **Probabilistic Scenarios**: Express future possibilities as probability-weighted scenarios
-5. **Sequential Processing**: Analyze each chart individually and document findings immediately
+## 核心原则
 
-## Analysis Workflow
+1. **纯图表分析**：所有结论严格基于图表中可观察到的技术数据
+2. **系统化方法**：每次图表分析遵循结构化方法论
+3. **客观评估**：避免主观偏见，专注于可观察的形态和数据
+4. **概率情景**：以概率加权情景表达未来的可能性
+5. **逐一处理**：逐一分析每张图表并立即记录发现
 
-### Step 1: Receive Chart Images
+## 分析工作流程
 
-When the user provides one or more weekly chart images for analysis:
+### 第一步：接收图表图片
 
-1. Confirm receipt of all chart images
-2. Identify the number of charts to analyze
-3. Note any specific focus areas requested by the user
-4. Proceed to analyze charts sequentially, one at a time
+当用户提供一张或多张价格图表图片时：
 
-### Step 2: Load Technical Analysis Framework
+1. 确认收到所有图表图片
+2. 识别图表数量
+3. 注意用户要求的任何特定关注点
+4. 识别图表的时间周期（日线/周线/月线/其他）
+5. 按顺序逐一分析图表
 
-Before beginning analysis, read the comprehensive technical analysis methodology:
+### 第二步：图片质量检查与降级处理
+
+在开始分析前，评估图片质量：
+
+- **图片清晰可读**：按完整分析流程进行
+- **图片部分模糊**（如价格标签难以辨认）：继续分析可识别的部分，在报告中注明"由于图片质量限制，[具体部分] 数据可能不精确"
+- **图片无法识别**（完全模糊、格式错误或非图表内容）：告知用户"无法识别图表内容，请提供更清晰的图片或确认图片格式正确"，不生成报告
+- **缺少关键信息**（如无价格刻度）：分析形态和结构，说明"因缺少价格刻度，无法提供具体价格目标，以下分析基于相对价格水平"
+
+### 第三步：系统化分析每张图表
+
+遵循以下技术分析方法论对每张图表进行系统分析：
+
+#### 3.1 趋势分析
+
+- 识别趋势方向（上升趋势、下降趋势、横盘）
+- 评估趋势强度（强、中、弱）
+- 注意趋势持续时间和潜在耗尽信号
+- 检查更高高点/低点或更低高点/低点形态
+- **趋势分类标准**：
+  - 强上升趋势：持续更高高点和更高低点，MA向上发散
+  - 弱化趋势：新高/低点幅度收窄，或MA开始走平
+  - 趋势反转信号：结构性破位（跌破关键低点/突破关键高点）
+
+#### 3.2 支撑与阻力分析
+
+- 标记重要水平支撑位
+- 标记重要水平阻力位
+- 识别趋势线支撑/阻力
+- 注意支撑-阻力角色互换
+- 评估多个S/R水平对齐的汇聚区
+- **识别技巧**：历史高低点、密集成交区、整数关口、前期突破/跌破位
+
+#### 3.3 均线分析
+
+- 确定价格相对于短期MA（约20期）、中期MA（约50期）、长期MA（约200期）的位置
+- 评估MA排列（多头、空头或中性配置）
+- 注意MA斜率（上升、下降、走平）
+- 识别任何近期或待定的MA金叉/死叉
+- 观察MA作为动态支撑或阻力的作用
+- **多头排列**：短期MA > 中期MA > 长期MA，且均向上
+- **空头排列**：短期MA < 中期MA < 长期MA，且均向下
+
+#### 3.4 成交量分析
+
+- 评估整体成交量趋势（增加、减少、稳定）
+- 识别成交量放大及其背景（在支撑/阻力位、突破时）
+- 检查成交量与价格的确认或背离
+- 注意成交量顶部或底部形态
+- **量价关系**：
+  - 放量上涨：看涨确认
+  - 缩量上涨：趋势弱化警示
+  - 放量下跌：看跌确认
+  - 缩量下跌：空头力量减弱
+
+#### 3.5 图表形态与价格行为
+
+- 识别反转形态（锤子线、射击之星、吞没形态等）
+- 识别持续形态（旗形、三角形等）
+- 注意重要蜡烛图形态
+- 观察近期突破或跌破
+- **常见形态含义**：
+  - 头肩顶/底：强反转信号
+  - 双顶/双底：中等强度反转信号
+  - 三角形整理：方向待定，突破方向为信号
+  - 旗形/楔形：通常为持续形态
+
+#### 3.6 综合观察
+
+- 将所有技术要素整合为连贯的当前评估
+- 识别影响图表的最重要因素
+- 注意任何矛盾信号或模糊性
+- 确定决定未来方向的关键价位
+
+### 第四步：制定概率情景
+
+为每张分析图表创建2-4个不同的未来价格走势情景：
+
+#### 情景结构
+
+每个情景必须包含：
+1. **情景名称**：清晰、描述性的标题（例如："看涨情景：突破阻力"）
+2. **概率估计**：基于技术因素的百分比可能性（所有情景概率之和必须为100%）
+3. **描述**：该情景的内容及其展开方式
+4. **支持因素**：支持该情景的技术证据（最少2-3个因素）
+5. **目标价位**：如果情景成立的预期价格水平
+6. **失效价位**：否定该情景的具体价格水平
+
+#### 典型情景框架
+
+- **基准情景（40-60%）**：基于当前结构最可能的结果
+- **看涨情景（20-40%）**：需要向上突破的乐观情景
+- **看跌情景（20-40%）**：需要向下突破的悲观情景
+- **替代情景（5-15%）**：较低概率但技术上合理的结果
+
+根据支持技术因素的强度调整概率。确保概率合理且总和为100%。
+
+### 第五步：生成分析报告
+
+为每张分析的图表创建综合分析报告，使用以下模板结构（直接在回复中输出，如需保存则以 `[标的代码]_technical_analysis_[YYYY-MM-DD].md` 命名）：
+
+---
+
+#### 分析报告模板
 
 ```
-Read: references/technical_analysis_framework.md
+# [标的名称] 技术分析报告
+
+**分析日期**：[YYYY-MM-DD]
+**图表周期**：[日线/周线/月线/其他]
+**数据截止**：[从图表可见的最新K线日期，如无法确认则注明"未知"]
+
+---
+
+## 1. 图表概述
+
+[简要描述图表的整体外观，包括时间范围、价格范围和总体市场条件]
+
+---
+
+## 2. 趋势分析
+
+**主要趋势**：[上升/下降/横盘]
+**趋势强度**：[强/中/弱]
+**趋势持续时间**：[估计时长]
+
+[详细趋势描述，包括高点/低点序列和趋势线观察]
+
+---
+
+## 3. 支撑与阻力位
+
+### 关键阻力位
+| 价格水平 | 类型 | 重要性 | 备注 |
+|--------|------|--------|------|
+| [价格] | [水平/趋势线/MA] | [高/中/低] | [说明] |
+
+### 关键支撑位
+| 价格水平 | 类型 | 重要性 | 备注 |
+|--------|------|--------|------|
+| [价格] | [水平/趋势线/MA] | [高/中/低] | [说明] |
+
+---
+
+## 4. 均线分析
+
+**均线排列**：[多头/空头/中性]
+
+| 均线 | 与价格关系 | 斜率 |
+|------|----------|------|
+| 短期MA（约20期） | [价格在上/下方] | [上升/下降/走平] |
+| 中期MA（约50期） | [价格在上/下方] | [上升/下降/走平] |
+| 长期MA（约200期） | [价格在上/下方] | [上升/下降/走平] |
+
+[均线分析详述]
+
+---
+
+## 5. 成交量分析
+
+**成交量趋势**：[增加/减少/稳定]
+**量价关系**：[确认/背离]
+
+[成交量详细分析，包括近期显著成交量事件]
+
+---
+
+## 6. 图表形态与价格行为
+
+**主要形态**：[形态名称及简述]
+**信号强度**：[强/中/弱]
+
+[识别的形态列表及其含义]
+
+---
+
+## 7. 当前市场评估
+
+[综合所有技术要素的总体评估。识别关键驱动因素、矛盾信号，并建立将决定未来方向的关键水平]
+
+**总体偏向**：[看涨/看跌/中性]
+**信心水平**：[高/中/低]（基于信号一致性）
+
+---
+
+## 8. 情景分析
+
+### 情景一：[情景名称]
+**概率**：[X%]
+**描述**：[该情景的详细描述]
+**支持因素**：
+- [技术因素1]
+- [技术因素2]
+- [技术因素3]
+**目标价位**：[具体价格水平]
+**失效价位**：[具体价格水平]
+
+### 情景二：[情景名称]
+**概率**：[Y%]
+**描述**：[该情景的详细描述]
+**支持因素**：
+- [技术因素1]
+- [技术因素2]
+**目标价位**：[具体价格水平]
+**失效价位**：[具体价格水平]
+
+[根据需要添加更多情景，确保所有概率之和为100%]
+
+---
+
+## 9. 总结
+
+[简洁总结主要技术发现，强调最重要的水平和情景]
+
+**关键监控水平**：
+- 上方关注：[价格水平]
+- 下方关注：[价格水平]
+
+---
+
+## 免责声明
+
+本分析完全基于图表技术数据，仅供教育和参考目的，不构成投资建议。技术分析不能保证未来价格走势。在做出任何投资决策前，请进行独立研究并考虑您的风险承受能力。
 ```
 
-This reference contains detailed guidance on:
-- Trend analysis and classification
-- Support and resistance identification
-- Moving average interpretation
-- Volume analysis
-- Chart patterns and candlestick analysis
-- Scenario development and probability assignment
-- Analysis discipline and objectivity
+---
 
-### Step 3: Analyze Each Chart Systematically
+### 第六步：多图表时重复分析
 
-For each chart image, conduct a systematic analysis following this sequence:
+如果提供了多张图表：
 
-#### 3.1 Trend Analysis
-- Identify trend direction (uptrend, downtrend, sideways)
-- Assess trend strength (strong, moderate, weak)
-- Note trend duration and potential exhaustion signals
-- Examine higher highs/lows or lower highs/lows pattern
+1. 为第一张图表完成完整分析流程（第三至五步）
+2. 保存分析报告
+3. 继续下一张图表
+4. 重复直到所有图表都已分析和记录
 
-#### 3.2 Support and Resistance Analysis
-- Mark significant horizontal support levels
-- Mark significant horizontal resistance levels
-- Identify trendline support/resistance
-- Note any support-resistance role reversals
-- Assess confluence zones where multiple S/R levels align
+不要批量分析。在继续下一张图表前，完成并保存每份报告。
 
-#### 3.3 Moving Average Analysis
-- Determine price position relative to 20-week, 50-week, and 200-week MAs
-- Assess MA alignment (bullish, bearish, or neutral configuration)
-- Note MA slope (rising, falling, flat)
-- Identify any recent or pending MA crossovers
-- Observe MAs acting as dynamic support or resistance
+## 质量标准
 
-#### 3.4 Volume Analysis
-- Assess overall volume trend (increasing, decreasing, stable)
-- Identify volume spikes and their context (at support/resistance, on breakouts)
-- Check for volume confirmation or divergence with price
-- Note any volume climax or exhaustion patterns
+### 客观性要求
 
-#### 3.5 Chart Patterns and Price Action
-- Identify any reversal patterns (hammers, shooting stars, engulfing patterns, etc.)
-- Identify any continuation patterns (flags, triangles, etc.)
-- Note significant candlestick formations
-- Observe recent breakouts or breakdowns
+- 严格基于可观察的图表数据进行所有分析
+- 避免纳入外部信息（新闻、基本面、情绪）
+- 不使用"我认为"或"我感觉"等主观语言
+- 当信号模糊时清晰表达不确定性
+- 同时呈现看涨和看跌的可能性，避免确认偏误
 
-#### 3.6 Synthesize Observations
-- Integrate all technical elements into coherent current assessment
-- Identify the most significant factors influencing the chart
-- Note any conflicting signals or ambiguity
-- Establish key levels that will determine future direction
+### 完整性要求
 
-### Step 4: Develop Probabilistic Scenarios
+- 处理分析模板的所有部分
+- 提供支撑、阻力和目标的具体价格水平
+- 用技术因素证明概率估计的合理性
+- 为每个情景包含失效价位
+- 注意分析的任何限制或注意事项
 
-For each analyzed chart, create 2-4 distinct scenarios for future price movement:
+### 清晰度要求
 
-#### Scenario Structure
+- 正确使用精确的技术术语
+- 以清晰、专业的中文撰写
+- 合理地组织信息结构
+- 包含具体价格水平（而非模糊描述）
+- 使情景清晰区分且相互独立
 
-Each scenario must include:
-1. **Scenario Name**: Clear, descriptive title (e.g., "Bull Case: Breakout Above Resistance")
-2. **Probability Estimate**: Percentage likelihood based on technical factors (must sum to 100% across all scenarios)
-3. **Description**: What this scenario entails and how it would unfold
-4. **Supporting Factors**: Technical evidence supporting this scenario (minimum 2-3 factors)
-5. **Target Levels**: Expected price levels if scenario plays out
-6. **Invalidation Level**: Specific price level that would negate this scenario
+## 示例使用场景
 
-#### Typical Scenario Framework
+**示例1：单图表分析**
 
-- **Base Case Scenario (40-60%)**: Most likely outcome based on current structure
-- **Bull Case Scenario (20-40%)**: Optimistic scenario requiring upside breakout
-- **Bear Case Scenario (20-40%)**: Pessimistic scenario requiring downside breakdown
-- **Alternative Scenario (5-15%)**: Lower probability but technically plausible outcome
+用户："请分析这张标普500的周线图"（提供图表图片）
 
-Adjust probabilities based on strength of supporting technical factors. Ensure probabilities are realistic and sum to 100%.
+分析师：
+1. 确认收到图表图片，识别为周线图
+2. 检查图片质量（清晰可读）
+3. 进行系统分析（趋势、S/R、MA、成交量、形态）
+4. 制定3个情景及概率（例：55%看涨延续、30%整理、15%反转）
+5. 使用模板生成综合分析报告，保存为 `SPY_technical_analysis_2025-11-02.md`
 
-### Step 5: Generate Analysis Report
+**示例2：多图表分析**
 
-For each chart analyzed, create a comprehensive markdown report using the template structure:
+用户："分析这三张图表：比特币、以太坊和纳斯达克"（提供3张图表图片）
 
-```
-Read and use as template: assets/analysis_template.md
-```
+分析师：
+1. 确认收到3张图表
+2. 完整分析比特币图表 → 生成报告 → 保存为 `BTC_technical_analysis_2025-11-02.md`
+3. 完整分析以太坊图表 → 生成报告 → 保存为 `ETH_technical_analysis_2025-11-02.md`
+4. 完整分析纳斯达克图表 → 生成报告 → 保存为 `NDX_technical_analysis_2025-11-02.md`
+5. 通知用户三份分析均已完成
 
-The report must include all sections:
-1. Chart Overview
-2. Trend Analysis
-3. Support and Resistance Levels
-4. Moving Average Analysis
-5. Volume Analysis
-6. Chart Patterns and Price Action
-7. Current Market Assessment
-8. Scenario Analysis (2-4 scenarios with probabilities)
-9. Summary
-10. Disclaimer
+**示例3：重点分析请求**
 
-**File Naming Convention**: Save each analysis as `[SYMBOL]_technical_analysis_[YYYY-MM-DD].md`
+用户："我特别想知道这只股票是否会突破阻力位，请分析图表。"（提供图表图片）
 
-Example: `SPY_technical_analysis_2025-11-02.md`
+分析师：
+1. 进行完整系统分析
+2. 特别关注阻力位和突破概率
+3. 制定强调突破与拒绝可能性的情景
+4. 根据成交量、趋势强度和与阻力位的接近程度分配概率
+5. 生成包含重点情景分析的完整报告
 
-### Step 6: Repeat for Multiple Charts
+**示例4：图片质量问题**
 
-If multiple charts are provided:
+用户："帮我分析这张图表"（提供模糊图片）
 
-1. Complete the full analysis workflow (Steps 3-5) for the first chart
-2. Save the analysis report
-3. Proceed to the next chart
-4. Repeat until all charts have been analyzed and documented
-
-Do not batch analyses. Complete and save each report before moving to the next chart.
-
-## Quality Standards
-
-### Objectivity Requirements
-
-- Base all analysis strictly on observable chart data
-- Avoid incorporating external information (news, fundamentals, sentiment)
-- Do not use subjective language like "I think" or "I feel"
-- Express uncertainty clearly when signals are ambiguous
-- Present both bullish and bearish possibilities to avoid confirmation bias
-
-### Completeness Requirements
-
-- Address all sections of the analysis template
-- Provide specific price levels for support, resistance, and targets
-- Justify probability estimates with technical factors
-- Include invalidation levels for each scenario
-- Note any limitations or caveats to the analysis
-
-### Clarity Requirements
-
-- Use precise technical terminology correctly
-- Write in clear, professional language
-- Structure information logically
-- Include specific price levels (not vague descriptions)
-- Make scenarios distinct and mutually exclusive
-
-## Example Usage Scenarios
-
-**Example 1: Single Chart Analysis**
-```
-User: "Please analyze this weekly chart of the S&P 500"
-[Provides chart image]
-
-Analyst:
-1. Confirms receipt of chart image
-2. Reads technical_analysis_framework.md for methodology
-3. Conducts systematic analysis (trend, S/R, MA, volume, patterns)
-4. Develops 3 scenarios with probabilities (e.g., 55% bullish continuation, 30% consolidation, 15% reversal)
-5. Generates comprehensive analysis report using template
-6. Saves as SPY_technical_analysis_2025-11-02.md
-```
-
-**Example 2: Multiple Chart Analysis**
-```
-User: "Analyze these three charts: Bitcoin, Ethereum, and Nasdaq"
-[Provides 3 chart images]
-
-Analyst:
-1. Confirms receipt of 3 charts
-2. Reads technical_analysis_framework.md
-3. Analyzes Bitcoin chart completely → Generates report → Saves as BTC_technical_analysis_2025-11-02.md
-4. Analyzes Ethereum chart completely → Generates report → Saves as ETH_technical_analysis_2025-11-02.md
-5. Analyzes Nasdaq chart completely → Generates report → Saves as NDX_technical_analysis_2025-11-02.md
-6. Notifies user that all three analyses are complete
-```
-
-**Example 3: Focused Analysis Request**
-```
-User: "I'm particularly interested in whether this stock will break above resistance. Analyze the chart."
-[Provides chart image]
-
-Analyst:
-1. Conducts full systematic analysis
-2. Pays special attention to resistance levels and breakout probability
-3. Develops scenarios with emphasis on breakout vs. rejection possibilities
-4. Assigns probabilities based on volume, trend strength, and proximity to resistance
-5. Generates complete report with focused scenario analysis
-```
-
-## Resources
-
-This skill includes the following bundled resources:
-
-### references/technical_analysis_framework.md
-
-Comprehensive methodology for technical analysis including:
-- Trend analysis criteria and classification
-- Support and resistance identification techniques
-- Moving average interpretation guidelines
-- Volume analysis principles
-- Chart pattern recognition
-- Scenario development and probability assignment framework
-- Objectivity and discipline reminders
-
-**Usage**: Read this file before conducting analysis to ensure systematic, objective approach.
-
-### assets/analysis_template.md
-
-Structured template for technical analysis reports with all required sections.
-
-**Usage**: Use this template structure for every analysis report. Copy the format and populate with specific findings for each chart.
+分析师：
+1. 检查图片质量，发现图表主体可辨认但价格刻度模糊
+2. 告知用户："图表价格刻度不清晰，将基于相对价格水平进行形态和结构分析，无法提供具体价格目标"
+3. 继续分析可识别的技术要素，在报告中标注限制

@@ -102,8 +102,7 @@ npx mcporter call "xhs-bot7.publish_longform(account_id: 'bot7', title: '...', .
 ## 发布前检查
 
 1. **登录状态**：`xhs-botN.check_login_status(account_id: 'botN')` — 创作者平台必须登录
-2. **合规审核**：`compliance-mcp.review_content(title: '...', content: '...', tags: '...')` — `passed: true` 才发
-3. **测试发布**：不确定时用 `visibility: '仅自己可见'` 先测试
+2. **测试发布**：不确定时用 `visibility: '仅自己可见'` 先测试
 
 ---
 

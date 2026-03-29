@@ -115,24 +115,26 @@ The card is surrounded by [主题描述，如: pixel art candlestick patterns sh
 
 ## 生图调用
 
-**关键原则：STYLE 参数直接从对应模板章节整段复制，不要修改。CONTENT 参数只放场景/主题等变量。**
+**STYLE 从模板整段复制，CONTENT 只放变量。有参考图时传 `reference_image`。**
 
 ```
-npx mcporter call 'image-gen-mcp.generate_image(
+image-gen-mcp.generate_image(
   style: "{直接复制对应模板的完整 STYLE}",
   content: "{替换好占位符的 CONTENT}",
   size: "960x1280",
-  workspace: "/home/rooot/.openclaw/workspace-bot7"
-)'
+  workspace: "/home/rooot/.openclaw/workspace-bot7",
+  reference_image: "{可选，本地图片路径，模型会参考该图的风格/构图/色彩}"
+)
 ```
 
-建议画幅：正方形(1:1) `1024x1024` 用于头像（模板C），16:9 `1536x1024` 用于文章封面，3:4 `960x1280` 用于小红书竖版（模板E首选）。
+- 画幅：1:1 `1024x1024`（头像/模板C）| 16:9 `1536x1024`（横版封面）| 3:4 `960x1280`（小红书竖版/模板E首选）
+- `reference_image` 适用场景：想沿用某张已有配图的色调/构图/氛围时传入，不传则纯文生图
 
 ## 铁律
 
-1. **每次生图必须先 Read 本文件** — 禁止凭记忆写 prompt，必须从本文件中复制 STYLE 模板，以文件内容为准
-2. **STYLE 参数直接从对应模板章节整段复制** — 不可缩写、不可省略、不可改写
-3. **CONTENT 参数只放场景/主题等变量** — 不要在 content 里重复写风格描述
+1. **每次生图必须先 Read 本文件** — 禁止凭记忆写 prompt，以文件内容为准
+2. **STYLE 整段复制，不可缩写/省略/改写**
+3. **CONTENT 只放变量** — 不要重复写风格描述
 
 ## 风格一致性要点
 

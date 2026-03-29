@@ -17,6 +17,8 @@ import {
   sanitizeUserFacingText,
 } from "../../agents/pi-embedded-helpers.js";
 import { runEmbeddedPiAgent } from "../../agents/pi-embedded.js";
+import { runEmbeddedClaudeAgent } from "../../agents/claude-sdk-runner/run.js";
+import { resolveAgentRuntime } from "../../agents/runtime-config.js";
 import {
   resolveAgentIdFromSessionKey,
   resolveGroupSessionKey,
@@ -252,7 +254,10 @@ export async function runAgentTurnWithFallback(params: {
             provider === params.followupRun.run.provider
               ? params.followupRun.run.authProfileId
               : undefined;
-          return runEmbeddedPiAgent({
+          const agentIdForRuntime = resolveAgentIdFromSessionKey(params.sessionKey);
+          const agentRuntime = resolveAgentRuntime(params.followupRun.run.config, agentIdForRuntime);
+          const runAgent = agentRuntime === "claude-sdk" ? runEmbeddedClaudeAgent : runEmbeddedPiAgent;
+          return runAgent({
             sessionId: params.followupRun.run.sessionId,
             sessionKey: params.sessionKey,
             messageProvider: params.sessionCtx.Provider?.trim().toLowerCase() || undefined,

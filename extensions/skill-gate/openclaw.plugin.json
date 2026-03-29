@@ -1,0 +1,8 @@
+{
+  "id": "skill-gate",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

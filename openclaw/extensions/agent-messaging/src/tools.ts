@@ -70,20 +70,30 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
             "Trace chain. First entry should be your origin context " +
             "(agent, session_id, reply_channel, reply_to, reply_account)",
         }),
+        media: Type.Optional(
+          Type.Array(Type.String(), {
+            description:
+              "Local file paths or URLs to send as media attachments. " +
+              "Passed along to the target agent in the message content.",
+          }),
+        ),
         metadata: Type.Optional(
           Type.Object({}, { additionalProperties: true, description: "Optional metadata" }),
         ),
       }),
       async execute(_toolCallId: string, params: Record<string, unknown>) {
-        const { to, content, trace, metadata } = params as {
+        const { to, content, trace, media, metadata } = params as {
           to: string;
           content: string;
           trace: TraceEntry[];
+          media?: string[];
           metadata?: Record<string, unknown>;
         };
 
         const rejected = validateTarget(to);
         if (rejected) return rejected;
+
+        const validMedia = media?.filter((m) => typeof m === "string" && m.trim().length > 0);
 
         const msg: AgentMessage = {
           message_id: nanoid(),
@@ -92,6 +102,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           content,
           type: "request",
           trace,
+          media: validMedia?.length ? validMedia : undefined,
           metadata,
           created_at: new Date().toISOString(),
           status: "pending",
@@ -107,6 +118,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           msg.from,
           content,
           store,
+          validMedia,
         ).then(
           (result) => store.updateStatus(msg.message_id, result.ok ? "delivered" : "failed"),
           () => store.updateStatus(msg.message_id, "failed"),
@@ -132,6 +144,13 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
       parameters: Type.Object({
         message_id: Type.String({ description: "The message_id of the message to reply to" }),
         content: Type.String({ description: "Reply content" }),
+        media: Type.Optional(
+          Type.Array(Type.String(), {
+            description:
+              "Local file paths or URLs to send as media attachments (images, files). " +
+              "Each entry is sent as a separate media message after the text.",
+          }),
+        ),
         also_notify_agent: Type.Optional(
           Type.Boolean({
             description:
@@ -141,9 +160,10 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
         ),
       }),
       async execute(_toolCallId: string, params: Record<string, unknown>) {
-        const { message_id: origMsgId, content, also_notify_agent: alsoNotifyAgent } = params as {
+        const { message_id: origMsgId, content, media, also_notify_agent: alsoNotifyAgent } = params as {
           message_id: string;
           content: string;
+          media?: string[];
           also_notify_agent?: boolean;
         };
 
@@ -160,6 +180,9 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
         const userRoute = resolveDirectDeliveryRoute(original.trace);
         const primaryRoute = userRoute ?? resolveReplyRoute(original.trace);
 
+        // Filter media to only valid, non-empty paths
+        const validMedia = media?.filter((m) => typeof m === "string" && m.trim().length > 0);
+
         // Create the reply message with trace peeled back one hop
         const reply: AgentMessage = {
           message_id: nanoid(),
@@ -169,6 +192,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           type: "reply",
           trace: popTrace(original.trace),
           reply_to_message_id: origMsgId,
+          media: validMedia?.length ? validMedia : undefined,
           created_at: new Date().toISOString(),
           status: "pending",
         };
@@ -183,6 +207,7 @@ export function registerMessagingTools(api: OpenClawPluginApi, store: MessageSto
           reply.from,
           content,
           store,
+          validMedia,
         );
 
         await store.updateStatus(reply.message_id, result.ok ? "delivered" : "failed");

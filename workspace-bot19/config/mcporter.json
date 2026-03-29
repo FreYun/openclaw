@@ -1,9 +1,5 @@
 {
     "mcpServers": {
-        "xiaohongshu-mcp": {
-            "baseUrl": "http://localhost:18079/mcp",
-            "url": "http://localhost:18060/mcp/bot19"
-        },
         "research-mcp": {
             "url": "http://research-mcp.jijinmima.cn/mcp"
         },

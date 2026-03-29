@@ -1,0 +1,122 @@
+<!-- TOOLS_COMMON:START -->
+
+---
+
+## System Admin — Strictly Forbidden
+
+**Only HQ (mag1) may execute these. All sub-bots are prohibited:**
+
+- `openclaw gateway restart/stop/start`, `kill/pkill/killall`, `systemctl/service`
+- `rm -rf`, `trash` on system directories or other bots' files
+
+**Infrastructure issues (timeout, connection failure) → report to HQ, do not troubleshoot yourself.**
+
+---
+
+## Inter-Agent Communication (Message Bus)
+
+### Rules
+
+1. **Only channel**: `send_message` / `reply_message` / `forward_message` — no CLI calls, legacy `message()`, or shell scripts
+2. **Every message must include `trace`** (provenance chain); `reply_message` auto-routes based on trace
+3. **Strict single-round**: request → process → `reply_message` → **done**. One request = one reply. Put all data in the reply — never split into multiple messages
+
+### Tools
+
+| Tool | Purpose |
+|------|---------|
+| `send_message` | Start a new conversation/request |
+| `reply_message` | Return results (defaults to Feishu user; add `also_notify_agent: true` to also wake upstream agent) |
+| `forward_message` | Forward to another agent (trace auto-appended) |
+| `get_message` / `list_messages` | Query message details / inbox |
+
+### Trace Construction
+
+```
+send_message(to: "target_agent", content: "...", trace: [{
+  agent: "your_account_id", session_id: "current_session_id",
+  reply_channel: "feishu", reply_to: "ou_xxx", reply_account: "your_account_id"
+}])
+```
+
+`reply_channel/reply_to/reply_account`: only set at the origin hop. Intermediate forwards auto-append trace.
+
+### Incoming `[MSG:xxx]` Messages
+
+`xxx` is the message_id → process → call `reply_message(message_id: "xxx", content: "all results here")` → done.
+
+**Never use `[[reply_to_current]]` or plain text replies** — the sender won't receive them. Always `reply_message`, whether success or failure.
+
+---
+
+## Image Generation: image-gen-mcp
+
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+
+```
+npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'
+```
+
+---
+
+## Tool Priority
+
+1. **memory** → check history first, update incrementally
+2. **research-mcp** → financial data
+3. **browser** → Xueqiu, EastMoney research reports, etc.
+4. **MCP search** → supplementary search, overseas data
+5. **xiaohongshu-mcp** → note management, interactions
+6. **message bus** → inter-agent communication
+<!-- TOOLS_COMMON:END -->
+
+
+
+
+
+
+# TOOLS.md — Publisher Tool Config
+
+
+## MCP 路由（单进程多租户）
+
+xiaohongshu-mcp 单进程监听 `:18060`，通过 URL path 区分 bot。印务局的 mcporter 配置了所有 bot 的 MCP 端点。
+
+调用时使用 mcporter 服务名 `xiaohongshu-mcp`，身份由 mcporter.json 中的 URL path 自动确定。
+
+## Usage
+
+```bash
+# Publish（mcporter 会根据配置自动路由到正确的 bot）
+npx mcporter call "xiaohongshu-mcp.publish_content(title: '...', ...)"
+# Login check
+npx mcporter call "xiaohongshu-mcp.check_login_status()"
+# Compliance
+npx mcporter call "compliance-mcp.review_content(title: '...', content: '...', tags: '...')"
+# Health check
+curl -s --connect-timeout 5 http://localhost:18060/health
+```
+
+## MCP Restart
+
+```bash
+lsof -ti:18060 | xargs kill 2>/dev/null; sleep 2
+nohup /home/rooot/MCP/xiaohongshu-mcp/xiaohongshu-mcp --headless=true -port=:18060 -profiles-base=/home/rooot/.xhs-profiles > /tmp/xhs-mcp-unified.log 2>&1 &
+sleep 3 && curl -s http://localhost:18060/health
+```
+
+## Publish Queue
+
+```
+/home/rooot/.openclaw/workspace-sys1/publish-queue/
+├── pending/      ← folder format (post.md + media) or .md file (legacy)
+├── publishing/   ← mv lock
+└── published/    ← archive (success only; failures deleted + notified)
+```
+
+Submit script: `~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh`
+
+## Feishu Alert
+
+```
+message(action="send", channel="feishu", target="oc_e59188e3ecdb04acd9b33843870a2249", message="...")
+```

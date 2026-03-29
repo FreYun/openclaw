@@ -17,7 +17,7 @@ description: >
 |------|----------|
 | [mcp-tools.md](mcp-tools.md) | 需要调用 MCP 工具时（登录、浏览、搜索、互动、通知、笔记管理） |
 | [发帖前必读.md](发帖前必读.md) | 每次发帖/回复评论前 |
-| [合规速查.md](合规速查.md) | 帖子被印务局打回时 |
+| [合规速查.md](合规速查.md) | 合规审核不过时参考修改 |
 | [内容策划.md](内容策划.md) | 策划内容 / heartbeat 推荐选题时 |
 | [素材积累.md](素材积累.md) | 定时巡逻 / 随手记录灵感时 |
 | [养号互动.md](养号互动.md) | 养号任务触发时 |
@@ -27,11 +27,12 @@ description: >
 
 ## 铁律
 
-1. **发布必走印务局** — 通过 `submit-to-publisher` 脚本提交，绝不直接调用 `publish_content`。合规由印务局负责。
+1. **发布必走印务局** — 通过 `submit-to-publisher` 脚本提交，绝不直接调用 `publish_content`。**提交前必须先过合规审核**（调用 `compliance-mcp.review_content()`），审核通过后再提交。
 2. **不传 account_id** — 身份由端口自动识别，传了会报错。
 3. **先检查登录** — 每次用 MCP 前先 `check_login_status()`。
 4. **人设一致** — 内容符合 SOUL.md / CONTENT_STYLE.md，不暴露研究部。
 5. **评论同等严格** — 不引流、不荐股、不提竞品平台。
+6. **超时处理** — MCP 超时先 `check_login_status()`，掉线按 mcp-tools.md Step 0 重登；mcporter 报 `offline` 则上报研究部。不要反复重试，不要修改 MCP 源码。
 
 ---
 
@@ -41,14 +42,15 @@ description: >
 
 读 `memory/发帖记录.md` + `memory/写稿经验.md` + `CONTENT_STYLE.md`（如有），保证连续性。
 
-### 两步发布
+### 三步发布
 
 ```
 1. 写稿 → 按 CONTENT_STYLE.md 检查风格、排版、封面
-2. 投稿 → Read 投稿发布.md，写文件到发布队列，通知印务局
+2. 合规 → 调用 compliance-mcp.review_content() 审核
+   - passed: true → 进入步骤 3
+   - passed: false → Read 合规速查.md，修改后重新审核
+3. 投稿 → Read 投稿发布.md，提交到发布队列（加 -C 标记），通知印务局
 ```
-
-- **印务局打回时**：Read 合规速查.md，修改后重新投稿
 
 ### 发布权限
 

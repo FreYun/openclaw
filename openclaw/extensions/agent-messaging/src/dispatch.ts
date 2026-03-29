@@ -43,6 +43,7 @@ export async function dispatchMessage(
   fromAgent: string,
   content: string,
   store?: MessageStore,
+  media?: string[],
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     if (route.kind === "wake_agent") {
@@ -57,9 +58,14 @@ export async function dispatchMessage(
         }
       }
 
+      // Include media paths in the message so the target agent can access them
+      const mediaSuffix = media?.length
+        ? `\n📎 media: ${JSON.stringify(media)}`
+        : "";
+
       const fullMessage = historyPrefix
-        ? `${historyPrefix}[MSG:${messageId}] from=${fromAgent}: ${content}`
-        : `[MSG:${messageId}] from=${fromAgent}: ${content}`;
+        ? `${historyPrefix}[MSG:${messageId}] from=${fromAgent}: ${content}${mediaSuffix}`
+        : `[MSG:${messageId}] from=${fromAgent}: ${content}${mediaSuffix}`;
 
       const argv = [
         "openclaw",
@@ -77,7 +83,9 @@ export async function dispatchMessage(
         // agents shares one session (e.g. agent:bot7:agent:bot1).
         argv.push("--session-key", `agent:${route.agent}:agent:${fromAgent}`);
       }
+      console.error(`[agent-messaging] dispatch wake_agent: ${route.agent} session=${route.session_id ?? `agent:${route.agent}:agent:${fromAgent}`} msgId=${messageId}`);
       await runtime.system.runCommandWithTimeout(argv, DISPATCH_TIMEOUT_MS);
+      console.error(`[agent-messaging] dispatch wake_agent OK: ${route.agent} msgId=${messageId}`);
     } else {
       // Origin — deliver directly to external user via `openclaw message send`.
       // Do NOT use `openclaw agent --deliver` — that runs a full LLM turn first
@@ -96,10 +104,31 @@ export async function dispatchMessage(
         content,
       ];
       await runtime.system.runCommandWithTimeout(argv, DISPATCH_TIMEOUT_MS);
+
+      // Send each media attachment as a separate message
+      if (media?.length) {
+        for (const mediaPath of media) {
+          const mediaArgv = [
+            "openclaw",
+            "message",
+            "send",
+            "--channel",
+            route.reply_channel,
+            "--target",
+            route.reply_to,
+            "--account",
+            route.reply_account,
+            "--media",
+            mediaPath,
+          ];
+          await runtime.system.runCommandWithTimeout(mediaArgv, DISPATCH_TIMEOUT_MS);
+        }
+      }
     }
     return { ok: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
+    console.error(`[agent-messaging] dispatch FAILED: ${route.kind} ${(route as any).agent ?? ""} error=${message}`);
     return { ok: false, error: message };
   }
 }

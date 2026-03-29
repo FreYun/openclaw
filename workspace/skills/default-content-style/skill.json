@@ -1,0 +1,7 @@
+{
+  "name": "天天出版社内容风格",
+  "icon": "📖",
+  "slot": "accessory",
+  "subType": "content",
+  "desc": "默认写作风格规范，从 SOUL.md 自动适配人设"
+}

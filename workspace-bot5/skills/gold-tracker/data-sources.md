@@ -12,8 +12,9 @@
 
 **获取方式**：浏览器访问
 ```
-openclaw browser navigate "https://www.jin10.com/" --browser-profile bot5
+browser navigate "https://www.jin10.com/" profile="你的account_id"
 ```
+> ⚠️ profile 用你自己的 account_id（见 TOOLS.md），不要用别人的。
 
 **能拿到的数据**：
 - COMEX 黄金期货实时报价（页面顶部行情栏）
@@ -29,6 +30,8 @@ openclaw browser navigate "https://www.jin10.com/" --browser-profile bot5
 3. 数据日历 → 确认今天有无重要数据发布
 
 **注意**：金十网页可能弹登录框，直接关掉即可，不影响查看行情和快讯。
+
+**⚠️ 用完必须 `browser close`**——金十有实时推送，不关会持续吃 CPU。
 
 ---
 
@@ -52,7 +55,7 @@ web_search("AU9999 实时价格")
 
 **获取方式**：浏览器访问
 ```
-openclaw browser navigate "https://www.mysteel.com/" --browser-profile bot5
+browser navigate "https://www.mysteel.com/" profile="你的account_id"
 ```
 然后搜索"黄金"或直接导航到贵金属频道。
 

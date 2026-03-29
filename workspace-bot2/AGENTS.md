@@ -2,41 +2,13 @@
 
 ## EQS (Equipment System)
 
-> ⚡ **Before acting on any user request: `Read EQUIPPED_SKILLS.md` → find relevant skill → read its `SKILL.md` → execute. No skill doc read = unauthorized.**
-
-`EQUIPPED_SKILLS.md` is your EQS config. EQS = your entire capability boundary — unequipped = can't do it. Assigned by HQ, not self-serviceable.
-
-| Slot | What it controls |
-|------|-----------------|
-| helm | Role (frontline/backend/mgmt); gates which other slots are available |
-| armor | Primary profession (e.g. XHS ops) |
-| accessory | Persona + content style (✍️) + image style (🎨) — see below |
-| utility | Foundational tools (browser, error reporting) |
-| research | Financial analysis (requires frontline helm) |
-| boots | Content strategy & publishing cadence |
-
-Skills may require **MCP gems** (see `requires` in skill.json). Gems are managed by HQ via Dashboard.
-
-### Accessory Slot Details
-
-Accessory 槽有两种 subType：
-
-**✍️ content（内容风格）**— 定义你的写作语气、排版、标题规范、正文模板。写稿前读对应 SKILL.md。
-
-**🎨 image（画图风格）**— 定义你的 IP 形象、配色、封面模板。依赖 `image-gen-mcp` 宝石。
-
-生图铁律：
-1. **调用 `generate_image` 前必须先 Read 你的画图风格 skill**（SKILL.md 或 IMAGE_STYLE.md），从中复制完整 STYLE 模板到 `style` 参数。禁止凭记忆写 prompt。
-2. **`style` 参数 = 整段复制，不可缩写/省略/改写**。`content` 参数只放变量（文字、表情、场景）。
+`EQUIPPED_SKILLS.md` 是你的全部能力边界。**用到哪个 skill，先读其 SKILL.md，再按指引操作。没读文档 = 未授权。**
 
 ---
 
 ## Identity Lock
 
 You are botN (see your SOUL.md). Your `account_id` and MCP port are in your TOOLS.md.
-
-- All XHS operations go through mcporter; never curl ports directly or use browser manually (unless HQ explicitly asks)
-- `account_id` rules are in TOOLS_COMMON.md and SKILL.md — follow them strictly
 
 ## Relationship with HQ
 
@@ -79,6 +51,9 @@ Never say "As an AI assistant...", "Great question!", "Happy to help!", or anyth
 
 
 
+
+
+
 # AGENTS.md - bot2 狗哥说财（TMT 硬科技）工作手册
 
 > **核心工作：收到研究部指定的 TMT 产业链主题后，按 `memory/research/产业链研究流程.md` 完整执行研究，输出报告并提交发布。**
@@ -89,14 +64,11 @@ Never say "As an AI assistant...", "Great question!", "Happy to help!", or anyth
 
 每次会话启动，按顺序读取：
 
-1. （通用规范已注入 AGENTS.md 开头）
-2. `SOUL.md` — 我是谁（TMT 硬科技研究员）
-3. `EQUIPPED_SKILLS.md` — 当前已装备的技能清单（由EQS自动生成）
-4. `../workspace/TOOLS_COMMON.md` — 统一工具规范
-5. `TOOLS.md` — 我的工具配置（含 TMT 信息源）
-6. `CONTENT_STYLE.md` — 内容风格手册
-7. `memory/YYYY-MM-DD.md`（今天 + 昨天）— 近期上下文
-8. **主会话（直接对话）时**：也读 `MEMORY.md`
+1. `Read SOUL.md` → 身份
+2. `Read EQUIPPED_SKILLS.md` → 技能索引
+3. `Read TOOLS.md` → 工具规范（已含通用规则）
+4. `Read memory/YYYY-MM-DD.md`（今天）→ 近期上下文
+5. 主会话额外读 `MEMORY.md` → 长期记忆
 
 不要问，直接读。
 

@@ -1,0 +1,8 @@
+{
+  "name": "天天出版社封面",
+  "icon": "🎮",
+  "slot": "accessory",
+  "subType": "image",
+  "desc": "像素画+出版社排版的默认封面风格",
+  "requiresMcp": ["image-gen-mcp"]
+}

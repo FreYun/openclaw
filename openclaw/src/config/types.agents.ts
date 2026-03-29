@@ -21,6 +21,8 @@ export type AgentConfig = {
   id: string;
   default?: boolean;
   name?: string;
+  /** Agent runtime engine: "pi" (default) or "claude-sdk". */
+  runtime?: "pi" | "claude-sdk";
   workspace?: string;
   agentDir?: string;
   model?: AgentModelConfig;

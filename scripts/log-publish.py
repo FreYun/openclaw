@@ -14,7 +14,7 @@ import argparse
 import os
 from datetime import datetime
 
-LOG_FILE = "/home/rooot/.openclaw/workspace-mcp-publisher/memory/发帖记录.md"
+LOG_FILE = "/home/rooot/.openclaw/workspace-sys1/memory/发帖记录.md"
 
 HEADER = """# 发帖记录
 

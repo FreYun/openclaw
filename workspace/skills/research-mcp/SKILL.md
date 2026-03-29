@@ -58,13 +58,34 @@ description: 金融研究数据 MCP — 92 个工具，分 10 个类别。按需
 ## 常用工作流
 
 ### 市场日报
-`market_overview` → `get_hshares_market_overview` → `get_usstock_index_quote`(DJIA.GI,SPX.GI,NDX.GI) → `get_ashares_gvix` → `news_search`("市场 热点")
+```
+market_overview()
+get_hshares_market_overview()
+get_usstock_index_quote(symbol="DJIA.GI,SPX.GI,NDX.GI", start_date="20250101", end_date="20250317")
+get_ashares_gvix(start_date="20250101", end_date="20250317")
+news_search(query="A股 市场 热点", top_k=5, search_day_ago=3)
+```
 
 ### 基金分析
-`get_fund_comprehensive_analysis`(fund_code) → 如需净值走势加 `get_fund_nav_and_return` → 如需异动加 `get_fund_abnormal_movement`
+```
+get_fund_comprehensive_analysis(fund_code="110011")
+# 如需净值走势：
+get_fund_nav_and_return(fund_code="110011", start_date="20240101", end_date="20250317")
+# 如需异动检测：
+get_fund_abnormal_movement(fund_code="110011", start_date="20240101")
+# 如需对比多只基金：
+get_multiple_funds_nav(fund_codes="110011,000001", start_date="20240101", end_date="20250317")
+```
 
 ### 个股研究
-`get_stock_info` → `get_stock_daily_quote` → `get_stock_valuation` → `get_stock_fund_flow` → `get_stock_northbound_holding` → `fund_stock_holdings`(找重仓基金)
+```
+get_stock_info(stock_code="600519")
+get_stock_daily_quote(stock_code="600519", start_date="20250101", end_date="20250317")
+get_stock_valuation(stock_code="600519", start_date="20250101", end_date="20250317")
+get_stock_fund_flow(stock_code="600519", start_date="20250101", end_date="20250317")
+get_stock_northbound_holding(stock_code="600519", start_date="20250101", end_date="20250317")
+fund_stock_holdings(stock_codes="600519", match_all=false)
+```
 
 ### 宏观环境
 `get_cn_macro_data`(cpi,ppi,m2,pmi) → `us_macro_simple` → `get_cn_bond_yield`(10Y) → `get_bond_yield_spread`(cn_vs_us) → `commodity_data`(AU9999)

@@ -2,7 +2,7 @@
 name: xhs-pub
 description: >
   印务局专属 Skill — 小红书 MCP 服务管理、发布流水线执行。
-  管理所有 bot 的 MCP 端口健康状态，处理发布队列，执行合规审核后发布。
+  管理所有 bot 的 MCP 端口健康状态，处理发布队列。
 ---
 
 # 小红书发布中心（xhs-pub）
@@ -24,27 +24,22 @@ description: >
 ## 铁律
 
 1. **只执行，不创作** — 忠实发布 bot 提交的内容，绝不修改标题、正文、标签。
-2. **合规先行** — 每篇必过 compliance-mcp 审核，`passed: true` 才发。
-3. **精确路由** — `account_id` 决定 MCP 端口，路由错误是最高级别事故。
-4. **不传错 account_id** — `account_id` 必须与 MCP 服务名匹配（`bot5` → `xhs-bot5:18065`）。
+2. **不管合规** — 合规由 bot 自行负责，印务局不审核、不检查，收到投稿直接走发布流程。
+3. **精确路由** — `account_id` 决定 MCP URL path，路由错误是最高级别事故。
+4. **不传错 account_id** — `account_id` 必须与 MCP URL path 匹配（`bot5` → `http://localhost:18060/mcp/bot5`）。
 5. **超时必设** — `mcporter call --timeout 180000` + `exec timeout: 180`，双保险。
 
 ---
 
-## 端口路由表
+## MCP 路由（单进程多租户）
 
-| account_id | MCP 服务名 | 端口 |
-|------------|-----------|------|
-| bot1 | xhs-bot1 | 18061 |
-| bot2 | xhs-bot2 | 18062 |
-| bot3 | xhs-bot3 | 18063 |
-| bot4 | xhs-bot4 | 18064 |
-| bot5 | xhs-bot5 | 18065 |
-| bot6 | xhs-bot6 | 18066 |
-| bot7 | xhs-bot7 | 18067 |
-| bot8 | xhs-bot8 | 18068 |
-| bot9 | xhs-bot9 | 18069 |
-| bot10 | xhs-bot10 | 18070 |
+所有 bot 共用一个 MCP 进程，监听 `:18060`，URL path 区分身份：
+
+```
+http://localhost:18060/mcp/{account_id}
+```
+
+支持的 account_id：**bot1–bot18**
 
 ---
 

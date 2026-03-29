@@ -286,11 +286,6 @@
       "title": "Memory Get",
       "detailKeys": ["path", "from", "lines"]
     },
-    "web_search": {
-      "emoji": "🔎",
-      "title": "Web Search",
-      "detailKeys": ["query", "count"]
-    },
     "web_fetch": {
       "emoji": "📄",
       "title": "Web Fetch",

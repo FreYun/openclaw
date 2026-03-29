@@ -1,0 +1,10 @@
+{
+  "name": "合规审核",
+  "icon": "🛡️",
+  "slot": "utility",
+  "desc": "内置 Sonnet 的独立合规审核服务",
+  "requiresMcp": [
+    "compliance-mcp"
+  ],
+  "subType": "duty"
+}

@@ -1,8 +1,0 @@
-{
-  "name": "技能进化",
-  "icon": "🧬",
-  "slot": "utility",
-  "subType": "duty",
-  "desc": "沙盒进化 skill、调度 bot 测试、汇总日报",
-  "requiresMcp": ["openspace"]
-}

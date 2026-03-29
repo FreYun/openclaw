@@ -78,6 +78,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 16px;
+    align-items: start;
   }
   .grid.full { grid-template-columns: 1fr; }
 
@@ -100,16 +101,63 @@
   /* Agent Stats */
   .agent-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
   }
   .agent-chip {
     background: rgba(255,255,255,0.05);
     border: 1px solid var(--border);
     border-radius: 3px;
-    padding: 10px;
+    padding: 8px;
+    aspect-ratio: 4 / 3;
     font-size: 11px;
     position: relative;
+    overflow: hidden;
+  }
+  .agent-chip .avatar-relief {
+    position: absolute;
+    right: -10px; bottom: -10px;
+    width: 80%; height: 90%;
+    pointer-events: none;
+    mask-image: radial-gradient(circle at 70% 70%, black 30%, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 70% 70%, black 30%, transparent 72%);
+  }
+  .agent-chip .avatar-relief .av-base {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.28;
+    filter: grayscale(1) contrast(1.6) brightness(1.4);
+  }
+  .agent-chip .avatar-relief .av-edge {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.14;
+    mix-blend-mode: screen;
+  }
+  .agent-chip:hover {
+    border-width: 2px;
+    filter: brightness(1.15);
+    cursor: pointer;
+  }
+  .agent-chip .active-tag {
+    position: absolute;
+    top: -1px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20,20,30,0.85);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 2px 10px;
+    font-size: 11px;
+    color: var(--text);
+    font-family: var(--cn);
+    letter-spacing: 0.5px;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0.7;
+    z-index: 1;
   }
   .agent-chip .name {
     font-size: 18px;
@@ -118,6 +166,7 @@
     font-family: var(--cn);
   }
   .agent-chip .name.system { color: var(--purple); }
+  .agent-chip .name span[style*="cursor:pointer"]:hover { text-decoration: underline; text-underline-offset: 3px; opacity: 0.85; }
   .agent-chip .stat { color: var(--dim); margin: 3px 0; font-family: var(--cn); font-size: 13px; }
   .agent-chip .stat b { color: var(--text); }
   .agent-chip .badge {
@@ -176,7 +225,7 @@
 
   /* Message Timeline */
   .timeline {
-    max-height: 600px;
+    max-height: 500px;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--border) var(--bg);
@@ -187,12 +236,14 @@
 
   .msg {
     display: grid;
-    grid-template-columns: 100px minmax(100px, auto) 24px minmax(100px, auto) 1fr;
-    gap: 10px;
+    grid-template-columns: 100px 120px 100px 1fr;
+    gap: 8px;
     align-items: center;
-    padding: 8px 12px;
+    padding: 4px 12px 8px;
     font-size: 11px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: -1px;
     transition: background 0.2s;
   }
   .msg:hover { background: rgba(255,255,255,0.03); }
@@ -204,9 +255,11 @@
     100% { background: transparent; }
   }
   .msg .time { color: var(--dim); font-size: 9px; }
-  .msg .from { color: var(--green); text-align: right; font-size: 16px; font-family: var(--cn); }
-  .msg .arrow { color: var(--border); text-align: center; }
-  .msg .to { color: var(--blue); font-size: 16px; font-family: var(--cn); }
+  .msg .from { color: var(--green); text-align: right; font-size: 13px; font-family: var(--cn); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg .sess { font-size: 9px; font-family: monospace; line-height: 1; }
+  .msg .sess a { color: var(--orange); text-decoration: none; padding: 1px 4px; border: 1px solid transparent; border-radius: 2px; transition: all 0.15s; opacity: 0.7; }
+  .msg .sess a:hover { opacity: 1; color: var(--yellow); border-color: var(--yellow); background: rgba(254,202,87,0.1); }
+  .msg .to { color: var(--blue); font-size: 13px; font-family: var(--cn); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .msg .content {
     color: var(--text);
     white-space: nowrap;
@@ -293,16 +346,31 @@
     max-height: 200px;
     overflow-y: auto;
   }
-  .pub-item {
+  .pub-row {
     display: grid;
-    grid-template-columns: 140px 150px 1fr;
+    grid-template-columns: 8% 12% 1fr 8% 7% 7% 7% 7% 7%;
     align-items: center;
-    gap: 8px;
-    padding: 6px 4px;
-    color: var(--dim);
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    font-size: 14px;
+    padding: 8px 6px;
+    font-size: 15px;
   }
+  .pub-item {
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .pub-item .pub-col-date { color: var(--dim); font-size: 13px; font-family: monospace; }
+  .pub-item .pub-col-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--cn); font-size: 16px; }
+  .pub-header {
+    color: #e89a3c;
+    border-bottom: 1px solid rgba(232,154,60,0.25);
+    font-size: 13px;
+    font-family: var(--cn);
+  }
+  .pub-metric-cell, .pub-header .pub-col-num { text-align: right; font-size: 15px; font-family: monospace; white-space: nowrap; color: var(--text); }
+  .pub-header .pub-col-num { color: #e89a3c; font-size: 13px; cursor: pointer; user-select: none; }
+  .pub-header .pub-col-num:hover { color: #f0c060; }
+  .pub-header .pub-col-num.sort-active { color: #4fc3f7; }
+  .pub-metric-cell.hi { color: #4fc3f7; }
+  .pub-stats-ts { font-size:11px; color:var(--dim); opacity:0.5; margin-left:8px; }
   .pub-item .bot-tag {
     display: inline-block;
     font-size: 12px;
@@ -320,12 +388,12 @@
     border-radius: 3px;
     border: 1px solid var(--border);
     background: rgba(255,255,255,0.05);
-    color: var(--dim);
+    color: var(--text);
     cursor: pointer;
     font-family: monospace;
     white-space: nowrap;
   }
-  .model-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+  .model-btn:hover { border-color: var(--orange); color: var(--orange); }
   .model-option {
     display: flex;
     align-items: center;
@@ -553,28 +621,29 @@
   .refresh-indicator.loading { color: var(--yellow); }
 
   /* Session rows */
-  .sess-header {
+  .sess-header, .sess-row {
     display: grid;
-    grid-template-columns: 160px 180px 110px 80px 1fr 60px;
+    grid-template-columns: 24px 60px 120px 80px 1fr 70px;
     gap: 10px;
-    padding: 6px 12px;
+    padding: 5px 10px;
+    align-items: center;
     font-size: 12px;
+  }
+  .sess-header {
     color: var(--dim);
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     background: var(--card);
     z-index: 1;
+    font-family: var(--pixel);
+    font-size: 9px;
   }
   .sess-row {
-    display: grid;
-    grid-template-columns: 160px 180px 110px 80px 1fr 60px;
-    gap: 10px;
-    padding: 6px 12px;
-    font-size: 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: -1px;
     transition: background 0.2s;
-    align-items: center;
   }
   .sess-row:hover { background: rgba(255,255,255,0.03); }
   .sess-row.selected { background: rgba(233,69,96,0.08); }
@@ -607,65 +676,139 @@
   .sess-id:hover { color: var(--blue); }
   a.sess-id { text-decoration: none; }
 
+  /* Session Dropdown */
+  .sess-dropdown {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 500;
+    min-width: 280px; max-height: 320px; overflow-y: auto;
+    background: var(--card); border: 2px solid var(--border); border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5); margin-top: 4px;
+  }
+  .sess-dropdown.flip { top: auto; bottom: 100%; margin-top: 0; margin-bottom: 4px; }
+  .sess-dropdown::-webkit-scrollbar { width: 4px; }
+  .sess-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sess-dropdown-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 10px; border-bottom: 1px solid var(--border);
+    font-size: 11px; color: var(--dim); font-family: var(--cn);
+    position: sticky; top: 0; background: var(--card); z-index: 1;
+  }
+  .sess-dropdown-item {
+    display: flex; align-items: center; gap: 8px; padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer;
+    font-family: var(--cn); font-size: 12px; text-decoration: none; color: var(--text);
+    transition: background 0.15s;
+  }
+  .sess-dropdown-item:hover { background: rgba(255,255,255,0.06); }
+  .sess-dropdown-new {
+    display: block; text-align: center; padding: 8px; font-family: var(--cn);
+    font-size: 12px; color: var(--green); cursor: pointer; text-decoration: none;
+    border-top: 1px solid var(--border); transition: background 0.15s;
+  }
+  .sess-dropdown-new:hover { background: rgba(0,210,211,0.1); }
+  .agent-chip.sess-open { z-index: 501; }
+
   /* Equipment Modal */
-  .equip-modal { max-width: 860px; }
+  .equip-modal { max-width: 1200px; }
   .agent-chip { cursor: pointer; }
   .agent-chip:hover { border-color: var(--yellow); }
 
-  .slot-row {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
+  /* 4-column equipment layout */
+  .equip-4col { display: flex; gap: 12px; align-items: flex-start; justify-content: flex-start; }
+  .equip-col-infra { display: flex; flex-direction: column; width: 130px; flex-shrink: 0; padding-top: 40px; }
+  .equip-col { display: flex; flex-direction: column; gap: 8px; width: 120px; flex-shrink: 0; padding-top: 40px; }
+  .equip-col-sess {
+    flex: 1; min-width: 160px; border-left: 1px dashed var(--border); padding-left: 12px;
+    max-height: 420px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent;
   }
-  .slot-row-label {
-    font-size: 9px;
-    color: var(--dim);
-    font-family: var(--pixel);
-    width: 50px;
-    text-align: right;
-  }
-  .row-unequip-btn {
-    font-size: 9px;
-    padding: 2px 7px;
-    border: 1px solid var(--accent);
-    border-radius: 2px;
-    background: transparent;
-    color: var(--accent);
-    cursor: pointer;
-    font-family: var(--pixel);
-    white-space: nowrap;
-    opacity: 0.5;
-    transition: opacity 0.15s, background 0.15s;
-    flex-shrink: 0;
-  }
-  .row-unequip-btn:hover { opacity: 1; background: rgba(233,69,96,0.12); }
+  .equip-col-sess::-webkit-scrollbar { width: 4px; }
+  .equip-col-sess::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .equip-col .cat-row { min-height: 90px; flex-direction: column; justify-content: center; text-align: center; gap: 4px; }
+  .equip-col .cat-row .cat-row-icon { font-size: 22px; }
+  .equip-col .cat-row .cat-row-arrow { display: none; }
+  .equip-col-center { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; }
+  .equip-avatar { width: 240px; height: 320px; border-radius: 12px; border: 2px solid var(--border); object-fit: cover; cursor: pointer; background: var(--bg); box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+  .equip-avatar-placeholder { width: 240px; height: 320px; border-radius: 12px; border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--dim); font-size: 48px; background: rgba(255,255,255,0.03); }
 
-  .equip-slot {
-    width: 76px;
-    height: 76px;
-    border: 2px dashed var(--border);
-    background: rgba(255,255,255,0.03);
-    border-radius: 4px;
+  /* Category summary rows */
+  .cat-row {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    gap: 2px;
+    transition: all 0.15s;
+    background: rgba(255,255,255,0.02);
   }
-  .equip-slot:hover { border-color: var(--yellow); background: rgba(254,202,87,0.08); }
-  .equip-slot.filled { border: 2px solid var(--green); background: rgba(0,210,211,0.06); }
-  .equip-slot.drop-target { border-color: var(--accent); background: rgba(233,69,96,0.12); animation: pulse-slot 0.6s infinite; }
-  .equip-slot.drop-ok { border-color: var(--green); background: rgba(0,210,211,0.15); }
-  .equip-slot .slot-icon { font-size: 22px; }
-  .equip-slot .slot-name { font-size: 10px; font-family: var(--cn); color: var(--text); text-align: center; line-height: 1.2; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .equip-slot .slot-empty { font-size: 9px; color: var(--dim); font-family: var(--pixel); }
-  .equip-slot.locked { opacity: 0.25; cursor: not-allowed; border-color: var(--dim); }
-  .equip-slot.locked:hover { border-color: var(--dim); background: rgba(255,255,255,0.03); }
-  .equip-slot .lock-icon { font-size: 12px; opacity: 0.5; }
+  .cat-row:hover { border-color: var(--yellow); background: rgba(254,202,87,0.06); }
+  .cat-row-icon { font-size: 18px; flex-shrink: 0; }
+  .cat-row-label { font-size: 11px; color: var(--dim); font-family: var(--pixel); width: 56px; flex-shrink: 0; }
+  .cat-row-skills { flex: 1; font-size: 11px; font-family: var(--cn); color: var(--text); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .cat-row-skills .empty { color: var(--dim); font-style: italic; }
+  .cat-row-count { font-size: 10px; color: var(--dim); font-family: var(--pixel); flex-shrink: 0; }
+  .cat-row-arrow { color: var(--dim); font-size: 14px; flex-shrink: 0; }
+  .cat-row.locked { opacity: 0.3; cursor: not-allowed; }
+  .cat-row.locked:hover { border-color: var(--border); background: rgba(255,255,255,0.02); }
+
+  /* Category detail modal */
+  .cat-detail-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1050;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .cat-detail-overlay.show { opacity: 1; pointer-events: auto; }
+  .cat-detail-modal {
+    background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+    padding: 20px; min-width: 400px; max-width: 600px; max-height: 70vh; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: var(--border) var(--bg);
+  }
+  .cat-detail-title { font-size: 14px; font-family: var(--cn); margin: 0 0 14px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .cat-detail-section { font-size: 10px; color: var(--dim); font-family: var(--pixel); margin: 12px 0 6px; }
+  .cat-detail-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cat-skill-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 12px; border-radius: 20px; font-size: 12px; font-family: var(--cn);
+    border: 1px solid var(--green); background: rgba(0,210,211,0.06);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .cat-skill-chip:hover { border-color: var(--accent); background: rgba(233,69,96,0.1); }
+  .cat-skill-chip .chip-icon { font-size: 14px; }
+  .cat-skill-chip .chip-x { font-size: 10px; color: var(--dim); margin-left: 4px; }
+  .cat-skill-chip.active { border-color: var(--yellow); background: rgba(254,202,87,0.12); }
+  .chip-actions {
+    width: 100%; display: flex; flex-direction: column; gap: 6px;
+    padding: 8px 10px; margin: 4px 0 2px;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: rgba(0,0,0,0.25);
+  }
+  .chip-actions-btns { display: flex; gap: 6px; align-items: center; }
+  .chip-action-btn {
+    font-size: 11px; padding: 3px 10px; border-radius: 4px;
+    border: 1px solid var(--border); background: transparent;
+    cursor: pointer; font-family: var(--cn); color: var(--text); transition: all 0.15s;
+  }
+  .chip-action-btn:hover { border-color: var(--yellow); background: rgba(254,202,87,0.1); }
+  .chip-action-btn.danger { border-color: var(--accent); color: var(--accent); }
+  .chip-action-btn.danger:hover { background: rgba(233,69,96,0.15); }
+  .chip-action-btn.primary { border-color: var(--green); color: var(--green); }
+  .chip-action-btn.primary:hover { background: rgba(0,210,211,0.15); }
+  .chip-sub-tags { width: 100%; display: flex; flex-wrap: wrap; gap: 4px; padding-top: 4px; }
+  .chip-detail-section { display: flex; flex-wrap: wrap; gap: 4px; padding-top: 6px; border-top: 1px dashed var(--border); margin-top: 4px; }
+  .chip-action-btn.active { border-color: var(--yellow); background: rgba(254,202,87,0.15); }
+  .cat-skill-chip .chip-x:hover { color: var(--accent); }
+  .cat-avail-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 12px; border-radius: 20px; font-size: 12px; font-family: var(--cn);
+    border: 1px dashed var(--border); background: rgba(255,255,255,0.03);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .cat-avail-chip:hover { border-color: var(--green); background: rgba(0,210,211,0.08); }
+  .cat-avail-chip .chip-icon { font-size: 14px; }
+
+  /* Keep old classes for compatibility with other code paths */
+  .slot-row { display: flex; gap: 8px; justify-content: center; align-items: center; }
+  .equip-slot { display: none; } /* hidden — replaced by cat-row */
   @keyframes pulse-slot {
     0%, 100% { box-shadow: 0 0 0 0 rgba(233,69,96,0.3); }
     50% { box-shadow: 0 0 8px 3px rgba(233,69,96,0.15); }
@@ -751,6 +894,27 @@
   .gem-badge.healthy { opacity: 1; }
   .gem-badge.unhealthy { opacity: 0.5; filter: saturate(0.3); }
   .gem-badge.down { opacity: 0.3; filter: grayscale(1); }
+
+  /* Gem status bar (top of page) */
+  .gem-status-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; font-size: 14px; border-radius: 4px;
+    cursor: pointer; transition: all 0.15s; border: 1px solid transparent;
+    position: relative;
+  }
+  .gem-status-icon:hover { border-color: var(--yellow); transform: scale(1.15); }
+  .gem-status-icon.active { border-color: var(--yellow); background: rgba(254,202,87,0.1); }
+  .gem-status-icon.healthy { opacity: 1; }
+  .gem-status-icon.down { opacity: 0.25; filter: grayscale(0.8); }
+  .gem-status-icon.unhealthy { opacity: 0.6; }
+  .gem-status-icon.unknown { opacity: 0.4; }
+  .gem-expand-panel {
+    padding: 10px 12px; margin-bottom: 10px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: rgba(255,255,255,0.03);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    font-family: var(--cn); font-size: 12px;
+  }
 
   .gem-panel {
     margin-top: 16px;
@@ -1033,9 +1197,102 @@
     .grid { grid-template-columns: 1fr; }
     .msg { grid-template-columns: 80px minmax(80px, auto) 20px minmax(80px, auto) 1fr; }
   }
+  /* Skill Evolution Panel */
+  .evo-panel { margin-bottom:16px; border:2px solid #b0b0b0; border-radius:4px; padding:12px; background:rgba(176,176,176,0.05); }
+  .evo-panel h3 { margin:0 0 8px; font-family:var(--cn); font-size:14px; color:#b0b0b0; }
+  .evo-item { display:flex; align-items:center; gap:8px; padding:6px 8px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px; }
+  .evo-item:last-child { border-bottom:none; }
+  .evo-badge { padding:1px 6px; border-radius:3px; font-size:10px; font-weight:bold; }
+  .evo-badge.candidate { background:#2d3436; color:#dfe6e9; }
+  .evo-badge.evolved { background:#00b894; color:#fff; }
+  .evo-badge.excluded { background:#636e72; color:#b2bec3; text-decoration:line-through; }
+  .evo-badge.positive { background:#00b894; color:#fff; }
+  .evo-btn { background:none; border:1px solid var(--dim); color:var(--text); padding:2px 8px; border-radius:3px; cursor:pointer; font-size:11px; font-family:var(--cn); }
+  .evo-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .evo-btn.danger { border-color:var(--red); color:var(--red); }
+  .evo-btn.approve { border-color:#00b894; color:#00b894; }
+  .diff-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; align-items:center; justify-content:center; }
+  .diff-modal-content { background:#1e1e1e; border:2px solid var(--accent); border-radius:6px; width:90%; max-width:900px; max-height:85vh; display:flex; flex-direction:column; }
+  .diff-modal-header { padding:10px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-family:var(--cn); }
+  .diff-modal-body { overflow:auto; padding:12px; flex:1; }
+  .diff-pre { margin:0; font-size:12px; line-height:1.5; white-space:pre-wrap; word-break:break-all; }
+  .diff-pre .d-add { color:#00b894; }
+  .diff-pre .d-del { color:#d63031; }
+  .diff-pre .d-hdr { color:#a29bfe; font-weight:bold; }
 </style>
 </head>
 <body>
+
+<!-- SVG edge-detection filters with glow per rarity color -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <!-- Shared edge detection pipeline (reused via feMerge glow pattern) -->
+    <!-- 白 (普通) -->
+    <filter id="edge-w" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feColorMatrix type="saturate" values="0"/>
+      <feConvolveMatrix order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" preserveAlpha="true"/>
+      <feComponentTransfer result="edges">
+        <feFuncR type="linear" slope="30" intercept="-5.5"/>
+        <feFuncG type="linear" slope="30" intercept="-5.5"/>
+        <feFuncB type="linear" slope="30" intercept="-5.5"/>
+      </feComponentTransfer>
+      <feGaussianBlur in="edges" stdDeviation="1.5" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="edges"/></feMerge>
+    </filter>
+    <!-- 绿 #2ecc71 -->
+    <filter id="edge-g" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feColorMatrix type="saturate" values="0"/>
+      <feConvolveMatrix order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" preserveAlpha="true"/>
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="30" intercept="-5.5"/>
+        <feFuncG type="linear" slope="30" intercept="-5.5"/>
+        <feFuncB type="linear" slope="30" intercept="-5.5"/>
+      </feComponentTransfer>
+      <feColorMatrix type="matrix" values="0.18 0 0 0 0  0 0.80 0 0 0  0 0 0.44 0 0  0 0 0 1 0" result="edges"/>
+      <feGaussianBlur in="edges" stdDeviation="1.5" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="edges"/></feMerge>
+    </filter>
+    <!-- 蓝 #3498db -->
+    <filter id="edge-b" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feColorMatrix type="saturate" values="0"/>
+      <feConvolveMatrix order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" preserveAlpha="true"/>
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="30" intercept="-5.5"/>
+        <feFuncG type="linear" slope="30" intercept="-5.5"/>
+        <feFuncB type="linear" slope="30" intercept="-5.5"/>
+      </feComponentTransfer>
+      <feColorMatrix type="matrix" values="0.20 0 0 0 0  0 0.60 0 0 0  0 0 0.86 0 0  0 0 0 1 0" result="edges"/>
+      <feGaussianBlur in="edges" stdDeviation="1.5" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="edges"/></feMerge>
+    </filter>
+    <!-- 紫 — 史诗：鲜艳紫细描边 + 窄辉光 -->
+    <filter id="edge-p" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feColorMatrix type="saturate" values="0"/>
+      <feConvolveMatrix order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" preserveAlpha="true"/>
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="38" intercept="-5.5"/>
+        <feFuncG type="linear" slope="38" intercept="-5.5"/>
+        <feFuncB type="linear" slope="38" intercept="-5.5"/>
+      </feComponentTransfer>
+      <feColorMatrix type="matrix" values="0.78 0 0 0 0  0 0.35 0 0 0  0 0 0.92 0 0  0 0 0 1 0" result="edges"/>
+      <feGaussianBlur in="edges" stdDeviation="0.8" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="edges"/></feMerge>
+    </filter>
+    <!-- 橙/金 — 传说鎏金：高饱和金色细描边 + 窄辉光 -->
+    <filter id="edge-o" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feColorMatrix type="saturate" values="0"/>
+      <feConvolveMatrix order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" preserveAlpha="true"/>
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="45" intercept="-5.5"/>
+        <feFuncG type="linear" slope="45" intercept="-5.5"/>
+        <feFuncB type="linear" slope="45" intercept="-5.5"/>
+      </feComponentTransfer>
+      <feColorMatrix type="matrix" values="1.0 0 0 0 0.05  0 0.75 0 0 0.03  0 0 0.15 0 0  0 0 0 1 0" result="edges"/>
+      <feGaussianBlur in="edges" stdDeviation="1" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="edges"/></feMerge>
+    </filter>
+  </defs>
+</svg>
 
 <div class="refresh-indicator" id="refreshIndicator">
   <span class="dot green"></span> LIVE
@@ -1056,6 +1313,7 @@
   <div class="card">
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
       <span class="card-title" style="margin:0;padding:0;border:none;white-space:nowrap"><span class="icon">📦</span>发布队列</span>
+      <button class="new-btn" onclick="openPubFullView()" style="font-size:9px;padding:2px 8px;margin:0">展开全部</button>
       <div class="queue-row" id="queueRow" style="flex:1;margin:0"></div>
     </div>
     <div class="pub-list" id="pubList" style="border-top:1px dashed var(--border);padding-top:8px"></div>
@@ -1065,7 +1323,11 @@
 <!-- Row 1: Agent Stats + Message Timeline -->
 <div class="grid">
   <div class="card">
-    <div class="card-title"><span class="icon">🤖</span>AGENT 通信统计</div>
+    <div class="card-title" style="display:flex;align-items:center;gap:12px">
+      <span><span class="icon">🤖</span>AGENT 通信统计</span>
+      <span id="gemStatusBar" style="display:flex;gap:6px;align-items:center;margin-left:auto"></span>
+    </div>
+    <div id="gemExpandPanel" style="display:none"></div>
     <div class="agent-grid" id="agentGrid"></div>
   </div>
   <div class="card">
@@ -1082,10 +1344,11 @@
   </div>
 </div>
 
-<!-- Row 2: Sessions -->
-<div class="grid full">
+<!-- Row 2: Sessions + Message Flow -->
+<div class="grid">
   <div class="card">
-    <div class="card-title"><span class="icon">📋</span>会话管理</div>
+    <div class="card-title" style="cursor:pointer" onclick="toggleSection('sessionsBody',this)"><span class="icon">📋</span>会话管理 <span style="float:right;color:var(--dim);font-size:11px">▲ 收起</span></div>
+    <div id="sessionsBody">
     <div class="filter-bar" style="flex-wrap:wrap;gap:4px 6px;align-items:center">
       <button class="filter-btn active" data-sfilter="all" onclick="setSessionFilter('all', this)">ALL</button>
       <button class="filter-btn" data-sfilter="feishu" onclick="setSessionFilter('feishu', this)">FEISHU</button>
@@ -1104,17 +1367,15 @@
       <span id="selectedCount" style="color:var(--dim);font-size:11px"></span>
     </div>
     <div class="timeline" id="sessionsTable" style="max-height:500px"></div>
-  </div>
-</div>
-
-<!-- Row 3: Message Flow Diagram -->
-<div class="grid full">
-  <div class="card">
-    <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
-      <span><span class="icon">🔀</span>消息流向（今日）</span>
-      <button class="new-btn" onclick="toggleFlowDiagram()" id="flowToggleBtn">收起</button>
     </div>
-    <div class="flow-container" id="flowDiagram"></div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="cursor:pointer" onclick="toggleSection('flowBody',this)">
+      <span class="icon">🔀</span>消息流向（今日）<span style="float:right;color:var(--dim);font-size:11px">▲ 收起</span>
+    </div>
+    <div id="flowBody">
+      <div class="flow-container" id="flowDiagram"></div>
+    </div>
   </div>
 </div>
 
@@ -1122,9 +1383,11 @@
 <!-- Row 4: Cron Jobs -->
 <div class="grid full">
   <div class="card">
-    <div class="card-title"><span class="icon">⏰</span>定时任务</div>
-    <div id="cronFilterBar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:0 4px"></div>
-    <div id="cronContainer"></div>
+    <div class="card-title" style="cursor:pointer" onclick="toggleSection('cronBody',this)"><span class="icon">⏰</span>定时任务 <span style="float:right;color:var(--dim);font-size:11px">▼ 展开</span></div>
+    <div id="cronBody" style="display:none">
+      <div id="cronFilterBar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:0 4px"></div>
+      <div id="cronContainer"></div>
+    </div>
   </div>
 </div>
 
@@ -1137,48 +1400,108 @@
       <h3 id="equipBotName" style="margin:0">⚔️ 装备</h3>
       <button id="syncSkillsBtn" onclick="syncSkills()" style="margin-left:auto;font-size:11px;padding:3px 10px;border:1px solid var(--border);border-radius:3px;background:transparent;color:var(--dim);cursor:pointer;font-family:var(--pixel)">🔄 SYNC</button>
     </div>
-    <div style="display:flex;gap:16px;align-items:flex-start">
-      <!-- Left: Plugins + Equipment Slots -->
-      <div id="equipPanel" style="min-width:260px;flex:1 1 auto">
-        <div style="margin-bottom:10px">
-          <div style="font-size:10px;color:var(--dim);margin-bottom:4px;font-family:var(--pixel)">🔌 PLUGINS</div>
-          <div id="pluginList" style="display:flex;flex-direction:column;gap:4px"></div>
+    <!-- 4-column: Plugin+MCP | Left equip | Avatar | Right equip -->
+    <div class="equip-4col">
+      <!-- Col 1: Plugin + Cron + MCP -->
+      <div class="equip-col-infra">
+        <div>
+          <div style="font-size:9px;color:var(--purple);margin-bottom:6px;font-family:var(--pixel)">PLUGINS</div>
+          <div id="pluginList" style="display:flex;flex-wrap:wrap;gap:4px"></div>
         </div>
-        <div id="equipSlots" style="display:flex;flex-direction:column;align-items:center;gap:8px"></div>
-      </div>
-      <!-- Right: MCP Gem on top, Avatar below-left -->
-      <div style="flex:0 0 auto;min-width:300px;max-width:400px;position:sticky;top:12px;display:flex;flex-direction:column">
-        <!-- MCP Gem - top right -->
-        <div class="gem-panel" style="margin:0 0 12px 0;padding:0;border:none;align-self:flex-end">
+        <div style="margin:12px 0 0">
+          <div style="font-size:9px;color:var(--yellow);margin-bottom:6px;font-family:var(--pixel)">CRON</div>
+          <div id="equipCronList" style="display:flex;flex-direction:column;gap:3px"></div>
+        </div>
+        <div class="gem-panel" style="margin:12px 0 0;padding:0;border:none">
           <div class="gem-panel-title">
-            <button id="gemToggleBtn" class="gem-tab-btn" onclick="toggleGemStore()" title="展开/收起 MCP 管理">💎 MCP GEM</button>
+            <button id="gemToggleBtn" class="gem-tab-btn" onclick="toggleGemStore()" title="展开/收起 MCP 管理" style="font-size:9px;font-family:var(--pixel);color:var(--orange);background:none;border:none;cursor:pointer;padding:0">MCP</button>
+            <button onclick="toggleGemStore()" style="font-size:8px;font-family:var(--pixel);color:var(--dim);background:none;border:1px solid var(--border);border-radius:2px;cursor:pointer;padding:1px 5px;margin-left:4px" id="gemExpandBtn">▼</button>
           </div>
           <div id="gemList"></div>
           <div id="gemWarnings" class="gem-warnings"></div>
         </div>
-        <!-- Avatar - half-body portrait -->
-        <div id="avatarSection" style="align-self:flex-start;text-align:center;margin-top:12px">
-          <img id="avatarImg" src="" style="width:280px;height:360px;border-radius:12px;border:2px solid var(--border);object-fit:cover;cursor:pointer;background:var(--bg);box-shadow:0 4px 24px rgba(0,0,0,0.4)" onclick="openAvatarPicker()" title="点击更换头像">
-          <div id="avatarPlaceholder" style="width:280px;height:360px;border-radius:12px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dim);font-size:48px;background:rgba(255,255,255,0.03)" onclick="openAvatarPicker()" title="点击设置头像">🖼️</div>
+      </div>
+      <!-- Col 2: Left equip (helm, armor, boots) -->
+      <div class="equip-col" id="equipSlotsLeft"></div>
+      <!-- Col 3: Soul+Agent above Avatar -->
+      <div class="equip-col-center">
+        <div id="equipSlotsMeta" style="display:flex;gap:8px;justify-content:center;margin-bottom:10px"></div>
+        <div id="avatarSection" style="text-align:center">
+          <img id="avatarImg" src="" class="equip-avatar" onclick="openAvatarPicker()" title="点击更换头像">
+          <div id="avatarPlaceholder" class="equip-avatar-placeholder" onclick="openAvatarPicker()" title="点击设置头像">🖼️</div>
           <div style="font-size:9px;color:var(--dim);margin-top:6px;font-family:var(--pixel);cursor:pointer" onclick="openAvatarPicker()">点击更换头像</div>
         </div>
       </div>
+      <!-- Col 4: Right equip (accessory, utility, research) -->
+      <div class="equip-col" id="equipSlotsRight"></div>
+      <!-- Col 5: Sessions -->
+      <div class="equip-col-sess" id="equipSessions"></div>
     </div>
-    <!-- Skill Inventory -->
+    <!-- Hidden container for renderArmory compatibility -->
+    <div id="equipSlots" style="display:none"></div>
+    <!-- Scheduled Tasks -->
     <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)">
-      <div id="inventoryFilters" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px"></div>
-      <div id="inventoryList" style="max-height:380px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) var(--bg);display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start"
-           ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)"></div>
+      <div style="font-size:10px;color:var(--dim);margin-bottom:6px;font-family:var(--pixel)">⏰ SCHEDULED TASKS</div>
+      <div id="scheduledSkills" style="display:flex;flex-wrap:wrap;gap:4px"></div>
     </div>
     <!-- Base Layer -->
-    <div style="margin-top:16px;padding-top:10px;border-top:1px dashed var(--border)">
+    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)">
       <div style="font-size:10px;color:var(--dim);margin-bottom:6px;font-family:var(--pixel)">BASE LAYER (PERMANENT)</div>
       <div id="baseLayerSkills" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+    </div>
+    <!-- Hidden inventory containers for compatibility -->
+    <div id="inventoryFilters" style="display:none"></div>
+    <div id="inventoryList" style="display:none"></div>
+  </div>
+</div>
+
+<!-- Category Detail Modal -->
+<!-- Generic Password Dialog -->
+<div class="cat-detail-overlay" id="pwdDialogOverlay" style="z-index:10001" onclick="closePwdDialog()">
+  <div class="cat-detail-modal" onclick="event.stopPropagation()" style="min-width:300px;max-width:360px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 class="cat-detail-title" id="pwdDialogTitle" style="margin:0">🔑 管理员验证</h3>
+      <button class="close-btn" onclick="closePwdDialog()" style="position:static">✕</button>
+    </div>
+    <div id="pwdDialogMsg" style="font-size:12px;color:var(--dim);font-family:var(--cn);margin-bottom:10px"></div>
+    <input type="password" id="pwdDialogInput" style="width:100%;padding:8px 10px;background:var(--dark);border:1px solid var(--dim);color:var(--text);border-radius:4px;font-size:13px;box-sizing:border-box" placeholder="请输入管理密码">
+    <div id="pwdDialogError" style="color:var(--accent);font-size:11px;font-family:var(--cn);margin-top:6px;display:none"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+      <button class="chip-action-btn" onclick="closePwdDialog()">取消</button>
+      <button class="chip-action-btn primary" id="pwdDialogConfirm">确认</button>
     </div>
   </div>
 </div>
 
+<div class="cat-detail-overlay" id="catDetailOverlay" onclick="closeCatDetail(event)">
+  <div class="cat-detail-modal" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 class="cat-detail-title" id="catDetailTitle"></h3>
+      <button class="close-btn" onclick="closeCatDetail()" style="position:static">✕</button>
+    </div>
+    <div class="cat-detail-section">已装备</div>
+    <div class="cat-detail-grid" id="catEquippedGrid"></div>
+    <div style="margin-top:16px;display:flex;align-items:center;gap:8px">
+      <div class="cat-detail-section" style="margin:0">可装备</div>
+      <div id="catSubTypeFilters" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    </div>
+    <div class="cat-detail-grid" id="catAvailableGrid" style="margin-top:6px"></div>
+  </div>
+</div>
+
 <!-- Avatar Picker Modal -->
+<!-- Full publish view modal -->
+<div class="modal-overlay" id="pubFullOverlay" onclick="if(event.target===event.currentTarget)closePubFullView()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:95vw;width:95vw;max-height:90vh;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <h3 style="margin:0;font-family:var(--cn)">📦 发布记录</h3>
+      <span id="pubFullCount" style="font-size:12px;color:var(--dim)"></span>
+      <button class="close-btn" onclick="closePubFullView()" style="margin-left:auto">✕ 关闭</button>
+    </div>
+    <div id="pubFullList" style="overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--border) var(--bg)"></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="avatarPickerOverlay" onclick="closeAvatarPicker(event)" style="z-index:1100">
   <div class="modal" onclick="event.stopPropagation()" style="max-width:600px;max-height:80vh">
     <button class="close-btn" onclick="document.getElementById('avatarPickerOverlay').classList.remove('show')">✕ 关闭</button>
@@ -1190,14 +1513,16 @@
 <!-- Row 6: System Services (crontab + MCP) -->
 <div class="grid full">
   <div class="card">
-    <div class="card-title"><span class="icon">🖥️</span>系统服务</div>
-    <div id="systemServicesContainer"></div>
+    <div class="card-title" style="cursor:pointer" onclick="toggleSection('sysBody',this)"><span class="icon">🖥️</span>系统服务 <span style="float:right;color:var(--dim);font-size:11px">▼ 展开</span></div>
+    <div id="sysBody" style="display:none">
+      <div id="systemServicesContainer"></div>
+    </div>
   </div>
 </div>
 
 
 <!-- Skill MD Viewer Modal -->
-<div class="modal-overlay" id="skillMdOverlay" onclick="document.getElementById('skillMdOverlay').classList.remove('show')">
+<div class="modal-overlay" id="skillMdOverlay" style="z-index:1100" onclick="document.getElementById('skillMdOverlay').classList.remove('show')">
   <div class="modal md-modal" onclick="event.stopPropagation()">
     <button class="close-btn" onclick="document.getElementById('skillMdOverlay').classList.remove('show')">✕ 关闭</button>
     <div class="md-title" id="skillMdTitle"></div>
@@ -1229,10 +1554,6 @@
     <button class="close-btn" onclick="document.getElementById('createAgentOverlay').classList.remove('show')">✕ 关闭</button>
     <h3>➕ 新建编辑部 Agent</h3>
     <div id="createAgentBody">
-      <div style="margin-bottom:12px">
-        <label style="color:var(--dim);font-family:var(--cn);font-size:13px;display:block;margin-bottom:4px">🔑 管理密码</label>
-        <input type="password" id="caPassword" style="width:100%;padding:6px 8px;background:var(--dark);border:1px solid var(--dim);color:var(--text);border-radius:3px;font-size:13px" placeholder="请输入管理密码">
-      </div>
       <div style="margin-bottom:12px">
         <label style="color:var(--dim);font-family:var(--cn);font-size:13px;display:block;margin-bottom:4px">🆔 Bot ID</label>
         <input type="text" id="caBotId" disabled style="width:100%;padding:6px 8px;background:var(--panel);border:1px solid var(--dim);color:var(--yellow);border-radius:3px;font-size:13px;opacity:0.7">
@@ -1346,10 +1667,10 @@ const BOT_COLORS = new Proxy(_BOT_COLOR_MAP, {
 // 白(普通) → 绿(优秀) → 蓝(稀有) → 紫(史诗) → 橙(传说)
 const RARITY_TIERS = [
   { min: 0,   glow: "none" },                                          // 白 — 无光
-  { min: 10,  glow: "0 0 4px #2ecc71, 0 0 8px #2ecc7166" },            // 绿
-  { min: 50,  glow: "0 0 5px #3498db, 0 0 12px #3498db88" },           // 蓝
-  { min: 150, glow: "0 0 6px #9b59b6, 0 0 14px #9b59b6aa" },           // 紫
-  { min: 300, glow: "0 0 8px #e67e22, 0 0 18px #e67e22cc, 0 0 30px #e67e2244" }, // 橙
+  { min: 10,  glow: "0 0 6px #2ecc71, 0 0 12px #2ecc71aa" },           // 绿
+  { min: 50,  glow: "0 0 8px #5dade2, 0 0 18px #3498dbcc" },           // 蓝
+  { min: 150, glow: "0 0 10px #bb6bd9, 0 0 22px #9b59b6dd, 0 0 36px #9b59b644" }, // 紫
+  { min: 300, glow: "0 0 10px #f39c12, 0 0 24px #e67e22ee, 0 0 40px #e67e2266, 0 0 60px #e67e2233" }, // 橙
 ];
 function agentGlow(volume) {
   let glow = RARITY_TIERS[0].glow;
@@ -1357,6 +1678,49 @@ function agentGlow(volume) {
     if (volume >= tier.min) glow = tier.glow;
   }
   return glow;
+}
+const RARITY_FILTERS = [
+  { min: 0,   id: "edge-w" },   // 白
+  { min: 10,  id: "edge-g" },   // 绿
+  { min: 50,  id: "edge-b" },   // 蓝
+  { min: 150, id: "edge-p" },   // 紫
+  { min: 300, id: "edge-o" },   // 橙
+];
+function agentEdgeFilter(volume) {
+  let f = RARITY_FILTERS[0].id;
+  for (const tier of RARITY_FILTERS) {
+    if (volume >= tier.min) f = tier.id;
+  }
+  return f;
+}
+const RARITY_BORDER_COLORS = [
+  { min: 0,   color: "var(--border)" },  // 白 — 默认边框
+  { min: 10,  color: "#2ecc71" },         // 绿
+  { min: 50,  color: "#5dade2" },         // 蓝 — 更亮
+  { min: 150, color: "#bb6bd9" },         // 紫 — 更亮
+  { min: 300, color: "#f39c12" },         // 橙 — 更亮偏金
+];
+// Stone relief 鎏金 intensity per rarity — controls av-base and av-edge opacity/brightness
+const RARITY_RELIEF = [
+  { min: 0,   base: "", edge: "" },  // 白 — 默认石雕
+  { min: 10,  base: "opacity:0.35;filter:grayscale(1) contrast(1.6) brightness(1.5)", edge: "opacity:0.18" },  // 绿
+  { min: 50,  base: "opacity:0.40;filter:grayscale(0.8) contrast(1.7) brightness(1.5)", edge: "opacity:0.22" },  // 蓝
+  { min: 150, base: "opacity:0.45;filter:grayscale(0.5) contrast(1.8) brightness(1.6)", edge: "opacity:0.30;mix-blend-mode:screen" },  // 紫
+  { min: 300, base: "opacity:0.50;filter:grayscale(0.2) contrast(1.9) brightness(1.7)", edge: "opacity:0.40;mix-blend-mode:screen" },  // 橙 — 鎏金
+];
+function agentReliefStyle(volume) {
+  let r = RARITY_RELIEF[0];
+  for (const tier of RARITY_RELIEF) {
+    if (volume >= tier.min) r = tier;
+  }
+  return { base: r.base, edge: r.edge };
+}
+function agentRarityBorder(volume) {
+  let c = RARITY_BORDER_COLORS[0].color;
+  for (const tier of RARITY_BORDER_COLORS) {
+    if (volume >= tier.min) c = tier.color;
+  }
+  return c;
 }
 
 // Normalize legacy agent IDs
@@ -1388,8 +1752,7 @@ function getModelShort(agentId) {
   if (!modelData || !modelData[agentId]) return null;
   const p = modelData[agentId].primary;
   if (!p) return null;
-  const parts = p.split("/");
-  return parts.length > 1 ? parts[1] : p;
+  return p.includes('/') ? p.split('/').slice(1).join('/') : p;
 }
 function getModelFull(agentId) {
   return modelData?.[agentId]?.primary || null;
@@ -1478,7 +1841,6 @@ async function showCreateAgentModal() {
   }
 
   // Clear form
-  document.getElementById("caPassword").value = "";
   document.getElementById("caBotName").value = "";
   document.getElementById("caFeishuAppId").value = "";
   document.getElementById("caFeishuAppSecret").value = "";
@@ -1513,14 +1875,14 @@ async function showCreateAgentModal() {
 }
 
 async function submitCreateAgent() {
-  const password = document.getElementById("caPassword").value;
   const name = document.getElementById("caBotName").value.trim();
   const feishuAppId = document.getElementById("caFeishuAppId").value.trim();
   const feishuAppSecret = document.getElementById("caFeishuAppSecret").value.trim();
   const models = [...document.querySelectorAll(".ca-model-cb:checked")].map(cb => cb.value);
   const status = document.getElementById("caStatus");
 
-  if (!password) { alert("请输入管理密码"); return; }
+  const password = await askPassword("🔑 新建 Agent", "创建新 Agent 需要管理员密码");
+  if (!password) return;
   if (models.length === 0) { alert("请至少选择一个模型"); return; }
 
   status.style.display = "block";
@@ -1559,34 +1921,120 @@ async function submitCreateAgent() {
 }
 
 // ── Rename Agent ────────────────────────────────────────────
-async function renameAgent(botId) {
-  const current = BOT_NAMES[botId] || botId;
-  const newName = prompt(`修改 ${botId} 的名称：`, current);
-  if (!newName || newName.trim() === current) return;
+function renameAgent(botId, event) {
+  // Close any existing rename popup
+  document.getElementById('renamePopup')?.remove();
 
+  const current = BOT_NAMES[botId] || botId;
+  const color = BOT_COLORS[botId] || '#888';
+  const anchor = event?.target;
+
+  const popup = document.createElement('div');
+  popup.id = 'renamePopup';
+  popup.style.cssText = 'position:fixed;z-index:1000;background:var(--card);border:2px solid var(--border);border-radius:4px;padding:10px 12px;box-shadow:0 4px 20px rgba(0,0,0,0.6);font-family:var(--cn);min-width:220px';
+  popup.innerHTML = `
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">${botId} · 修改名称</div>
+    <input id="renameInput" type="text" value="${current.replace(/"/g,'&quot;')}" style="
+      width:100%;box-sizing:border-box;padding:6px 8px;font-size:14px;font-family:var(--cn);
+      background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:3px;
+      color:${color};outline:none;
+    ">
+    <div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end">
+      <button id="renameCancelBtn" style="
+        padding:4px 12px;font-size:11px;font-family:var(--cn);cursor:pointer;
+        background:none;border:1px solid var(--border);border-radius:3px;color:var(--dim);
+      ">取消</button>
+      <button id="renameConfirmBtn" style="
+        padding:4px 12px;font-size:11px;font-family:var(--cn);cursor:pointer;
+        background:var(--blue);border:1px solid var(--blue);border-radius:3px;color:#fff;
+      ">确认</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
+  // Position near the name
+  if (anchor) {
+    const rect = anchor.getBoundingClientRect();
+    let top = rect.bottom + 4;
+    let left = rect.left;
+    // Flip up if near bottom
+    if (top + 100 > window.innerHeight) top = rect.top - popup.offsetHeight - 4;
+    // Clamp right edge
+    if (left + popup.offsetWidth > window.innerWidth - 8) left = window.innerWidth - popup.offsetWidth - 8;
+    popup.style.top = top + 'px';
+    popup.style.left = left + 'px';
+  } else {
+    popup.style.top = '50%'; popup.style.left = '50%'; popup.style.transform = 'translate(-50%,-50%)';
+  }
+
+  const input = document.getElementById('renameInput');
+  input.select();
+  input.focus();
+
+  function close() { popup.remove(); }
+
+  async function submit() {
+    const newName = input.value.trim();
+    if (!newName || newName === current) { close(); return; }
+    const btn = document.getElementById('renameConfirmBtn');
+    btn.textContent = '...'; btn.disabled = true;
+    try {
+      const r = await fetch("/api/agent/rename", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ botId, name: newName })
+      });
+      const data = await r.json();
+      if (data.status === "ok") {
+        BOT_NAMES[botId] = data.name;
+        close();
+        renderAgentStats();
+        renderSessions();
+      } else {
+        btn.textContent = '失败'; btn.style.background = 'var(--accent)'; btn.style.borderColor = 'var(--accent)';
+        setTimeout(() => { btn.textContent = '确认'; btn.disabled = false; btn.style.background = 'var(--blue)'; btn.style.borderColor = 'var(--blue)'; }, 2000);
+      }
+    } catch {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '确认'; btn.disabled = false; }, 2000);
+    }
+  }
+
+  document.getElementById('renameCancelBtn').onclick = close;
+  document.getElementById('renameConfirmBtn').onclick = submit;
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') submit();
+    if (e.key === 'Escape') close();
+  });
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', function handler(e) {
+    if (!popup.contains(e.target)) { close(); document.removeEventListener('click', handler); }
+  }), 0);
+}
+
+// ── Change Agent Color ──────────────────────────────────────
+async function changeAgentColor(botId, color) {
   try {
-    const r = await fetch("/api/agent/rename", {
+    const r = await fetch("/api/agent/color", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ botId, name: newName.trim() })
+      body: JSON.stringify({ botId, color })
     });
     const data = await r.json();
     if (data.status === "ok") {
-      BOT_NAMES[botId] = data.name;
+      _BOT_COLOR_MAP[botId] = color;
       renderAgentStats();
-      renderSessions();
-    } else {
-      alert("修改失败: " + (data.error || "未知错误"));
+      if (armoryCurrentBot === botId) renderArmory();
     }
   } catch (e) {
-    alert("请求失败: " + e.message);
+    console.error("Failed to change color:", e);
   }
 }
 
 // ── Delete Agent ────────────────────────────────────────────
 async function deleteAgent(botId) {
   const botName = BOT_NAMES[botId] || botId;
-  const pwd = prompt(`确认删除 ${botName}（${botId}）？\n\nworkspace 会备份保留，其他配置全部清除。\nMCP 实例会被停止。\n\n请输入删除密码：`);
+  const pwd = await askPassword("🗑️ 删除 Agent", `确认删除 ${botName}（${botId}）？workspace 会备份保留，其他配置全部清除。`);
   if (!pwd) return;
 
   try {
@@ -1615,12 +2063,29 @@ async function deleteAgent(botId) {
 // ── Cron Modal ──────────────────────────────────────────────
 let cronModalAgent = null;
 
-// allowedAgents: null = 所有人可投，array = 仅列出的 agentId 可投
-const DELIVERY_OPTIONS = [
-  { value: "none",        label: "不投递",    allowedAgents: null },
-  { value: "feishu-mgm",  label: "🦞 疯狂小龙虾（管理群）", allowedAgents: ["bot_main"] },
-  { value: "feishu-edit", label: "📈 投资前线（编辑群）",   allowedAgents: ["bot1","bot2","bot3","bot4","bot5","bot6","bot7","bot11"] },
-];
+// ── 通讯录（从 /api/contact-book 加载，源文件 contact-book/SKILL.md）──
+let contactBook = { groups: [], users: [] };
+
+async function fetchContactBook() {
+  try {
+    const r = await fetch("/api/contact-book");
+    const data = await r.json();
+    if (data.groups) contactBook = data;
+  } catch (e) { console.warn("fetchContactBook failed:", e); }
+}
+
+// 根据 agentId 动态生成投递选项：群聊全部可选，个人只显示该 bot 有 open_id 的
+function buildDeliveryOptions(agentId) {
+  const opts = [{ value: "none", label: "不投递" }];
+  for (const g of contactBook.groups) {
+    opts.push({ value: `chat:${g.chatId}`, label: g.label });
+  }
+  for (const u of contactBook.users) {
+    const oid = u.openIds[agentId];
+    if (oid) opts.push({ value: oid, label: `👤 ${u.name}` });
+  }
+  return opts;
+}
 
 const FREQ_OPTIONS = [
   { label: "1h",  interval: 1,  defaultHour: 0 },
@@ -1700,7 +2165,7 @@ function renderCronModalList(agentId) {
         <div class="cron-job-expr">${job.schedule?.expr || '?'}${dateRange}</div>
         ${lastRunStr ? `<span style="font-size:10px;color:var(--dim)">${lastRunStr}</span>` : ''}
         <button class="cron-toggle ${enabled ? 'on' : ''}" onclick="event.stopPropagation();toggleCronJob('${job.id}',${!enabled})" title="${enabled ? '停用' : '启用'}"></button>
-        <button class="cron-del-btn" onclick="event.stopPropagation();deleteCronJob('${job.id}','${(job.name||'').replace(/'/g,'\\\'')}')" title="删除">✕</button>
+        <button class="cron-del-btn" onclick="event.stopPropagation();deleteCronJob('${job.id}','${(job.name||'').replace(/'/g,'\\\'')}',event)" title="删除">✕</button>
       </div>
     `;
   }).join("");
@@ -1795,6 +2260,10 @@ function renderCronCreateForm(agentId) {
     <div class="cron-create-form">
       <div style="font-family:var(--cn);font-size:14px;color:var(--text);margin-bottom:10px;font-weight:bold">新建定时任务</div>
       <div class="cron-form-row">
+        <label>名称</label>
+        <input type="text" id="cronName" placeholder="任务名称" style="flex:1;font-family:var(--cn);font-size:13px">
+      </div>
+      <div class="cron-form-row">
         <label>频率</label>
         <select id="cronFreq" onchange="updateCronPreview()">
           ${FREQ_OPTIONS.map((f, i) => `<option value="${i}">${f.label}</option>`).join("")}
@@ -1817,7 +2286,7 @@ function renderCronCreateForm(agentId) {
       </div>
       <div class="cron-form-row">
         <label>技能</label>
-        <select id="cronSkill">
+        <select id="cronSkill" onchange="document.getElementById('cronPrompt').value=''">
           ${scheduledSkills.length ?
             scheduledSkills.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join("") :
             '<option value="">（无可选技能）</option>'
@@ -1825,17 +2294,18 @@ function renderCronCreateForm(agentId) {
         </select>
       </div>
       <div class="cron-form-row">
+        <label>指令</label>
+        <input type="text" id="cronPrompt" placeholder="自定义指令（填写后优先于技能）" style="flex:1;font-family:var(--cn);font-size:13px" onfocus="document.getElementById('cronSkill').value=''">
+      </div>
+      <div class="cron-form-row">
         <label>投递</label>
         <select id="cronDelivery">
-          ${DELIVERY_OPTIONS.map(d => {
-            const allowed = !d.allowedAgents || d.allowedAgents.includes(agentId);
-            const disabledAttr = allowed ? "" : "disabled";
-            const hint = allowed ? "" : ` （仅 ${d.allowedAgents.map(a => AGENT_ALIASES[a] ? BOT_NAMES[AGENT_ALIASES[a]] || a : BOT_NAMES[a] || a).join("/")} 可投）`;
-            return `<option value="${d.value}" ${disabledAttr}>${d.label}${hint}</option>`;
-          }).join("")}
+          ${buildDeliveryOptions(agentId).map(d =>
+            `<option value="${d.value}">${d.label}</option>`
+          ).join("")}
         </select>
       </div>
-      <button class="cron-submit-btn" id="cronSubmitBtn" onclick="createCronJob('${agentId}')" ${scheduledSkills.length ? '' : 'disabled'}>创建</button>
+      <button class="cron-submit-btn" id="cronSubmitBtn" onclick="createCronJob('${agentId}')">创建</button>
     </div>
   `;
   updateCronPreview();
@@ -1883,24 +2353,71 @@ async function toggleCronJob(jobId, enabled) {
   } catch (e) { alert("操作失败: " + e.message); }
 }
 
-async function deleteCronJob(jobId, name) {
-  if (!confirm(`确定删除定时任务「${name}」？`)) return;
-  try {
-    const r = await fetch("/api/cron/delete", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ jobId })
-    });
-    const data = await r.json();
-    if (data.status !== "ok") throw new Error(data.error || "未知错误");
-    await fetchData();
-    if (cronModalAgent) renderCronModalList(cronModalAgent);
-  } catch (e) { alert("删除失败: " + e.message); }
+function deleteCronJob(jobId, name, event) {
+  // Remove any existing confirm popup
+  document.getElementById('cronDelPopup')?.remove();
+
+  const popup = document.createElement('div');
+  popup.id = 'cronDelPopup';
+  popup.style.cssText = 'position:fixed;z-index:1100;background:var(--card);border:2px solid var(--accent);border-radius:4px;padding:12px 16px;box-shadow:0 4px 20px rgba(0,0,0,0.6);font-family:var(--cn);min-width:240px';
+  popup.innerHTML = `
+    <div style="font-size:12px;color:var(--dim);margin-bottom:8px">删除定时任务</div>
+    <div style="font-size:14px;color:var(--text);margin-bottom:12px">确定删除「<b style="color:var(--accent)">${name}</b>」？</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button id="cronDelCancel" style="padding:4px 14px;font-size:11px;font-family:var(--cn);cursor:pointer;background:none;border:1px solid var(--border);border-radius:3px;color:var(--dim)">取消</button>
+      <button id="cronDelConfirm" style="padding:4px 14px;font-size:11px;font-family:var(--cn);cursor:pointer;background:var(--accent);border:1px solid var(--accent);border-radius:3px;color:#fff">删除</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
+  // Position near the button
+  const anchor = event?.target;
+  if (anchor) {
+    const rect = anchor.getBoundingClientRect();
+    let top = rect.bottom + 4, left = rect.left - 200;
+    if (top + 120 > window.innerHeight) top = rect.top - 120;
+    if (left < 8) left = 8;
+    popup.style.top = top + 'px';
+    popup.style.left = left + 'px';
+  } else {
+    popup.style.top = '50%'; popup.style.left = '50%'; popup.style.transform = 'translate(-50%,-50%)';
+  }
+
+  function close() { popup.remove(); }
+
+  document.getElementById('cronDelCancel').onclick = close;
+  document.getElementById('cronDelConfirm').onclick = async () => {
+    const btn = document.getElementById('cronDelConfirm');
+    btn.textContent = '⏳'; btn.disabled = true; btn.style.opacity = '0.6';
+    try {
+      const r = await fetch("/api/cron/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobId })
+      });
+      const data = await r.json();
+      if (data.status !== "ok") throw new Error(data.error || "未知错误");
+      close();
+      showToast('定时任务', `「${name}」已删除`, true);
+      await fetchData();
+      if (cronModalAgent) renderCronModalList(cronModalAgent);
+    } catch (e) {
+      btn.textContent = '失败'; btn.style.background = '#f59e0b'; btn.style.borderColor = '#f59e0b';
+      setTimeout(() => { btn.textContent = '删除'; btn.disabled = false; btn.style.opacity = ''; btn.style.background = 'var(--accent)'; btn.style.borderColor = 'var(--accent)'; }, 2000);
+    }
+  };
+
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', function handler(e) {
+    if (!popup.contains(e.target)) { close(); document.removeEventListener('click', handler); }
+  }), 0);
 }
 
 async function createCronJob(agentId) {
   const btn = document.getElementById("cronSubmitBtn");
   const skillId = document.getElementById("cronSkill")?.value;
+  const prompt = document.getElementById("cronPrompt")?.value?.trim() || "";
+  const jobName = document.getElementById("cronName")?.value?.trim() || "";
   const freqSel = document.getElementById("cronFreq")?.value;
   let cronExpr;
   if (freqSel === "custom") {
@@ -1914,16 +2431,13 @@ async function createCronJob(agentId) {
   const endDate = document.getElementById("cronEnd")?.value || undefined;
   const deliverySel = document.getElementById("cronDelivery")?.value || "none";
 
-  if (!skillId) { alert("请选择技能"); return; }
+  if (!skillId && !prompt) { alert("请选择技能或输入自定义指令"); return; }
   if (!cronExpr) { alert("请填写 cron 表达式"); return; }
 
   let deliveryChannel, deliveryTo;
-  if (deliverySel === "feishu-mgm") {
+  if (deliverySel !== "none") {
     deliveryChannel = "feishu";
-    deliveryTo = "chat:oc_e59188e3ecdb04acd9b33843870a2249";
-  } else if (deliverySel === "feishu-edit") {
-    deliveryChannel = "feishu";
-    deliveryTo = "chat:oc_6fd813d4cebdcbc97ed622e2d47d8fac";
+    deliveryTo = deliverySel; // value 已经是 "chat:oc_xxx" 或 "ou_xxx"
   }
 
   btn.disabled = true;
@@ -1932,7 +2446,7 @@ async function createCronJob(agentId) {
     const r = await fetch("/api/cron/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ agentId, skillId, cronExpr, startDate, endDate, deliveryChannel, deliveryTo })
+      body: JSON.stringify({ agentId, skillId: skillId || undefined, prompt: prompt || undefined, jobName: jobName || undefined, cronExpr, startDate, endDate, deliveryChannel, deliveryTo })
     });
     const data = await r.json();
     if (data.status !== "ok") throw new Error(data.error || "未知错误");
@@ -1955,10 +2469,15 @@ async function fetchData() {
   try {
     const resp = await fetch("/api/data");
     currentData = await resp.json();
-    // Merge bot names from API (openclaw.json is the source of truth)
+    // Merge bot names + colors from API (openclaw.json is the source of truth)
     if (currentData.botNames) {
       for (const [id, name] of Object.entries(currentData.botNames)) {
         BOT_NAMES[id] = name;
+      }
+    }
+    if (currentData.botColors) {
+      for (const [id, color] of Object.entries(currentData.botColors)) {
+        _BOT_COLOR_MAP[id] = color;
       }
     }
     if (!modelData) await fetchModels(); // load models on first fetch
@@ -1994,6 +2513,8 @@ function renderHeader() {
   document.getElementById("lastUpdate").textContent =
     `${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}:${t.getSeconds().toString().padStart(2,"0")}`;
 }
+
+let _openSessionAgent = null; // track which agent's session dropdown is open
 
 function renderAgentStats() {
   const grid = document.getElementById("agentGrid");
@@ -2031,14 +2552,6 @@ function renderAgentStats() {
       : '';
     const hasEquipment = !!armoryData?.equipment?.bots?.[agent];
     const clickHandler = (!isSystem || hasEquipment) ? `onclick="openEquipModal('${agent}')"` : '';
-    let equipBadge = '';
-    if (hasEquipment) {
-      const slots = armoryData.equipment.bots[agent].slots || {};
-      const nonSched = Object.entries(slots).filter(([k]) => !k.startsWith("scheduled-"));
-      const filled = nonSched.filter(([,v]) => v).length;
-      const total = nonSched.length;
-      equipBadge = `<div style="font-size:10px;color:var(--dim);margin-top:2px">⚔️ ${filled}/${total}</div>`;
-    }
     // Cron button: count active jobs for this agent
     const cronJobs = (currentData?.cronJobs?.jobs || (Array.isArray(currentData?.cronJobs) ? currentData.cronJobs : []));
     const agentCronCount = cronJobs.filter(j => j.agentId === agent && j.enabled !== false).length;
@@ -2047,39 +2560,31 @@ function renderAgentStats() {
     // Feishu status indicator
     const feishuStatus = currentData?.feishuStatus || {};
     const hasFeishu = feishuStatus[agent]?.hasAppId;
-    const feishuBadge = (!isSystem && !hasFeishu) ? `<span title="未配置飞书 App ID 和 Secret" style="font-size:14px;cursor:help">⚠️</span>` : '';
+    const feishuBadge = (!isSystem && !hasFeishu) ? `<span title="未配置飞书 App ID 和 Secret" style="font-size:12px;cursor:help">⚠️</span>` : '';
 
-    // Gem badges
-    let gemBadgesHtml = '';
-    if (gemData?.bindings?.[agent] && gemData?.registry?.gems) {
-      const badges = [];
-      for (const [gid, gem] of Object.entries(gemData.registry.gems)) {
-        const b = gemData.bindings[agent]?.[gid];
-        if (!b?.socketed) continue;
-        const health = getGemHealthStatus(gid, agent);
-        badges.push(`<span class="gem-badge ${health}" title="${gem.name}: ${health}">${gem.icon}</span>`);
-      }
-      if (badges.length > 0) {
-        gemBadgesHtml = `<div class="gem-badges">${badges.join("")}</div>`;
-      }
-    }
+    const avatarSrc = avatarDataCache?.[agent];
+    const edgeFilter = agentEdgeFilter(volume);
+    const rarityBorder = agentRarityBorder(volume);
+    // Rarity-based relief style: higher tiers get brighter, more golden edges
+    const reliefStyle = agentReliefStyle(volume);
+    const pixelAvatar = avatarSrc
+      ? `<div class="avatar-relief"><img src="${avatarSrc}" class="av-base" style="${reliefStyle.base}"><img src="${avatarSrc}" class="av-edge" style="filter:url(#${edgeFilter});${reliefStyle.edge}"></div>`
+      : '';
+
+    const modelFull = getModelFull(agent) || '';
+
     return `
-      <div class="agent-chip" ${clickHandler}>
-        <div class="name ${isSystem ? 'system' : ''}" style="color:${color};font-family:var(--cn);font-size:15px;display:flex;align-items:center;gap:4px;text-shadow:${glow}">
+      <div class="agent-chip" style="border-color:${rarityBorder}" ${clickHandler}>
+        ${pixelAvatar}
+        <div class="active-tag">${lastActive}</div>
+        <div class="name ${isSystem ? 'system' : ''}" style="color:${color};font-family:var(--cn);font-size:15px;display:flex;align-items:center;gap:4px">
           <span>${dn(agent)}</span> ${feishuBadge}
-          ${!isSystem ? `<button onclick="event.stopPropagation();renameAgent('${agent}')" style="background:none;border:none;cursor:pointer;font-size:11px;opacity:0.3;padding:0 2px" title="修改名称">✏️</button>` : ''}
         </div>
-        <div style="font-size:10px;color:var(--dim);margin-bottom:3px;display:flex;align-items:center;gap:6px"><span>${agent}</span>${modelBtn}</div>
-        <div class="stat">📥 <b>${s.inbox}</b> 收  📤 <b>${s.outbox}</b> 发</div>
-        <div class="stat">🕐 ${lastActive}</div>
-        ${equipBadge}
-        ${gemBadgesHtml}
-        ${s.inbox > 20 ? `<div class="badge">${s.inbox}</div>` : ''}
-        <div style="display:flex;gap:6px;align-items:center;margin-top:6px">
-          <button class="new-btn" style="margin-top:0" id="new-${agent}" onclick="event.stopPropagation();resetAgent('${agent}',this)" ${_resetBusy.has(agent) ? 'disabled style="margin-top:0;opacity:0.5"' : ''}>${_resetBusy.has(agent) ? '...' : '/new'}</button>
-          ${cronBtn}
-          ${!isSystem ? `<button class="new-btn" style="margin-top:0;font-size:9px;color:var(--red);border-color:var(--red);opacity:0.4" onclick="event.stopPropagation();deleteAgent('${agent}')" title="删除此 Agent">🗑</button>` : ''}
+        <div style="font-size:11px;color:var(--text);opacity:0.7;margin:2px 0">
+          <span>${agent}</span>
         </div>
+        ${modelFull ? `<div style="font-size:8px;color:var(--text);opacity:0.55;font-family:var(--pixel)">${modelShort}</div>` : ''}
+        ${volume > 20 ? `<div class="badge">${volume}</div>` : ''}
       </div>
     `;
   }
@@ -2139,6 +2644,18 @@ function renderAgentStats() {
   </div>`;
   editorialDiv.innerHTML = editorialBotsHtml + addCard;
   editorialBar.after(editorialDiv);
+
+  // Restore session dropdown if it was open
+  if (_openSessionAgent) {
+    const chip = document.querySelector(`#agentGrid .agent-chip .cron-btn[onclick*="showAgentSessions('${_openSessionAgent}'"]`)?.closest('.agent-chip')
+      || document.querySelector(`#editorialGrid .agent-chip .cron-btn[onclick*="showAgentSessions('${_openSessionAgent}'"]`)?.closest('.agent-chip');
+    if (chip) {
+      chip.classList.add('sess-open');
+      // Re-trigger the dropdown by simulating the open
+      _restoreSessionDropdown(_openSessionAgent, chip);
+    }
+  }
+
 }
 
 function toggleEditorial() {
@@ -2146,6 +2663,25 @@ function toggleEditorial() {
   if (!el) return;
   el.style.display = el.style.display === "grid" ? "none" : "grid";
   renderAgentStats();
+  setTimeout(syncTimelineHeight, 50);
+}
+
+function toggleSection(bodyId, titleEl) {
+  const body = document.getElementById(bodyId);
+  if (!body) return;
+  const open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  const hint = titleEl.querySelector('span[style*="float:right"]');
+  if (hint) hint.textContent = open ? '▲ 收起' : '▼ 展开';
+}
+
+function syncTimelineHeight() {
+  const leftCard = document.getElementById("agentGrid")?.closest(".card");
+  const timeline = document.getElementById("timeline");
+  if (!leftCard || !timeline) return;
+  // Match timeline max-height to left card height minus the title/filter bar (~90px)
+  const leftH = leftCard.offsetHeight;
+  timeline.style.maxHeight = Math.max(300, leftH - 90) + 'px';
 }
 
 function renderPublishQueue() {
@@ -2179,7 +2715,6 @@ function toggleFlowDiagram() {
 
 function renderFlowDiagram() {
   const container = document.getElementById("flowDiagram");
-  if (flowDiagramCollapsed) return;
 
   const flows = {};
   const today = new Date().toISOString().slice(0, 10);
@@ -2383,7 +2918,10 @@ function renderTimeline() {
   const newIds = new Set();
   msgs.forEach(m => newIds.add(m.message_id));
 
-  container.innerHTML = msgs.slice(0, 150).map(msg => {
+  const headerRow = `<div class="msg" style="position:sticky;top:0;background:var(--card);z-index:1;border-bottom:1px solid var(--border);padding:4px 12px;font-size:10px;color:var(--dim);font-family:var(--pixel)">
+    <span>TIME</span><span style="text-align:right">FROM</span><span>TO</span><span>CONTENT</span>
+  </div>`;
+  container.innerHTML = headerRow + msgs.slice(0, 150).map(msg => {
     const isNew = !firstLoad && !knownMessageIds.has(msg.message_id);
     const t = new Date(msg.created_at);
     const timeStr = `${(t.getMonth()+1).toString().padStart(2,"0")}-${t.getDate().toString().padStart(2,"0")} ${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}`;
@@ -2392,12 +2930,26 @@ function renderTimeline() {
     const content = (msg.content || "").replace(/</g, "&lt;").slice(0, 200);
     const statusClass = msg.status || "pending";
 
+    // Try to find matching session between from and to
+    let sessLink = '';
+    const allSess = currentData?.allSessions || [];
+    const fromId = nid(msg.from), toId = nid(msg.to);
+    // Look for agent-to-agent session on the receiver side
+    const matchSess = allSess.find(s => s.agent === toId && s.key.includes(':agent:') && s.key.includes(fromId))
+      || allSess.find(s => s.agent === fromId && s.key.includes(':agent:') && s.key.includes(toId))
+      || allSess.find(s => s.agent === toId && s.key.endsWith(':main'))
+      || allSess.find(s => s.agent === fromId && s.key.endsWith(':main'));
+    if (matchSess) {
+      const sUrl = chatUrl(matchSess.key);
+      sessLink = `<span style="color:var(--dim)">session:</span><a href="${sUrl}" target="_blank" onclick="event.stopPropagation()" title="${matchSess.key}">${matchSess.sessionId}</a>`;
+    }
+
     return `
       <div class="msg ${isNew ? 'new' : ''}" onclick="showDetail('${msg.message_id}')">
+        ${sessLink ? `<span></span><span></span><span></span><span class="sess">${sessLink}</span>` : ''}
         <span class="time">${timeStr}</span>
-        <span class="from" style="color:${fromColor}">${dn(msg.from)}</span>
-        <span class="arrow">→</span>
-        <span class="to" style="color:${toColor}">${dn(msg.to)}</span>
+        <span class="from" style="color:${fromColor}" title="${dn(msg.from)}">${dn(msg.from)}</span>
+        <span class="to" style="color:${toColor}" title="${dn(msg.to)}">${dn(msg.to)}</span>
         <span class="content">
           <span class="type-badge ${msg.type}">${msg.type}</span>
           ${content}
@@ -2408,6 +2960,7 @@ function renderTimeline() {
   }).join("");
 
   knownMessageIds = newIds;
+  setTimeout(syncTimelineHeight, 50);
 }
 
 function setCronFilter(agent, btn) {
@@ -2593,31 +3146,6 @@ function renderSystemServices() {
 
   const rows = [];
 
-  // MCP services rows
-  for (const svc of (mcpServicesData || [])) {
-    const statusColor = svc.running ? "var(--green)" : "var(--accent)";
-    const statusText = svc.running ? "RUNNING" : "STOPPED";
-    const healthColor = !svc.running ? "var(--dim)" : svc.healthy ? "var(--green)" : "#f59e0b";
-    const healthText = !svc.running ? "—" : svc.healthy ? "HEALTHY" : "UNHEALTHY";
-    const btnColor = svc.running ? "var(--accent)" : "var(--green)";
-    const btnText = svc.running ? "STOP" : "START";
-    const action = svc.running ? "stop" : "start";
-    rows.push(`
-      <tr>
-        <td style="font-family:var(--cn);font-size:13px;white-space:nowrap">${svc.name} <span style="color:var(--dim);font-size:10px">MCP</span></td>
-        <td class="mono">:${svc.port}</td>
-        <td><span style="color:${statusColor};font-family:var(--pixel);font-size:10px">${statusText}</span>${svc.pid ? ` <span style="color:var(--dim);font-size:10px">PID ${svc.pid}</span>` : ""}</td>
-        <td><span style="color:${healthColor};font-family:var(--pixel);font-size:10px">${healthText}</span></td>
-        <td style="text-align:center">
-          <button onclick="toggleMcpService('${svc.id}','${action}')" style="
-            background:${btnColor}22;color:${btnColor};border:1px solid ${btnColor};
-            padding:2px 10px;font-family:var(--pixel);font-size:10px;cursor:pointer;border-radius:3px;
-          " ${mcpServicesLoading ? "disabled" : ""}>${btnText}</button>
-        </td>
-      </tr>
-    `);
-  }
-
   // Crontab rows
   for (const e of (sysCrontabData?.entries || [])) {
     const opacity = e.enabled ? "1" : "0.4";
@@ -2686,6 +3214,7 @@ async function toggleSysCrontab(lineIndex, enable) {
 async function toggleMcpService(id, action) {
   mcpServicesLoading = true;
   renderSystemServices();
+  renderGemStatusBar();
   try {
     const resp = await fetch("/api/services/toggle", {
       method: "POST",
@@ -2694,20 +3223,106 @@ async function toggleMcpService(id, action) {
     });
     const result = await resp.json();
     if (result.status === "error") {
-      alert("操作失败: " + (result.error || "unknown"));
+      showToast(`MCP ${id}`, result.error || "操作失败", false);
+      mcpServicesLoading = false;
+      renderSystemServices();
+      renderGemStatusBar();
+      return;
     }
+    // Poll until status confirms or 60s timeout
+    const deadline = Date.now() + 60000;
+    const poll = async () => {
+      await fetchMcpServices();
+      const svc = (mcpServicesData || []).find(s => s.id === id);
+      const ok = action === "start" ? svc?.running : !svc?.running;
+      if (ok || Date.now() > deadline) {
+        mcpServicesLoading = false;
+        renderSystemServices();
+        if (ok) showToast(`MCP ${svc?.name || id}`, action === "start" ? "已启动" : "已停止", true);
+        else showToast(`MCP ${id}`, "状态未确认，请检查", false);
+        // Also refresh gem health
+        fetchGemHealth();
+        return;
+      }
+      setTimeout(poll, 2000);
+    };
+    setTimeout(poll, action === "start" ? 2000 : 500);
   } catch (e) {
-    alert("请求失败: " + e.message);
+    showToast(`MCP ${id}`, e.message, false);
+    mcpServicesLoading = false;
+    renderSystemServices();
+    renderGemStatusBar();
   }
-  mcpServicesLoading = false;
-  await fetchMcpServices();
-  renderSystemServices();
+}
+
+function fmtMetric(s) {
+  if (!s || s === "0") return "0";
+  const n = parseInt(s.replace(/,/g, ""));
+  if (isNaN(n)) return s;
+  if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, "") + "w";
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  return String(n);
+}
+
+let pubSortKey = null; // null = default, or "date"/"views"/"likes"/"comments"/"favorites"/"shares"
+let pubSortDesc = true;
+function sortPublished(key) {
+  if (pubSortKey === key) pubSortDesc = !pubSortDesc;
+  else { pubSortKey = key; pubSortDesc = true; }
+  renderPublished();
+}
+function clearPubSort() {
+  pubSortKey = null;
+  pubSortDesc = true;
+  renderPublished();
 }
 
 function renderPublished() {
-  const files = currentData.publishQueue.published;
+  // Deduplicate by title (keep the one with more views)
+  const raw = [...currentData.publishQueue.published];
+  const seen = new Map();
+  for (const item of raw) {
+    const title = item.title || item.name;
+    if (!title) { seen.set(item.name, item); continue; }
+    const existing = seen.get(title);
+    if (!existing || (parseInt(item.metrics?.views) || 0) > (parseInt(existing.metrics?.views) || 0)) {
+      seen.set(title, item);
+    }
+  }
+  let files = [...seen.values()];
+
+  if (pubSortKey === "date") {
+    files.sort((a, b) => {
+      const da = a.name || "", db = b.name || "";
+      return pubSortDesc ? db.localeCompare(da) : da.localeCompare(db);
+    });
+  } else if (pubSortKey) {
+    files.sort((a, b) => {
+      const va = parseInt(a.metrics?.[pubSortKey]) || 0;
+      const vb = parseInt(b.metrics?.[pubSortKey]) || 0;
+      return pubSortDesc ? vb - va : va - vb;
+    });
+  }
   const list = document.getElementById("pubList");
-  list.innerHTML = files.slice(0, 30).map(item => {
+  const statsTs = currentData.xhsStatsUpdatedAt;
+  const tsHtml = statsTs
+    ? `<span class="pub-stats-ts">数据更新: ${timeAgo(new Date(statsTs))}</span>`
+    : "";
+  const sortCols = [
+    { key: "views", label: "浏览" },
+    { key: "likes", label: "点赞" },
+    { key: "comments", label: "评论" },
+    { key: "favorites", label: "收藏" },
+    { key: "shares", label: "转发" },
+  ];
+  const resetBtn = pubSortKey ? `<span class="pub-col-num sort-active" onclick="clearPubSort()" style="font-size:11px;cursor:pointer">✕ 重置</span>` : '<span></span>';
+  const dateSortCls = pubSortKey === "date" ? " sort-active" : "";
+  const dateSortArrow = pubSortKey === "date" ? (pubSortDesc ? " ↓" : " ↑") : "";
+  const headerHtml = `<div class="pub-row pub-header">
+    <span>账号</span><span class="pub-col-num${dateSortCls}" onclick="sortPublished('date')" style="text-align:left">发布时间${dateSortArrow}</span><span>标题</span>
+    ${sortCols.map(c => `<span class="pub-col-num${pubSortKey === c.key ? ' sort-active' : ''}" onclick="sortPublished('${c.key}')">${c.label}${pubSortKey === c.key ? (pubSortDesc ? ' ↓' : ' ↑') : ''}</span>`).join("")}${resetBtn}
+  </div>`;
+  list.innerHTML = tsHtml + headerHtml + files.slice(0, 30).map(item => {
     const f = typeof item === "string" ? item : item.name;
     const title = (item && item.title) || "";
     const match = f.match(/_(\w+)_/);
@@ -2715,13 +3330,100 @@ function renderPublished() {
     const color = BOT_COLORS[bot] || "#888";
     const dateMatch = f.match(/^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2})/);
     const date = dateMatch ? dateMatch[1].replace("T", " ") : "";
+    const m = item.metrics;
+    const mc = (val, threshold) => {
+      if (!m) return `<span class="pub-metric-cell" style="opacity:0.15">-</span>`;
+      const n = parseInt(val);
+      return `<span class="pub-metric-cell${n >= threshold ? ' hi' : ''}">${fmtMetric(val)}</span>`;
+    };
     return `
-      <div class="pub-item">
-        <span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span>
-        <span style="color:var(--dim);font-size:13px;font-family:monospace">${date}</span>
-        <span style="color:var(--text);font-family:var(--cn);font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
+      <div class="pub-row pub-item">
+        <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span></span>
+        <span class="pub-col-date">${date}</span>
+        <span class="pub-col-title">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
+        ${mc(m?.views, 100)}${mc(m?.likes, 50)}${mc(m?.comments, 10)}${mc(m?.favorites, 20)}${mc(m?.shares, 5)}
       </div>
     `;
+  }).join("");
+}
+
+// Full publish view
+function openPubFullView() {
+  const overlay = document.getElementById("pubFullOverlay");
+  overlay.classList.add("show");
+  renderPubFullView();
+}
+function closePubFullView() {
+  document.getElementById("pubFullOverlay").classList.remove("show");
+}
+let pubFullSortKey = null;
+let pubFullSortDesc = true;
+function sortPubFull(key) {
+  if (pubFullSortKey === key) pubFullSortDesc = !pubFullSortDesc;
+  else { pubFullSortKey = key; pubFullSortDesc = true; }
+  renderPubFullView();
+}
+function clearPubFullSort() {
+  pubFullSortKey = null; pubFullSortDesc = true;
+  renderPubFullView();
+}
+function renderPubFullView() {
+  const raw = [...currentData.publishQueue.published];
+  // Deduplicate
+  const seen = new Map();
+  for (const item of raw) {
+    const title = item.title || item.name;
+    if (!title) { seen.set(item.name, item); continue; }
+    const existing = seen.get(title);
+    if (!existing || (parseInt(item.metrics?.views) || 0) > (parseInt(existing.metrics?.views) || 0)) {
+      seen.set(title, item);
+    }
+  }
+  let files = [...seen.values()];
+  if (pubFullSortKey === "date") {
+    files.sort((a, b) => pubFullSortDesc ? (b.name||"").localeCompare(a.name||"") : (a.name||"").localeCompare(b.name||""));
+  } else if (pubFullSortKey) {
+    files.sort((a, b) => {
+      const va = parseInt(a.metrics?.[pubFullSortKey]) || 0;
+      const vb = parseInt(b.metrics?.[pubFullSortKey]) || 0;
+      return pubFullSortDesc ? vb - va : va - vb;
+    });
+  }
+  document.getElementById("pubFullCount").textContent = `共 ${files.length} 条`;
+  const sortCols = [
+    { key: "views", label: "浏览" },
+    { key: "likes", label: "点赞" },
+    { key: "comments", label: "评论" },
+    { key: "favorites", label: "收藏" },
+    { key: "shares", label: "转发" },
+  ];
+  const resetBtn = pubFullSortKey ? `<span class="pub-col-num sort-active" onclick="clearPubFullSort()" style="font-size:11px;cursor:pointer">✕ 重置</span>` : '<span></span>';
+  const dateCls = pubFullSortKey === "date" ? " sort-active" : "";
+  const dateArr = pubFullSortKey === "date" ? (pubFullSortDesc ? " ↓" : " ↑") : "";
+  const header = `<div class="pub-row pub-header">
+    <span>账号</span><span class="pub-col-num${dateCls}" onclick="sortPubFull('date')" style="text-align:left">发布时间${dateArr}</span><span>标题</span>
+    ${sortCols.map(c => `<span class="pub-col-num${pubFullSortKey === c.key ? ' sort-active' : ''}" onclick="sortPubFull('${c.key}')">${c.label}${pubFullSortKey === c.key ? (pubFullSortDesc ? ' ↓' : ' ↑') : ''}</span>`).join("")}${resetBtn}
+  </div>`;
+  document.getElementById("pubFullList").innerHTML = header + files.map(item => {
+    const f = typeof item === "string" ? item : item.name;
+    const title = (item && item.title) || "";
+    const match = f.match(/_(\w+)_/);
+    const bot = match ? match[1] : "?";
+    const color = BOT_COLORS[bot] || "#888";
+    const dateMatch = f.match(/^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2})/);
+    const date = dateMatch ? dateMatch[1].replace("T", " ") : "";
+    const m = item.metrics;
+    const mc = (val, threshold) => {
+      if (!m) return `<span class="pub-metric-cell" style="opacity:0.15">-</span>`;
+      const n = parseInt(val);
+      return `<span class="pub-metric-cell${n >= threshold ? ' hi' : ''}">${fmtMetric(val)}</span>`;
+    };
+    return `<div class="pub-row pub-item">
+      <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span></span>
+      <span class="pub-col-date">${date}</span>
+      <span class="pub-col-title">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
+      ${mc(m?.views, 100)}${mc(m?.likes, 50)}${mc(m?.comments, 10)}${mc(m?.favorites, 20)}${mc(m?.shares, 5)}
+    </div>`;
   }).join("");
 }
 
@@ -2781,38 +3483,33 @@ function renderSessions() {
   const allChecked = displayed.length > 0 && displayed.every(s => selectedSessions.has(sessKey(s)));
 
   let html = `
-    <div class="sess-header" style="grid-template-columns: 30px 130px 200px 100px 100px 1fr 90px">
+    <div class="sess-header">
       <span><input type="checkbox" class="sess-check" ${allChecked ? 'checked' : ''} onchange="toggleAllSessions(this.checked)"></span>
-      <span>最后活动</span>
-      <span>Agent</span>
-      <span>模型</span>
-      <span>来源</span>
-      <span>Session</span>
-      <span>操作</span>
+      <span>TIME</span>
+      <span>AGENT</span>
+      <span>SOURCE</span>
+      <span>SESSION</span>
+      <span>OPS</span>
     </div>
   `;
 
   html += displayed.map(s => {
     const color = BOT_COLORS[s.agent] || "#888";
     const t = s.updatedAt ? new Date(s.updatedAt) : null;
-    const timeStr = t
-      ? `${(t.getMonth()+1).toString().padStart(2,"0")}-${t.getDate().toString().padStart(2,"0")} ${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}`
-      : "---";
-    const ago = t ? timeAgo(t) : "";
+    const ago = t ? timeAgo(t) : "---";
     const sk = sessKey(s);
     const checked = selectedSessions.has(sk);
     const shortKey = s.key.replace(/^agent:[^:]+:/, '');
 
     return `
-      <div class="sess-row${checked ? ' selected' : ''}" style="grid-template-columns: 30px 130px 200px 100px 100px 1fr 90px">
+      <div class="sess-row${checked ? ' selected' : ''}">
         <span><input type="checkbox" class="sess-check" ${checked ? 'checked' : ''} onchange="toggleSession('${sk}',this.checked)"></span>
-        <span class="time">${timeStr}<br><span style="color:var(--dim);font-size:11px">${ago}</span></span>
-        <span style="color:${color};font-size:14px;font-weight:bold;font-family:var(--cn)">${dn(s.agent)} <span style="font-size:10px;opacity:0.5">${s.agent}</span></span>
-        <span><button class="model-btn" onclick="event.stopPropagation();showModelPicker('${s.agent}')" title="${getModelFull(s.agent) || '未设置'}">${getModelShort(s.agent) || '---'}</button></span>
-        <span><span class="source-badge ${s.source}">${s.source}</span></span>
-        <span style="font-size:11px"><a href="${chatUrl(s.key)}" target="_blank" class="sess-id" title="${s.key}" style="font-size:11px">${s.sessionId.slice(0,8)}</a> <span style="color:var(--dim);font-size:10px;margin-left:4px">${shortKey}</span></span>
-        <span style="display:flex;gap:4px">
-          <button class="new-btn" onclick="event.stopPropagation();resetSession('${s.agent}','${s.sessionId}',this)" style="margin:0;font-size:8px;padding:3px 6px">/new</button>
+        <span style="color:var(--dim);font-size:10px">${ago}</span>
+        <span style="color:${color};font-size:12px;font-family:var(--cn);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${dn(s.agent)} (${s.agent})">${dn(s.agent)}</span>
+        <span><span class="source-badge ${s.source}" style="font-size:8px;padding:1px 5px">${s.source}</span></span>
+        <span style="font-size:10px;font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><a href="${chatUrl(s.key)}" target="_blank" class="sess-id" title="${s.key}" style="color:var(--orange)">${shortKey}</a></span>
+        <span style="display:flex;gap:3px">
+          <button class="new-btn" onclick="event.stopPropagation();resetSession('${s.agent}','${s.sessionId}',this)" style="margin:0;font-size:7px;padding:2px 5px">/new</button>
           <button class="del-btn" onclick="event.stopPropagation();deleteSession('${s.agent}','${s.sessionId}','${s.key.replace(/'/g,"\\'")}',this)">DEL</button>
         </span>
       </div>
@@ -2871,6 +3568,40 @@ async function deleteSession(agentId, sessionId, key, btn) {
     btn.textContent = "ERR";
     setTimeout(() => { btn.textContent = "DEL"; btn.disabled = false; }, 3000);
   }
+}
+
+function deleteSessionInline(agentId, sessionId, key, btn) {
+  document.getElementById('sessDelPopup')?.remove();
+  const shortKey = key.replace(/^agent:[^:]+:/, '');
+  const popup = document.createElement('div');
+  popup.id = 'sessDelPopup';
+  popup.style.cssText = 'position:fixed;z-index:1100;background:var(--card);border:2px solid var(--accent);border-radius:4px;padding:12px 16px;box-shadow:0 4px 20px rgba(0,0,0,0.6);font-family:var(--cn);min-width:220px';
+  popup.innerHTML = `
+    <div style="font-size:12px;color:var(--dim);margin-bottom:6px">删除会话</div>
+    <div style="font-size:13px;color:var(--text);margin-bottom:12px;word-break:break-all">确定删除「<b style="color:var(--accent)">${shortKey}</b>」？</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button id="sessDelCancel" style="padding:4px 14px;font-size:11px;font-family:var(--cn);cursor:pointer;background:none;border:1px solid var(--border);border-radius:3px;color:var(--dim)">取消</button>
+      <button id="sessDelConfirm" style="padding:4px 14px;font-size:11px;font-family:var(--cn);cursor:pointer;background:var(--accent);border:1px solid var(--accent);border-radius:3px;color:#fff">删除</button>
+    </div>`;
+  document.body.appendChild(popup);
+  const rect = btn.getBoundingClientRect();
+  let top = rect.bottom + 4, left = rect.left - 180;
+  if (top + 100 > window.innerHeight) top = rect.top - 100;
+  if (left < 8) left = 8;
+  popup.style.top = top + 'px'; popup.style.left = left + 'px';
+  function close() { popup.remove(); }
+  document.getElementById('sessDelCancel').onclick = close;
+  document.getElementById('sessDelConfirm').onclick = async () => {
+    const cb = document.getElementById('sessDelConfirm');
+    cb.textContent = '⏳'; cb.disabled = true;
+    try {
+      const r = await fetch("/api/session/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ agentId, sessionId, key }) });
+      const data = await r.json();
+      if (data.status === "ok") { close(); showToast('会话', `已删除 ${shortKey}`, true); await fetchData(); if (armoryCurrentBot) renderEquipSessions(armoryCurrentBot); }
+      else { cb.textContent = '失败'; setTimeout(() => { cb.textContent = '删除'; cb.disabled = false; }, 2000); }
+    } catch { cb.textContent = '失败'; setTimeout(() => { cb.textContent = '删除'; cb.disabled = false; }, 2000); }
+  };
+  setTimeout(() => document.addEventListener('click', function h(e) { if (!popup.contains(e.target)) { close(); document.removeEventListener('click', h); } }), 0);
 }
 
 async function bulkAction(action) {
@@ -2993,6 +3724,7 @@ function closeModal(e) {
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
     document.getElementById("modalOverlay").classList.remove("show");
+    closeAgentSessions();
   }
 });
 
@@ -3008,70 +3740,127 @@ function timeAgo(date) {
   return `${days}d前`;
 }
 
-// Reset agent: send /new to all sessions (two-click: first click = arm, second = fire)
+// ── Agent Session Dropdown ────────────────────────────────────────
+function closeAgentSessions() {
+  _openSessionAgent = null;
+  const existing = document.getElementById('activeSessionDropdown');
+  if (existing) {
+    existing.closest('.agent-chip')?.classList.remove('sess-open');
+    existing.remove();
+  }
+}
+
+function _buildSessionDropdownHtml(agentId) {
+  const sessions = (currentData?.allSessions || [])
+    .filter(s => s.agent === agentId)
+    .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+  let itemsHtml = '';
+  if (sessions.length === 0) {
+    itemsHtml = '<div style="padding:12px 10px;color:var(--dim);font-size:12px;text-align:center;font-family:var(--cn)">暂无会话</div>';
+  } else {
+    const modelShort = getModelShort(agentId);
+    itemsHtml = sessions.map(s => {
+      const t = s.updatedAt ? new Date(s.updatedAt) : null;
+      const ago = t ? timeAgo(t) : '---';
+      const shortKey = s.key.replace(/^agent:[^:]+:/, '');
+      const url = chatUrl(s.key);
+      const safeKey = s.key.replace(/'/g, "\\'");
+      return `<div class="sess-dropdown-item" style="flex-wrap:wrap;gap:4px 8px">
+        <a href="${url}" target="_blank" onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:8px;width:100%;text-decoration:none;color:var(--text)">
+          <span class="source-badge ${s.source}" style="font-size:9px;padding:2px 5px">${s.source}</span>
+          <span style="color:var(--dim);font-size:11px;min-width:45px">${ago}</span>
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px" title="${s.key}">${shortKey}</span>
+        </a>
+        <div onclick="event.stopPropagation()" style="display:flex;gap:4px;align-items:center;padding-left:4px">
+          ${modelShort ? `<button class="model-btn" onclick="showModelPicker('${agentId}')" style="font-size:9px;padding:1px 5px">${modelShort}</button>` : ''}
+          <button class="new-btn" onclick="resetSession('${agentId}','${s.sessionId}',this)" style="margin:0;font-size:8px;padding:2px 6px">/new</button>
+          <button class="del-btn" onclick="deleteSessionInline('${agentId}','${s.sessionId}','${safeKey}',this)">DEL</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const newUrl = chatUrl('agent:' + agentId + ':main');
+  return `
+    <div class="sess-dropdown-header">
+      <span>会话 (${sessions.length})</span>
+      <span onclick="closeAgentSessions()" style="cursor:pointer;color:var(--dim);font-size:13px;padding:0 2px" title="关闭">✕</span>
+    </div>
+    ${itemsHtml}
+    <a class="sess-dropdown-new" href="${newUrl}" target="_blank" onclick="event.stopPropagation()">＋ 新建会话</a>
+  `;
+}
+
+function _attachSessionDropdown(agentId, chip) {
+  chip.classList.add('sess-open');
+  const dropdown = document.createElement('div');
+  dropdown.className = 'sess-dropdown';
+  dropdown.id = 'activeSessionDropdown';
+  dropdown.innerHTML = _buildSessionDropdownHtml(agentId);
+  dropdown.onclick = (e) => e.stopPropagation();
+  chip.style.position = 'relative';
+  chip.appendChild(dropdown);
+  const rect = chip.getBoundingClientRect();
+  if (rect.bottom + 320 > window.innerHeight) dropdown.classList.add('flip');
+}
+
+function _restoreSessionDropdown(agentId, chip) {
+  _attachSessionDropdown(agentId, chip);
+}
+
+function showAgentSessions(agentId, event) {
+  event.stopPropagation();
+  if (_openSessionAgent === agentId) { closeAgentSessions(); return; }
+  closeAgentSessions();
+  _openSessionAgent = agentId;
+  const chip = event.target.closest('.agent-chip');
+  if (!chip) return;
+  _attachSessionDropdown(agentId, chip);
+}
+
+// Reset agent: two-click confirm, then instant file-based reset
 let _resetArmed = null; // { agentId, timer }
-let _resetBusy = new Set(); // agentIds currently resetting
+let _resetBusy = new Set();
 
 async function resetAgent(agentId, btn) {
-  // Two-click confirmation: first click arms, second click fires
+  // Two-click confirmation
   if (!_resetArmed || _resetArmed.agentId !== agentId) {
-    // Arm — change button to confirm state
     if (_resetArmed) { clearTimeout(_resetArmed.timer); _resetArmedRevert(); }
     btn.textContent = "确认?";
     btn.style.background = "rgba(233,69,96,0.25)";
-    btn.style.borderColor = "var(--accent)";
-    btn.style.color = "var(--accent)";
-    const revert = () => { btn.textContent = "/new"; btn.style.background = ""; btn.style.borderColor = ""; btn.style.color = ""; _resetArmed = null; };
+    const revert = () => { btn.textContent = "/new"; btn.style.background = ""; _resetArmed = null; };
     _resetArmedRevert = revert;
     _resetArmed = { agentId, timer: setTimeout(revert, 3000) };
     return;
   }
-  // Second click — fire
   clearTimeout(_resetArmed.timer);
   _resetArmed = null;
   btn.disabled = true;
-  btn.style.background = "";
-  btn.style.borderColor = "";
-  btn.style.color = "";
-  _resetBusy.add(agentId);
-  // Show elapsed timer on button
-  const t0 = Date.now();
-  const tickTimer = setInterval(() => {
-    const el = document.getElementById(`new-${agentId}`);
-    if (el) el.textContent = `${Math.floor((Date.now() - t0) / 1000)}s...`;
-  }, 1000);
-  btn.textContent = "0s...";
+  btn.textContent = "...";
   try {
     const resp = await fetch(`/api/agent/${agentId}/new`, { method: "POST" });
     const data = await resp.json();
     const sessions = data.sessions || [];
-    const ok = sessions.filter(s => s.status === "ok");
-    const fail = sessions.filter(s => s.status === "error");
-    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-    // Toast with details
-    const lines = [];
-    for (const s of ok) lines.push(`✓ ${s.key.replace('agent:'+agentId+':', '')}`);
-    for (const s of fail) lines.push(`✗ ${s.key.replace('agent:'+agentId+':', '')}${s.error ? ' — ' + s.error.split('\n')[0].slice(0, 60) : ''}`);
-    showResetToast(dn(agentId), lines, ok.length, fail.length, elapsed);
+    const ok = sessions.filter(s => s.status === "ok").length;
+    const fail = sessions.filter(s => s.status === "error").length;
+    showToast(`/new ${dn(agentId)}`, `${ok} 个会话已重置${fail ? `，${fail} 个失败` : ''}`, !fail);
+    setTimeout(() => fetchData(), 300);
   } catch (e) {
-    showResetToast(dn(agentId), [`✗ ${e.message}`], 0, 1, ((Date.now() - t0) / 1000).toFixed(1));
+    showToast(`/new ${dn(agentId)}`, e.message, false);
   }
-  clearInterval(tickTimer);
-  _resetBusy.delete(agentId);
-  // Button will be recreated by next renderAgentStats cycle
+  btn.disabled = false;
+  btn.textContent = "/new";
 }
 let _resetArmedRevert = () => {};
 
-function showResetToast(botName, lines, okCount, failCount, elapsed) {
+function showToast(title, msg, success) {
   const el = document.createElement("div");
-  const borderColor = failCount && !okCount ? "var(--accent)" : "var(--green)";
-  el.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--card);border:2px solid ${borderColor};border-radius:6px;padding:10px 16px;font-family:var(--cn);font-size:12px;color:var(--text);min-width:280px;max-width:480px;box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:toast-in 0.3s ease-out`;
-  const statusColor = failCount ? (okCount ? "var(--yellow)" : "var(--accent)") : "var(--green)";
-  const header = `<div style="font-size:13px;font-weight:bold;margin-bottom:6px;color:${statusColor}">/new ${botName} — ${okCount + failCount} sessions, ${elapsed}s</div>`;
-  const body = lines.map(l => `<div style="font-size:11px;color:${l.startsWith('✓') ? 'var(--green)' : 'var(--accent)'};margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l}</div>`).join("");
-  el.innerHTML = header + `<div style="max-height:150px;overflow-y:auto">${body}</div>`;
+  const color = success ? "var(--green)" : "var(--accent)";
+  el.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--card);border:2px solid ${color};border-radius:4px;padding:8px 16px;font-family:var(--cn);font-size:12px;color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,0.5)`;
+  el.innerHTML = `<b style="color:${color}">${title}</b><span style="margin-left:8px">${msg}</span>`;
   document.body.appendChild(el);
-  setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity 0.3s"; setTimeout(() => el.remove(), 300); }, 6000);
+  setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity 0.3s"; setTimeout(() => el.remove(), 300); }, 3000);
 }
 
 // Reset single session: send /new
@@ -3106,14 +3895,17 @@ let armoryFilter = "helm";
 let armorySubFilter = null; // null = show all within slot type
 let armoryDragging = null; // { skillId, fromSlot }
 
-const SLOT_LAYOUT = [
-  { label: "工种", slots: ["helm-1"] },
-  { label: "职业", slots: ["armor-1"] },
-  { label: "风格", slots: ["accessory-soul", "accessory-1", "accessory-2"], subLabels: ["灵魂", "内容风格", "画图风格"] },
-  { label: "通用技能", slots: ["utility-1", "utility-2", "utility-3", "utility-4"] },
-  { label: "研究技能", slots: ["research-1", "research-2", "research-3", "research-4", "research-5", "research-6"] },
-  { label: "策略", slots: ["boots-1"] },
+// Category types for equipment display (no fixed slot counts)
+const SLOT_CATEGORIES = [
+  { type: "helm", label: "工种" },
+  { type: "armor", label: "职业" },
+  { type: "accessory", label: "风格" },
+  { type: "utility", label: "通用技能" },
+  { type: "research", label: "研究技能" },
+  { type: "boots", label: "策略" },
 ];
+let activeCategoryModal = null; // currently open category type
+let catSubTypeFilter = null; // subType filter within category modal
 
 async function fetchArmoryData() {
   try {
@@ -3143,6 +3935,70 @@ function openEquipModal(botId) {
   fetchGemData();
   fetchGemHealth();
   fetchPluginData();
+  renderEquipSessions(botId);
+  renderEquipCron(botId);
+}
+
+function renderEquipCron(botId) {
+  const el = document.getElementById("equipCronList");
+  if (!el) return;
+  const cronJobs = (currentData?.cronJobs?.jobs || (Array.isArray(currentData?.cronJobs) ? currentData.cronJobs : []));
+  const jobs = cronJobs.filter(j => j.agentId === botId);
+  const total = jobs.length;
+  const active = jobs.filter(j => j.enabled !== false).length;
+  const statusColor = total === 0 ? 'var(--dim)' : active === total ? 'var(--green)' : active > 0 ? 'var(--yellow)' : 'var(--accent)';
+  const summary = total === 0 ? '无任务' : `${active}/${total} 运行中`;
+  el.innerHTML = `<button onclick="event.stopPropagation();showCronModal('${botId}')" style="
+    display:flex;align-items:center;gap:5px;width:100%;padding:4px 6px;
+    background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;
+    cursor:pointer;font-family:var(--cn);font-size:10px;color:var(--text);transition:border-color 0.15s;
+  " onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='var(--border)'">
+    <span style="color:${statusColor};font-family:var(--pixel);font-size:9px">${summary}</span>
+    <span style="margin-left:auto;color:var(--dim);font-size:9px">管理 ▸</span>
+  </button>`;
+}
+
+function renderEquipSessions(botId) {
+  const el = document.getElementById("equipSessions");
+  if (!el) return;
+  const sessions = (currentData?.allSessions || [])
+    .filter(s => s.agent === botId)
+    .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+  const color = BOT_COLORS[botId] || '#888';
+
+  const newUrl = chatUrl('agent:' + botId + ':main');
+  const modelFull = getModelFull(botId) || '---';
+  let html = `<div style="margin-bottom:8px">
+    <button class="model-btn" onclick="showModelPicker('${botId}')" title="${modelFull}" style="font-size:13px;padding:4px 14px;width:100%">${modelFull}</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+    <span style="font-size:13px;color:var(--yellow);font-family:var(--pixel);text-shadow:0 0 6px rgba(232,154,60,0.4);border:1px solid var(--yellow);border-radius:3px;padding:2px 8px;letter-spacing:1px">💬 SESSIONS (${sessions.length})</span>
+    <a href="${newUrl}" target="_blank" style="color:var(--green);text-decoration:none;font-size:10px;font-family:var(--cn)">＋ 新建</a>
+    <button class="new-btn" onclick="event.stopPropagation();resetAgent('${botId}',this)" style="margin:0 0 0 auto;font-size:8px;padding:2px 6px">/new all</button>
+  </div>`;
+  if (sessions.length === 0) {
+    html += '<div style="color:var(--dim);font-size:11px;font-family:var(--cn)">暂无会话</div>';
+  } else {
+    html += sessions.map(s => {
+      const t = s.updatedAt ? new Date(s.updatedAt) : null;
+      const ago = t ? timeAgo(t) : '---';
+      const shortKey = s.key.replace(/^agent:[^:]+:/, '');
+      const url = chatUrl(s.key);
+      const safeKey = s.key.replace(/'/g, "\\'");
+      return `<div style="border-top:1px solid var(--border);padding:6px 0;font-size:10px">
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="source-badge ${s.source}" style="font-size:7px;padding:1px 4px">${s.source}</span>
+          <span style="color:var(--dim)">${ago}</span>
+          <span style="margin-left:auto;display:flex;gap:3px">
+            <button class="new-btn" onclick="event.stopPropagation();resetSession('${botId}','${s.sessionId}',this)" style="margin:0;font-size:7px;padding:1px 4px">/new</button>
+            <button class="del-btn" onclick="event.stopPropagation();deleteSessionInline('${botId}','${s.sessionId}','${safeKey}',this)" style="font-size:7px;padding:1px 4px">DEL</button>
+          </span>
+        </div>
+        <a href="${url}" target="_blank" style="color:var(--orange);text-decoration:none;font-family:monospace;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:220px;margin-top:2px" title="${s.key}">${shortKey}</a>
+      </div>`;
+    }).join('');
+  }
+  el.innerHTML = html;
 }
 
 function closeEquipModal(e) {
@@ -3158,157 +4014,111 @@ function renderArmory() {
 
   // Bot name
   const botName = BOT_NAMES[armoryCurrentBot] || armoryCurrentBot;
-  document.getElementById("equipBotName").innerHTML = `<span style="color:var(--accent)">⚔️</span> <span style="font-family:var(--cn)">${botName}</span> <span style="color:var(--dim);font-size:12px">(${armoryCurrentBot})</span>`;
+  const curColor = BOT_COLORS[armoryCurrentBot] || '#888';
+  document.getElementById("equipBotName").innerHTML = `
+    <span style="color:${curColor};font-family:var(--cn);font-size:18px;cursor:pointer" onclick="renameAgent('${armoryCurrentBot}',event)" title="点击修改名称">${botName}</span>
+    <span style="color:var(--dim);font-size:12px">(${armoryCurrentBot})</span>
+    <input type="color" value="${curColor}" id="equipColorPicker" style="width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;vertical-align:middle" title="修改主色调" onchange="changeAgentColor('${armoryCurrentBot}',this.value)">
+  `;
 
-  // Equipment slots
-  const slotsEl = document.getElementById("equipSlots");
-  slotsEl.innerHTML = "";
+  // ── sys2 Evolution Button ──
+  const existingEvoBtn = document.getElementById("evoOpenBtn");
+  if (armoryCurrentBot === "sys2") {
+    let evoBtn = existingEvoBtn;
+    if (!evoBtn) {
+      evoBtn = document.createElement("button");
+      evoBtn.id = "evoOpenBtn";
+      evoBtn.className = "evo-btn";
+      evoBtn.style.cssText = "margin-bottom:10px;padding:6px 16px;font-size:13px;border-color:#00b894;color:#00b894;";
+      evoBtn.onclick = () => showEvoModal();
+      const nameEl = document.getElementById("equipBotName");
+      nameEl.parentElement.insertBefore(evoBtn, nameEl.nextSibling);
+    }
+    fetch("/api/skill-evolution/pending").then(r=>r.json()).then(d => {
+      const n = (d.items||[]).length;
+      evoBtn.innerHTML = `🧬 技能进化${n > 0 ? ` <span style="background:#00b894;color:#fff;padding:1px 6px;border-radius:8px;font-size:11px">${n}</span>` : ''}`;
+    }).catch(()=>{});
+  } else {
+    if (existingEvoBtn) existingEvoBtn.remove();
+  }
+
+  // Equipment layout: 3 columns
+  const leftEl = document.getElementById("equipSlotsLeft");
+  const rightEl = document.getElementById("equipSlotsRight");
+  const metaEl = document.getElementById("equipSlotsMeta");
+  leftEl.innerHTML = ""; rightEl.innerHTML = ""; metaEl.innerHTML = "";
   const equippedSkillIds = new Set(Object.values(botSlots).filter(Boolean));
-
-  // Permission: research slots require frontline helm
   const hasFrontline = botSlots["helm-1"] === "frontline";
 
-  for (const row of SLOT_LAYOUT) {
-    const rowDiv = document.createElement("div");
-    rowDiv.className = "slot-row";
-    const labelDiv = document.createElement("div");
-    labelDiv.className = "slot-row-label";
-    labelDiv.textContent = row.label;
-    rowDiv.appendChild(labelDiv);
-
-    for (let si = 0; si < row.slots.length; si++) {
-      const slotId = row.slots[si];
-      const slotType = slotId.replace(/-\d+$/, "");
-      const typeInfo = registry.slotTypes[slotType];
-      const subLabel = row.subLabels?.[si];
-      const subTypes = typeInfo?.subTypes;
-      const skillId = botSlots[slotId] || null;
-      const skill = skillId ? registry.skills[skillId] : null;
-
-      // Check if slot is locked by permissions
-      const isEditorialBot = /^bot\d+$/.test(armoryCurrentBot);
-      const isHelmLocked = slotType === "helm" && isEditorialBot && skillId === "frontline";
-      const isLocked = (slotType === "research" && !hasFrontline);
-
-      const slotDiv = document.createElement("div");
-      slotDiv.className = "equip-slot" + (skillId ? " filled" : "") + (isLocked ? " locked" : "");
-      slotDiv.dataset.slot = slotId;
-      slotDiv.dataset.slotType = slotType;
-
-      // Soul slot: always filled, not removable
-      if (slotId === "accessory-soul") {
-        slotDiv.className = "equip-slot filled";
-        slotDiv.style.borderColor = "var(--purple)";
-        slotDiv.style.background = "rgba(162,155,254,0.08)";
-        const botName = BOT_NAMES[armoryCurrentBot] || armoryCurrentBot;
-        slotDiv.innerHTML = `<span class="slot-icon">👻</span><span class="slot-name">灵魂</span>`;
-        slotDiv.title = `${botName} 的 SOUL.md — 不可拆卸`;
-        slotDiv.style.cursor = "pointer";
-        slotDiv.onclick = () => openSoulMd(armoryCurrentBot);
-        rowDiv.appendChild(slotDiv);
-        continue;
-      }
-
-      if (isLocked) {
-        slotDiv.innerHTML = `<span class="slot-icon" style="opacity:0.2">${typeInfo?.icon || "?"}</span><span class="lock-icon">🔒</span>`;
-        slotDiv.title = "需要装备「前台」工种才能解锁研究插槽";
-        rowDiv.appendChild(slotDiv);
-        continue;
-      }
-
-      if (skill) {
-        const stBadge = skill.subType && subTypes?.[skill.subType] ? `<span class="sub-type-badge st-${skill.subType}">${subTypes[skill.subType].icon}</span>` : "";
-        const lockBadge = isHelmLocked ? `<span style="font-size:10px;margin-left:4px" title="编辑部工种已锁定">🔒</span>` : "";
-        slotDiv.innerHTML = `<span class="slot-icon">${skill.icon}</span><span class="slot-name">${skill.name}</span>${stBadge}${lockBadge}`;
-        slotDiv.draggable = !skill.infrastructure && !isHelmLocked;
-        slotDiv.onmouseenter = (e) => { if (skill.desc) showSkillTooltip(e, skill); };
-        slotDiv.onmousemove = (e) => moveSkillTooltip(e);
-        slotDiv.onmouseleave = () => hideSkillTooltip();
-        slotDiv.ondragstart = (e) => {
-          hideSkillTooltip();
-          armoryDragging = { skillId, fromSlot: slotId };
-          e.dataTransfer.setData("text/plain", JSON.stringify(armoryDragging));
-          e.target.style.opacity = "0.4";
-          highlightSlots(slotType);
-        };
-        slotDiv.ondragend = (e) => { e.target.style.opacity = ""; clearHighlights(); };
-      } else {
-        const emptyLabel = subLabel || typeInfo?.name || slotType;
-        const emptyIcon = subLabel && subTypes ? Object.values(subTypes).find(st => st.name === subLabel)?.icon || typeInfo?.icon : typeInfo?.icon;
-        slotDiv.innerHTML = `<span class="slot-icon" style="opacity:0.3">${emptyIcon || "?"}</span><span class="slot-empty">${emptyLabel}</span>`;
-      }
-
-      // Drop handlers
-      slotDiv.ondragover = (e) => {
-        e.preventDefault();
-        const data = getDragData(e);
-        if (data && canDropInSlot(data, slotId, registry)) {
-          slotDiv.classList.add("drop-ok");
-        }
-      };
-      slotDiv.ondragleave = () => { slotDiv.classList.remove("drop-ok"); };
-      slotDiv.ondrop = async (e) => {
-        e.preventDefault();
-        slotDiv.classList.remove("drop-ok");
-        clearHighlights();
-        const data = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
-        if (!data.skillId) return;
-        if (data.fromSlot && data.fromSlot !== slotId) {
-          // Swap or move between slots
-          const fromType = data.fromSlot.replace(/-\d+$/, "");
-          const toType = slotId.replace(/-\d+$/, "");
-          if (fromType === toType) {
-            await armorySwap(armoryCurrentBot, data.fromSlot, slotId);
-          } else {
-            // Cross-type: equip to new slot (will auto-unequip from old)
-            await armoryEquip(armoryCurrentBot, slotId, data.skillId);
-          }
-        } else if (!data.fromSlot) {
-          // From inventory
-          await armoryEquip(armoryCurrentBot, slotId, data.skillId);
-        }
-      };
-
-      // Click to unequip (not allowed for infrastructure skills or helm-locked)
-      if (skillId && !skill?.infrastructure && !isHelmLocked) {
-        slotDiv.onclick = (e) => {
-          if (e.target.draggable && !e.defaultPrevented) {
-            if (confirm(`卸下「${skill.name}」?`)) {
-              armoryUnequip(armoryCurrentBot, slotId);
-            }
-          }
-        };
-      }
-
-      rowDiv.appendChild(slotDiv);
-    }
-
-    // One-click unequip button for this row
-    const unequippableSlots = row.slots.filter(sId => {
-      if (sId === "accessory-soul") return false;
-      const sType = sId.replace(/-\d+$/, "");
-      if (sType === "research" && !hasFrontline) return false;
-      // Helm lock for editorial bots
-      if (sType === "helm" && /^bot\d+$/.test(armoryCurrentBot) && botSlots[sId] === "frontline") return false;
-      const sSkillId = botSlots[sId];
-      if (!sSkillId) return false;
-      const sSkill = registry.skills[sSkillId];
-      return !sSkill?.infrastructure;
-    });
-    if (unequippableSlots.length > 0) {
-      const unequipBtn = document.createElement("button");
-      unequipBtn.className = "row-unequip-btn";
-      unequipBtn.textContent = "卸下";
-      unequipBtn.title = "一键卸下此行所有装备";
-      unequipBtn.onclick = (e) => {
-        e.stopPropagation();
-        armoryUnequipRow(armoryCurrentBot, unequippableSlots);
-      };
-      rowDiv.appendChild(unequipBtn);
-    }
-
-    slotsEl.appendChild(rowDiv);
+  // Group equipped skills by type
+  const equippedByType = {};
+  for (const [slotId, skillId] of Object.entries(botSlots)) {
+    if (!skillId) continue;
+    const type = slotId.replace(/-\d+$/, "");
+    if (type === "scheduled") continue;
+    if (!equippedByType[type]) equippedByType[type] = [];
+    equippedByType[type].push({ slotId, skillId, skill: registry.skills[skillId] });
   }
+
+  const singleTypes = new Set(["helm", "armor", "boots"]);
+  const leftTypes = ["helm", "armor", "boots"];
+  const rightTypes = ["accessory", "utility", "research"];
+
+  function makeCatRow(cat) {
+    const typeInfo = registry.slotTypes[cat.type];
+    const items = equippedByType[cat.type] || [];
+    const isLocked = cat.type === "research" && !hasFrontline;
+    const isSingle = singleTypes.has(cat.type);
+
+    const row = document.createElement("div");
+    row.className = "cat-row" + (isLocked ? " locked" : "");
+
+    if (isSingle) {
+      const item = items[0];
+      if (item?.skill) {
+        row.innerHTML = `<span class="cat-row-icon">${item.skill.icon}</span><span class="cat-row-skills">${item.skill.name}</span><span class="cat-row-arrow">›</span>`;
+      } else {
+        row.innerHTML = `<span class="cat-row-icon" style="opacity:0.3">${typeInfo?.icon || ""}</span><span class="cat-row-skills"><span class="empty">${cat.label}（空）</span></span><span class="cat-row-arrow">›</span>`;
+      }
+    } else {
+      if (isLocked) {
+        row.innerHTML = `<span class="cat-row-icon" style="opacity:0.3">${typeInfo?.icon || ""}</span><span class="cat-row-label">${cat.label}</span><span class="cat-row-skills"><span class="empty">🔒</span></span>`;
+      } else {
+        const countText = items.length > 0 ? `<span class="cat-row-count">${items.length}</span>` : '<span class="cat-row-count" style="opacity:0.3">0</span>';
+        row.innerHTML = `<span class="cat-row-icon">${typeInfo?.icon || ""}</span><span class="cat-row-label">${cat.label}</span><span style="flex:1"></span>${countText}<span class="cat-row-arrow">›</span>`;
+      }
+    }
+
+    if (!isLocked) row.onclick = () => openCatDetail(cat.type, cat.label, typeInfo);
+    return row;
+  }
+
+  // Left column: helm, armor, boots
+  for (const type of leftTypes) {
+    const cat = SLOT_CATEGORIES.find(c => c.type === type);
+    if (cat) leftEl.appendChild(makeCatRow(cat));
+  }
+
+  // Right column: accessory, utility, research
+  for (const type of rightTypes) {
+    const cat = SLOT_CATEGORIES.find(c => c.type === type);
+    if (cat) rightEl.appendChild(makeCatRow(cat));
+  }
+
+  // Center meta: AGENTS.md + SOUL.md
+  const agentsBtn = document.createElement("div");
+  agentsBtn.className = "cat-row";
+  agentsBtn.style.cssText = "width:auto;padding:6px 14px;border-color:#e67e22;";
+  agentsBtn.innerHTML = '<span class="cat-row-icon">📋</span><span class="cat-row-skills">AGENTS.md</span>';
+  agentsBtn.onclick = () => openBotFile(armoryCurrentBot, "AGENTS.md", "📋");
+  metaEl.appendChild(agentsBtn);
+
+  const soulBtn = document.createElement("div");
+  soulBtn.className = "cat-row";
+  soulBtn.style.cssText = "width:auto;padding:6px 14px;border-color:var(--purple);";
+  soulBtn.innerHTML = '<span class="cat-row-icon">👻</span><span class="cat-row-skills">SOUL.md</span>';
+  soulBtn.onclick = () => openSoulMd(armoryCurrentBot);
+  metaEl.appendChild(soulBtn);
 
   // Inventory filters
   const filtersEl = document.getElementById("inventoryFilters");
@@ -3446,6 +4256,33 @@ function renderArmory() {
   }
 
   // Base layer (per-bot, from disk)
+  // Scheduled tasks — driven by actual cron jobs, not equipment slots
+  const schedEl = document.getElementById("scheduledSkills");
+  schedEl.innerHTML = "";
+  const _cronAll = currentData?.cronJobs?.jobs || (Array.isArray(currentData?.cronJobs) ? currentData.cronJobs : []);
+  const _cronBot = _cronAll.filter(j => j.agentId === armoryCurrentBot);
+  if (!_cronBot.length) {
+    schedEl.innerHTML = '<span style="color:var(--dim);font-size:11px;font-family:var(--cn)">无定时任务</span>';
+  }
+  for (const job of _cronBot) {
+    const enabled = job.enabled !== false;
+    // Resolve skillId: explicit field → extract from payload → strip agentId prefix → job name
+    let _sid = job.skillId;
+    if (!_sid) { const _m = job.payload?.message?.match(/skills\/([^/]+)\/SKILL\.md/); if (_m) _sid = _m[1]; }
+    if (!_sid && job.name?.startsWith(armoryCurrentBot + "-")) _sid = job.name.slice(armoryCurrentBot.length + 1);
+    if (!_sid) _sid = job.name;
+    const sk = registry.skills[_sid];
+    const icon = sk?.icon || '⏰';
+    const name = sk?.name || job.name || job.id?.slice(0, 8);
+    const tag = document.createElement("span");
+    tag.className = "base-skill-tag";
+    tag.style.opacity = enabled ? "1" : "0.4";
+    tag.textContent = `${icon} ${name}`;
+    tag.title = `${job.schedule?.expr || '?'} | ${job.description || ''}${enabled ? '' : ' [已停用]'}`;
+    if (sk?.desc) { tag.onmouseenter = (ev) => showSkillTooltip(ev, sk); tag.onmousemove = moveSkillTooltip; tag.onmouseleave = hideSkillTooltip; }
+    schedEl.appendChild(tag);
+  }
+
   const baseEl = document.getElementById("baseLayerSkills");
   baseEl.innerHTML = "";
   const botBase = armoryData.botBaseLayer?.[armoryCurrentBot] || [];
@@ -3557,6 +4394,22 @@ function md2html(md) {
   return html;
 }
 
+async function openBotFile(botId, file, icon) {
+  const overlay = document.getElementById("skillMdOverlay");
+  const titleEl = document.getElementById("skillMdTitle");
+  const bodyEl = document.getElementById("skillMdBody");
+  const botName = BOT_NAMES[botId] || botId;
+  titleEl.textContent = `${icon || "📄"} ${botName} / ${file}`;
+  bodyEl.innerHTML = '<span style="color:var(--dim)">Loading...</span>';
+  overlay.classList.add("show");
+  try {
+    const res = await fetch(`/api/bot/file?botId=${encodeURIComponent(botId)}&file=${encodeURIComponent(file)}`);
+    const data = await res.json();
+    if (data.error) { bodyEl.textContent = "Error: " + data.error; return; }
+    bodyEl.innerHTML = md2html(data.content);
+  } catch (e) { bodyEl.textContent = "Failed to load: " + e.message; }
+}
+
 async function openSoulMd(botId) {
   const overlay = document.getElementById("skillMdOverlay");
   const titleEl = document.getElementById("skillMdTitle");
@@ -3631,12 +4484,14 @@ function handleInventoryDrop(e) {
   } catch {}
 }
 
-async function armoryEquip(botId, slot, skillId) {
+async function armoryEquip(botId, slot, skillId, password) {
   try {
+    const payload = { botId, slot, skillId };
+    if (password) payload.password = password;
     const res = await fetch("/api/skills/equip", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ botId, slot, skillId })
+      body: JSON.stringify(payload)
     });
     const data = await res.json();
     if (data.status === "ok") {
@@ -3686,6 +4541,157 @@ async function armoryUnequipRow(botId, slotIds) {
     showArmoryToast(`已卸下 ${count} 个装备`, "ok");
     await fetchArmoryData();
   }
+}
+
+// ── Category Detail Modal ──────────────────────────────────────
+function openCatDetail(type, label, typeInfo) {
+  if (!armoryData) return;
+  if (activeCategoryModal !== type) catSubTypeFilter = null;
+  activeCategoryModal = type;
+  const { registry, equipment } = armoryData;
+  const botSlots = equipment?.bots?.[armoryCurrentBot]?.slots || {};
+  document.getElementById("catDetailTitle").innerHTML = `${typeInfo?.icon || ""} ${label}`;
+
+  function makeActionPanel(skillId, skill, opts) {
+    const p = document.createElement("div"); p.className = "chip-actions";
+    const btns = document.createElement("div"); btns.className = "chip-actions-btns";
+    if (!opts.locked) {
+      const singleSlot = ["helm", "armor", "boots"].includes(type);
+      const willReplace = !opts.equipped && (singleSlot || (type === "accessory" && skill.subType)) && eqItems.some(it => singleSlot || it.skill.subType === skill.subType);
+      const ab = document.createElement("button");
+      ab.className = "chip-action-btn " + (opts.equipped ? "danger" : "primary");
+      ab.textContent = opts.equipped ? "卸下" : (willReplace ? "替换" : "装备");
+      ab.onclick = async (e) => { e.stopPropagation();
+        if (opts.equipped) { await armoryUnequip(armoryCurrentBot, opts.slotId); }
+        else if (type === "helm") {
+          const pwd = await askPassword("🔑 工种变更", "变更工种需要管理员密码");
+          if (!pwd) return;
+          await armoryEquip(armoryCurrentBot, findNextSlot(type, botSlots), skillId, pwd);
+        } else { await armoryEquip(armoryCurrentBot, findNextSlot(type, botSlots), skillId); }
+        openCatDetail(type, label, typeInfo);
+      };
+      btns.appendChild(ab);
+    }
+    const db = document.createElement("button"); db.className = "chip-action-btn"; db.textContent = "详情";
+    db.onclick = (e) => {
+      e.stopPropagation();
+      // Toggle detail section (SKILL.md + sub-files)
+      const existing = p.querySelector(".chip-detail-section");
+      if (existing) { existing.remove(); db.classList.remove("active"); return; }
+      db.classList.add("active");
+      const detail = document.createElement("div"); detail.className = "chip-detail-section";
+      // SKILL.md entry
+      const mainTag = document.createElement("div"); mainTag.className = "sub-skill-tag";
+      mainTag.style.cssText = "cursor:pointer;border-color:var(--yellow);color:var(--yellow)";
+      mainTag.textContent = "SKILL.md";
+      mainTag.onclick = (ev) => { ev.stopPropagation(); openSkillMd(skillId, "SKILL.md"); };
+      detail.appendChild(mainTag);
+      // Sub-skill files
+      if (skill.subSkills?.length > 0) {
+        for (const s of skill.subSkills) {
+          const t = document.createElement("div"); t.className = "sub-skill-tag";
+          t.textContent = `${s.icon || ""} ${s.name}`;
+          if (s.desc) { t.onmouseenter = (ev) => showSkillTooltip(ev, s); t.onmousemove = (ev) => moveSkillTooltip(ev); t.onmouseleave = () => hideSkillTooltip(); }
+          if (s.file?.endsWith(".md")) { t.style.cursor = "pointer"; t.onclick = (ev) => { ev.stopPropagation(); hideSkillTooltip(); openSkillMd(skillId, s.file); }; }
+          detail.appendChild(t);
+        }
+      }
+      p.appendChild(detail);
+    };
+    btns.appendChild(db);
+    p.appendChild(btns);
+    return p;
+  }
+
+  function makeChip(skillId, skill, cls, opts) {
+    const c = document.createElement("div"); c.className = cls;
+    c.innerHTML = `<span class="chip-icon">${skill.icon}</span>${skill.name}${opts.locked ? ' <span style="font-size:10px">🔒</span>' : ""}`;
+    if (skill.desc) { c.onmouseenter = (e) => showSkillTooltip(e, skill); c.onmousemove = (e) => moveSkillTooltip(e); c.onmouseleave = () => hideSkillTooltip(); }
+    c.onclick = () => {
+      hideSkillTooltip();
+      const nx = c.nextElementSibling;
+      if (nx?.classList.contains("chip-actions")) { nx.remove(); c.classList.remove("active"); return; }
+      document.querySelectorAll("#catEquippedGrid .chip-actions, #catAvailableGrid .chip-actions").forEach(el => el.remove());
+      document.querySelectorAll("#catEquippedGrid .active, #catAvailableGrid .active").forEach(el => el.classList.remove("active"));
+      c.classList.add("active"); c.after(makeActionPanel(skillId, skill, opts));
+    };
+    return c;
+  }
+
+  const eqG = document.getElementById("catEquippedGrid"); eqG.innerHTML = "";
+  const eqItems = [];
+  for (const [slotId, skillId] of Object.entries(botSlots)) {
+    if (!skillId || slotId.replace(/-\d+$/, "") !== type) continue;
+    const skill = registry.skills[skillId]; if (skill) eqItems.push({ slotId, skillId, skill });
+  }
+  if (!eqItems.length) eqG.innerHTML = '<span style="color:var(--dim);font-size:11px;font-family:var(--cn)">暂无</span>';
+  for (const it of eqItems) {
+    const locked = type === "helm" && /^bot\d+$/.test(armoryCurrentBot) && it.skillId === "frontline";
+    eqG.appendChild(makeChip(it.skillId, it.skill, "cat-skill-chip", { equipped: true, slotId: it.slotId, locked }));
+  }
+
+  // SubType filter buttons
+  const stFilters = document.getElementById("catSubTypeFilters"); stFilters.innerHTML = "";
+  const subTypes = typeInfo?.subTypes;
+  const eqIds = new Set(eqItems.map(i => i.skillId));
+  const avail = Object.entries(registry.skills).filter(([id, s]) => s.slot === type && !s.infrastructure && !eqIds.has(id)).sort((a, b) => a[1].name.localeCompare(b[1].name, "zh"));
+  if (subTypes && avail.some(([, s]) => s.subType)) {
+    const allBtn = document.createElement("button"); allBtn.className = "inv-filter-btn sub-filter" + (!catSubTypeFilter ? " active" : "");
+    allBtn.textContent = "全部"; allBtn.onclick = () => { catSubTypeFilter = null; openCatDetail(type, label, typeInfo); };
+    stFilters.appendChild(allBtn);
+    for (const [stKey, stInfo] of Object.entries(subTypes)) {
+      const btn = document.createElement("button"); btn.className = "inv-filter-btn sub-filter" + (catSubTypeFilter === stKey ? " active" : "");
+      btn.textContent = `${stInfo.icon} ${stInfo.name}`; btn.onclick = () => { catSubTypeFilter = stKey; openCatDetail(type, label, typeInfo); };
+      stFilters.appendChild(btn);
+    }
+  }
+
+  // Available skills (filtered by subType if active)
+  const avG = document.getElementById("catAvailableGrid"); avG.innerHTML = "";
+  const filtered = catSubTypeFilter ? avail.filter(([, s]) => s.subType === catSubTypeFilter) : avail;
+  if (!filtered.length) avG.innerHTML = '<span style="color:var(--dim);font-size:11px;font-family:var(--cn)">无可用技能</span>';
+  for (const [id, skill] of filtered) avG.appendChild(makeChip(id, skill, "cat-avail-chip", { equipped: false }));
+
+  document.getElementById("catDetailOverlay").classList.add("show");
+}
+
+function closeCatDetail(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById("catDetailOverlay").classList.remove("show");
+  activeCategoryModal = null;
+}
+
+// Generic password dialog — returns a Promise<string|null>
+let _pwdResolve = null;
+function askPassword(title, msg) {
+  return new Promise((resolve) => {
+    _pwdResolve = resolve;
+    document.getElementById("pwdDialogTitle").textContent = title || "🔑 管理员验证";
+    document.getElementById("pwdDialogMsg").textContent = msg || "";
+    document.getElementById("pwdDialogInput").value = "";
+    document.getElementById("pwdDialogError").style.display = "none";
+    document.getElementById("pwdDialogOverlay").classList.add("show");
+    setTimeout(() => document.getElementById("pwdDialogInput").focus(), 100);
+    document.getElementById("pwdDialogConfirm").onclick = () => {
+      const val = document.getElementById("pwdDialogInput").value;
+      if (!val) { const err = document.getElementById("pwdDialogError"); err.textContent = "请输入密码"; err.style.display = "block"; return; }
+      document.getElementById("pwdDialogOverlay").classList.remove("show");
+      resolve(val);
+    };
+    document.getElementById("pwdDialogInput").onkeydown = (e) => {
+      if (e.key === "Enter") document.getElementById("pwdDialogConfirm").click();
+    };
+  });
+}
+function closePwdDialog() {
+  document.getElementById("pwdDialogOverlay").classList.remove("show");
+  if (_pwdResolve) { _pwdResolve(null); _pwdResolve = null; }
+}
+
+function findNextSlot(type, botSlots) {
+  let i = 1;
+  while (botSlots[`${type}-${i}`] !== undefined && botSlots[`${type}-${i}`] !== null) i++;
+  return `${type}-${i}`;
 }
 
 async function armorySwap(botId, fromSlot, toSlot) {
@@ -3748,6 +4754,296 @@ async function fetchPluginData() {
   } catch (e) { console.error("Plugin fetch error:", e); }
 }
 
+// ── Skill Evolution Panel (sys2) ──────────────────────────────────
+let evoPoolData = null, evoPendingData = null;
+
+async function showEvoModal() {
+  let modal = document.getElementById("evoModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "evoModal";
+    modal.className = "diff-modal";
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `<div class="diff-modal-content" style="max-width:750px;max-height:80vh">
+      <div class="diff-modal-header">
+        <span style="color:#00b894">🧬 技能进化管理</span>
+        <button class="evo-btn" onclick="document.getElementById('evoModal').remove()">✕</button>
+      </div>
+      <div class="diff-modal-body" id="evoModalBody" style="padding:8px 12px"><span style="color:var(--dim)">Loading...</span></div>
+    </div>`;
+    document.body.appendChild(modal);
+  } else {
+    modal.style.display = "flex";
+  }
+  await renderSkillEvoPanel();
+}
+
+async function renderSkillEvoPanel() {
+  const panel = document.getElementById("evoModalBody");
+  if (!panel) return;
+
+  // Fetch data
+  const [poolRes, pendingRes] = await Promise.all([
+    fetch("/api/skill-evolution/pool").then(r => r.json()).catch(() => ({ items: [] })),
+    fetch("/api/skill-evolution/pending").then(r => r.json()).catch(() => ({ items: [] })),
+  ]);
+  evoPoolData = poolRes.items || [];
+  evoPendingData = pendingRes.items || [];
+
+  const candidates = evoPoolData.filter(i => i.status === "candidate");
+  const evolved = evoPoolData.filter(i => i.status === "evolved");
+  const excluded = evoPoolData.filter(i => i.status === "excluded");
+
+  let html = "";
+
+  // Pending approvals
+  if (evoPendingData.length > 0) {
+    html += `<div class="evo-panel" style="border-color:#00b894">
+      <h3 style="color:#00b894">📋 待审批 (${evoPendingData.length})</h3>`;
+    for (const p of evoPendingData) {
+      const v = p.verification?.result || {};
+      const sz = p.size || {};
+      const before = sz.before?.skillMdKB || sz.before?.totalKB || "?";
+      const after = sz.after?.skillMdKB || sz.after?.totalKB || "?";
+      const tokenDelta = sz.tokenDelta || "?";
+      const changes = p.evolution?.changes || [];
+      const changesHtml = changes.length > 0
+        ? changes.map(c => `<div style="padding:1px 0;color:var(--text)">· ${c}</div>`).join("")
+        : `<div style="color:var(--dim)">${p.evolution?.changeSummary || "无描述"}</div>`;
+
+      html += `<div style="border:1px solid rgba(0,184,148,0.3);border-radius:4px;padding:10px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-family:monospace;color:var(--accent);font-size:14px;font-weight:bold">${p.skillName}</span>
+          <span class="evo-badge positive">${v.verdict || "?"}</span>
+          <span style="flex:1"></span>
+          <button class="evo-btn" onclick="showEvoDiff('${p.skillName}')" style="font-size:10px">查看原始 DIFF</button>
+          <button class="evo-btn approve" onclick="approveEvo('${p.skillName}')">批准</button>
+          <button class="evo-btn danger" onclick="rejectEvo('${p.skillName}')">驳回</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;margin-bottom:6px">
+          <div style="color:var(--dim)">📦 体积：${before}KB → ${after}KB</div>
+          <div style="color:${String(tokenDelta).startsWith('+') ? '#d63031' : '#00b894'}">🎯 Token 变化：${tokenDelta}</div>
+          <div style="color:var(--dim)">⚙️ 验证：${v.status || "?"} · ${v.iterations || "?"}轮 · ${v.toolCallCount || "?"}次工具调用</div>
+          <div style="color:var(--dim)">🤖 模型：${p.evolution?.createdBy || "?"}</div>
+        </div>
+        <div style="font-size:11px;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px">
+          <div style="color:var(--dim);margin-bottom:2px;font-weight:bold">改动内容：</div>
+          ${changesHtml}
+        </div>
+        <div style="font-size:11px;color:#00b894;margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px">
+          ✅ ${v.verdictReason || ""}
+        </div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Evolution pool — only candidates, excluded, and stale evolved (with reset button)
+  // Next evolution time (daily 3:00 AM CST)
+  const now = new Date();
+  const next3am = new Date(now);
+  next3am.setHours(3, 0, 0, 0);
+  if (next3am <= now) next3am.setDate(next3am.getDate() + 1);
+  const hoursLeft = Math.round((next3am - now) / 3600000);
+  const nextEvoText = hoursLeft > 0 ? `下次自动进化：${hoursLeft}h 后（03:00）` : "即将开始";
+
+  html += `<div class="evo-panel">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <h3 style="flex:1;margin:0">🧬 进化池 — 候选 ${candidates.length}${excluded.length ? ` · 已排除 ${excluded.length}` : ''}${evolved.length ? ` · 待重置 ${evolved.length}` : ''}</h3>
+      <span style="color:var(--dim);font-size:10px">⏰ ${nextEvoText}</span>
+      <button class="evo-btn danger" onclick="evoBatchExclude()" style="font-size:11px">批量移除</button>
+      <button class="evo-btn approve" onclick="triggerEvolution(event)" style="font-size:12px;padding:4px 12px">▶ 立刻进化</button>
+    </div>`;
+
+  for (const item of candidates) {
+    const safeId = item.name.replace(/[^a-zA-Z0-9]/g, '_');
+    html += `<div style="border-bottom:1px solid rgba(255,255,255,0.05);padding:6px 8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <input type="checkbox" class="evo-check" data-name="${item.name}" style="accent-color:#00b894">
+        <span style="font-family:monospace;min-width:140px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px" onclick="toggleEvoContent('${item.name}')">${item.name}</span>
+        <span style="color:var(--dim)">${item.liveSizeKB}KB</span>
+        <span style="flex:1"></span>
+        <button class="evo-btn danger" onclick="evoDelete('${item.name}')" style="font-size:10px;opacity:0.5" title="从沙盒彻底删除">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-start;padding-left:24px">
+        <input id="evoDirTxt_${safeId}" style="flex:1;background:#1a1a2e;color:var(--text);border:1px solid var(--dim);border-radius:3px;padding:4px 6px;font-size:11px;font-family:var(--cn)" placeholder="进化方向（留空自动诊断）· 精确性 · 可执行性 · 容错性 · scope匹配" value="${(item.direction || '').replace(/"/g, '&quot;')}">
+        <button class="evo-btn" onclick="saveEvoDirection('${item.name}')" style="white-space:nowrap">保存</button>
+      </div>
+      <div id="evoContent_${safeId}" style="display:none"></div>
+    </div>`;
+  }
+
+  if (evolved.length > 0) {
+    for (const item of evolved) {
+      html += `<div class="evo-item" style="opacity:0.6">
+        <span class="evo-badge" style="background:#636e72;color:#dfe6e9">待重置</span>
+        <span style="font-family:monospace;min-width:140px">${item.name}</span>
+        <span style="color:var(--dim)">${item.sizeKB}KB (原 ${item.liveSizeKB}KB)</span>
+        <span style="flex:1"></span>
+        <button class="evo-btn" onclick="evoReset('${item.name}')">重置</button>
+      </div>`;
+    }
+  }
+
+  if (excluded.length > 0) {
+    for (const item of excluded) {
+      html += `<div class="evo-item" style="opacity:0.4">
+        <span class="evo-badge excluded">已排除</span>
+        <span style="font-family:monospace;min-width:140px">${item.name}</span>
+        <span style="flex:1"></span>
+        <button class="evo-btn" onclick="evoInclude('${item.name}')">恢复</button>
+      </div>`;
+    }
+  }
+  html += `</div>`;
+
+  panel.innerHTML = html;
+}
+
+async function evoExclude(name) {
+  await fetch(`/api/skill-evolution/pool/exclude/${name}`, { method: "POST" });
+  renderSkillEvoPanel();
+}
+
+async function toggleEvoContent(name) {
+  const safeId = name.replace(/[^a-zA-Z0-9]/g, '_');
+  const el = document.getElementById("evoContent_" + safeId);
+  if (!el) return;
+  if (el.style.display !== "none") { el.style.display = "none"; return; }
+  el.style.display = "block";
+  el.innerHTML = '<span style="color:var(--dim);font-size:11px;padding:8px 24px;display:block">Loading...</span>';
+  try {
+    const data = await fetch(`/api/skill-evolution/pool/content/${name}`).then(r => r.json());
+    if (data.error) { el.innerHTML = `<span style="color:var(--red);padding:8px 24px;display:block">${data.error}</span>`; return; }
+    const content = data.live || data.sandbox || "（无内容）";
+    // Parse frontmatter description
+    const descMatch = content.match(/description:\s*>?\s*\n?\s*(.+?)(?:\n---|\n\n)/s);
+    const desc = descMatch ? descMatch[1].trim().slice(0, 200) : "";
+    // Get structure info
+    const headings = [...content.matchAll(/^##\s+(.+)$/gm)].map(m => m[1]);
+    const lineCount = content.split('\n').length;
+    const fileList = (data.liveFiles || []).filter(f => f.endsWith('.md')).join(', ') || "SKILL.md";
+
+    el.innerHTML = `<div style="padding:6px 24px;font-size:11px;background:rgba(255,255,255,0.02);border-radius:3px;margin-top:4px">
+      ${desc ? `<div style="color:var(--dim);margin-bottom:4px">${desc}</div>` : ''}
+      <div style="color:var(--dim)">📄 文件：${fileList}</div>
+      <div style="color:var(--dim)">📏 ${lineCount} 行 · ${headings.length} 个章节</div>
+      ${headings.length > 0 ? `<div style="color:var(--dim);margin-top:2px">📑 ${headings.join(' → ')}</div>` : ''}
+      <details style="margin-top:4px">
+        <summary style="color:var(--accent);cursor:pointer;font-size:10px">查看完整内容</summary>
+        <pre style="margin:4px 0;padding:6px;background:#0d1117;border-radius:3px;font-size:10px;max-height:300px;overflow:auto;white-space:pre-wrap;color:var(--text)">${content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+      </details>
+    </div>`;
+  } catch (e) {
+    el.innerHTML = `<span style="color:var(--red);padding:8px 24px;display:block">${e.message}</span>`;
+  }
+}
+
+async function evoBatchExclude() {
+  const checked = [...document.querySelectorAll('.evo-check:checked')].map(el => el.dataset.name);
+  if (!checked.length) { alert("请先勾选要移除的技能"); return; }
+  if (!confirm(`移除 ${checked.length} 个技能：${checked.join(', ')}？`)) return;
+  for (const name of checked) {
+    await fetch(`/api/skill-evolution/pool/exclude/${name}`, { method: "POST" });
+  }
+  renderSkillEvoPanel();
+}
+
+async function triggerEvolution(e) {
+  if (!confirm("立刻触发 sys2 执行一轮技能进化？")) return;
+  const btn = e?.target || document.querySelector('[onclick*="triggerEvolution"]');
+  if (btn) { btn.disabled = true; btn.textContent = "⏳ 进化中..."; }
+  try {
+    const res = await fetch("/api/skill-evolution/trigger", { method: "POST" }).then(r => r.json());
+    if (btn) btn.textContent = res.ok ? "✅ 已触发" : "❌ 失败";
+  } catch (err) {
+    if (btn) btn.textContent = "❌ 失败";
+  }
+  setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = "▶ 立刻进化"; } }, 5000);
+}
+
+function toggleEvoDirection(name) {
+  const id = "evoDir_" + name.replace(/[^a-zA-Z0-9]/g, '_');
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === "none" ? "block" : "none";
+}
+
+async function saveEvoDirection(name) {
+  const id = "evoDirTxt_" + name.replace(/[^a-zA-Z0-9]/g, '_');
+  const txt = document.getElementById(id)?.value || "";
+  await fetch(`/api/skill-evolution/pool/direction/${name}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ direction: txt }),
+  });
+  renderSkillEvoPanel();
+}
+
+async function evoDelete(name) {
+  if (!confirm(`彻底删除 ${name}？将从沙盒中完全移除，下次同步脚本会重新从线上复制。`)) return;
+  await fetch(`/api/skill-evolution/pool/delete/${name}`, { method: "POST" });
+  renderSkillEvoPanel();
+}
+
+async function evoReset(name) {
+  if (!confirm(`重置 ${name}？沙盒版将恢复为线上版，可重新参与进化。`)) return;
+  await fetch(`/api/skill-evolution/pool/reset/${name}`, { method: "POST" });
+  renderSkillEvoPanel();
+}
+
+async function evoInclude(name) {
+  await fetch(`/api/skill-evolution/pool/include/${name}`, { method: "POST" });
+  renderSkillEvoPanel();
+}
+
+async function showEvoDiff(name) {
+  const res = await fetch(`/api/skill-evolution/diff/${name}`).then(r => r.json());
+  if (res.error) { alert(res.error); return; }
+  const diffText = (res.diff || "No diff").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const colored = diffText.split("\n").map(line => {
+    if (line.startsWith("+")) return `<span class="d-add">${line}</span>`;
+    if (line.startsWith("-")) return `<span class="d-del">${line}</span>`;
+    if (line.startsWith("@@")) return `<span class="d-hdr">${line}</span>`;
+    return line;
+  }).join("\n");
+
+  const modal = document.createElement("div");
+  modal.className = "diff-modal";
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  modal.innerHTML = `<div class="diff-modal-content">
+    <div class="diff-modal-header">
+      <span style="color:var(--accent)">🧬 ${name} — DIFF</span>
+      <button class="evo-btn" onclick="this.closest('.diff-modal').remove()">✕ 关闭</button>
+    </div>
+    <div class="diff-modal-body"><pre class="diff-pre">${colored}</pre></div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+async function approveEvo(name) {
+  const pw = await askPassword("🔑 批准进化", `批准 ${name} 的技能进化需要管理员密码`);
+  if (!pw) return;
+  const res = await fetch(`/api/skill-evolution/approve/${name}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: pw }),
+  }).then(r => r.json());
+  if (res.error) { showToast('技能进化', `批准失败: ${res.error}`, false); return; }
+  showToast('技能进化', `${name} 已批准并合并到线上`, true);
+  renderSkillEvoPanel();
+}
+
+async function rejectEvo(name) {
+  if (!confirm(`驳回 ${name} 的进化？沙盒将恢复为线上版。`)) return;
+  const res = await fetch(`/api/skill-evolution/reject/${name}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: "openclaw2026" }),
+  }).then(r => r.json());
+  if (res.error) { showToast('技能进化', `驳回失败: ${res.error}`, false); return; }
+  renderSkillEvoPanel();
+}
+
 function renderPluginPanel() {
   const el = document.getElementById("pluginList");
   if (!el || !pluginData || pluginData.error) return;
@@ -3770,6 +5066,8 @@ function toggleGemStore() {
   gemStoreOpen = !gemStoreOpen;
   const btn = document.getElementById("gemToggleBtn");
   if (btn) btn.classList.toggle('active', gemStoreOpen);
+  const expandBtn = document.getElementById("gemExpandBtn");
+  if (expandBtn) expandBtn.textContent = gemStoreOpen ? "▲" : "▼";
   renderGemPanel();
 }
 
@@ -3777,10 +5075,11 @@ async function fetchGemData() {
   try {
     const res = await fetch("/api/gems");
     gemData = await res.json();
+    renderGemStatusBar(); // render immediately with whatever health data we have
     if (document.getElementById("equipOverlay").classList.contains("show")) {
       renderGemPanel();
     }
-    renderAgentStats(); // refresh gem badges on cards
+    renderAgentStats();
   } catch (e) {
     console.error("Gem data fetch error:", e);
   }
@@ -3794,9 +5093,69 @@ async function fetchGemHealth() {
       renderGemPanel();
     }
     renderAgentStats();
+    renderGemStatusBar();
   } catch (e) {
     console.error("Gem health fetch error:", e);
   }
+}
+
+let _activeGemId = null; // currently expanded gem in status bar
+
+function renderGemStatusBar() {
+  const bar = document.getElementById("gemStatusBar");
+  const panel = document.getElementById("gemExpandPanel");
+  if (!bar) return;
+  if (!gemData?.registry?.gems) { bar.innerHTML = ''; panel.style.display = 'none'; return; }
+
+  const gems = gemData.registry.gems;
+  bar.innerHTML = '<span style="font-size:10px;color:var(--orange);font-family:var(--pixel);margin-right:2px">MCP</span>' + Object.entries(gems).map(([gid, gem]) => {
+    const health = getGemHealthStatus(gid);
+    const hClass = (health === 'healthy' || health === 'up') ? 'healthy' : health === 'standby' ? 'healthy' : health === 'down' ? 'down' : health === 'unhealthy' ? 'unhealthy' : 'unknown';
+    const isActive = _activeGemId === gid;
+    return `<span class="gem-status-icon ${hClass}${isActive ? ' active' : ''}" title="${gem.name}: ${health}" onclick="event.stopPropagation();toggleGemExpand('${gid}')">${gem.icon}</span>`;
+  }).join('');
+
+  // Render expand panel if a gem is selected
+  if (_activeGemId && gems[_activeGemId]) {
+    const gid = _activeGemId;
+    const gem = gems[gid];
+    const health = getGemHealthStatus(gid);
+    const isUp = health === 'healthy' || health === 'up' || health === 'standby';
+    const isDown = health === 'down' || health === 'unknown';
+    const statusColor = isUp ? 'var(--green)' : isDown ? 'var(--accent)' : '#f59e0b';
+    const statusText = health === 'standby' ? 'STANDBY' : isUp ? 'HEALTHY' : isDown ? 'DOWN' : 'UNHEALTHY';
+
+    let actionHtml = '';
+    if (gem.manageable) {
+      const action = isDown ? 'start' : 'stop';
+      const btnColor = isDown ? 'var(--green)' : 'var(--accent)';
+      const btnText = isDown ? '▶ 启动' : '⏹ 停止';
+      const loading = mcpServicesLoading;
+      actionHtml = `<button onclick="toggleMcpService('${gid}','${action}')" style="
+        background:${btnColor}22;color:${btnColor};border:1px solid ${btnColor};
+        padding:3px 12px;font-family:var(--cn);font-size:11px;cursor:pointer;border-radius:3px;
+      " ${loading ? 'disabled' : ''}>${loading ? '⏳ 启动中...' : btnText}</button>`;
+    }
+
+    const portStr = gem.port ? `:${gem.port}` : '';
+    panel.style.display = '';
+    panel.innerHTML = `<div class="gem-expand-panel">
+      <span style="font-size:18px">${gem.icon}</span>
+      <span style="color:${gem.color || 'var(--text)'};font-weight:bold;font-size:13px">${gid}</span>
+      <span style="color:var(--dim);font-size:11px">${gem.desc}</span>
+      ${portStr ? `<span style="color:var(--dim);font-family:monospace;font-size:11px">${portStr}</span>` : ''}
+      <span style="color:${statusColor};font-family:var(--pixel);font-size:10px">${statusText}</span>
+      ${actionHtml}
+      <span style="margin-left:auto;cursor:pointer;color:var(--dim);font-size:14px" onclick="_activeGemId=null;renderGemStatusBar()">✕</span>
+    </div>`;
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function toggleGemExpand(gemId) {
+  _activeGemId = _activeGemId === gemId ? null : gemId;
+  renderGemStatusBar();
 }
 
 function getGemHealthStatus(gemId, botId) {
@@ -3884,27 +5243,19 @@ function renderGemPanel() {
     if (gem.perBot && gem.portMap && gem.portMap[bot]) portDisplay = ":" + gem.portMap[bot];
     else if (gem.port) portDisplay = ":" + gem.port;
 
-    let healthClass = "unknown", healthText = "???";
-    if (binding.socketed) {
-      healthClass = health;
-      healthText = health === "healthy" ? "HEALTHY" : health === "up" ? "UP" : health === "down" ? "DOWN" : health === "unhealthy" ? "WARN" : "???";
-    } else { healthClass = "unknown"; healthText = "——"; }
+    const isHealthy = health === "healthy" || health === "up";
+    const rowOpacity = binding.socketed ? (isHealthy ? "1" : "0.5") : "0.3";
 
     let actionHtml = "";
     if (binding.socketed) actionHtml = `<button class="gem-action remove" onclick="unsocketGem('${bot}','${gemId}')">✕</button>`;
     else actionHtml = `<button class="gem-action add" onclick="socketGem('${bot}','${gemId}')">+</button>`;
 
     let svcHtml = "";
-    if (gem.manageable) {
-      const svcRunning = health !== "down" && health !== "unknown" && health !== "planned";
-      const svcAction = svcRunning ? "stop" : "start";
-      const svcColor = svcRunning ? "var(--accent)" : "var(--green)";
-      svcHtml = `<button onclick="toggleGemService('${gemId}','${svcAction}')" title="${svcRunning ? '停止服务' : '启动服务'}" style="background:${svcColor}22;color:${svcColor};border:1px solid ${svcColor};padding:1px 6px;font-size:12px;cursor:pointer;border-radius:2px;margin-right:3px;line-height:1">${svcRunning ? "⏹" : "▶"}</button>`;
-    }
 
     const gemColor = gem.color || "var(--dim)";
     const row = document.createElement("div");
     row.className = "gem-row";
+    row.style.opacity = rowOpacity;
     if (binding.socketed) row.style.borderColor = gemColor + "40";
     const hasSubTools = gem.subTools && gem.subTools.length > 0;
     const subToolBtnHtml = hasSubTools
@@ -3913,7 +5264,6 @@ function renderGemPanel() {
     row.innerHTML = `
       <span class="gem-icon">${gem.icon}</span>
       <span class="gem-name" style="color:${gemColor}">${gem.name}</span>
-      <span class="gem-health ${healthClass}">${healthText}</span>
       ${subToolBtnHtml}${svcHtml}${actionHtml}
     `;
     listEl.appendChild(row);
@@ -4034,6 +5384,24 @@ async function resetGemTools(botId, gemId) {
 async function toggleGemService(gemId, action) {
   const gem = gemData?.registry?.gems?.[gemId];
   const name = gem?.name || gemId;
+  // Find and disable the button, show loading
+  const btns = document.querySelectorAll('.gem-row button');
+  let svcBtn = null;
+  for (const b of btns) {
+    if (b.onclick?.toString().includes(gemId) && (b.textContent === '▶' || b.textContent === '⏹')) { svcBtn = b; break; }
+  }
+  if (!svcBtn) {
+    // Fallback: find by matching text content in gem rows
+    document.querySelectorAll('.gem-row').forEach(row => {
+      const nameEl = row.querySelector('.gem-name');
+      if (nameEl?.textContent === name) {
+        const btn = row.querySelector('button');
+        if (btn && (btn.textContent === '▶' || btn.textContent === '⏹')) svcBtn = btn;
+      }
+    });
+  }
+  const origText = svcBtn?.textContent;
+  if (svcBtn) { svcBtn.disabled = true; svcBtn.textContent = '⏳'; svcBtn.style.opacity = '0.6'; }
   try {
     const resp = await fetch("/api/services/toggle", {
       method: "POST",
@@ -4043,12 +5411,28 @@ async function toggleGemService(gemId, action) {
     const result = await resp.json();
     if (!resp.ok || result.status === "error" || result.error) {
       showArmoryToast(`操作失败: ${result.error || "unknown"}`, "err");
+      if (svcBtn) { svcBtn.disabled = false; svcBtn.textContent = origText; svcBtn.style.opacity = ''; }
       return;
     }
     showArmoryToast(action === "start" ? `▶ 启动中 ${name}...` : `⏹ 已停止 ${name}`, "ok");
-    setTimeout(async () => { await fetchGemHealth(); }, action === "start" ? 2500 : 500);
+    // Poll health until status changes or timeout
+    const deadline = Date.now() + 60000;
+    const poll = async () => {
+      await fetchGemHealth();
+      const newHealth = getGemHealthStatus(gemId);
+      const started = action === "start" && (newHealth === "healthy" || newHealth === "up");
+      const stopped = action === "stop" && (newHealth === "down" || newHealth === "unknown");
+      if (started || stopped || Date.now() > deadline) {
+        renderGemPanel();
+        if (Date.now() > deadline && !started && !stopped) showArmoryToast(`${name} 状态未确认，请稍后检查`, "err");
+        return;
+      }
+      setTimeout(poll, 1500);
+    };
+    setTimeout(poll, action === "start" ? 2000 : 500);
   } catch (e) {
     showArmoryToast(`请求失败: ${e.message}`, "err");
+    if (svcBtn) { svcBtn.disabled = false; svcBtn.textContent = origText; svcBtn.style.opacity = ''; }
   }
 }
 
@@ -4109,15 +5493,29 @@ async function unsocketGem(botId, gemId) {
 }
 
 // --- Avatar functions ---
+let avatarDataCache = null; // { botId: "data:image/webp;base64,..." }
+async function loadAllAvatars() {
+  try {
+    const res = await fetch("/api/bot/avatars");
+    avatarDataCache = await res.json();
+  } catch (e) {
+    console.error("Failed to load avatar cache:", e);
+    avatarDataCache = {};
+  }
+}
 function loadAvatar(botId) {
   const img = document.getElementById("avatarImg");
   const ph = document.getElementById("avatarPlaceholder");
   if (!img || !ph) return;
-  img.style.display = "none";
-  ph.style.display = "flex";
-  img.src = `/api/bot/avatar?botId=${botId}&v=${loadAvatar._version || 0}`;
-  img.onload = () => { img.style.display = "block"; ph.style.display = "none"; };
-  img.onerror = () => { img.style.display = "none"; ph.style.display = "flex"; };
+  const dataUri = avatarDataCache && avatarDataCache[botId];
+  if (dataUri) {
+    img.src = dataUri;
+    img.style.display = "block";
+    ph.style.display = "none";
+  } else {
+    img.style.display = "none";
+    ph.style.display = "flex";
+  }
 }
 
 async function openAvatarPicker() {
@@ -4168,10 +5566,11 @@ async function selectAvatar(botId, imgPath) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ path: imgPath })
     });
-    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed");
     document.getElementById("avatarPickerOverlay").classList.remove("show");
-    loadAvatar._version = (loadAvatar._version || 0) + 1;
-    loadAvatar._lastBot = null; // force reload
+    if (data.thumb && avatarDataCache) avatarDataCache[botId] = data.thumb;
+    loadAvatar._lastBot = null;
     loadAvatar(botId);
     loadAvatar._lastBot = botId;
     showArmoryToast("头像已更新", "ok");
@@ -4184,6 +5583,8 @@ async function selectAvatar(botId, imgPath) {
 fetchArmoryData();
 fetchGemData();
 fetchGemHealth();
+fetchContactBook();
+loadAllAvatars();
 fetchConfig().then(() => fetchData());
 setInterval(fetchData, 5000);
 setInterval(fetchGemHealth, 30000);

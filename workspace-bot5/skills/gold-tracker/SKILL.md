@@ -52,9 +52,9 @@ description: >
 
 | 数据源 | 获取方式 | 能拿到什么 | 时效 |
 |--------|---------|-----------|------|
-| **金十数据** | 浏览器访问 `https://www.jin10.com/` (profile: bot5) | COMEX 金价实时报价、快讯、数据日历 | **实时** |
+| **金十数据** | 浏览器访问 `https://www.jin10.com/`（profile 用你自己的 account_id，见 TOOLS.md） | COMEX 金价实时报价、快讯、数据日历 | **实时** |
 | **Web Search** | `web_search("黄金 实时价格 今日")` | 各平台实时金价汇总 | **近实时**（分钟级） |
-| **Mysteel 贵金属** | 浏览器访问 `https://www.mysteel.com/` (profile: bot5)，搜索"黄金" | AU9999 现货报价、升贴水 | **盘中更新**（但需手动刷新） |
+| **Mysteel 贵金属** | 浏览器访问 `https://www.mysteel.com/`（profile 用你自己的 account_id），搜索"黄金" | AU9999 现货报价、升贴水 | **盘中更新**（但需手动刷新） |
 
 ### 2.2 收盘/历史数据（收盘后或做分析时用）
 
@@ -125,6 +125,13 @@ description: >
 - web_search("黄金 走势分析") → 财经媒体观点
 ```
 
+### Step 3.5：关闭浏览器（必做）
+
+```
+数据采集完毕 → 立即 browser close → 再动笔
+⚠️ 不是写完稿子再关，是采集完数据就关。金十等实时页面不关会持续吃 CPU。
+```
+
 ### Step 4：数据就绪，开始写稿
 
 数据采集完毕后，根据内容类型选择 `content-templates.md` 中的对应模板动笔。
@@ -133,7 +140,7 @@ description: >
 
 ## 4. Memory 文件结构
 
-> 路径相对于 `workspace-bot5/memory/gold/`，bot 自主维护。
+> 路径相对于你自己 workspace 的 `memory/gold/`，bot 自主维护。
 
 ```
 memory/gold/

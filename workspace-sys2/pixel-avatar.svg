@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 16" width="320" height="256" shape-rendering="crispEdges">
+<!-- SYS2 技能部 — Scholarly curator with glasses, teal robes, holding scroll -->
+
+<!-- Neat dark hair (#2c3e50) -->
+<g fill="#2c3e50">
+<rect x="6" y="0" width="1" height="1"/>
+<rect x="7" y="0" width="1" height="1"/>
+<rect x="8" y="0" width="1" height="1"/>
+<rect x="9" y="0" width="1" height="1"/>
+<rect x="10" y="0" width="1" height="1"/>
+<rect x="11" y="0" width="1" height="1"/>
+<rect x="5" y="1" width="1" height="1"/>
+<rect x="6" y="1" width="1" height="1"/>
+<rect x="7" y="1" width="1" height="1"/>
+<rect x="8" y="1" width="1" height="1"/>
+<rect x="9" y="1" width="1" height="1"/>
+<rect x="10" y="1" width="1" height="1"/>
+<rect x="11" y="1" width="1" height="1"/>
+<rect x="12" y="1" width="1" height="1"/>
+<rect x="4" y="2" width="1" height="1"/>
+<rect x="5" y="2" width="1" height="1"/>
+<rect x="6" y="2" width="1" height="1"/>
+<rect x="11" y="2" width="1" height="1"/>
+<rect x="12" y="2" width="1" height="1"/>
+<rect x="13" y="2" width="1" height="1"/>
+<rect x="4" y="3" width="1" height="1"/>
+<rect x="13" y="3" width="1" height="1"/>
+</g>
+
+<!-- Skin light - forehead (#e0b88a) -->
+<g fill="#e0b88a">
+<rect x="7" y="2" width="1" height="1"/>
+<rect x="8" y="2" width="1" height="1"/>
+<rect x="9" y="2" width="1" height="1"/>
+<rect x="10" y="2" width="1" height="1"/>
+<rect x="5" y="3" width="1" height="1"/>
+<rect x="6" y="3" width="1" height="1"/>
+<rect x="7" y="3" width="1" height="1"/>
+<rect x="8" y="3" width="1" height="1"/>
+<rect x="9" y="3" width="1" height="1"/>
+<rect x="10" y="3" width="1" height="1"/>
+<rect x="11" y="3" width="1" height="1"/>
+<rect x="12" y="3" width="1" height="1"/>
+</g>
+
+<!-- Skin (#d4a574) -->
+<g fill="#d4a574">
+<rect x="4" y="4" width="1" height="1"/>
+<rect x="5" y="4" width="1" height="1"/>
+<rect x="8" y="4" width="1" height="1"/>
+<rect x="9" y="4" width="1" height="1"/>
+<rect x="12" y="4" width="1" height="1"/>
+<rect x="13" y="4" width="1" height="1"/>
+<rect x="4" y="5" width="1" height="1"/>
+<rect x="6" y="5" width="1" height="1"/>
+<rect x="7" y="5" width="1" height="1"/>
+<rect x="10" y="5" width="1" height="1"/>
+<rect x="11" y="5" width="1" height="1"/>
+<rect x="13" y="5" width="1" height="1"/>
+<rect x="5" y="6" width="1" height="1"/>
+<rect x="6" y="6" width="1" height="1"/>
+<rect x="7" y="6" width="1" height="1"/>
+<rect x="10" y="6" width="1" height="1"/>
+<rect x="11" y="6" width="1" height="1"/>
+<rect x="12" y="6" width="1" height="1"/>
+<rect x="6" y="7" width="1" height="1"/>
+<rect x="7" y="7" width="1" height="1"/>
+<rect x="8" y="7" width="1" height="1"/>
+<rect x="9" y="7" width="1" height="1"/>
+<rect x="10" y="7" width="1" height="1"/>
+<rect x="11" y="7" width="1" height="1"/>
+<rect x="3" y="9" width="1" height="1"/>
+</g>
+
+<!-- Glasses frame (#5dade2) -->
+<g fill="#5dade2">
+<rect x="6" y="4" width="1" height="1"/>
+<rect x="7" y="4" width="1" height="1"/>
+<rect x="10" y="4" width="1" height="1"/>
+<rect x="11" y="4" width="1" height="1"/>
+</g>
+
+<!-- Glasses bridge (#3498db) -->
+<g fill="#3498db">
+<rect x="8" y="3" width="0" height="0"/>
+</g>
+
+<!-- Pink cheeks (#ffb6c1) -->
+<g fill="#ffb6c1">
+<rect x="5" y="5" width="1" height="1"/>
+<rect x="12" y="5" width="1" height="1"/>
+</g>
+
+<!-- Nose (#c4956a) -->
+<g fill="#c4956a">
+<rect x="8" y="5" width="1" height="1"/>
+<rect x="9" y="5" width="1" height="1"/>
+</g>
+
+<!-- Mouth — subtle smile (#a0724a) -->
+<g fill="#a0724a">
+<rect x="8" y="6" width="1" height="1"/>
+<rect x="9" y="6" width="1" height="1"/>
+</g>
+
+<!-- Teal robe outer (#1a5276) -->
+<g fill="#1a5276">
+<rect x="4" y="8" width="1" height="1"/>
+<rect x="5" y="8" width="1" height="1"/>
+<rect x="12" y="8" width="1" height="1"/>
+<rect x="13" y="8" width="1" height="1"/>
+<rect x="4" y="9" width="1" height="1"/>
+<rect x="5" y="9" width="1" height="1"/>
+<rect x="12" y="9" width="1" height="1"/>
+<rect x="13" y="9" width="1" height="1"/>
+<rect x="4" y="10" width="1" height="1"/>
+<rect x="5" y="10" width="1" height="1"/>
+<rect x="12" y="10" width="1" height="1"/>
+<rect x="13" y="10" width="1" height="1"/>
+<rect x="4" y="11" width="1" height="1"/>
+<rect x="5" y="11" width="1" height="1"/>
+<rect x="12" y="11" width="1" height="1"/>
+<rect x="13" y="11" width="1" height="1"/>
+</g>
+
+<!-- Teal robe inner (#1abc9c) -->
+<g fill="#1abc9c">
+<rect x="6" y="8" width="1" height="1"/>
+<rect x="7" y="8" width="1" height="1"/>
+<rect x="8" y="8" width="1" height="1"/>
+<rect x="9" y="8" width="1" height="1"/>
+<rect x="10" y="8" width="1" height="1"/>
+<rect x="11" y="8" width="1" height="1"/>
+<rect x="6" y="9" width="1" height="1"/>
+<rect x="7" y="9" width="1" height="1"/>
+<rect x="10" y="9" width="1" height="1"/>
+<rect x="11" y="9" width="1" height="1"/>
+<rect x="6" y="10" width="1" height="1"/>
+<rect x="7" y="10" width="1" height="1"/>
+<rect x="10" y="10" width="1" height="1"/>
+<rect x="11" y="10" width="1" height="1"/>
+<rect x="6" y="11" width="1" height="1"/>
+<rect x="7" y="11" width="1" height="1"/>
+<rect x="8" y="11" width="1" height="1"/>
+<rect x="9" y="11" width="1" height="1"/>
+<rect x="10" y="11" width="1" height="1"/>
+<rect x="11" y="11" width="1" height="1"/>
+</g>
+
+<!-- Scroll held in hand (#f5e6c8) -->
+<g fill="#f5e6c8">
+<rect x="8" y="9" width="1" height="1"/>
+<rect x="9" y="9" width="1" height="1"/>
+<rect x="8" y="10" width="1" height="1"/>
+<rect x="9" y="10" width="1" height="1"/>
+</g>
+
+<!-- Scroll rod caps (#8b6914) -->
+<g fill="#8b6914">
+<rect x="14" y="9" width="1" height="1"/>
+</g>
+
+<!-- Belt (#2c3e50) -->
+<g fill="#2c3e50">
+<rect x="5" y="12" width="1" height="1"/>
+<rect x="6" y="12" width="1" height="1"/>
+<rect x="7" y="12" width="1" height="1"/>
+<rect x="8" y="12" width="1" height="1"/>
+<rect x="9" y="12" width="1" height="1"/>
+<rect x="10" y="12" width="1" height="1"/>
+<rect x="11" y="12" width="1" height="1"/>
+<rect x="12" y="12" width="1" height="1"/>
+</g>
+
+<!-- Dark pants (#34495e) -->
+<g fill="#34495e">
+<rect x="6" y="13" width="1" height="1"/>
+<rect x="7" y="13" width="1" height="1"/>
+<rect x="10" y="13" width="1" height="1"/>
+<rect x="11" y="13" width="1" height="1"/>
+<rect x="5" y="14" width="1" height="1"/>
+<rect x="6" y="14" width="1" height="1"/>
+<rect x="10" y="14" width="1" height="1"/>
+<rect x="11" y="14" width="1" height="1"/>
+</g>
+
+<!-- Dark shoes (#1a1a2e) -->
+<g fill="#1a1a2e">
+<rect x="5" y="15" width="1" height="1"/>
+<rect x="6" y="15" width="1" height="1"/>
+<rect x="10" y="15" width="1" height="1"/>
+<rect x="11" y="15" width="1" height="1"/>
+</g>
+</svg>

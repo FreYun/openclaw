@@ -29,7 +29,7 @@ def get_db_path(bot_id: str) -> str:
     if bot_id.startswith("bot") and bot_id != "bot_main":
         workspace = f"workspace-{bot_id}"
     elif bot_id == "bot_main":
-        workspace = "workspace-main"
+        workspace = "workspace-mag1"
     else:
         workspace = f"workspace-{bot_id}"
     path = os.path.join(OPENCLAW_ROOT, workspace, "memory", "brain.db")

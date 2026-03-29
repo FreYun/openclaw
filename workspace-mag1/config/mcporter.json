@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "xiaohongshu-mcp": {
+            "url": "http://localhost:18060/mcp/bot_main"
+        },
+        "image-gen-mcp": {
+            "url": "http://localhost:18085/mcp"
+        }
+    },
+    "imports": []
+}

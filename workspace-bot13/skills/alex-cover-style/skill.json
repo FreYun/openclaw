@@ -1,0 +1,8 @@
+{
+  "name": "Alex画图风格",
+  "icon": "🎨",
+  "slot": "accessory",
+  "subType": "image",
+  "desc": "Alex画图风格：persona、写作语气、行情反应模板、日常科普模板",
+  "requiresMcp": ["image-gen-mcp"]
+}

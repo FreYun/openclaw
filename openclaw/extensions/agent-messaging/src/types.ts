@@ -20,6 +20,8 @@ export interface AgentMessage {
   type: MessageType;
   trace: TraceEntry[];
   reply_to_message_id?: string;
+  /** Local file paths or URLs to send as media attachments */
+  media?: string[];
   metadata?: Record<string, unknown>;
   created_at: string;
   status: MessageStatus;

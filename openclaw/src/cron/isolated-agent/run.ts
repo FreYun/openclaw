@@ -29,6 +29,8 @@ import {
   resolveThinkingDefault,
 } from "../../agents/model-selection.js";
 import { runEmbeddedPiAgent } from "../../agents/pi-embedded.js";
+import { runEmbeddedClaudeAgent } from "../../agents/claude-sdk-runner/run.js";
+import { resolveAgentRuntime } from "../../agents/runtime-config.js";
 import { buildWorkspaceSkillSnapshot } from "../../agents/skills.js";
 import { getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
@@ -300,6 +302,7 @@ export async function runCronIsolatedAgentTurn(params: {
       `${commandBody}\n\nReturn your summary as plain text; it will be delivered automatically. If the task explicitly calls for messaging a specific external recipient, note who/where it should go instead of sending it yourself.`.trim();
   }
 
+
   const existingSnapshot = cronSession.sessionEntry.skillsSnapshot;
   const skillsSnapshotVersion = getSkillsSnapshotVersion(workspaceDir);
   const needsSkillsSnapshot =
@@ -368,7 +371,9 @@ export async function runCronIsolatedAgentTurn(params: {
             cliSessionId,
           });
         }
-        return runEmbeddedPiAgent({
+        const cronRuntime = resolveAgentRuntime(cfgWithAgentDefaults, agentId);
+        const runAgent = cronRuntime === "claude-sdk" ? runEmbeddedClaudeAgent : runEmbeddedPiAgent;
+        return runAgent({
           sessionId: cronSession.sessionEntry.sessionId,
           sessionKey: agentSessionKey,
           messageChannel,

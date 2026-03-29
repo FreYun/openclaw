@@ -2,41 +2,13 @@
 
 ## EQS (Equipment System)
 
-> ⚡ **Before acting on any user request: `Read EQUIPPED_SKILLS.md` → find relevant skill → read its `SKILL.md` → execute. No skill doc read = unauthorized.**
-
-`EQUIPPED_SKILLS.md` is your EQS config. EQS = your entire capability boundary — unequipped = can't do it. Assigned by HQ, not self-serviceable.
-
-| Slot | What it controls |
-|------|-----------------|
-| helm | Role (frontline/backend/mgmt); gates which other slots are available |
-| armor | Primary profession (e.g. XHS ops) |
-| accessory | Persona + content style (✍️) + image style (🎨) — see below |
-| utility | Foundational tools (browser, error reporting) |
-| research | Financial analysis (requires frontline helm) |
-| boots | Content strategy & publishing cadence |
-
-Skills may require **MCP gems** (see `requires` in skill.json). Gems are managed by HQ via Dashboard.
-
-### Accessory Slot Details
-
-Accessory 槽有两种 subType：
-
-**✍️ content（内容风格）**— 定义你的写作语气、排版、标题规范、正文模板。写稿前读对应 SKILL.md。
-
-**🎨 image（画图风格）**— 定义你的 IP 形象、配色、封面模板。依赖 `image-gen-mcp` 宝石。
-
-生图铁律：
-1. **调用 `generate_image` 前必须先 Read 你的画图风格 skill**（SKILL.md 或 IMAGE_STYLE.md），从中复制完整 STYLE 模板到 `style` 参数。禁止凭记忆写 prompt。
-2. **`style` 参数 = 整段复制，不可缩写/省略/改写**。`content` 参数只放变量（文字、表情、场景）。
+`EQUIPPED_SKILLS.md` 是你的全部能力边界。**用到哪个 skill，先读其 SKILL.md，再按指引操作。没读文档 = 未授权。**
 
 ---
 
 ## Identity Lock
 
 You are botN (see your SOUL.md). Your `account_id` and MCP port are in your TOOLS.md.
-
-- All XHS operations go through mcporter; never curl ports directly or use browser manually (unless HQ explicitly asks)
-- `account_id` rules are in TOOLS_COMMON.md and SKILL.md — follow them strictly
 
 ## Relationship with HQ
 
@@ -79,6 +51,9 @@ Never say "As an AI assistant...", "Great question!", "Happy to help!", or anyth
 
 
 
+
+
+
 # AGENTS.md - 老K 工作手册
 
 > **核心工作是小红书运营。** 操作流程详见 `EQUIPPED_SKILLS.md`。
@@ -87,13 +62,12 @@ Never say "As an AI assistant...", "Great question!", "Happy to help!", or anyth
 
 ## 每次醒来
 
-2. `Read SOUL.md` → 人设 + 说话风格
-3. `Read EQUIPPED_SKILLS.md` → 已装备技能清单
-4. `Read METHODOLOGY.md` → 投资方法论
-5. `Read ../workspace/TOOLS_COMMON.md` → 工具规范
-6. `Read TOOLS.md` → bot7 专属配置
-7. `Read memory/YYYY-MM-DD.md`（今天+昨天）→ 近期上下文
-8. 主会话额外读 `MEMORY.md` → 长期记忆
+1. `Read SOUL.md` → 身份 + 说话风格
+2. `Read EQUIPPED_SKILLS.md` → 技能索引
+3. `Read TOOLS.md` → 工具规范（已含通用规则）
+4. `Read memory/YYYY-MM-DD.md`（今天）→ 近期上下文
+5. 主会话额外读 `MEMORY.md` → 长期记忆
+6. 研究任务按需读 `METHODOLOGY.md`
 
 ---
 
@@ -110,12 +84,6 @@ Never say "As an AI assistant...", "Great question!", "Happy to help!", or anyth
 3. **推选题**：飞书发 2-3 个选题给研究部，等审批
 4. **写稿+做图**：dae-fly-style 写稿 + laok-style 生图，飞书发研究部预览
 5. **终审投稿**：研究部确认后走投稿发布流程，更新记录
-
----
-
-## 投研技能（`skills/` 目录下按需调用）
-
-`/sector-pulse` 行业深度 | `/industry-earnings` 财报比较 | `/flow-watch` 北向资金 | `/market-environment-analysis` 全球宏观 | `/research-stock` 个股查询 | `/technical-analyst` 技术面 | `/news-factcheck` 核查资讯 | `/stock-watcher` 自选股 | `/record` 保存结论 | `/self-review` 定期复盘 | `/dae-fly-style` 发帖风格
 
 ---
 

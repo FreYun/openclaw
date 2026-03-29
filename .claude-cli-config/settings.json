@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read", "Edit", "Write", "Glob", "Grep",
+      "WebSearch", "WebFetch", "TodoWrite",
+      "Bash(git:*)", "Bash(ls:*)", "Bash(cat:*)", "Bash(head:*)", "Bash(tail:*)",
+      "Bash(find:*)", "Bash(grep:*)", "Bash(wc:*)", "Bash(date:*)", "Bash(echo:*)",
+      "Bash(curl:*)", "Bash(python3:*)", "Bash(node:*)", "Bash(mkdir:*)", "Bash(cp:*)",
+      "Bash(mv:*)", "Bash(touch:*)", "Bash(diff:*)", "Bash(sort:*)", "Bash(uniq:*)",
+      "mcp__openclaw-tools__*"
+    ],
+    "defaultMode": "dontAsk"
+  }
+}

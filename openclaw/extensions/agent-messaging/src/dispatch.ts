@@ -81,7 +81,7 @@ export async function dispatchMessage(
         // Route to a per-peer agent session so agent-to-agent messages
         // don't pollute the main session. All communication between two
         // agents shares one session (e.g. agent:bot7:agent:bot1).
-        argv.push("--session-key", `agent:${route.agent}:agent:${fromAgent}`);
+        argv.push("--session-id", `agent:${route.agent}:agent:${fromAgent}`);
       }
       console.error(`[agent-messaging] dispatch wake_agent: ${route.agent} session=${route.session_id ?? `agent:${route.agent}:agent:${fromAgent}`} msgId=${messageId}`);
       await runtime.system.runCommandWithTimeout(argv, DISPATCH_TIMEOUT_MS);

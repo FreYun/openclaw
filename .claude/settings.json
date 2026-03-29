@@ -109,7 +109,9 @@
       "Bash(kill 309043 332207 491464 578114)",
       "Bash(kill -9 309043 332207 491464 578114)",
       "Bash(lsof -ti:18090)",
-      "Bash(find /home/rooot/.openclaw/openclaw/src -name *.ts)"
+      "Bash(find /home/rooot/.openclaw/openclaw/src -name *.ts)",
+      "Bash(ps -o pid,ppid,start,cmd -p 1605)",
+      "Bash(systemctl --user status openclaw-gateway)"
     ],
     "additionalDirectories": [
       "/home/rooot/.openclaw/workspace-sys1/publish-queue/pending"

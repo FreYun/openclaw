@@ -9,6 +9,9 @@
         },
         "image-gen-mcp": {
             "url": "http://localhost:18085/mcp"
+        },
+        "weread-mcp": {
+            "url": "http://localhost:18100/mcp/bot11"
         }
     },
     "imports": []

@@ -14,4 +14,4 @@ _更新时间：2026-03-27 12:07:02_
 | [bot9](./bot9.md) | bot9 | 2026-03-26 18:19:02 | feishu/direct |
 | [bot10](./bot10.md) | bot10 | 2026-03-26 17:34:49 | feishu/direct |
 | [bot8](./bot8.md) | bot8 | 2026-03-20 13:33:33 | ?/? |
-| [bot_main](./bot_main.md) | 魏忠贤 | — | — |
+| [mag1](./mag1.md) | 魏忠贤 | — | — |

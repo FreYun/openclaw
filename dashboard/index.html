@@ -1819,6 +1819,7 @@ async function setModel(agentId, model, el) {
       showModelPicker(agentId); // refresh picker
       renderAgentStats(); // refresh agent cards
       renderSessions(); // refresh session list
+      if (armoryCurrentBot) renderEquipSessions(armoryCurrentBot); // refresh equip panel model display
     } else {
       alert("设置失败: " + (data.error || "未知错误"));
     }

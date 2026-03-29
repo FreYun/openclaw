@@ -803,6 +803,16 @@ const server = http.createServer(async (req, res) => {
             }
           }
         } catch {}
+        // Append CLI backend models (claude-cli built-in + configured cliBackends)
+        available.push({ provider: "claude-cli", modelId: "opus", name: "CC Opus", reasoning: true });
+        available.push({ provider: "claude-cli", modelId: "sonnet", name: "CC Sonnet", reasoning: true });
+        const cliBackends = ocData.agents?.defaults?.cliBackends || {};
+        for (const [backendName, _cfg] of Object.entries(cliBackends)) {
+          // For custom CLI backends, add their known models
+          if (backendName === "claude-cli-glm") {
+            available.push({ provider: backendName, modelId: "glm-5-turbo", name: "CC GLM-5-Turbo", reasoning: false });
+          }
+        }
         result[a.id] = { primary, available };
       }
       res.end(JSON.stringify(result));

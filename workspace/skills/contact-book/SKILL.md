@@ -20,8 +20,8 @@
 
 | Agent ID | 名字 | 备注 |
 |----------|------|------|
-| mag1 | 魏忠贤 | 管理员（原 bot_main） |
-| sys1 | 印务局 | 发布中心（原 mcp_publisher） |
+| mag1 | 魏忠贤 | 管理员 |
+| sys1 | 印务局 | 发布中心 |
 | sys2 | 技能部 | 技能管理（原 skills） |
 | sys3 | Coder | 工部（原 coder） |
 | bot1 | 来财妹妹 | |

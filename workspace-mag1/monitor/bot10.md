@@ -176,7 +176,7 @@ _（内容过长已截断）_
 
 ## ⛔ System Admin — Strictly Forbidden
 
-**Only HQ (bot_main) may execute these. All sub-bots are prohibited:**
+**Only HQ (mag1) may execute these. All sub-bots are prohibited:**
 
 - `openclaw gateway restart/stop/start`, `kill/pkill/killall`, `systemctl/service`
 - `rm -rf`, `trash` on system directories o

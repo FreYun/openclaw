@@ -11,7 +11,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Agent 层                                 │
-│   bot_main    bot1-11    mcp_publisher    skills    coder       │
+│   mag1    bot1-11    sys1    skills    coder       │
 └──────┬──────────┬──────────┬───────────────┬────────┬──────────┘
        │          │          │               │        │
        ▼          ▼          ▼               ▼        ▼
@@ -69,10 +69,10 @@ Agent 可能不在线（session 结束了），消息需要存下来等下次唤
 
 ```
 1. HQ → bot7:  send_message
-   trace: [{agent:"bot_main", reply_channel:"feishu", reply_to:"ou_xxx"}]
+   trace: [{agent:"mag1", reply_channel:"feishu", reply_to:"ou_xxx"}]
 
 2. bot7 → bot11:  forward_message
-   trace: [{bot_main...}, {agent:"bot7"}]          ← 自动追加
+   trace: [{mag1...}, {agent:"bot7"}]          ← 自动追加
 
 3. bot11 reply → 根据 trace 自动路由回 bot7
 4. bot7 reply  → 根据 trace 自动路由回 HQ → 推送飞书

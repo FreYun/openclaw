@@ -48,8 +48,9 @@ export function resolveSessionKeyForRequest(opts: {
   const sessionCfg = opts.cfg.session;
   const scope = sessionCfg?.scope ?? "per-sender";
   const mainKey = normalizeMainKey(sessionCfg?.mainKey);
+  const userSessionKey = opts.sessionKey?.trim();
   const explicitSessionKey =
-    opts.sessionKey?.trim() ||
+    userSessionKey ||
     resolveExplicitAgentSessionKey({
       cfg: opts.cfg,
       agentId: opts.agentId,
@@ -64,9 +65,12 @@ export function resolveSessionKeyForRequest(opts: {
   let sessionKey: string | undefined =
     explicitSessionKey ?? (ctx ? resolveSessionKey(scope, ctx, mainKey) : undefined);
 
-  // If a session id was provided, prefer to re-use its entry (by id) even when no key was derived.
+  // If a session id was provided (but no explicit session key from the user),
+  // prefer to re-use its entry (by id) even when no key was derived.
+  // Also accept session ids that look like session keys (contain ':') and use
+  // them directly as the session key when no matching entry exists in the store.
   if (
-    !explicitSessionKey &&
+    !userSessionKey &&
     opts.sessionId &&
     (!sessionKey || sessionStore[sessionKey]?.sessionId !== opts.sessionId)
   ) {
@@ -75,6 +79,10 @@ export function resolveSessionKeyForRequest(opts: {
     );
     if (foundKey) {
       sessionKey = foundKey;
+    } else if (opts.sessionId.includes(":")) {
+      // Session id looks like a session key (e.g. "agent:sys1:agent:bot5")
+      // — use it directly as the session key for a new per-peer session.
+      sessionKey = opts.sessionId;
     }
   }
 

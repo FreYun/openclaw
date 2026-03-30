@@ -241,9 +241,9 @@ redis-cli XADD "agentmsg:outbox:${ACCOUNT_ID}" MAXLEN "~" 1000 "*" message_id "$
 
 # Wake sys1 agent (fire-and-forget, dedicated per-peer session)
 nohup openclaw agent --agent sys1 \
-    --session-key "agent:sys1:agent:${ACCOUNT_ID}" \
+    --session-id "agent:sys1:agent:${ACCOUNT_ID}" \
     --message "[MSG:${MSG_ID}] from=${ACCOUNT_ID}: ${MSG_CONTENT}" \
-    > /dev/null 2>&1 &
+    > /tmp/submit-wake-sys1.log 2>&1 &
 
 # Update status to delivered
 redis-cli HSET "agentmsg:detail:${MSG_ID}" status "delivered" > /dev/null 2>&1

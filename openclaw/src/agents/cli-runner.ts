@@ -160,7 +160,9 @@ export async function runCliAgent(params: {
   });
 
   const serialize = backend.serialize ?? true;
-  const queueKey = serialize ? backendResolved.id : `${backendResolved.id}:${params.runId}`;
+  const queueKey = serialize
+    ? backendResolved.id
+    : `${backendResolved.id}:${cliSessionIdToSend ?? params.runId}`;
 
   try {
     const output = await enqueueCliRun(queueKey, async () => {

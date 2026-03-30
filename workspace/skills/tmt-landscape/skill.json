@@ -3,32 +3,32 @@
   "icon": "📡",
   "slot": "research",
   "subType": "research",
-  "desc": "半导体、AI、消费电子、通信四大方向全景研究",
-  "requires": ["research-gateway"],
+  "desc": "电子/计算机/通信/传媒四方向供需推导与轮动判断",
+  "requiresMcp": ["research-mcp"],
   "subSkills": [
     {
-      "name": "电子行业图谱",
+      "name": "电子：供需框架",
       "icon": "🔬",
       "file": "electronics.md",
-      "desc": "半导体/消费电子/元器件产业链与标的库"
+      "desc": "半导体/消费电子/光模块供需推导与标的库"
     },
     {
-      "name": "计算机行业图谱",
+      "name": "计算机：供需框架",
       "icon": "💻",
       "file": "computer.md",
-      "desc": "AI/云计算/信创/SaaS产业链与标的库"
+      "desc": "AI/信创/安全供需推导与标的库"
     },
     {
-      "name": "通信行业图谱",
+      "name": "通信：供需框架",
       "icon": "📶",
       "file": "telecom.md",
-      "desc": "算力基建/光通信/运营商/卫星产业链与标的库"
+      "desc": "算力基建/光通信/卫星供需推导与标的库"
     },
     {
-      "name": "传媒行业图谱",
+      "name": "传媒：供需框架",
       "icon": "🎬",
       "file": "media.md",
-      "desc": "游戏/影视/广告/AIGC产业链与标的库"
+      "desc": "游戏/影视/AIGC供需推导与标的库"
     }
   ]
 }

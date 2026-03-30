@@ -111,7 +111,23 @@
       "Bash(lsof -ti:18090)",
       "Bash(find /home/rooot/.openclaw/openclaw/src -name *.ts)",
       "Bash(ps -o pid,ppid,start,cmd -p 1605)",
-      "Bash(systemctl --user status openclaw-gateway)"
+      "Bash(systemctl --user status openclaw-gateway)",
+      "Bash(npx tsdown:*)",
+      "Bash(node_modules/.bin/tsdown)",
+      "Bash(./node_modules/.bin/tsdown)",
+      "Bash(ps -p 1830829,1920613,2253768 -o pid,ppid,comm,args --no-headers)",
+      "Bash(kill 2253768)",
+      "Bash(ps -p 2272055 -o pid,ppid,comm,args --no-headers)",
+      "Bash(lsof -i:18888 -P -n -sTCP:LISTEN)",
+      "Bash(ping -c 2 -W 3 8.8.8.8)",
+      "Bash(ip route:*)",
+      "Bash(find /home/rooot/.openclaw -type f -name *.json -exec grep -l \"zai-coding-plan\\\\|zai.*coding\" {})",
+      "Bash(find /home/rooot/.openclaw/agents -type f -name *.jsonl -exec grep -l zai-coding-plan {})",
+      "Bash(curl -s --max-time 30 https://dd-ai-api.eastmoney.com/v1/chat/completions -H 'Authorization: Bearer XFEyNVb9Hmdkl77H5fD76aB1552046Cc9cC5667f3cEd3c69' -H 'Content-Type: application/json' -d '{:*)",
+      "Bash(rm -rf /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T13-56-33_bot4_mzt30q)",
+      "Bash(openclaw config:*)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if ''''model'''' in str\\(k\\).lower\\(\\) or ''''default'''' in str\\(k\\).lower\\(\\)}, indent=2\\)\\)\")",
+      "Bash(rm -rf /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T15-00-00_bot7_test01 /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T15-05-00_bot3_test02)"
     ],
     "additionalDirectories": [
       "/home/rooot/.openclaw/workspace-sys1/publish-queue/pending"

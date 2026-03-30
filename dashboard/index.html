@@ -217,6 +217,14 @@
     font-size: 11px;
     color: var(--dim);
   }
+  .queue-label.clickable {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .queue-label.clickable:hover {
+    color: var(--yellow);
+    text-shadow: 0 0 6px rgba(232,154,60,0.4);
+  }
   .queue-arrow {
     font-size: 24px;
     color: var(--border);
@@ -2689,12 +2697,12 @@ function renderPublishQueue() {
   const q = currentData.publishQueue;
   document.getElementById("queueRow").innerHTML = `
     <div class="queue-col">
-      <div class="queue-label">PENDING</div>
+      <div class="queue-label ${q.pending.length ? 'clickable' : ''}" style="${q.pending.length ? 'cursor:pointer' : ''}" onclick="${q.pending.length ? "showQueueDetail('pending')" : ''}">PENDING</div>
       <div class="queue-count pending">${q.pending.length}</div>
     </div>
     <div class="queue-arrow">→</div>
     <div class="queue-col">
-      <div class="queue-label">PUBLISHING</div>
+      <div class="queue-label ${q.publishing.length ? 'clickable' : ''}" style="${q.publishing.length ? 'cursor:pointer' : ''}" onclick="${q.publishing.length ? "showQueueDetail('publishing')" : ''}">PUBLISHING</div>
       <div class="queue-count publishing">${q.publishing.length}</div>
     </div>
     <div class="queue-arrow">→</div>
@@ -2703,6 +2711,47 @@ function renderPublishQueue() {
       <div class="queue-count published">${q.published.length}</div>
     </div>
   `;
+}
+
+function showQueueDetail(status) {
+  const q = currentData.publishQueue;
+  const items = q[status] || [];
+  if (!items.length) return;
+  const color = status === 'pending' ? '#feca57' : '#ee5a24';
+  const label = status.toUpperCase();
+
+  // Remove existing queue overlay if any
+  const existing = document.getElementById("queueOverlay");
+  if (existing) existing.remove();
+
+  let html = items.map(item => {
+    const bot = item.accountId || '?';
+    const botColor = BOT_COLORS[bot] || '#888';
+    const title = item.title || item.name || '无标题';
+    const timeMatch = item.name.match(/^(\d{4}-\d{2}-\d{2}T[\d-]+)/);
+    const time = timeMatch ? timeMatch[1].replace('T', ' ').replaceAll('-', ':').slice(5) : '';
+    return `<div style="border:1px solid #333;border-radius:4px;padding:8px;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:${botColor};font-weight:bold;font-size:12px">${bot}</span>
+        <span style="color:#666;font-size:9px;font-family:monospace">${time}</span>
+      </div>
+      <div style="color:#eee;font-size:11px;margin-top:4px">${title}</div>
+      ${item.summary ? `<div style="color:#888;font-size:9px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.summary.slice(0,80)}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const overlay = document.createElement('div');
+  overlay.id = 'queueOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+  overlay.innerHTML = `<div style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:16px;min-width:320px;max-width:500px;max-height:70vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span style="color:${color};font-size:14px;letter-spacing:1px;font-weight:bold">${label} (${items.length})</span>
+      <span style="cursor:pointer;color:#888;font-size:16px" onclick="this.closest('#queueOverlay').remove()">✕</span>
+    </div>
+    ${html}
+  </div>`;
+  document.body.appendChild(overlay);
 }
 
 let flowDiagramCollapsed = false;
@@ -3316,11 +3365,12 @@ function renderPublished() {
     { key: "favorites", label: "收藏" },
     { key: "shares", label: "转发" },
   ];
+  const loginStatus = currentData.xhsLoginStatus || {};
   const resetBtn = pubSortKey ? `<span class="pub-col-num sort-active" onclick="clearPubSort()" style="font-size:11px;cursor:pointer">✕ 重置</span>` : '<span></span>';
   const dateSortCls = pubSortKey === "date" ? " sort-active" : "";
   const dateSortArrow = pubSortKey === "date" ? (pubSortDesc ? " ↓" : " ↑") : "";
   const headerHtml = `<div class="pub-row pub-header">
-    <span>账号</span><span class="pub-col-num${dateSortCls}" onclick="sortPublished('date')" style="text-align:left">发布时间${dateSortArrow}</span><span>标题</span>
+    <span>账号</span><span class="pub-col-num" style="text-align:center">状态</span><span class="pub-col-num${dateSortCls}" onclick="sortPublished('date')" style="text-align:left">发布时间${dateSortArrow}</span><span>标题</span>
     ${sortCols.map(c => `<span class="pub-col-num${pubSortKey === c.key ? ' sort-active' : ''}" onclick="sortPublished('${c.key}')">${c.label}${pubSortKey === c.key ? (pubSortDesc ? ' ↓' : ' ↑') : ''}</span>`).join("")}${resetBtn}
   </div>`;
   list.innerHTML = tsHtml + headerHtml + files.slice(0, 30).map(item => {
@@ -3337,9 +3387,12 @@ function renderPublished() {
       const n = parseInt(val);
       return `<span class="pub-metric-cell${n >= threshold ? ' hi' : ''}">${fmtMetric(val)}</span>`;
     };
+    const ls = loginStatus[bot];
+    const statusDot = ls ? (ls.creator ? '🟢' : '🔴') : '<span style="opacity:0.15">-</span>';
     return `
       <div class="pub-row pub-item">
         <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span></span>
+        <span class="pub-col-num" style="text-align:center" title="创作者平台: ${ls?.creator ? '已登录' : '未登录'}">${statusDot}</span>
         <span class="pub-col-date">${date}</span>
         <span class="pub-col-title">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
         ${mc(m?.views, 100)}${mc(m?.likes, 50)}${mc(m?.comments, 10)}${mc(m?.favorites, 20)}${mc(m?.shares, 5)}
@@ -3402,7 +3455,7 @@ function renderPubFullView() {
   const dateCls = pubFullSortKey === "date" ? " sort-active" : "";
   const dateArr = pubFullSortKey === "date" ? (pubFullSortDesc ? " ↓" : " ↑") : "";
   const header = `<div class="pub-row pub-header">
-    <span>账号</span><span class="pub-col-num${dateCls}" onclick="sortPubFull('date')" style="text-align:left">发布时间${dateArr}</span><span>标题</span>
+    <span>账号</span><span class="pub-col-num" style="text-align:center">状态</span><span class="pub-col-num${dateCls}" onclick="sortPubFull('date')" style="text-align:left">发布时间${dateArr}</span><span>标题</span>
     ${sortCols.map(c => `<span class="pub-col-num${pubFullSortKey === c.key ? ' sort-active' : ''}" onclick="sortPubFull('${c.key}')">${c.label}${pubFullSortKey === c.key ? (pubFullSortDesc ? ' ↓' : ' ↑') : ''}</span>`).join("")}${resetBtn}
   </div>`;
   document.getElementById("pubFullList").innerHTML = header + files.map(item => {
@@ -3419,8 +3472,11 @@ function renderPubFullView() {
       const n = parseInt(val);
       return `<span class="pub-metric-cell${n >= threshold ? ' hi' : ''}">${fmtMetric(val)}</span>`;
     };
+    const ls = (currentData.xhsLoginStatus || {})[bot];
+    const statusDot = ls ? (ls.creator ? '🟢' : '🔴') : '<span style="opacity:0.15">-</span>';
     return `<div class="pub-row pub-item">
       <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span></span>
+      <span class="pub-col-num" style="text-align:center" title="创作者平台: ${ls?.creator ? '已登录' : '未登录'}">${statusDot}</span>
       <span class="pub-col-date">${date}</span>
       <span class="pub-col-title">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
       ${mc(m?.views, 100)}${mc(m?.likes, 50)}${mc(m?.comments, 10)}${mc(m?.favorites, 20)}${mc(m?.shares, 5)}

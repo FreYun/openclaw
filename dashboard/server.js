@@ -598,7 +598,10 @@ const server = http.createServer(async (req, res) => {
         editorialBots: getEditorialBots(),
         botNames,
         botColors,
-        xhsStatsUpdatedAt: xhsStats ? xhsStats.updated_at : null
+        xhsStatsUpdatedAt: xhsStats ? xhsStats.updated_at : null,
+        xhsLoginStatus: xhsStats ? Object.fromEntries(
+          Object.entries(xhsStats.bots || {}).map(([bot, data]) => [bot, data.loginStatus || null])
+        ) : {}
       });
       cacheTime = now;
     }

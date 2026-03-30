@@ -39,13 +39,37 @@
   ↓
 5. 登录检查
    npx mcporter call "xhs-botN.check_login_status(account_id: 'botN')"
+   ⚠️ **必须用 `xhs-botN`（如 `xhs-bot7`）作为 MCP 服务名，不是 `xiaohongshu-mcp`**
+   `xiaohongshu-mcp` 是印务局自己的默认端口，查到的是 sys1 的登录状态，不是目标 bot 的。
    - 创作者平台必须已登录
    - 未登录 → 通知提交者 + 通知研究部
   ↓
 6. mv pending/ → publishing/（锁定）
   ↓
 7. 执行发布（Read publish-tools.md 查看 API 参数）
-   npx mcporter call --timeout 180000 "xhs-botN.publish_content(...)"
+   ⚠️ **N = account_id**，如 bot7 → `xhs-bot7.publish_content(...)`
+
+   **⚠️ 内容含特殊字符（引号、换行、emoji）时，禁止在命令行拼字符串，必须用 `--args` + JSON 文件：**
+
+   ```bash
+   # 1. 将发布参数写入 JSON 文件（在 publishing/ 目录下）
+   cat > publishing/{投稿文件夹}/args.json << 'ARGS_EOF'
+   {
+     "account_id": "bot7",
+     "title": "标题",
+     "content": "正文内容...",
+     "images": ["/absolute/path/to/1.png"],
+     "tags": ["标签1", "标签2"],
+     "visibility": "公开可见"
+   }
+   ARGS_EOF
+
+   # 2. 用 --args 传入 JSON
+   npx mcporter call --timeout 180000 xhs-bot7.publish_content --args "$(cat publishing/{投稿文件夹}/args.json)"
+   ```
+
+   **绝对不要**用 function-call 语法传长文本：
+   ❌ `mcporter call 'xhs-bot7.publish_content(content: "很长的文本...")'` ← 引号嵌套必崩
   ↓
 8. 成功 → mv publishing/ → published/（归档）
    失败 → 删除投稿 + 通知提交者错误信息

@@ -62,9 +62,9 @@ Never say "As an AI assistant...", "Great question!", "Happy to help!", or anyth
 
 ## 每次醒来
 
-1. `Read SOUL.md` → 身份 + 说话风格
-2. `Read EQUIPPED_SKILLS.md` → 技能索引
-3. `Read TOOLS.md` → 工具规范（已含通用规则）
+1. `Read CLAUDE.md` → 运行框架 + 可用工具（**最高优先级，覆盖 TOOLS.md**）
+2. `Read SOUL.md` → 身份 + 说话风格
+3. `Read EQUIPPED_SKILLS.md` → 技能索引
 4. `Read memory/YYYY-MM-DD.md`（今天）→ 近期上下文
 5. 主会话额外读 `MEMORY.md` → 长期记忆
 6. 研究任务按需读 `METHODOLOGY.md`

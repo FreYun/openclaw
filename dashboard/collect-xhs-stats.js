@@ -17,6 +17,7 @@ const path = require("path");
 const MCP_PORT = 18060;
 const MCP_HOST = "localhost";
 const PUBLISH_DIR = path.join(__dirname, "..", "workspace-sys1", "publish-queue", "published");
+// Note: workspace-sys1 is the correct path (renamed from workspace-mcp-publisher)
 const STATS_FILE = path.join(__dirname, "xhs-stats.json");
 const BOT_TIMEOUT = 60000; // 60s per bot
 const DELAY_BETWEEN_BOTS = 2000; // 2s
@@ -176,20 +177,22 @@ async function main() {
 
     try {
       const notes = await callListNotes(bot, sessionId);
+      const hasNotes = Array.isArray(notes) && notes.length > 0;
       stats.bots[bot] = {
         updated_at: new Date().toISOString(),
-        notes: Array.isArray(notes) ? notes : [],
+        notes: hasNotes ? notes : [],
         error: null,
+        loginStatus: { creator: hasNotes },
       };
-      log(`  [${bot}] OK - ${Array.isArray(notes) ? notes.length : 0} notes`);
+      log(`  [${bot}] OK - ${hasNotes ? notes.length : 0} notes (creator: ${hasNotes ? "✅" : "❌"})`);
       successCount++;
     } catch (e) {
       log(`  [${bot}] Error: ${e.message}`);
-      // Keep existing data if available, just mark the error
       if (!stats.bots[bot]) {
-        stats.bots[bot] = { updated_at: null, notes: [], error: e.message };
+        stats.bots[bot] = { updated_at: null, notes: [], error: e.message, loginStatus: { creator: false } };
       } else {
         stats.bots[bot].error = e.message;
+        stats.bots[bot].loginStatus = { creator: false };
       }
     }
   }

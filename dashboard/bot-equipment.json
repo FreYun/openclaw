@@ -206,7 +206,8 @@
         "scheduled-3": null,
         "scheduled-4": null,
         "scheduled-5": null,
-        "scheduled-6": null
+        "scheduled-6": null,
+        "research-12": "solar-tracker"
       }
     },
     "bot8": {
@@ -245,8 +246,8 @@
         "armor-1": "gzh-publish",
         "accessory-1": "daily-market-recap",
         "accessory-2": "mp-cover-art",
-        "accessory-3": "laok-style",
-        "accessory-4": "default-content-style",
+        "accessory-3": null,
+        "accessory-4": null,
         "accessory-5": "default-cover-style",
         "utility-1": "browser-base",
         "utility-2": "report-incident",
@@ -262,7 +263,8 @@
         "scheduled-3": null,
         "scheduled-4": null,
         "scheduled-5": null,
-        "scheduled-6": null
+        "scheduled-6": null,
+        "research-6": "solar-tracker"
       }
     },
     "bot10": {
@@ -580,7 +582,7 @@
         "utility-1": null,
         "research-1": null,
         "boots-1": null,
-        "scheduled-1": "技能部-技能进化",
+        "scheduled-1": null,
         "scheduled-2": null,
         "scheduled-3": null,
         "scheduled-4": null,

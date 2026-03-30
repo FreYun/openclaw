@@ -59,9 +59,6 @@
         },
         "compliance-mcp": {
             "url": "http://localhost:18090/mcp"
-        },
-        "xiaohongshu-mcp": {
-            "url": "http://localhost:18060/mcp/sys1"
         }
     },
     "imports": []

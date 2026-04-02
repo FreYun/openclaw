@@ -1,0 +1,7 @@
+{
+  "name": "FinBot Research",
+  "icon": "📊",
+  "slot": "research",
+  "desc": "个股深度研报、估值分析、催化剂雷达（方法论源自 FinRobot）",
+  "subType": "research"
+}

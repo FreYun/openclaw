@@ -104,14 +104,14 @@ async function mcpInitialize(botId) {
   }
 }
 
-// Call list_notes for a bot
-async function callListNotes(botId, sessionId) {
+// Call get_notes_performance for a bot (richer data than list_notes)
+async function callGetNotesPerformance(botId, sessionId) {
   const res = await httpPost(`/mcp/${botId}`, {
     jsonrpc: "2.0",
     id: 2,
     method: "tools/call",
     params: {
-      name: "list_notes",
+      name: "get_notes_performance",
       arguments: {},
     },
   }, { "Mcp-Session-Id": sessionId });
@@ -139,6 +139,29 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const PROFILES_BASE = "/home/rooot/.xhs-profiles";
+
+// Find bots that have cookie files (may not have published via queue)
+function getCookieBots() {
+  const bots = [];
+  try {
+    const files = fs.readdirSync(PROFILES_BASE);
+    for (const f of files) {
+      const m = f.match(/^cookies-(bot\d+)\.json$/);
+      if (m) bots.push(m[1]);
+    }
+  } catch {}
+  return bots;
+}
+
+function sortBots(bots) {
+  return [...bots].sort((a, b) => {
+    const na = a.match(/^bot(\d+)$/), nb = b.match(/^bot(\d+)$/);
+    if (na && nb) return parseInt(na[1]) - parseInt(nb[1]);
+    return a.localeCompare(b);
+  });
+}
+
 async function main() {
   log("=== XHS Stats Collection Start ===");
 
@@ -148,9 +171,13 @@ async function main() {
     existing = JSON.parse(fs.readFileSync(STATS_FILE, "utf8"));
   } catch {}
 
-  // Find bots to query
-  const bots = getRecentPublishingBots();
-  log(`Bots with posts in last 7 days: ${bots.join(", ") || "none"}`);
+  // Find bots to query: union of queue bots + existing stats bots + cookie bots
+  const queueBots = getRecentPublishingBots();
+  const existingBots = Object.keys(existing.bots || {}).filter(b => /^bot\d+$/.test(b));
+  const cookieBots = getCookieBots();
+  const bots = sortBots([...new Set([...queueBots, ...existingBots, ...cookieBots])]);
+  log(`Queue bots (7d): ${queueBots.join(", ") || "none"}`);
+  log(`All bots to scan: ${bots.join(", ") || "none"}`);
 
   if (bots.length === 0) {
     log("No bots to query. Exiting.");
@@ -176,24 +203,38 @@ async function main() {
     }
 
     try {
-      const notes = await callListNotes(bot, sessionId);
+      const notes = await callGetNotesPerformance(bot, sessionId);
       const hasNotes = Array.isArray(notes) && notes.length > 0;
-      stats.bots[bot] = {
-        updated_at: new Date().toISOString(),
-        notes: hasNotes ? notes : [],
-        error: null,
-        loginStatus: { creator: hasNotes },
-      };
-      log(`  [${bot}] OK - ${hasNotes ? notes.length : 0} notes (creator: ${hasNotes ? "✅" : "❌"})`);
+      if (hasNotes) {
+        // Got real data — update everything
+        stats.bots[bot] = {
+          updated_at: new Date().toISOString(),
+          notes,
+          error: null,
+          loginStatus: { creator: true },
+        };
+      } else {
+        // Empty result (login expired?) — keep old notes, just update status
+        const prev = stats.bots[bot] || {};
+        stats.bots[bot] = {
+          ...prev,
+          error: null,
+          loginStatus: { creator: false },
+        };
+      }
+      log(`  [${bot}] OK - ${hasNotes ? notes.length : 0} notes (creator: ${hasNotes ? "✅" : "❌ (kept old data)"})`);
       successCount++;
     } catch (e) {
       log(`  [${bot}] Error: ${e.message}`);
-      if (!stats.bots[bot]) {
-        stats.bots[bot] = { updated_at: null, notes: [], error: e.message, loginStatus: { creator: false } };
-      } else {
-        stats.bots[bot].error = e.message;
-        stats.bots[bot].loginStatus = { creator: false };
-      }
+      // Error — keep old data, only update error + loginStatus
+      const prev = stats.bots[bot] || {};
+      stats.bots[bot] = {
+        ...prev,
+        updated_at: prev.updated_at || null,
+        notes: prev.notes || [],
+        error: e.message,
+        loginStatus: { creator: false },
+      };
     }
   }
 

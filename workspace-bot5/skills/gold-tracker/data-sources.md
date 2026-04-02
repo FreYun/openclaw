@@ -94,16 +94,18 @@ commodity_data(symbol="黄金9999")
 
 ---
 
-#### 5. research-mcp `commodity_quote`
+#### 5. 近 N 天走势（用 `commodity_data` 指定日期范围）
 
 **调用方式**：
 ```
-commodity_quote(symbol="AU9999", days=30)
+commodity_data(symbol="AU9999", start_date="30天前的日期", end_date="今天的日期")
 ```
 
-**时效**：⚠️ 同 `commodity_data`，**收盘后更新**，盘中数据滞后。
+**时效**：⚠️ 同上，**收盘后更新**，盘中数据滞后。
 
-**正确用法**：同上，看近 N 天走势趋势
+**正确用法**：收盘后看近 N 天走势趋势
+
+> ⚠️ `commodity_quote` 工具已下线，不要调用。用 `commodity_data` + 日期范围替代。
 
 ---
 
@@ -129,7 +131,7 @@ futures_data(symbol="AU.SHF", start_date="20260320", end_date="20260325")
 │   │   └── 看现货升贴水 → Mysteel（浏览器）
 │   └── 否 → 收盘模式
 │       ├── 今日收盘数据 → commodity_data(AU9999) ✅
-│       ├── 近期走势 → commodity_quote(AU9999, days=30) ✅
+│       ├── 近期走势 → commodity_data(AU9999, start_date=30天前, end_date=今天) ✅
 │       └── 外盘收盘 → web_search("COMEX 黄金 收盘")
 ├── 我要分析走势趋势
 │   └── commodity_data 拉 30-90 天数据 ✅

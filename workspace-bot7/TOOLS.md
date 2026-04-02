@@ -59,6 +59,17 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 ---
 
+## 发帖流程说明
+
+| 场景 | 流程 |
+|------|------|
+| **跟你（研究部）直接对话** | 写稿 → 合规 → 投稿印务局，三步搞定 |
+| **定时/自动发帖** | 写稿 → 合规 → 冷宫群审批 → 投稿印务局 |
+
+冷宫群审批只给定时任务用，日常对话不走那套。
+
+---
+
 ## Tool Priority
 
 1. **memory** → check history first, update incrementally

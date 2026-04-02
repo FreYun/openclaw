@@ -1,0 +1,7 @@
+{
+  "name": "叙事风格库",
+  "icon": "🎭",
+  "slot": "accessory",
+  "subType": "content",
+  "desc": "可插拔的叙事风格组件，5种风格独立文件，任何写作类 skill 可引用"
+}

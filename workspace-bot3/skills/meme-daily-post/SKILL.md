@@ -11,9 +11,11 @@ description: meme爱理财内容生产：看行情 → 选题 → 写稿 → 生
 
 ## 入口：触发方式
 
+> ⚠️ 本 skill 仅供 **cron 定时任务**自动触发。研究部直接说「去发帖」「投稿」等指令时，**不走本 skill**，直接按研究部要求投稿即可。
+
 | 触发 | 进入步骤 |
 |------|---------|
-| 研究部说「去发帖」/ 定时任务触发 | 从 **Step 1** 开始 |
+| **定时任务（cron）触发** | 从 **Step 1** 开始 |
 | 收到 `[MSG:xxx]` 含「✅」/「已批准」 | 跳到 **scheduled-post Step C**（Read `skills/scheduled-post/SKILL.md`） |
 | 收到 `[MSG:xxx]` 含修改意见/「打回」 | 跳到 **scheduled-post Step D**（Read `skills/scheduled-post/SKILL.md`） |
 

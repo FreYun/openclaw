@@ -6,13 +6,15 @@ sync-fund-pool.py — 从腾讯文档同步基金池到 bot9 本地文件
 打开腾讯文档表格，用 Ctrl+A → Ctrl+C → 读剪贴板 提取数据。
 腾讯文档表格是 canvas 渲染，DOM 里没有数据，只能用这种方式。
 
-同步三个 sheet：主题-核心池、市值-核心池、风格-核心池。
+同步两类数据源：
+1. 权益基金池：主题-核心池、市值-核心池、风格-核心池
+2. 指数基金池：tab=000001、tab=000002
 
 用法：
-    python3 sync-fund-pool.py           # 同步三个核心池
+    python3 sync-fund-pool.py           # 同步全部基金池
     python3 sync-fund-pool.py --dry-run # 只预览，不写文件
 
-前置条件：bot9 的 Chrome 中需要已打开腾讯文档链接。
+前置条件：bot9 的 Chrome 中需要已打开相关腾讯文档链接。
 
 输出：workspace-bot9/skills/daily-market-recap/基金池.md
 """
@@ -21,6 +23,7 @@ import argparse
 import csv
 import io
 import json
+import re
 import sys
 import time
 from collections import OrderedDict
@@ -35,15 +38,50 @@ except ImportError:
 
 # ── 配置 ──────────────────────────────────────────────
 CDP_PORT = 18809  # bot9 Chrome CDP 端口
-DOC_URL = "https://docs.qq.com/sheet/DWmVodVJ4TEN2aEZQ"
-DOC_ID = "WmVodVJ4TEN2aEZQ"
 
-# 三个核心池 sheet
-SHEETS = {
-    "主题-核心池": {"tab": "000001", "group_col": "主题(最新)", "group_labels": True},
-    "市值-核心池": {"tab": "000003", "group_col": "市值(最新)", "group_labels": True},
-    "风格-核心池": {"tab": "000005", "group_col": "风格(最新)", "group_labels": True},
-}
+SOURCES = OrderedDict({
+    "权益基金池": {
+        "doc_url": "https://docs.qq.com/sheet/DWktnQ3ZEQnhFUGp0",
+        "doc_id": "WktnQ3ZEQnhFUGp0",
+        "sheets": OrderedDict({
+            "主题-核心池": {"tab": "000001", "group_col": "主题(最新)"},
+            "市值-核心池": {"tab": "000003", "group_col": "市值(最新)"},
+            "风格-核心池": {"tab": "000005", "group_col": "风格(最新)"},
+        }),
+    },
+    "指数基金池": {
+        "doc_url": "https://docs.qq.com/sheet/DWkJzR1pNVUVIenZV",
+        "doc_id": "WkJzR1pNVUVIenZV",
+        "sheets": OrderedDict({
+            "指数型基金-核心池": {
+                "tab": "000001",
+                "group_col": "主题(近一年)",
+                "keep_columns": [
+                    "基金代码",
+                    "基金简称",
+                    "基金公司",
+                    "基金经理",
+                    "可购买代码",
+                    "指数名称",
+                    "主题(近一年)",
+                ],
+            },
+            "指数型基金-优选池": {
+                "tab": "000002",
+                "group_col": "主题(近一年)",
+                "keep_columns": [
+                    "基金代码",
+                    "基金简称",
+                    "基金公司",
+                    "基金经理",
+                    "可购买代码",
+                    "指数名称",
+                    "主题(近一年)",
+                ],
+            },
+        }),
+    },
+})
 
 # 市值/风格标签的中文映射
 LABEL_MAP = {
@@ -57,6 +95,16 @@ OUTPUT_FILE = Path("/home/rooot/.openclaw/workspace-bot9/skills/daily-market-rec
 
 # 主题显示顺序
 THEME_ORDER = ["科技", "全市场", "新能源", "医药", "消费", "周期", "金融", "制造", "基建地产"]
+
+INDEX_NORMALIZED_HEADERS = [
+    "是否ETF",
+    "推荐基金代码",
+    "推荐基金简称",
+    "推荐基金公司",
+    "推荐基金经理",
+    "推荐份额",
+    "映射状态",
+]
 
 
 # ── CDP 通信 ──────────────────────────────────────────
@@ -92,9 +140,9 @@ def find_tab(cdp_port, doc_id):
     return None
 
 
-def extract_sheet_data(cdp, tab_id, wait=5):
+def extract_sheet_data(cdp, doc_url, tab_id, wait=5):
     """导航到指定 tab 并提取剪贴板数据"""
-    url = f"{DOC_URL}?tab={tab_id}"
+    url = f"{doc_url}?tab={tab_id}"
     cdp.send("Page.navigate", {"url": url})
     time.sleep(wait)
 
@@ -131,12 +179,17 @@ def extract_sheet_data(cdp, tab_id, wait=5):
     return text
 
 
-def parse_pool(tsv_text, group_col):
+def parse_pool(tsv_text, group_col, keep_columns=None):
     """解析基金池 TSV，按 group_col 分组，返回 (headers, {group: [fund_dict, ...]})"""
     reader = csv.DictReader(io.StringIO(tsv_text), delimiter='\t')
     # 保留原始表头（去掉第一列的空白分组列）
     raw_headers = reader.fieldnames or []
-    headers = [h for h in raw_headers if h.strip()]
+    available_headers = [h for h in raw_headers if h.strip()]
+    headers = available_headers
+    if keep_columns:
+        headers = [h for h in keep_columns if h in available_headers]
+        if not headers:
+            raise ValueError(f"未找到任何目标列：{keep_columns}")
     by_group = OrderedDict()
 
     current_group = ""
@@ -144,7 +197,10 @@ def parse_pool(tsv_text, group_col):
         # 第一列可能是分组标签
         first_col = list(row.values())[0].strip() if row else ""
         name = row.get("基金简称", "").strip()
-        status = row.get("申购状态", "").strip()
+        status = " ".join([
+            row.get("申购状态", "").strip(),
+            row.get("销售状态", "").strip(),
+        ]).strip()
         group_val = row.get(group_col, "").strip()
         score_str = row.get("分数", "").strip()
 
@@ -214,6 +270,113 @@ def group_display_name(group_key, sheet_name):
     return group_key
 
 
+def extract_candidate_codes(text):
+    """从可购买代码中提取候选代码，优先提取 6 位数字代码。"""
+    raw = (text or "").strip()
+    if not raw:
+        return []
+
+    codes = re.findall(r"\b\d{6}\b", raw)
+    if codes:
+        return list(OrderedDict.fromkeys(codes))
+
+    parts = [p.strip() for p in re.split(r"[，,、/\s]+", raw) if p.strip()]
+    return list(OrderedDict.fromkeys(parts))
+
+
+def infer_share_class(name):
+    """从基金简称推断份额类型。"""
+    raw = (name or "").strip().upper()
+    match = re.search(r"([A-Z])$", raw)
+    return match.group(1) if match else ""
+
+
+def is_etf_fund(fund):
+    """指数基金中 ETF 只作为索引线索，不直接推荐。"""
+    name = (fund.get("基金简称", "") or "").upper()
+    return "ETF" in name
+
+
+def flatten_groups(groups_dict):
+    funds = []
+    for group_funds in groups_dict.values():
+        funds.extend(group_funds)
+    return funds
+
+
+def resolve_recommended_fund(fund, code_index):
+    """将 ETF 候选映射到可推荐份额，优先 C 类。"""
+    default = {
+        "是否ETF": "是" if is_etf_fund(fund) else "否",
+        "推荐基金代码": fund.get("基金代码", ""),
+        "推荐基金简称": fund.get("基金简称", ""),
+        "推荐基金公司": fund.get("基金公司", ""),
+        "推荐基金经理": fund.get("基金经理", ""),
+        "推荐份额": infer_share_class(fund.get("基金简称", "")),
+        "映射状态": "原基金",
+    }
+
+    if not is_etf_fund(fund):
+        return default
+
+    candidate_codes = extract_candidate_codes(fund.get("可购买代码", ""))
+    if not candidate_codes:
+        default["映射状态"] = "ETF无可购买代码"
+        return default
+
+    candidates = []
+    for code in candidate_codes:
+        candidates.extend(code_index.get(code, []))
+
+    if not candidates:
+        default["推荐基金代码"] = candidate_codes[0]
+        default["映射状态"] = "ETF仅取可购买代码"
+        return default
+
+    candidates.sort(
+        key=lambda item: (
+            0 if infer_share_class(item.get("基金简称", "")) == "C" else 1,
+            0 if item.get("基金代码", "") in candidate_codes else 1,
+            item.get("基金简称", ""),
+        )
+    )
+    chosen = candidates[0]
+    share_class = infer_share_class(chosen.get("基金简称", ""))
+
+    return {
+        "是否ETF": "是",
+        "推荐基金代码": chosen.get("基金代码", ""),
+        "推荐基金简称": chosen.get("基金简称", ""),
+        "推荐基金公司": chosen.get("基金公司", ""),
+        "推荐基金经理": chosen.get("基金经理", ""),
+        "推荐份额": share_class or "未知",
+        "映射状态": "ETF映射C类" if share_class == "C" else "ETF映射非C类",
+    }
+
+
+def normalize_index_source(source_results):
+    """为指数基金池补充 ETF 映射后的标准化推荐字段。"""
+    code_index = {}
+    for sheet_data in source_results.values():
+        for fund in flatten_groups(sheet_data["data"]):
+            code = fund.get("基金代码", "").strip()
+            if not code:
+                continue
+            code_index.setdefault(code, []).append(fund)
+
+    for sheet_data in source_results.values():
+        headers = list(sheet_data["headers"])
+        for extra in INDEX_NORMALIZED_HEADERS:
+            if extra not in headers:
+                headers.append(extra)
+
+        for fund in flatten_groups(sheet_data["data"]):
+            normalized = resolve_recommended_fund(fund, code_index)
+            fund.update(normalized)
+
+        sheet_data["headers"] = headers
+
+
 def generate_markdown(all_data):
     """生成 基金池.md 内容"""
     now = datetime.now()
@@ -231,7 +394,7 @@ def generate_markdown(all_data):
         "",
         f"# 天天基金研究部基金池（{month_str}）",
         "",
-        f"> 自动同步时间：{date_str}。数据来源：腾讯文档权益基金池。",
+        f"> 自动同步时间：{date_str}。数据来源：腾讯文档权益基金池、指数基金池。",
         "> 每个分组内按「分数」从高到低排序，推荐时优先选排名靠前的。",
         "",
     ]
@@ -260,38 +423,45 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="只预览统计，不写文件")
     args = parser.parse_args()
 
-    total_sheets = len(SHEETS)
-
-    # 1. 找 tab
-    print(f"[1/{total_sheets+2}] 查找 bot9 Chrome (CDP:{CDP_PORT}) 中的腾讯文档 tab...")
-    ws_url = find_tab(CDP_PORT, DOC_ID)
-    if not ws_url:
-        print("❌ 未找到已打开的腾讯文档 tab。请先在 bot9 的 Chrome 中打开：")
-        print(f"   {DOC_URL}")
-        sys.exit(1)
-    print(f"   ✓ 找到 tab: {ws_url[:60]}...")
-
-    cdp = CDPConnection(ws_url)
     all_data = OrderedDict()
+    total_sheets = sum(len(source_cfg["sheets"]) for source_cfg in SOURCES.values())
 
-    # 2. 逐个 sheet 提取
-    for i, (sheet_name, sheet_cfg) in enumerate(SHEETS.items(), start=2):
-        print(f"[{i}/{total_sheets+2}] 提取 {sheet_name} (tab={sheet_cfg['tab']})...")
-        text = extract_sheet_data(cdp, sheet_cfg["tab"])
-        headers, data = parse_pool(text, sheet_cfg["group_col"])
-        total = sum(len(v) for v in data.values())
-        print(f"   ✓ {total} 只基金，{len(data)} 个分组，{len(headers)} 列")
-        for group, funds in data.items():
-            label = LABEL_MAP.get(group, group)
-            print(f"     - {label}: {len(funds)}只")
-        all_data[sheet_name] = {"data": data, "headers": headers, "cfg": sheet_cfg}
+    print(f"[准备] 查找 bot9 Chrome (CDP:{CDP_PORT}) 中的腾讯文档 tab...")
+    for source_name, source_cfg in SOURCES.items():
+        ws_url = find_tab(CDP_PORT, source_cfg["doc_id"])
+        if not ws_url:
+            print(f"❌ 未找到已打开的 {source_name} tab。请先在 bot9 的 Chrome 中打开：")
+            print(f"   {source_cfg['doc_url']}")
+            sys.exit(1)
+        print(f"   ✓ {source_name} 已打开")
 
-    cdp.close()
+    step_idx = 1
+    for source_name, source_cfg in SOURCES.items():
+        print(f"\n[来源] 连接 {source_name}...")
+        ws_url = find_tab(CDP_PORT, source_cfg["doc_id"])
+        cdp = CDPConnection(ws_url)
+        try:
+            for sheet_name, sheet_cfg in source_cfg["sheets"].items():
+                print(f"[{step_idx}/{total_sheets}] 提取 {sheet_name} (tab={sheet_cfg['tab']})...")
+                text = extract_sheet_data(cdp, source_cfg["doc_url"], sheet_cfg["tab"])
+                headers, data = parse_pool(
+                    text,
+                    sheet_cfg["group_col"],
+                    keep_columns=sheet_cfg.get("keep_columns"),
+                )
+                total = sum(len(v) for v in data.values())
+                print(f"   ✓ {total} 只基金，{len(data)} 个分组，{len(headers)} 列")
+                for group, funds in data.items():
+                    label = LABEL_MAP.get(group, group)
+                    print(f"     - {label}: {len(funds)}只")
+                all_data[sheet_name] = {"data": data, "headers": headers, "cfg": sheet_cfg}
+                step_idx += 1
+        finally:
+            cdp.close()
 
     # 3. 生成并写入
     md = generate_markdown(all_data)
-    step = total_sheets + 2
-    print(f"[{step}/{step}] 生成 markdown（{len(md.splitlines())} 行，{len(md)} 字符）...")
+    print(f"\n[输出] 生成 markdown（{len(md.splitlines())} 行，{len(md)} 字符）...")
 
     if args.dry_run:
         print("\n--- DRY RUN：预览前 60 行 ---")

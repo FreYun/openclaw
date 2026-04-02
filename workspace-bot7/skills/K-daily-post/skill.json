@@ -1,0 +1,7 @@
+{
+  "name": "K-daily-post",
+  "icon": "📝",
+  "description": "老K投资笔记专属发帖流程：问热点→自研→推选题→写稿做图→终审投稿",
+  "slot": "utility",
+  "subType": "duty"
+}

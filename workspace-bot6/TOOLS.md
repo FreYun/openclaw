@@ -79,6 +79,14 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 ---
 
+## 🚨 浏览器 profile 铁律（最高优先级）
+
+> **无论何时何地，调用 `browser` 工具的任何操作（start / open / snapshot / act 等），必须显式传 `profile: "bot6"`（CDP 端口 18806）。**
+> **⛔ 绝对禁止使用 `profile: "openclaw"`（18800）、`profile: "chrome"` 或省略 profile 参数 —— 省略会 fallback 到默认的 openclaw（18800），导致串号。**
+> **没有任何例外。每一次调用都要检查自己传了 `profile: "bot6"`。**
+
+---
+
 ## Bot 专属配置
 
 - **account_id**: `bot6`

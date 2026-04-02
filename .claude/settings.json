@@ -127,10 +127,17 @@
       "Bash(rm -rf /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T13-56-33_bot4_mzt30q)",
       "Bash(openclaw config:*)",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if ''''model'''' in str\\(k\\).lower\\(\\) or ''''default'''' in str\\(k\\).lower\\(\\)}, indent=2\\)\\)\")",
-      "Bash(rm -rf /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T15-00-00_bot7_test01 /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T15-05-00_bot3_test02)"
+      "Bash(rm -rf /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T15-00-00_bot7_test01 /home/rooot/.openclaw/workspace-sys1/publish-queue/pending/2026-03-30T15-05-00_bot3_test02)",
+      "Bash(find /home/rooot -name *.ts -o -name *.js)",
+      "Bash(find /home/rooot/.openclaw -name *zai* -o -name *kimi*)",
+      "Bash(find /home/rooot/.openclaw/openclaw -path */extensions/* -name *.ts)",
+      "WebFetch(domain:www.swsresearch.com)",
+      "Bash(pnpm tsdown:*)",
+      "Bash(pnpm exec:*)"
     ],
     "additionalDirectories": [
-      "/home/rooot/.openclaw/workspace-sys1/publish-queue/pending"
+      "/home/rooot/.openclaw/workspace-sys1/publish-queue/pending",
+      "/home/rooot/.openclaw/agents/bot10/sessions"
     ]
   }
 }

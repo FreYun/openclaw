@@ -1,0 +1,7 @@
+{
+  "name": "小红书素材巡逻",
+  "icon": "🔍",
+  "description": "定时巡逻小红书与外部信息源，主动收集选题灵感写入素材库",
+  "slot": "utility",
+  "subType": "duty"
+}

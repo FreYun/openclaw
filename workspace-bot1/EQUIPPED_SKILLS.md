@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-29 15:41:08
+> 更新时间：2026-04-02 05:41:45
 
 ## 职业
 
@@ -17,6 +17,7 @@
 - 浏览器基础（browser-base） — `skills/browser-base/SKILL.md`
 - 异常上报（report-incident） — `skills/report-incident/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
+- 小红书素材巡逻（xhs-topic-collector） — `skills/xhs-topic-collector/SKILL.md`
 
 ## 研究技能
 
@@ -31,4 +32,6 @@
 - 自选股（stock-watcher） — `skills/stock-watcher/SKILL.md`
 - 技术分析（technical-analyst） — `skills/technical-analyst/SKILL.md`
 - TMT全景（tmt-landscape） — `skills/tmt-landscape/SKILL.md`
+- 光伏跟踪（solar-tracker） — `skills/solar-tracker/SKILL.md`
+- 投顾产品选品（product-match） — `skills/product-match/SKILL.md`
 

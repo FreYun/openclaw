@@ -1,0 +1,8 @@
+{
+  "name": "狗哥画图风格",
+  "icon": "🎨",
+  "slot": "accessory",
+  "subType": "image",
+  "desc": "狗哥说财产业链图解卡片生成：style基底、配色规则、图片分解模板、生图工作流",
+  "requiresMcp": ["image-gen-mcp"]
+}

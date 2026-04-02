@@ -84,9 +84,11 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 - **account_id**: `bot5`
 - **小红书 MCP 端口**: 18065（已配置在 mcporter.json，不需要手动指定）
 
-## 浏览器（全局规则）
+## 🚨 浏览器 profile 铁律（最高优先级）
 
-**所有浏览器操作必须使用 `profile="bot5"`**，无论是发布、研究还是截图，调用 browser 工具时一律带上此参数。
+> **无论何时何地，调用 `browser` 工具的任何操作（start / open / snapshot / act 等），必须显式传 `profile: "bot5"`（CDP 端口 18805）。**
+> **⛔ 绝对禁止使用 `profile: "openclaw"`（18800）、`profile: "chrome"` 或省略 profile 参数 —— 省略会 fallback 到默认的 openclaw（18800），导致串号。**
+> **没有任何例外。每一次调用都要检查自己传了 `profile: "bot5"`。**
 
 ## 封面生图
 
@@ -103,37 +105,36 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 你的 mcporter.json 已配置 `research-mcp`（端口 18080），权限由 dashboard 管理，可直接调用以下工具查行情数据：
 
-### 你有权限的工具
+### 你有权限的工具（以实际 research-mcp 工具名为准）
 
 | 工具 | 说明 | 常用参数 |
 |------|------|---------|
-| `commodity_quote` | **黄金/白银等商品行情** | `symbol="AU9999"` 或 `"黄金9999"`，`days=30` |
-| `market_snapshot` | A股/港股/美股大盘快照 | 无必填参数 |
-| `fund_analysis` | 基金综合分析 | `fund_code="000001"` |
-| `fund_screen` | 基金筛选 | 按条件筛 |
-| `macro_overview` | 宏观经济数据（GDP/CPI/M2等） | `category="cpi,ppi,m2"` |
-| `search_news` | 财经新闻搜索 | `keyword="黄金"` |
-| `search_report` | 研报搜索 | `keyword="黄金"` |
-| `index_valuation` | 指数估值 | 指数代码 |
+| `commodity_data` | **黄金/白银等商品历史行情** | `symbol="AU9999"`, `start_date`, `end_date` |
+| `market_overview` | A股大盘概览 | 无必填参数 |
+| `get_fund_comprehensive_analysis` | 基金综合分析 | `fund_code="000001"` |
+| `fund_screening` | 基金筛选 | 按条件筛 |
+| `get_cn_macro_data` | 国内宏观数据（GDP/CPI/M2等） | `category="cpi"` |
+| `us_macro_simple` | 美国宏观数据（CPI/非农/利率） | 无必填参数 |
+| `news_search` | 财经新闻搜索 | `keyword="黄金"` |
+| `research_search` | 研报搜索 | `keyword="黄金 贵金属"` |
+| `get_ashares_index_val` | A股指数估值 | 指数代码 |
+
+> ⚠️ **`commodity_quote` 已下线，不要调用。** 用 `commodity_data` + 日期范围替代。
 
 ### 查黄金行情（最常用）
 
-调用 research-mcp 的 `commodity_quote` 工具：
+调用 research-mcp 的 `commodity_data` 工具：
 - **黄金**：`symbol="AU9999"` 或 `symbol="黄金9999"`
 - **白银**：`symbol="AG9999"` 或 `symbol="白银9999"`
 - **多个商品**：逗号分隔 `symbol="AU9999,AG9999"`
-- **历史天数**：`days=30`（默认 30 天）
+- **近30天走势**：`start_date="30天前YYYYMMDD"`, `end_date="今天YYYYMMDD"`
 
 ### 写稿前查行情的推荐流程
 
-1. `commodity_quote`(symbol="AU9999") — 拿最新金价和近期走势
-2. `market_snapshot` — 看大盘环境
-3. `search_news`(keyword="黄金") — 搜相关新闻做选题
+1. `commodity_data`(symbol="AU9999", start_date=近5天) — 拿近期金价和走势
+2. `market_overview` — 看大盘环境
+3. `news_search`(keyword="黄金") — 搜相关新闻做选题
 4. 结合行情数据和新闻写稿
-
-### 需要更多工具？
-
-如需 `stock_research`、`bond_monitor` 等当前角色没有的工具，向技能部发权限申请（见 `skills/research-mcp/SKILL.md`）。
 
 ---
 

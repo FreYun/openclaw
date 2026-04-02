@@ -1,8 +1,0 @@
-{
-  "name": "小红书素材积累",
-  "icon": "📦",
-  "slot": "scheduled",
-  "subType": "scheduled",
-  "desc": "定时巡逻小红书与外部信息源，收集选题灵感写入素材库",
-  "requiresMcp": ["xiaohongshu-mcp"]
-}

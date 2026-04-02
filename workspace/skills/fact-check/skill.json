@@ -1,0 +1,7 @@
+{
+  "name": "数据核查",
+  "icon": "🔍",
+  "slot": "quality",
+  "desc": "逐条核实文章中的数据和事实性表述，输出核查报告",
+  "subType": "general"
+}

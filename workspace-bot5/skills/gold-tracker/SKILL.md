@@ -14,15 +14,15 @@ description: >
 
 ## ⚠️ 数据时效铁律
 
-> **盘中（交易时段）禁止用 `commodity_data` / `commodity_quote` 当作实时价格！**
-> 这两个接口返回的是**前一个交易日收盘价**，盘中调用拿到的数据是滞后的。
+> **盘中（交易时段）禁止用 `commodity_data` 当作实时价格！**
+> 该接口返回的是**前一个交易日收盘价**，盘中调用拿到的数据是滞后的。
 
 | 场景 | 正确数据源 | 错误做法 |
 |------|-----------|---------|
 | 盘中看金价 | 金十数据网页 / web_search 实时报价 | ~~commodity_data~~（收盘价） |
 | 盘中看消息面 | 金十数据快讯 / web_search 新闻 | — |
 | 收盘后复盘 | `commodity_data`(AU9999) + Mysteel | — |
-| 历史走势分析 | `commodity_data` + `commodity_quote` | — |
+| 历史走势分析 | `commodity_data`(AU9999, start_date, end_date) | — |
 
 **判断当前是否盘中**：
 - 上海金交所 AU9999：交易日 09:00-11:30, 13:30-15:30, 20:00-02:30（夜盘）
@@ -61,7 +61,7 @@ description: >
 | 数据源 | 工具 | 能拿到什么 | 时效 |
 |--------|------|-----------|------|
 | **research-mcp** | `commodity_data`(symbol="AU9999") | AU9999 每日收盘价、历史走势 | **T+1 收盘后更新** |
-| **research-mcp** | `commodity_quote`(symbol="AU9999", days=30) | 近 N 天收盘行情 | **同上** |
+| **research-mcp** | `commodity_data`(symbol="AU9999", start_date="30天前", end_date="今天") | 近 N 天收盘行情 | **同上** |
 | **research-mcp** | `get_cn_macro_data`(category="usdcny") | 美元兑人民币汇率 | 日频 |
 | **research-mcp** | `us_macro_simple` | 美国 CPI/非农/利率 等 | 按数据发布频率 |
 
@@ -111,7 +111,7 @@ description: >
 
 ```
 1. commodity_data(symbol="AU9999", start_date=近5天) → 收盘价 + 涨跌幅
-2. commodity_quote(symbol="AU9999", days=30) → 近一个月走势
+2. commodity_data(symbol="AU9999", start_date=30天前, end_date=今天) → 近一个月走势
 3. web_search("COMEX 黄金 收盘") → 外盘收盘情况
 4. 可选：Mysteel 浏览器 → 现货升贴水、实物需求
 5. 可选：get_cn_macro_data(category="usdcny") → 汇率变动

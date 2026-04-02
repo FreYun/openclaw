@@ -7,6 +7,7 @@
       "Bash(find:*)", "Bash(grep:*)", "Bash(wc:*)", "Bash(date:*)", "Bash(echo:*)",
       "Bash(curl:*)", "Bash(python3:*)", "Bash(node:*)", "Bash(mkdir:*)", "Bash(cp:*)",
       "Bash(mv:*)", "Bash(touch:*)", "Bash(diff:*)", "Bash(sort:*)", "Bash(uniq:*)",
+      "Bash(bash /home/rooot/.openclaw/workspace/**:*)",
       "mcp__openclaw-tools__*"
     ],
     "defaultMode": "dontAsk"

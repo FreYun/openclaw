@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-30 08:15:11
+> 更新时间：2026-04-02 05:41:45
 
 ## 职业
 
@@ -18,7 +18,7 @@
 - 浏览器基础（browser-base） — `skills/browser-base/SKILL.md`
 - 异常上报（report-incident） — `skills/report-incident/SKILL.md`
 - 定时发稿（scheduled-post） — `skills/scheduled-post/SKILL.md`
-- 老K发帖SOP（laok-posting-sop） — `skills/laok-posting-sop/SKILL.md`
+- K-daily-post（K-daily-post） — `skills/K-daily-post/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
 
 ## 研究技能

@@ -1,121 +1,84 @@
 ---
 name: laok-style
-description: "老K投资笔记"专属画图风格定义。为 bot7/bot8 生成配图时提供统一的视觉风格 prompt 模板。使用场景：(1) 生成老K IP扑克牌配图, (2) 生成投资/财经主题像素插画, (3) 任何需要老K品牌视觉一致性的图片生成任务。调用 image-generator 时引用此 skill 获取风格 prompt。
+description: "老K投资笔记"专属画图风格定义。日常发帖默认生成大标题文字封面 + 右下角像素扑克牌 icon。研究部要求时可生成概念插画。
 ---
 
 # 老K投资笔记 · 画图风格指南
 
 ## 核心 IP 形象
 
-**老K** — 一张像素风的黑桃K扑克牌，是品牌的唯一视觉锚点。不画人物，只画牌。
+**老K** — 一张像素风的黑桃K扑克牌，放在封面右下角作为品牌 icon。不画人物，只画牌。
 
-### 扑克牌设定
+### 扑克牌 icon 设定
 
-- **牌面**：黑桃K (King of Spades) 标准扑克牌比例（约 2.5:3.5）
-- **风格**：8-bit / 16-bit 像素艺术 (pixel art)，清晰可辨的像素网格感
-- **牌面国王**：像素风格绘制的国王侧脸，深藏青色服装，金色王冠，手持权杖（可替换为 K 线图/数据棒）
-- **花色标记**：黑桃 ♠ 用冰蓝色发光像素渲染，带微弱光晕
-- **牌背**：深藏青底色 + 金色像素几何纹样
-
-### 标志元素
-
-| 元素 | 说明 |
-|------|------|
-| **黑桃K扑克牌** | 像素风，整体视觉主角，牌面内容可根据主题变化 |
-| **像素光粒子** | 牌周围散落的冰蓝色像素方块粒子，表达数据/科技感 |
-| **像素化数据** | K线、柱状图、趋势箭头等金融元素均用像素风格绘制 |
+- **牌面**：黑桃K (King of Spades)，像素艺术风格
+- **配色**：藏青 `#1a2744` 牌面 + 冰蓝 `#00d4ff` 黑桃发光 + 金色 `#c8a84e` 王冠
+- **位置**：右下角，约占画面 1/8，微微倾斜，作为品牌水印
 
 ## 配色方案
 
 ```
-主色:
-  藏青    #1a2744  (牌面/背景主色)
-  冰蓝    #00d4ff  (像素光效/数据高光)
+背景色（暖底）:
+  暖米白  #faf6f0  (主背景色，温暖明亮)
+  浅暖灰  #e8e0d4  (辅助背景/区块分隔)
+  淡奶茶  #f0e6d6  (渐变过渡/装饰底色)
+
+扑克牌 IP 色（冷色，保持科技感）:
+  藏青    #1a2744  (牌面底色/牌背)
+  冰蓝    #00d4ff  (像素光效/黑桃发光)
   金色    #c8a84e  (王冠/纹饰/点缀)
 
-辅助色:
-  深黑    #0d1117  (背景/暗部)
-  纯白    #ffffff  (牌面边框/高光/文字)
-  像素红  #ff4444  (涨/阳线)
-  像素绿  #44bb44  (跌/阴线)
+内容区:
+  深炭    #2a2a2a  (标题文字)
+  纯白    #ffffff  (牌面边框/高光)
 ```
 
 ## Prompt 模板
 
-> **关键原则**：STYLE 参数包含完整的视觉风格定义（直接从对应模板复制，不要改动）。CONTENT 参数只放场景/主题等变量部分。
+> **关键原则**：STYLE 参数整段复制不改动。CONTENT 参数只放变量部分。
 
-### 模板 A：老K 扑克牌 IP（通用）
+### 模板 A：大标题文字封面 — ⭐ 默认模板
+
+日常发帖的**唯一默认模板**。画面主体是醒目的中文大标题文字，右下角放像素扑克牌 icon。**不画 K 线图、蜡烛图、数据面板等金融图表**。
 
 **STYLE（直接复制）**
 ```
-16-bit pixel art playing card illustration, detailed pixel rendering, visible pixel grid, retro game aesthetic meets fintech, dark moody palette of navy (#1a2744) ice blue (#00d4ff) and gold (#c8a84e), crisp pixel art. A single King of Spades playing card stands upright slightly tilted. The pixel king wears dark navy (#1a2744) royal garment with gold (#c8a84e) crown holding a scepter. Spade symbol glows ice blue (#00d4ff) with subtle pixel glow effect. Scattered tiny ice-blue pixel particles floating like data fragments. Dark gradient background (#0d1117 to #1a2744). No human figures.
+Bold Chinese title text poster, clean modern layout, warm bright background of creamy white (#faf6f0) with soft beige (#e8e0d4) accents, large eye-catching Chinese headline text as the main visual element, text in dark charcoal (#2a2a2a) or contrasting bold colors, minimal decorative elements, clean typography focus, no candlestick charts no stock graphs no financial dashboards
 ```
 
 **CONTENT 模板**
 ```
-The card floats in dark space with [场景装饰，如: golden sparkles / floating pixel coins / subtle data grid lines].
-```
-
-### 模板 B：老K 扑克牌 + 投资主题
-
-**STYLE（直接复制）**
-```
-16-bit pixel art playing card illustration with financial theme, visible pixel grid, retro game aesthetic meets fintech, dark moody palette of navy (#1a2744) ice blue (#00d4ff) and gold (#c8a84e). A King of Spades playing card in pixel art style standing upright against dark navy background. Card face shows pixel king in navy robes with gold crown. Spade symbol glows ice blue (#00d4ff). Pixel particles and data blocks float around. All text labels in Chinese characters only no English.
-```
-
-**CONTENT 模板**
-```
-Surrounding the card: [场景描述，如: pixel art candlestick charts showing uptrend / 8-bit style financial dashboard with rising green and red bars / pixel stock ticker display]. All labels in Chinese.
-```
-
-### 模板 C：老K 头像版（正方形）
-
-**STYLE（直接复制）**
-```
-Close-up 16-bit pixel art King of Spades playing card, centered square 1:1 composition suitable for avatar. The pixel king face fills most of the frame: navy (#1a2744) garment, gold (#c8a84e) crown, confident pixel expression. Glowing ice-blue (#00d4ff) spade symbol. Dark background with floating pixel particles. Crisp pixel art style, retro 16-bit game aesthetic, visible pixel grid.
-```
-
-**CONTENT 模板**
-```
-[可选的额外装饰，如: subtle golden sparkles around crown / ice blue data particles orbiting the card].
-```
-
-### 模板 D：纯扑克牌元素（文章配图）
-
-**STYLE（直接复制）**
-```
-16-bit pixel art illustration, visible pixel grid, retro game aesthetic meets fintech, dark moody palette. A glowing King of Spades playing card in pixel art style floating in dark space (#0d1117). Ice blue (#00d4ff) pixel glow effects and gold (#c8a84e) accents. Scattered pixel blocks and data fragments. Clean composition. No human figures. All text in Chinese only.
-```
-
-**CONTENT 模板**
-```
-The card is surrounded by [主题描述，如: pixel art candlestick patterns showing market trend / 8-bit financial data visualizations with Chinese labels / retro-style stock market indicators].
-```
-
-### 模板 E：日常发帖配图（扑克牌角标 + 内容主体）— ⭐ 首选模板
-
-这是日常发帖的**首选模板**。像素扑克牌仅占画面约 1/6（角落），其余 5/6 留给主题内容。所有图内文字必须是中文。
-
-**STYLE（直接复制）**
-```
-16-bit pixel art illustration, visible pixel grid, retro game aesthetic meets modern fintech, dark moody palette, crisp clean pixel rendering, all text labels in Chinese only no English
-```
-
-**CONTENT 模板**
-```
-[根据帖子主题自由发挥的场景描述，占画面主体 5/6。用中文标签和像素风视觉元素填充，风格和内容应与帖子主题匹配。如果涉及中国股市涨跌，遵循红涨绿跌惯例。所有图表、数据面板、趋势线均用像素风格绘制]. The background is dark navy (#1a2744) with floating ice-blue (#00d4ff) pixel particles. In the [bottom-left/bottom-right] corner (approximately 1/6 of the image), a small pixel art King of Spades playing card with glowing ice-blue spade symbol and gold (#c8a84e) crown details, slightly tilted as a brand watermark. All text in the image must be in Chinese characters only, no English letters or words.
+Large bold Chinese title text "[帖子标题/核心观点]" prominently displayed as the main visual, filling most of the image. Text should be eye-catching with [字体效果，如: bold weight with subtle shadow / gradient color accent on key words / slight 3D pixel effect]. Simple decorative accents like [装饰，如: small pixel sparkles / subtle geometric shapes / faint topic-related icon]. In the bottom-right corner, a small pixel art King of Spades playing card in dark navy (#1a2744) with glowing ice-blue (#00d4ff) spade symbol and gold (#c8a84e) crown details, slightly tilted as a brand watermark (approximately 1/8 of the image). The background is warm creamy white (#faf6f0). All text must be in Chinese characters only, no English.
 ```
 
 **要点**：
-- **扑克牌 vs 内容 = 1:5** — 像素扑克牌放角落作为品牌标记，主体留给内容
-- **所有文字必须中文** — 包括图表标签、标题、百分比说明等，一律中文，禁止出现英文字母
-- **红涨绿跌** — 遵循中国市场惯例（RED = 上涨, GREEN = 下跌）
-- **统一像素风** — 所有元素（图表、文字、装饰）都应保持像素艺术风格的一致性
-- 适合画幅：16:9（横版封面）或 3:4（小红书竖版）
+- **大标题文字为主角** — 画面 80%+ 是醒目的中文标题
+- **不要画金融图表** — 不要 K 线、蜡烛图、柱状图、数据面板、趋势线
+- **扑克牌是右下角小 icon** — 约占画面 1/8，品牌水印
+- **所有文字必须中文**
+- **装饰从简** — 少量像素风点缀即可，不喧宾夺主
+- 画幅：3:4 `960x1280`（小红书竖版）
+
+### 模板 B：概念插画封面 — 仅研究部要求时使用
+
+研究部明确要求"画概念插画/主题插画"时才用。像素扑克牌占 1/6 角落，主体是主题相关的像素插画。
+
+**STYLE（直接复制）**
+```
+16-bit pixel art illustration, visible pixel grid, retro game aesthetic meets modern fintech, warm bright palette with creamy white (#faf6f0) background and soft beige (#e8e0d4) accents, crisp clean pixel rendering, all text labels in Chinese only no English
+```
+
+**CONTENT 模板**
+```
+[根据帖子主题的像素插画场景，占画面主体 5/6。用像素风视觉元素表达主题概念，如: 像素风太阳能板阵列 / 像素风芯片电路 / 像素风机器人 / 像素风火箭发射等。不要画 K 线图和蜡烛图]. The background is warm creamy white (#faf6f0) with soft beige (#e8e0d4) accents and floating ice-blue (#00d4ff) pixel particles. In the bottom-right corner (approximately 1/6 of the image), a small pixel art King of Spades playing card in dark navy (#1a2744) with glowing ice-blue spade symbol and gold (#c8a84e) crown details, slightly tilted as a brand watermark. All text in the image must be in Chinese characters only.
+```
+
+**要点**：
+- **需研究部明确要求才使用**，日常默认用模板 A
+- 用具象的像素图标表达概念（芯片、火箭、太阳能板等），不用金融图表
+- 扑克牌放右下角作为品牌标记
 
 ## 生图调用
-
-**STYLE 从模板整段复制，CONTENT 只放变量。有参考图时传 `reference_image`。**
 
 ```
 image-gen-mcp.generate_image(
@@ -123,21 +86,21 @@ image-gen-mcp.generate_image(
   content: "{替换好占位符的 CONTENT}",
   size: "960x1280",
   workspace: "/home/rooot/.openclaw/workspace-bot7",
-  reference_image: "{可选，本地图片路径，模型会参考该图的风格/构图/色彩}"
+  reference_image: "{可选，本地图片路径}"
 )
 ```
 
-- 画幅：1:1 `1024x1024`（头像/模板C）| 16:9 `1536x1024`（横版封面）| 3:4 `960x1280`（小红书竖版/模板E首选）
-- `reference_image` 适用场景：想沿用某张已有配图的色调/构图/氛围时传入，不传则纯文生图
+- 默认画幅：3:4 `960x1280`（小红书竖版）
 
 ## 铁律
 
-1. **每次生图必须先 Read 本文件** — 禁止凭记忆写 prompt，以文件内容为准
+1. **每次生图必须先 Read 本文件** — 禁止凭记忆写 prompt
 2. **STYLE 整段复制，不可缩写/省略/改写**
 3. **CONTENT 只放变量** — 不要重复写风格描述
+4. **默认用模板 A（大标题文字）** — 不要自作主张用模板 B，除非研究部明确要求概念插画
 
 ## 风格一致性要点
 
-- **必须保持**：像素艺术风格、藏青+冰蓝+金三色体系、黑桃K扑克牌作为 IP 锚点
-- **可以变化**：牌面内容（国王/图表/数据）、像素密度(8-bit vs 16-bit)、周围场景元素
-- **避免**：写实照片风格、人物肖像/半身像、非像素的平滑渐变、暖色调为主的配色
+- **必须保持**：暖米白底色、右下角像素扑克牌 icon（藏青+冰蓝+金色）、中文大标题为主角
+- **可以变化**：标题排版样式、装饰点缀元素
+- **避免**：K 线图/蜡烛图/数据面板/金融图表（除非研究部明确要求）、写实照片风格、人物肖像、深暗背景色

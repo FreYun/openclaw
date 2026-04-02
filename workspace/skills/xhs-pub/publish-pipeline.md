@@ -18,7 +18,7 @@
 ```
 收到投稿 [MSG:xxx]
   ↓
-0. Read MEMORY.md → 特殊关怀面板（匹配 account_id，记下本次适用的指令）
+0. Read MEMORY.md → 永久规则
   ↓
 1. ACK：回复提交者队列位置
   ↓
@@ -77,8 +77,6 @@
 9. 记录日志
    python3 ~/.openclaw/scripts/log-publish.py ...
    更新 memory/发帖记录.md
-  ↓
-10. 清理一次性指令：步骤 0 中匹配到的「一次性」指令，从 MEMORY.md 特殊关怀面板中删除
 ```
 
 ---

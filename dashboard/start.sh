@@ -7,11 +7,11 @@ cd "$(dirname "$0")"
 PORT=18888
 
 # 如果已经在运行，先停掉
-OLD_PID=$(lsof -ti:${PORT} 2>/dev/null || true)
-if [ -n "$OLD_PID" ]; then
-    echo "停止旧进程 (PID: ${OLD_PID})"
-    kill "$OLD_PID" 2>/dev/null || true
-    sleep 1
+OLD_PIDS=$(lsof -ti:${PORT} 2>/dev/null || true)
+if [ -n "$OLD_PIDS" ]; then
+    echo "停止旧进程 (PID: ${OLD_PIDS})"
+    echo "$OLD_PIDS" | xargs kill 2>/dev/null || true
+    sleep 2
 fi
 
 # 启动

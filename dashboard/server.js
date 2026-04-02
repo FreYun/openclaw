@@ -8,6 +8,7 @@ const path = require("path");
 const zlib = require("zlib");
 const { execSync, execFile, spawn } = require("child_process");
 const sharp = require("sharp");
+const ExcelJS = require("exceljs");
 
 const PORT = parseInt(process.argv[2] || "18888");
 
@@ -55,6 +56,7 @@ const OPENCLAW_DIR = "/home/rooot/.openclaw";
 const ARMORY_CONFIG_FILE = path.join(__dirname, "armory-config.json");
 const BOT_EQUIPMENT_FILE = path.join(__dirname, "bot-equipment.json");
 const GEM_REGISTRY_FILE = path.join(__dirname, "gem-registry.json");
+const BOT_COLORS_FILE = path.join(__dirname, "bot-colors.json");
 const ADMIN_PASSWORD = "openclaw2026";
 const DELETE_PASSWORD = "delete2026";
 const SYSTEM_BOT_IDS = new Set(["mag1", "sys1", "sys2", "sys3"]);
@@ -388,21 +390,53 @@ function matchXhsMetrics(publishedList, stats) {
     for (const note of data.notes) {
       const key = normalizeTitle(note.title);
       if (key) lookup[bot][key] = {
+        publish_time: note.publish_time || "",
+        impressions: note.impressions || "-",
         views: note.views || "0",
+        click_rate: note.click_rate || "-",
         likes: note.likes || "0",
         comments: note.comments || "0",
         favorites: note.favorites || "0",
-        shares: note.shares || "0"
+        new_followers: note.new_followers || "-",
+        shares: note.shares || "0",
+        avg_watch_time: note.avg_watch_time || "-",
+        danmaku: note.danmaku || "-"
       };
     }
   }
+  // Track which stats notes were matched by queue items
+  const matched = {};  // bot -> Set of normalized titles
   // Match each published item
-  return publishedList.map(item => {
+  const result = publishedList.map(item => {
     const bot = item.accountId || "";
     const title = normalizeTitle(item.title);
     const metrics = (lookup[bot] && lookup[bot][title]) || null;
+    if (metrics) {
+      if (!matched[bot]) matched[bot] = new Set();
+      matched[bot].add(title);
+    }
     return { ...item, metrics };
   });
+  // Append unmatched notes from stats as discovered entries (not published via 印务局)
+  for (const [bot, data] of Object.entries(stats.bots)) {
+    if (!data.notes) continue;
+    for (const note of data.notes) {
+      const title = normalizeTitle(note.title);
+      if (!title) continue;
+      if (matched[bot] && matched[bot].has(title)) continue;
+      // Build synthetic name for front-end compatibility: date_botId_discovered
+      const pt = (note.publish_time || "").replace(/ /g, "T").replace(/:/g, "-");
+      const name = `${pt || "unknown"}_${bot}_discovered`;
+      result.push({
+        name,
+        title: note.title,
+        summary: "",
+        accountId: bot,
+        metrics: lookup[bot][title],
+      });
+    }
+  }
+  return result;
 }
 
 function getPublishQueue() {
@@ -574,8 +608,8 @@ const server = http.createServer(async (req, res) => {
         const ocData = JSON.parse(fs.readFileSync(OPENCLAW_JSON, "utf8"));
         for (const a of (ocData.agents?.list || [])) {
           if (a.name) botNames[a.id] = a.name;
-          if (a.color) botColors[a.id] = a.color;
         }
+        try { Object.assign(botColors, JSON.parse(fs.readFileSync(BOT_COLORS_FILE, "utf8"))); } catch {}
         const accounts = ocData.channels?.feishu?.accounts || {};
         for (const [id, acct] of Object.entries(accounts)) {
           if (id === "default") continue;
@@ -2270,11 +2304,10 @@ const server = http.createServer(async (req, res) => {
     try {
       const { botId, color } = body;
       if (!botId || !color) throw new Error("botId and color required");
-      const ocData = JSON.parse(fs.readFileSync(OPENCLAW_JSON, "utf8"));
-      const agent = (ocData.agents?.list || []).find(a => a.id === botId);
-      if (!agent) throw new Error(`Agent ${botId} not found`);
-      agent.color = color;
-      fs.writeFileSync(OPENCLAW_JSON, JSON.stringify(ocData, null, 2));
+      let colors = {};
+      try { colors = JSON.parse(fs.readFileSync(BOT_COLORS_FILE, "utf8")); } catch {}
+      colors[botId] = color;
+      fs.writeFileSync(BOT_COLORS_FILE, JSON.stringify(colors, null, 2));
       cachedData = null;
       res.end(JSON.stringify({ status: "ok", botId, color }));
     } catch (e) {
@@ -2767,6 +2800,103 @@ const server = http.createServer(async (req, res) => {
       const liveFiles = fs.existsSync(liveDir) ? fs.readdirSync(liveDir).filter(f => !f.startsWith(".")) : [];
       res.end(JSON.stringify({ name, sandbox, live, sandboxFiles, liveFiles }));
     } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    return;
+  }
+
+  // POST /api/xhs-stats/refresh — trigger collect-xhs-stats.js immediately
+  if (url.pathname === "/api/xhs-stats/refresh" && req.method === "POST") {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+    const script = path.join(__dirname, "collect-xhs-stats.js");
+    const logFile = fs.openSync("/tmp/xhs-stats-refresh.log", "a");
+    const child = spawn("node", [script], { stdio: ["ignore", logFile, logFile], detached: true });
+    child.unref();
+    child.on("close", (code) => {
+      fs.closeSync(logFile);
+      console.log(`[xhs-stats] collect finished with code ${code}`);
+      cachedData = null; cacheTime = 0;
+    });
+    cachedData = null; cacheTime = 0;
+    res.end(JSON.stringify({ ok: true, message: "已触发 XHS 数据刷新" }));
+    return;
+  }
+
+  // GET /api/xhs-stats/export — export published records as Excel
+  if (url.pathname === "/api/xhs-stats/export" && req.method === "GET") {
+    const start = url.searchParams.get("start") || "";
+    const end = url.searchParams.get("end") || "";
+    const xhsStats = getXhsStats();
+    const pq = getPublishQueue();
+    if (xhsStats) pq.published = matchXhsMetrics(pq.published, xhsStats);
+    let items = pq.published || [];
+    if (start || end) {
+      items = items.filter(item => {
+        const dateMatch = (item.name || "").match(/^(\d{4}-\d{2}-\d{2})/);
+        if (!dateMatch) return false;
+        const d = dateMatch[1];
+        if (start && d < start) return false;
+        if (end && d > end) return false;
+        return true;
+      });
+    }
+    try {
+      const wb = new ExcelJS.Workbook();
+      const ws = wb.addWorksheet("发布记录");
+      const columns = [
+        { header: "账号", key: "bot", width: 12 },
+        { header: "状态", key: "status", width: 8 },
+        { header: "发布时间", key: "date", width: 18 },
+        { header: "标题", key: "title", width: 36 },
+        { header: "曝光", key: "impressions", width: 10 },
+        { header: "浏览", key: "views", width: 10 },
+        { header: "封面点击率", key: "click_rate", width: 12 },
+        { header: "点赞", key: "likes", width: 8 },
+        { header: "评论", key: "comments", width: 8 },
+        { header: "收藏", key: "favorites", width: 8 },
+        { header: "涨粉", key: "new_followers", width: 8 },
+        { header: "分享", key: "shares", width: 8 },
+        { header: "人均观看时长", key: "avg_watch_time", width: 14 },
+        { header: "弹幕", key: "danmaku", width: 8 },
+      ];
+      ws.columns = columns;
+      // Style header row
+      ws.getRow(1).font = { bold: true };
+      ws.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF1a1a2e" } };
+      ws.getRow(1).font = { bold: true, color: { argb: "FFFECA57" } };
+      for (const item of items) {
+        const f = item.name || "";
+        const botMatch = f.match(/_(\w+?)_/);
+        const bot = botMatch ? botMatch[1] : "?";
+        const ls = xhsStats ? (xhsStats.bots?.[bot]?.loginStatus) : null;
+        const status = ls ? (ls.creator ? "已登录" : "未登录") : "-";
+        const dateMatch = f.match(/^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2})/);
+        const date = dateMatch ? dateMatch[1].replace("T", " ") : (item.metrics?.publish_time || "");
+        const m = item.metrics || {};
+        ws.addRow({
+          bot, status, date,
+          title: item.title || f,
+          impressions: m.impressions || "-",
+          views: m.views || "-",
+          click_rate: m.click_rate || "-",
+          likes: m.likes || "-",
+          comments: m.comments || "-",
+          favorites: m.favorites || "-",
+          new_followers: m.new_followers || "-",
+          shares: m.shares || "-",
+          avg_watch_time: m.avg_watch_time || "-",
+          danmaku: m.danmaku || "-",
+        });
+      }
+      const dateStr = new Date().toISOString().slice(0, 10);
+      res.writeHead(200, {
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": `attachment; filename=xhs-publish-records-${dateStr}.xlsx`,
+        "Access-Control-Allow-Origin": "*"
+      });
+      wb.xlsx.write(res).then(() => res.end());
+    } catch (e) {
+      res.writeHead(500, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ error: e.message }));
+    }
     return;
   }
 

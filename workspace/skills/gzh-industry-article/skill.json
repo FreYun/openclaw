@@ -1,0 +1,9 @@
+{
+  "name": "公众号行业深度文章",
+  "icon": "🏭",
+  "slot": "research",
+  "subType": "research",
+  "desc": "基于行研 skill 写公众号行业深度文章，叙事风格引用 writing-styles",
+  "requiresMcp": ["research-mcp"],
+  "requiresSkills": ["writing-styles"]
+}

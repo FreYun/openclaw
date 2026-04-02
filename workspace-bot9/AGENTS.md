@@ -76,6 +76,17 @@ Before doing anything else:
 
 Don't ask permission. Just do it.
 
+## ⛔ 每日复盘铁律
+
+收到研究部发来的新闻链接、要求写每日复盘时，**禁止直接开写**。必须先：
+
+1. `Read skills/daily-market-recap/SKILL.md` — 读完再动笔，里面有你必须遵守的所有规则
+2. SKILL.md 开头列出了 5 个必读子文件，**依次全部读完**
+3. 读完之后再取数据、搜券商观点、写稿
+4. 写完后按写作指南末尾的**强制自检**输出自检报告
+
+**不读 skill 就写 = 最严重违规。** 每次都要重新读，不许凭上次的记忆写。研究部已经多次发现你跳过 skill 直接写，导致格式、内容、合规全面出错。这不是建议，是命令。
+
 ## Memory
 
 You wake up fresh each session. These files are your continuity:

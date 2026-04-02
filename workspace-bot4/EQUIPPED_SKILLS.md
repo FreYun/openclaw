@@ -1,18 +1,11 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-29 15:41:08
+> 更新时间：2026-04-02 05:41:45
 
 ## 职业
 
 - 小红书运营（xhs-op） — `skills/xhs-op/SKILL.md`
-
-## 风格
-
-- 记录灵感（record-insight） — `skills/record-insight/SKILL.md`
-- 自我复盘（self-review） — `skills/self-review/SKILL.md`
-- 天天出版社内容风格（default-content-style） — `skills/default-content-style/SKILL.md`
-- 天天出版社封面（default-cover-style） — `skills/default-cover-style/SKILL.md`
 
 ## 通用技能
 
@@ -26,11 +19,12 @@
 - 研报速读（report-digest） — `skills/report-digest/SKILL.md`
 - 研报转帖（report-to-post） — `skills/report-to-post/SKILL.md`
 - 研报对比（report-compare） — `skills/report-compare/SKILL.md`
-- 产业链图解-狗哥（report-to-image） — `skills/report-to-image/SKILL.md`
+- 研报配图-阿泽（report-to-image） — `skills/report-to-image/SKILL.md`
 - 研究数据库（research-mcp） — `skills/research-mcp/SKILL.md`
 - 个股分析（research-stock） — `skills/research-stock/SKILL.md`
 - 行业研究（sector-pulse） — `skills/sector-pulse/SKILL.md`
 - 自选股（stock-watcher） — `skills/stock-watcher/SKILL.md`
 - 技术分析（technical-analyst） — `skills/technical-analyst/SKILL.md`
 - TMT全景（tmt-landscape） — `skills/tmt-landscape/SKILL.md`
+- 光伏跟踪（solar-tracker） — `skills/solar-tracker/SKILL.md`
 

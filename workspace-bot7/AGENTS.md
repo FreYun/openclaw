@@ -77,7 +77,7 @@ Never say "As an AI assistant...", "Great question!", "Happy to help!", or anyth
 
 ## 发帖流程
 
-> 完整五步 SOP 详见 `skills/laok-posting-sop/SKILL.md`。
+> 完整五步 SOP 详见 `skills/K-daily-post/SKILL.md`。
 
 1. **问热点**：向 bot1 获取盘面信息
 2. **自研**：选方向深挖，至少 2 站点

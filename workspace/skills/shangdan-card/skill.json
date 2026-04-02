@@ -1,0 +1,8 @@
+{
+  "name": "商单写作",
+  "icon": "📐",
+  "slot": "utility",
+  "subType": "content",
+  "desc": "商单多图帖：3-4张知识卡片（逻辑讲解+示意图+业绩图+风险提示）+ 配套正文",
+  "requiresMcp": ["image-gen-mcp"]
+}

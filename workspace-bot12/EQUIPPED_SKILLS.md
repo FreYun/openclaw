@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-29 15:41:08
+> 更新时间：2026-04-02 05:41:45
 
 ## 职业
 
@@ -19,6 +19,7 @@
 - 小红书写稿经验（xhs-writing） — `skills/xhs-writing/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
 - 定时发稿（scheduled-post） — `skills/scheduled-post/SKILL.md`
+- 小红书素材巡逻（xhs-topic-collector） — `skills/xhs-topic-collector/SKILL.md`
 
 ## 研究技能
 

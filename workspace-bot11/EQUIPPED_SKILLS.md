@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-29 15:41:08
+> 更新时间：2026-04-02 05:41:45
 
 ## 职业
 
@@ -13,8 +13,7 @@
 
 - 公众号投资报告（mp-content-writer） — `skills/mp-content-writer/SKILL.md`
 - 公众号配图生成（mp-cover-art） — `skills/mp-cover-art/SKILL.md`
-- 基金与指数数据工具（data-tools） — `skills/data-tools/SKILL.md`
-- 市场数据工具箱（market-tools） — `skills/market-tools/SKILL.md`
+- 叙事风格库（writing-styles） — `skills/writing-styles/SKILL.md`
 - 小奶龙封面生成（nailong-cover） — `skills/nailong-cover/SKILL.md`
 - 天天出版社内容风格（default-content-style） — `skills/default-content-style/SKILL.md`
 - 天天出版社封面（default-cover-style） — `skills/default-cover-style/SKILL.md`
@@ -24,6 +23,7 @@
 - 浏览器基础（browser-base） — `skills/browser-base/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
 - 微信读书（weread-reader） — `skills/weread-reader/SKILL.md`
+- 小红书素材巡逻（xhs-topic-collector） — `skills/xhs-topic-collector/SKILL.md`
 
 ## 研究技能
 

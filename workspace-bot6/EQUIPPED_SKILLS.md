@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-03-29 15:41:08
+> 更新时间：2026-04-02 05:41:45
 
 ## 职业
 
@@ -22,6 +22,8 @@
 - 詹姆斯话题库（james-topic-research） — `skills/james-topic-research/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
 - 定时发稿（scheduled-post） — `skills/scheduled-post/SKILL.md`
+- 商单写作（shangdan-card） — `skills/shangdan-card/SKILL.md`
+- 小红书素材巡逻（xhs-topic-collector） — `skills/xhs-topic-collector/SKILL.md`
 
 ## 研究技能
 
@@ -35,4 +37,5 @@
 - 自选股（stock-watcher） — `skills/stock-watcher/SKILL.md`
 - 技术分析（technical-analyst） — `skills/technical-analyst/SKILL.md`
 - TMT全景（tmt-landscape） — `skills/tmt-landscape/SKILL.md`
+- 光伏跟踪（solar-tracker） — `skills/solar-tracker/SKILL.md`
 

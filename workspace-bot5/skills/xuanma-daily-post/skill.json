@@ -3,7 +3,7 @@
   "icon": "🪙",
   "slot": "scheduled",
   "subType": "scheduled",
-  "desc": "内容生产：拉金价 → 选题 → 写稿 → 生图，产出后交 scheduled-post 审批投稿",
-  "requiresMcp": ["image-gen-mcp", "research-mcp"],
+  "desc": "内容生产：拉金价 → 选题 → 写稿 → 生成封面文字，默认走 text_to_image 笔记，产出后交 scheduled-post 审批投稿",
+  "requiresMcp": ["research-mcp"],
   "requiresSkills": ["scheduled-post"]
 }

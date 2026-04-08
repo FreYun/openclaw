@@ -19,8 +19,8 @@ const MCP_HOST = "localhost";
 const PUBLISH_DIR = path.join(__dirname, "..", "workspace-sys1", "publish-queue", "published");
 // Note: workspace-sys1 is the correct path (renamed from workspace-mcp-publisher)
 const STATS_FILE = path.join(__dirname, "xhs-stats.json");
-const BOT_TIMEOUT = 60000; // 60s per bot
-const DELAY_BETWEEN_BOTS = 2000; // 2s
+const BOT_TIMEOUT = 90000; // 90s per bot (翻页后耗时更长)
+const DELAY_BETWEEN_BOTS = 8000; // 8s — 等上一个 bot 的 Chrome 进程完全退出
 
 function log(msg) {
   console.log(`[${new Date().toISOString()}] ${msg}`);
@@ -36,9 +36,9 @@ function getRecentPublishingBots() {
   try {
     const entries = fs.readdirSync(PUBLISH_DIR);
     for (const entry of entries) {
-      // Extract date and bot from filename like 2026-03-27T14-38-31_bot7_bjq77j
+      // Extract date and bot from filename like 2026-03-27T14-38-31_bot7_bjq77j or 2026-04-08T13-11-bot4-半导体设备
       const dateMatch = entry.match(/^(\d{4}-\d{2}-\d{2})T/);
-      const botMatch = entry.match(/_(\w+?)_/);
+      const botMatch = entry.match(/_(\w+?)_/) || entry.match(/-(bot\d+)-/);
       if (dateMatch && botMatch) {
         const date = dateMatch[1];
         if (date >= cutoff) {
@@ -171,13 +171,10 @@ async function main() {
     existing = JSON.parse(fs.readFileSync(STATS_FILE, "utf8"));
   } catch {}
 
-  // Find bots to query: union of queue bots + existing stats bots + cookie bots
+  // Only scan bots that actually published in the last 7 days
   const queueBots = getRecentPublishingBots();
-  const existingBots = Object.keys(existing.bots || {}).filter(b => /^bot\d+$/.test(b));
-  const cookieBots = getCookieBots();
-  const bots = sortBots([...new Set([...queueBots, ...existingBots, ...cookieBots])]);
+  const bots = sortBots(queueBots);
   log(`Queue bots (7d): ${queueBots.join(", ") || "none"}`);
-  log(`All bots to scan: ${bots.join(", ") || "none"}`);
 
   if (bots.length === 0) {
     log("No bots to query. Exiting.");

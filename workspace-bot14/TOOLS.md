@@ -51,7 +51,7 @@ send_message(to: "target_agent", content: "...", trace: [{
 
 ## Image Generation: image-gen-mcp
 
-生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。
 
 ```
 npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'
@@ -75,4 +75,4 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 ## Bot 专属配置
 - account_id: bot14
-- 小红书 MCP 端口: 18074
+- 小红书 MCP: 单进程多租户，所有 bot 共用 `:18060`，URL path 自动识别身份（已配置在 mcporter.json）

@@ -5,6 +5,32 @@ import { getDb } from "../db.js";
 import { syncBotCatalog } from "../services/bot-catalog.js";
 
 const router = Router();
+const OPENCLAW_DIR = "/home/rooot/.openclaw";
+const IMG_EXTS = [".png", ".jpg", ".jpeg", ".webp"];
+const MIME_MAP = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp" };
+const avatarPlaceholder = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+  "base64"
+);
+
+function botWorkspaceDir(botId) {
+  const mapping = { mag1: "workspace-mag1", main: "workspace-mag1", sys1: "workspace-sys1", sys2: "workspace-sys2", sys3: "workspace-sys3" };
+  return mapping[botId] || `workspace-${botId}`;
+}
+
+function resolveAvatarPath(botId) {
+  const wsDir = path.join(OPENCLAW_DIR, botWorkspaceDir(botId));
+  for (const ext of IMG_EXTS) {
+    const candidate = path.join(wsDir, `avatar${ext}`);
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
+function sendAvatarPlaceholder(res) {
+  res.set("Content-Type", "image/png");
+  res.send(avatarPlaceholder);
+}
 
 // GET /api/bots - list available bots
 router.get("/", (req, res) => {
@@ -23,18 +49,28 @@ router.get("/:id", (req, res) => {
 
 // GET /api/bots/:id/avatar - serve avatar image
 router.get("/:id/avatar", (req, res) => {
-  const OPENCLAW_DIR = "/home/rooot/.openclaw";
-  // Try png, jpg, webp
-  for (const ext of ["png", "jpg", "jpeg", "webp"]) {
-    const avatarPath = path.join(OPENCLAW_DIR, `workspace-${req.params.id}`, `avatar.${ext}`);
-    if (fs.existsSync(avatarPath)) {
-      return res.sendFile(avatarPath);
-    }
+  const avatarPath = resolveAvatarPath(req.params.id);
+  if (!avatarPath) {
+    return sendAvatarPlaceholder(res);
   }
-  // Return a 1x1 transparent PNG placeholder instead of error to avoid log spam
-  const placeholder = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==", "base64");
-  res.set("Content-Type", "image/png");
-  res.send(placeholder);
+
+  try {
+    const ext = path.extname(avatarPath).toLowerCase();
+    const stat = fs.statSync(avatarPath);
+    const etag = `"${stat.mtimeMs.toString(36)}-${stat.size.toString(36)}"`;
+    if (req.headers["if-none-match"] === etag) {
+      return res.status(304).end();
+    }
+
+    res.set("Content-Type", MIME_MAP[ext] || "application/octet-stream");
+    res.set("Cache-Control", "max-age=86400");
+    res.set("ETag", etag);
+    return fs.createReadStream(avatarPath)
+      .on("error", () => sendAvatarPlaceholder(res))
+      .pipe(res);
+  } catch {
+    return sendAvatarPlaceholder(res);
+  }
 });
 
 // POST /api/bots/sync - admin: re-sync bot catalog from workspace files

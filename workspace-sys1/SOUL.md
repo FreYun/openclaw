@@ -38,7 +38,7 @@ Report to admin via 魏忠贤 (mag1).
 
 | Level | Actions |
 |-------|---------|
-| Autonomous | Process queue, health checks, auto-restart MCP, compliance review, Feishu alerts, publish logs |
+| Autonomous | Process queue, health checks, compliance review, Feishu alerts, publish logs |
 | Need admin approval | Modify compliance rules, retry rejected posts, modify SOUL/AGENTS.md |
 | **NEVER** | Modify post content, make content decisions, browse/search XHS, comment/like/collect |
 
@@ -47,5 +47,5 @@ Report to admin via 魏忠贤 (mag1).
 - Never leak API keys, ports, Chrome profile paths
 - Never `pkill -f "chrome.*xhs-profiles"` (kills ALL bots' Chrome)
 - Never `pkill -f "xhs-mcp"` blindly
-- Restart MCP: `lsof -ti:18060 | xargs kill` then restart single process
+- **禁止重启 MCP 服务** — 任何 kill/restart 操作都会中断其他 bot 正在执行的发布。遇到 MCP 异常只上报 mag1，由管理员处理
 - Max 1 auto-retry on publish failure, then delete and notify

@@ -96,14 +96,26 @@ OUTPUT_FILE = Path("/home/rooot/.openclaw/workspace-bot9/skills/daily-market-rec
 # 主题显示顺序
 THEME_ORDER = ["科技", "全市场", "新能源", "医药", "消费", "周期", "金融", "制造", "基建地产"]
 
-INDEX_NORMALIZED_HEADERS = [
-    "是否ETF",
-    "推荐基金代码",
-    "推荐基金简称",
-    "推荐基金公司",
-    "推荐基金经理",
-    "推荐份额",
-    "映射状态",
+EQUITY_OUTPUT_HEADERS = [
+    "基金代码",
+    "基金简称",
+    "基金公司",
+    "基金经理",
+    "主题(最新)",
+    "主题(近一年)",
+    "市值(最新)",
+    "风格(最新)",
+    "年限区间",
+    "分数",
+]
+
+INDEX_OUTPUT_HEADERS = [
+    "基金代码",
+    "基金简称",
+    "基金公司",
+    "基金经理",
+    "指数名称",
+    "主题(近一年)",
 ]
 
 
@@ -304,58 +316,106 @@ def flatten_groups(groups_dict):
     return funds
 
 
-def resolve_recommended_fund(fund, code_index):
-    """将 ETF 候选映射到可推荐份额，优先 C 类。"""
-    default = {
-        "是否ETF": "是" if is_etf_fund(fund) else "否",
-        "推荐基金代码": fund.get("基金代码", ""),
-        "推荐基金简称": fund.get("基金简称", ""),
-        "推荐基金公司": fund.get("基金公司", ""),
-        "推荐基金经理": fund.get("基金经理", ""),
-        "推荐份额": infer_share_class(fund.get("基金简称", "")),
-        "映射状态": "原基金",
-    }
+def normalize_base_name(name):
+    """将同一基金的不同份额规整到同一个基名上。"""
+    raw = re.sub(r"\s+", "", (name or "").strip())
+    raw = re.sub(r"(人民币)?[A-Z]类?$", "", raw)
+    raw = re.sub(r"联接[A-Z]$", "联接", raw)
+    return raw
 
+
+def family_key(fund):
+    return "|".join([
+        fund.get("基金公司", "").strip(),
+        normalize_base_name(fund.get("基金简称", "")),
+        fund.get("指数名称", "").strip(),
+    ])
+
+
+def fund_sort_key(fund):
+    share_class = infer_share_class(fund.get("基金简称", ""))
+    score = fund.get("_score", 0) or 0
+    try:
+        score = float(score)
+    except (TypeError, ValueError):
+        score = 0
+
+    return (
+        0 if share_class == "C" else 1,
+        0 if share_class == "A" else 1,
+        -score,
+        fund.get("基金简称", ""),
+    )
+
+
+def pick_preferred_share(funds):
+    ordered = sorted(funds, key=fund_sort_key)
+    return ordered[0] if ordered else None
+
+
+def project_fund(fund, headers, group_key, score=None):
+    row = {h: fund.get(h, "") for h in headers}
+    row["_group"] = group_key
+    row["_score"] = score if score is not None else fund.get("_score", 0)
+    return row
+
+
+def dedupe_group_funds(funds, headers, projector):
+    families = OrderedDict()
+    for fund in funds:
+        families.setdefault(family_key(fund), []).append(fund)
+
+    deduped = []
+    for family_funds in families.values():
+        chosen = pick_preferred_share(family_funds)
+        if not chosen:
+            continue
+        deduped.append(projector(chosen))
+
+    deduped.sort(key=lambda item: fund_sort_key(item))
+    return deduped
+
+
+def resolve_index_target(fund, code_index):
+    """ETF 只作索引，必须映射到同基金公司的可购买份额，否则不替换。"""
     if not is_etf_fund(fund):
-        return default
+        return fund
 
     candidate_codes = extract_candidate_codes(fund.get("可购买代码", ""))
     if not candidate_codes:
-        default["映射状态"] = "ETF无可购买代码"
-        return default
+        return fund
 
+    source_company = fund.get("基金公司", "").strip()
     candidates = []
     for code in candidate_codes:
         candidates.extend(code_index.get(code, []))
 
-    if not candidates:
-        default["推荐基金代码"] = candidate_codes[0]
-        default["映射状态"] = "ETF仅取可购买代码"
-        return default
+    if source_company:
+        candidates = [
+            item for item in candidates
+            if item.get("基金公司", "").strip() == source_company
+        ]
 
-    candidates.sort(
-        key=lambda item: (
-            0 if infer_share_class(item.get("基金简称", "")) == "C" else 1,
-            0 if item.get("基金代码", "") in candidate_codes else 1,
-            item.get("基金简称", ""),
-        )
-    )
-    chosen = candidates[0]
-    share_class = infer_share_class(chosen.get("基金简称", ""))
-
-    return {
-        "是否ETF": "是",
-        "推荐基金代码": chosen.get("基金代码", ""),
-        "推荐基金简称": chosen.get("基金简称", ""),
-        "推荐基金公司": chosen.get("基金公司", ""),
-        "推荐基金经理": chosen.get("基金经理", ""),
-        "推荐份额": share_class or "未知",
-        "映射状态": "ETF映射C类" if share_class == "C" else "ETF映射非C类",
-    }
+    chosen = pick_preferred_share(candidates)
+    return chosen or fund
 
 
-def normalize_index_source(source_results):
-    """为指数基金池补充 ETF 映射后的标准化推荐字段。"""
+def simplify_equity_source(source_results):
+    """权益基金池只保留挑选基金真正需要的字段，并优先保留 C 类。"""
+    for sheet_data in source_results.values():
+        simplified = OrderedDict()
+        for group_key, funds in sheet_data["data"].items():
+            simplified[group_key] = dedupe_group_funds(
+                funds,
+                EQUITY_OUTPUT_HEADERS,
+                projector=lambda chosen, g=group_key: project_fund(chosen, EQUITY_OUTPUT_HEADERS, g),
+            )
+        sheet_data["data"] = simplified
+        sheet_data["headers"] = list(EQUITY_OUTPUT_HEADERS)
+
+
+def simplify_index_source(source_results):
+    """指数基金池直接整理成最终可推荐份额，ETF 尽量映射到可买 C 类。"""
     code_index = {}
     for sheet_data in source_results.values():
         for fund in flatten_groups(sheet_data["data"]):
@@ -365,16 +425,31 @@ def normalize_index_source(source_results):
             code_index.setdefault(code, []).append(fund)
 
     for sheet_data in source_results.values():
-        headers = list(sheet_data["headers"])
-        for extra in INDEX_NORMALIZED_HEADERS:
-            if extra not in headers:
-                headers.append(extra)
+        simplified = OrderedDict()
+        for group_key, funds in sheet_data["data"].items():
+            resolved = []
+            for fund in funds:
+                target = resolve_index_target(fund, code_index)
+                merged = {
+                    "基金代码": target.get("基金代码", "") or fund.get("基金代码", ""),
+                    "基金简称": target.get("基金简称", "") or fund.get("基金简称", ""),
+                    "基金公司": target.get("基金公司", "") or fund.get("基金公司", ""),
+                    "基金经理": target.get("基金经理", "") or fund.get("基金经理", ""),
+                    "指数名称": target.get("指数名称", "") or fund.get("指数名称", ""),
+                    "主题(近一年)": target.get("主题(近一年)", "") or fund.get("主题(近一年)", ""),
+                    "_group": group_key,
+                    "_score": max(target.get("_score", 0) or 0, fund.get("_score", 0) or 0),
+                }
+                resolved.append(merged)
 
-        for fund in flatten_groups(sheet_data["data"]):
-            normalized = resolve_recommended_fund(fund, code_index)
-            fund.update(normalized)
+            simplified[group_key] = dedupe_group_funds(
+                resolved,
+                INDEX_OUTPUT_HEADERS,
+                projector=lambda chosen, g=group_key: project_fund(chosen, INDEX_OUTPUT_HEADERS, g),
+            )
 
-        sheet_data["headers"] = headers
+        sheet_data["data"] = simplified
+        sheet_data["headers"] = list(INDEX_OUTPUT_HEADERS)
 
 
 def generate_markdown(all_data):
@@ -395,7 +470,7 @@ def generate_markdown(all_data):
         f"# 天天基金研究部基金池（{month_str}）",
         "",
         f"> 自动同步时间：{date_str}。数据来源：腾讯文档权益基金池、指数基金池。",
-        "> 每个分组内按「分数」从高到低排序，推荐时优先选排名靠前的。",
+        "> 基金池已按最终可推荐份额整理：有 C 类优先保留 C 类，指数 ETF 尽量映射到可买份额。",
         "",
     ]
 
@@ -440,6 +515,7 @@ def main():
         print(f"\n[来源] 连接 {source_name}...")
         ws_url = find_tab(CDP_PORT, source_cfg["doc_id"])
         cdp = CDPConnection(ws_url)
+        source_results = OrderedDict()
         try:
             for sheet_name, sheet_cfg in source_cfg["sheets"].items():
                 print(f"[{step_idx}/{total_sheets}] 提取 {sheet_name} (tab={sheet_cfg['tab']})...")
@@ -454,10 +530,17 @@ def main():
                 for group, funds in data.items():
                     label = LABEL_MAP.get(group, group)
                     print(f"     - {label}: {len(funds)}只")
-                all_data[sheet_name] = {"data": data, "headers": headers, "cfg": sheet_cfg}
+                source_results[sheet_name] = {"data": data, "headers": headers, "cfg": sheet_cfg}
                 step_idx += 1
         finally:
             cdp.close()
+
+        if source_name == "权益基金池":
+            simplify_equity_source(source_results)
+        elif source_name == "指数基金池":
+            simplify_index_source(source_results)
+
+        all_data.update(source_results)
 
     # 3. 生成并写入
     md = generate_markdown(all_data)

@@ -1,0 +1,70 @@
+{
+  "order": {
+    "id": "d54e9106-f7b9-401a-ab27-a5f763a684d1",
+    "title": "1",
+    "bot_id": "bot1",
+    "status": "pending",
+    "requirements": "nihao",
+    "content_type": "image",
+    "max_revisions": 3,
+    "reference_links": [],
+    "created_at": "2026-04-03 07:57:42",
+    "updated_at": "2026-04-03 07:57:43"
+  },
+  "client": {
+    "id": 6,
+    "username": "1",
+    "display_name": "1",
+    "company": "1",
+    "phone": ""
+  },
+  "generation_request": {
+    "version": 1,
+    "revision_note": ""
+  },
+  "materials": [
+    {
+      "id": 38,
+      "file_name": "银华创新药-来财妹妹.docx (文字内容)",
+      "file_type": "text/plain",
+      "file_size": 2151,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/d54e9106-f7b9-401a-ab27-a5f763a684d1/materials/1775203063157_docx_content.txt",
+      "uploaded_at": "2026-04-03 07:57:43",
+      "text_content": "__标题（17字）：__ 创新药悄悄涨疯了，还没上车？\n\n__正文：__\n\n家人们，今天锂电风太大，很多人没注意到——创新药其实也在闷声发大财 💊\n\n创新药板块今天整体领涨，资金悄咪咪在进场。\n\n说实话，创新药这波行情不是一天两天了，而是三条线同时点火了👇\n\n__1️⃣ 业绩拐点来了__\n\n前天有个港股创新药龙头出了年报，营收增长超38%，第一次实现年度盈利，直接跨过百亿营收大关。Biotech公司从烧钱到赚钱，这个信号太重要了。不止一家，已披露的多家产业链公司业绩和今年指引都超预期。行业拐点不是喊口号，是财报数据体现。\n\n__2️⃣ 政策持续加码__\n\n前几天刚出了长护险的政策文件，创新药企业有望拿到增量支付。而且今年两会头一次把生物医药列为国家新兴支柱产业，后面商保等政策还会继续加码。\n\n__3️⃣ 每年的\"吃药行情\"快到了__\n\n4月中旬有AACR（美国癌症研究协会），5月底有ASCO（临床肿瘤学会），这两个是全球最重要的医药学术大会。每年ASCO之前创新药板块都会有一波行情，今年大概率也不例外。中国创新药BD交易额2025年已经到1388亿美元，出海逻辑越来越硬。\n\n__想参与的话，怎么选？__\n\n我自己比较看好两个方向：\n\n一个是__银华中证创新药__，跟踪A股创新药公司，今天涨幅超过3%，成交额很活跃，流动性没问题。适合看好国内创新药基本面的朋友。\n\n另一个是__银华国证港股通创新药__，跟踪港股创新药标的。港股创新药估值更低，弹性更大，适合能接受波动、想博更高收益的朋友。\n\n两个可以都配一点，A股求稳、港股博弹性，比例看自己的风险承受能力。\n\n__风险提示：__ 医药板块波动较大，单日大涨后注意回调风险。以上仅为个人观点，不构成投资建议。基金有风险，投资需谨慎。\n\n__标签：__\n\n\\#创新药 \\#医药 \\#港股 \\#基金 \\#A股 \\#今日复盘 \\#我的炒股日记 \\#股票 \\#银华基金 \\#生物医药"
+    },
+    {
+      "id": 39,
+      "file_name": "docx_img_1.png",
+      "file_type": "image/png",
+      "file_size": 1042380,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/d54e9106-f7b9-401a-ab27-a5f763a684d1/docx_images/docx_img_1.png",
+      "uploaded_at": "2026-04-03 07:57:43",
+      "text_content": null
+    },
+    {
+      "id": 40,
+      "file_name": "docx_img_2.png",
+      "file_type": "image/png",
+      "file_size": 80977,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/d54e9106-f7b9-401a-ab27-a5f763a684d1/docx_images/docx_img_2.png",
+      "uploaded_at": "2026-04-03 07:57:43",
+      "text_content": null
+    },
+    {
+      "id": 41,
+      "file_name": "docx_img_3.png",
+      "file_type": "image/png",
+      "file_size": 65259,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/d54e9106-f7b9-401a-ab27-a5f763a684d1/docx_images/docx_img_3.png",
+      "uploaded_at": "2026-04-03 07:57:43",
+      "text_content": null
+    }
+  ],
+  "drafts": [],
+  "request_id": "25bfe8dd-53e7-436c-ac63-f1e5a8fe307e",
+  "status": "rejected",
+  "created_at": "2026-04-03T07:58:44.595Z",
+  "updated_at": "2026-04-03T08:00:16.140Z",
+  "reviewer_note": "gun",
+  "reviewed_at": "2026-04-03T08:00:16.139Z"
+}

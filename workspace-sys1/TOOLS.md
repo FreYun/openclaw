@@ -51,7 +51,7 @@ send_message(to: "target_agent", content: "...", trace: [{
 
 ## Image Generation: image-gen-mcp
 
-生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。
 
 ```
 npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'
@@ -96,13 +96,14 @@ npx mcporter call "compliance-mcp.review_content(title: '...', content: '...', t
 curl -s --connect-timeout 5 http://localhost:18060/health
 ```
 
-## MCP Restart
+## MCP Restart — ⛔ 禁止自行执行
 
-```bash
-lsof -ti:18060 | xargs kill 2>/dev/null; sleep 2
-nohup /home/rooot/MCP/xiaohongshu-mcp/xiaohongshu-mcp --headless=true -port=:18060 -profiles-base=/home/rooot/.xhs-profiles > /tmp/xhs-mcp-unified.log 2>&1 &
-sleep 3 && curl -s http://localhost:18060/health
-```
+> **印务局禁止重启 MCP 服务。** kill MCP 会中断所有 bot 正在执行的浏览器操作（发布、登录等），
+> 导致数据不一致和 Chrome profile 损坏。遇到 MCP 异常时：
+> 1. 记录错误日志
+> 2. 上报 mag1（send_message）
+> 3. 等待管理员处理
+> 4. **绝对不要执行 `lsof -ti:18060 | xargs kill` 或任何 kill 命令**
 
 ## Publish Queue
 

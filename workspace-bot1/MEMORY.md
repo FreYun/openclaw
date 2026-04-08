@@ -15,7 +15,7 @@
 ### xiaohongshu-mcp（小红书操作）
 - 搜索笔记、查看详情、发布内容、回复评论
 - **必须通过 mcporter 调用，禁止 curl/浏览器**
-- 端口 18061，account_id: "bot1"
+- 端口 18060，account_id: "bot1"
 - 使用前先读 `skills/xhs-op/mcp-tools.md`
 
 ### financedata-mcp / choice-mcp

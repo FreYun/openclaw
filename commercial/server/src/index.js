@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getDb } from "./db.js";
@@ -9,6 +10,7 @@ import ordersRoutes from "./routes/orders.js";
 import draftsRoutes from "./routes/drafts.js";
 import uploadsRoutes from "./routes/uploads.js";
 import publishRoutes from "./routes/publish.js";
+import researchRoutes from "./routes/research.js";
 import { ensureBotCatalog } from "./services/bot-catalog.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -37,14 +39,18 @@ app.use("/api/orders", ordersRoutes);
 app.use("/api/orders", draftsRoutes);
 app.use("/api/orders", uploadsRoutes);
 app.use("/api/orders", publishRoutes);
+app.use("/api/research", researchRoutes);
 
 // Serve Vue SPA in production
 const clientDist = path.resolve(__dirname, "../../client/dist");
+const clientIndex = path.join(clientDist, "index.html");
 app.use(express.static(clientDist));
 app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(clientDist, "index.html"), (err) => {
-    if (err) res.status(404).json({ error: "前端未构建" });
-  });
+  try {
+    res.type("html").send(fs.readFileSync(clientIndex, "utf8"));
+  } catch {
+    res.status(404).json({ error: "前端未构建" });
+  }
 });
 
 // Init DB and sync bot catalog on startup

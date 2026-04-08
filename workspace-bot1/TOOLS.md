@@ -51,7 +51,7 @@ send_message(to: "target_agent", content: "...", trace: [{
 
 ## Image Generation: image-gen-mcp
 
-生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。
 
 ```
 npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'
@@ -82,13 +82,58 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 ## Bot 专属配置
 
 - **account_id**: `bot1`
-- **小红书 MCP 端口**: 18061（已配置在 mcporter.json，不需要手动指定）
+- **小红书 MCP**: 单进程多租户，所有 bot 共用 `:18060`，URL path 自动识别身份（已配置在 mcporter.json）
 
 ## [临时覆盖] 合规审核暂停
 
 **覆盖 TOOLS_COMMON.md 中的合规审核要求：** bot1 当前无需调用 `compliance-mcp.review_content` 或 `compliance-mcp.review_comment`。发布前由研究部人工确认即可，不需要走 compliance-mcp 审核流程。
 
 > 恢复时删除本节即可。
+
+---
+
+## 投顾组合管理: tougu-portfolio-mcp
+
+投顾产品池查询、持仓管理、巡检调仓记录、收益快照追踪。数据存储在本地 SQLite，所有 bot 共用。
+
+### 产品查询
+
+| 工具 | 功能 | 示例 |
+|------|------|------|
+| `get_product_pool` | 按档位筛选产品池 | `get_product_pool(risk_band=2)` → 第二档产品 |
+| `get_product_detail` | 单产品详情+绩效+主题 | `get_product_detail(product_id="AILVXKB")` |
+| `get_product_performance` | 产品多区间绩效 | `get_product_performance(product_id="AILVXKB")` |
+
+### 持仓管理
+
+| 工具 | 功能 |
+|------|------|
+| `get_bot_holdings` | 获取当前活跃持仓 |
+| `save_bot_holdings` | 更新持仓（关闭旧仓+写入新仓） |
+| `init_bot_holdings` | 首次初始化持仓 |
+
+### 巡检与调仓
+
+| 工具 | 功能 |
+|------|------|
+| `check_cooldown` | 检查冷静期 |
+| `save_review` | 保存巡检结论 (KEEP/REBALANCE/SWITCH) |
+| `save_rebalance_actions` | 保存调仓动作明细 |
+| `get_review_history` | 查询巡检历史 |
+
+### 收益快照
+
+| 工具 | 功能 |
+|------|------|
+| `record_daily_snapshot` | 记录当日收益快照（需传入各产品当日收益率） |
+| `get_performance_curve` | 获取收益曲线 |
+
+### 数据更新
+
+| 工具 | 功能 |
+|------|------|
+| `update_products` | 批量刷新产品池数据 |
+| `update_product_metrics` | 批量刷新产品绩效指标 |
 
 ---
 

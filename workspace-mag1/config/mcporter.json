@@ -1,11 +1,4 @@
 {
-    "mcpServers": {
-        "xiaohongshu-mcp": {
-            "url": "http://localhost:18060/mcp/mag1"
-        },
-        "image-gen-mcp": {
-            "url": "http://localhost:18085/mcp"
-        }
-    },
+    "mcpServers": {},
     "imports": []
 }

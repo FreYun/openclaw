@@ -1,0 +1,7 @@
+{
+  "name": "投顾库刷新",
+  "icon": "🗄️",
+  "slot": "utility",
+  "subType": "duty",
+  "desc": "调用 tougu_tools.py 的四个函数并写入 tougu.db"
+}

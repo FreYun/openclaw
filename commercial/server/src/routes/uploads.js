@@ -62,6 +62,34 @@ function requireOwnedOrder(req, res, next) {
   next();
 }
 
+function sendMaterialFile(res, material, inline = false) {
+  let stat;
+  try {
+    stat = fs.statSync(material.file_path);
+  } catch (err) {
+    if (err?.code === "ENOENT") {
+      return res.status(404).json({ error: "素材文件不存在" });
+    }
+    return res.status(500).json({ error: "素材读取失败" });
+  }
+
+  res.setHeader("Content-Type", material.file_type || "application/octet-stream");
+  res.setHeader("Content-Length", stat.size);
+  if (!inline) {
+    res.attachment(material.file_name);
+  }
+
+  const stream = fs.createReadStream(material.file_path);
+  stream.on("error", () => {
+    if (!res.headersSent) {
+      res.status(500).json({ error: "素材读取失败" });
+    } else {
+      res.destroy();
+    }
+  });
+  stream.pipe(res);
+}
+
 // POST /api/orders/:id/materials - upload materials
 router.post("/:id/materials", requireAuth, requireOwnedOrder, upload.array("files", MAX_FILES), async (req, res) => {
   const db = getDb();
@@ -164,7 +192,11 @@ router.get("/:id/materials/:mid/download", requireAuth, requireOwnedOrder, (req,
   );
   if (!material) return res.status(404).json({ error: "素材不存在" });
 
-  res.download(material.file_path, material.file_name);
+  if (material.file_type.startsWith("image/")) {
+    return sendMaterialFile(res, material, true);
+  }
+
+  return sendMaterialFile(res, material, false);
 });
 
 // Error handling for multer

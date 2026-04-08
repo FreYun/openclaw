@@ -53,6 +53,9 @@ const AGENTS_DIR = "/home/rooot/.openclaw/agents";
 const CRON_DIR = "/home/rooot/.openclaw/cron";
 const OPENCLAW_JSON = "/home/rooot/.openclaw/openclaw.json";
 const OPENCLAW_DIR = "/home/rooot/.openclaw";
+const COMMERCIAL_HOST = "127.0.0.1";
+const COMMERCIAL_PORT = 18900;
+const COMMERCIAL_RESEARCH_TOKEN_FILE = "/home/rooot/.openclaw/commercial/server/.research-approval-token";
 const ARMORY_CONFIG_FILE = path.join(__dirname, "armory-config.json");
 const BOT_EQUIPMENT_FILE = path.join(__dirname, "bot-equipment.json");
 const GEM_REGISTRY_FILE = path.join(__dirname, "gem-registry.json");
@@ -135,7 +138,7 @@ function getAllBots() {
   return [...getEditorialBots(), ...getKnownAgentIds().filter(id => !(/^bot\d+$/.test(id)))];
 }
 
-const FEISHU_ID_SKILL = path.join(OPENCLAW_DIR, "workspace/skills/contact-book/SKILL.md");
+const FEISHU_ID_SKILL = path.join(OPENCLAW_DIR, "workspace/skills/utility/contact-book/SKILL.md");
 
 // Regenerate the Agent section in 通讯小本本 from openclaw.json
 function regenerateContactDirectory() {
@@ -165,7 +168,7 @@ function regenerateContactDirectory() {
 }
 
 // ── Contact Book: parse SKILL.md → { groups, users } with mtime cache ──
-const CONTACT_BOOK_PATH = path.join(OPENCLAW_DIR, "workspace/skills/contact-book/SKILL.md");
+const CONTACT_BOOK_PATH = path.join(OPENCLAW_DIR, "workspace/skills/utility/contact-book/SKILL.md");
 let _contactBookCache = null;
 let _contactBookMtime = 0;
 
@@ -368,6 +371,67 @@ function readPostMeta(filePath) {
   } catch { return { title: "", summary: "", accountId: "" }; }
 }
 
+const HOLD_MINUTES = 5;
+const releasedEntries = new Set();  // tracks pending entries already released to sys1
+
+function readPostFull(filePath) {
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
+    if (!fmMatch) return null;
+    const fm = fmMatch[1];
+    const body = raw.slice(fmMatch[0].length).trim();
+
+    const get = (key) => {
+      const m = fm.match(new RegExp(`^${key}:\\s*"([\\s\\S]*?)"\\s*$`, "m"));
+      if (m) return m[1].replace(/\\"/g, '"');
+      const m2 = fm.match(new RegExp(`^${key}:\\s*(.+)$`, "m"));
+      return m2 ? m2[1].trim() : "";
+    };
+    const getArray = (key) => {
+      const m = fm.match(new RegExp(`^${key}:\\s*\\[(.*)\\]`, "m"));
+      if (!m) return [];
+      return m[1].split(",").map(s => s.trim().replace(/^"|"$/g, "")).filter(Boolean).map(v => {
+        if (key !== "tags") return v;
+        return v.replace(/^#+|#+$/g, "").replace(/\[话题\]$/g, "").trim();
+      }).filter(Boolean);
+    };
+
+    return {
+      account_id: get("account_id"),
+      publish_type: get("publish_type"),
+      content_mode: get("content_mode"),
+      title: get("title"),
+      content: get("content"),
+      text_image: get("text_image"),
+      image_style: get("image_style"),
+      visibility: get("visibility"),
+      images: getArray("images"),
+      tags: getArray("tags"),
+      schedule_at: get("schedule_at"),
+      is_original: get("is_original") === "true",
+      submitted_by: get("submitted_by"),
+      submitted_at: get("submitted_at"),
+      reply_to: get("reply_to"),
+      desc: get("desc"),
+      video: get("video"),
+      body: body
+    };
+  } catch { return null; }
+}
+
+function wakeSys1ForEntry(folderName, postMeta) {
+  const accountId = postMeta?.account_id || (folderName.match(/_(\w+?)_/) || folderName.match(/-(bot\d+)-/) || [])[1] || "unknown";
+  const title = postMeta?.title || folderName;
+  const child = spawn("openclaw", [
+    "agent", "--agent", "sys1",
+    "--session-id", `agent:sys1:agent:${accountId}`,
+    "-m", `📮 发布队列就绪：《${title}》${folderName}，请处理发布队列`
+  ], { stdio: "ignore", detached: true });
+  child.unref();
+  console.log(`[hold-timer] Woke sys1 for ${folderName} (${accountId})`);
+}
+
 const XHS_STATS_FILE = path.join(__dirname, "xhs-stats.json");
 
 function getXhsStats() {
@@ -451,6 +515,29 @@ function getPublishQueue() {
       result[status] = entries.map(f => {
         const fullPath = path.join(dir, f);
         const stat = fs.statSync(fullPath);
+
+        // Pending items: return full metadata for preview + hold countdown
+        if (status === "pending") {
+          let full = null;
+          if (stat.isDirectory()) {
+            const postMd = path.join(fullPath, "post.md");
+            if (fs.existsSync(postMd)) full = readPostFull(postMd);
+          } else if (f.endsWith(".md")) {
+            full = readPostFull(fullPath);
+          }
+          if (!full) full = { title: "", content: "", account_id: "" };
+          // Fallback accountId from filename
+          if (!full.account_id) {
+            const m = f.match(/_(\w+?)_/) || f.match(/-(bot\d+)-/);
+            if (m) full.account_id = m[1];
+          }
+          const submittedMs = full.submitted_at ? new Date(full.submitted_at).getTime() : 0;
+          const holdDeadline = submittedMs ? submittedMs + HOLD_MINUTES * 60000 : 0;
+          const remainingSec = Math.max(0, Math.ceil((holdDeadline - Date.now()) / 1000));
+          return { name: f, ...full, accountId: full.account_id, remainingSec, isHeld: remainingSec > 0 };
+        }
+
+        // Publishing / Published: lightweight metadata only
         let meta = { title: "", summary: "" };
         if (stat.isDirectory()) {
           const postMd = path.join(fullPath, "post.md");
@@ -458,9 +545,8 @@ function getPublishQueue() {
         } else if (f.endsWith(".md")) {
           meta = readPostMeta(fullPath);
         }
-        // Fallback: extract accountId from filename if not in frontmatter
         if (!meta.accountId) {
-          const m = f.match(/_(\w+?)_/);
+          const m = f.match(/_(\w+?)_/) || f.match(/-(bot\d+)-/);
           if (m) meta.accountId = m[1];
         }
         return { name: f, ...meta };
@@ -573,6 +659,21 @@ function getAllSessions() {
   return sessions;
 }
 
+// Chrome process pressure indicator
+function getChromePressure() {
+  try {
+    const total = parseInt(execSync("pgrep -c chrome 2>/dev/null || echo 0", { encoding: "utf8", timeout: 3000 }).trim()) || 0;
+    const rod = parseInt(execSync("pgrep -fa chrome 2>/dev/null | grep -c /tmp/rod/ || echo 0", { encoding: "utf8", timeout: 3000 }).trim()) || 0;
+    const gateway = parseInt(execSync("pgrep -fa chrome 2>/dev/null | grep -c 'openclaw/browser/' || echo 0", { encoding: "utf8", timeout: 3000 }).trim()) || 0;
+    const localhostConns = parseInt(execSync("ss -tn 2>/dev/null | grep -c '127.0.0.1' || echo 0", { encoding: "utf8", timeout: 3000 }).trim()) || 0;
+    const other = Math.max(0, total - rod - gateway);
+    const level = total <= 50 ? "ok" : total <= 70 ? "warn" : "danger";
+    return { total, rod, gateway, other, localhostConns, level };
+  } catch {
+    return { total: -1, rod: 0, gateway: 0, other: 0, localhostConns: 0, level: "unknown" };
+  }
+}
+
 // Gzip helper: compress response if client supports it
 function sendCompressed(req, res, statusCode, headers, body) {
   const accept = req.headers["accept-encoding"] || "";
@@ -588,6 +689,58 @@ function sendCompressed(req, res, statusCode, headers, body) {
     res.writeHead(statusCode, headers);
     res.end(body);
   }
+}
+
+function readJsonBody(req) {
+  return new Promise((resolve) => {
+    let data = "";
+    req.on("data", chunk => data += chunk);
+    req.on("end", () => {
+      try { resolve(JSON.parse(data || "{}")); } catch { resolve({}); }
+    });
+  });
+}
+
+function getCommercialResearchToken() {
+  if (process.env.RESEARCH_APPROVAL_TOKEN) return process.env.RESEARCH_APPROVAL_TOKEN.trim();
+  return fs.readFileSync(COMMERCIAL_RESEARCH_TOKEN_FILE, "utf8").trim();
+}
+
+function requestCommercial(pathname, method = "GET", body = null) {
+  return new Promise((resolve, reject) => {
+    let token;
+    try {
+      token = getCommercialResearchToken();
+    } catch (err) {
+      reject(new Error(`读取研究部审批令牌失败: ${err.message}`));
+      return;
+    }
+
+    const payload = body ? JSON.stringify(body) : "";
+    const req2 = http.request({
+      hostname: COMMERCIAL_HOST,
+      port: COMMERCIAL_PORT,
+      path: pathname,
+      method,
+      headers: {
+        "x-research-token": token,
+        "Content-Type": "application/json",
+        ...(payload ? { "Content-Length": Buffer.byteLength(payload) } : {}),
+      },
+    }, (resp) => {
+      let raw = "";
+      resp.on("data", chunk => raw += chunk);
+      resp.on("end", () => {
+        let parsed;
+        try { parsed = raw ? JSON.parse(raw) : {}; } catch { parsed = { raw }; }
+        resolve({ statusCode: resp.statusCode || 500, data: parsed });
+      });
+    });
+
+    req2.on("error", reject);
+    if (payload) req2.write(payload);
+    req2.end();
+  });
 }
 
 const server = http.createServer(async (req, res) => {
@@ -635,7 +788,8 @@ const server = http.createServer(async (req, res) => {
         xhsStatsUpdatedAt: xhsStats ? xhsStats.updated_at : null,
         xhsLoginStatus: xhsStats ? Object.fromEntries(
           Object.entries(xhsStats.bots || {}).map(([bot, data]) => [bot, data.loginStatus || null])
-        ) : {}
+        ) : {},
+        chromePressure: getChromePressure()
       });
       cacheTime = now;
     }
@@ -1150,6 +1304,9 @@ const server = http.createServer(async (req, res) => {
     catch { return []; }
   }
 
+  // Skill category directories (maps to armory slot types)
+  const SKILL_CATEGORIES = ["helm", "armor", "accessory", "utility", "research", "boots", "scheduled"];
+
   // Scan all skill.json files from disk to build unified registry
   let _skillCache = null;
   function scanAllSkills(force) {
@@ -1159,14 +1316,29 @@ const server = http.createServer(async (req, res) => {
     const skills = {};
     const baseLayer = [];
 
-    // 1. Scan universal skills: workspace/skills/*/skill.json
+    // 1. Scan universal skills: workspace/skills/{category}/*/skill.json
     const universalDir = path.join(OPENCLAW_DIR, "workspace", "skills");
+    for (const cat of SKILL_CATEGORIES) {
+      const catDir = path.join(universalDir, cat);
+      try {
+        for (const name of fs.readdirSync(catDir)) {
+          const jsonPath = path.join(catDir, name, "skill.json");
+          try {
+            const meta = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+            skills[name] = { ...meta, source: "universal", id: name, _category: cat };
+            if (meta.infrastructure) baseLayer.push(name);
+          } catch {}
+        }
+      } catch {}
+    }
+    // Also scan top-level for any uncategorized skills (backward compat)
     try {
       for (const name of fs.readdirSync(universalDir)) {
+        if (SKILL_CATEGORIES.includes(name) || skills[name]) continue;
         const jsonPath = path.join(universalDir, name, "skill.json");
         try {
           const meta = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
-          skills[name] = { ...meta, source: "universal", id: name };
+          skills[name] = { ...meta, source: "universal", id: name, _category: null };
           if (meta.infrastructure) baseLayer.push(name);
         } catch {}
       }
@@ -1197,11 +1369,40 @@ const server = http.createServer(async (req, res) => {
 
   function clearSkillCache() { _skillCache = null; }
 
+  // Resolve universal skill directory path (handles categorized layout)
+  function resolveSkillDir(skillId) {
+    const universalDir = path.join(OPENCLAW_DIR, "workspace", "skills");
+    // Check registry first
+    const registry = scanAllSkills();
+    const skill = registry.skills[skillId];
+    if (skill && skill._category) return path.join(universalDir, skill._category, skillId);
+    // Fallback: scan category dirs
+    for (const cat of SKILL_CATEGORIES) {
+      const dir = path.join(universalDir, cat, skillId);
+      if (fs.existsSync(dir)) return dir;
+    }
+    // Last fallback: top-level (uncategorized)
+    return path.join(universalDir, skillId);
+  }
+
+  // Resolve symlink relative path for bot → skill
+  function resolveSkillSymlink(skillId) {
+    const registry = scanAllSkills();
+    const skill = registry.skills[skillId];
+    if (skill && skill._category) return `../../workspace/skills/${skill._category}/${skillId}`;
+    // Fallback: scan category dirs
+    const universalDir = path.join(OPENCLAW_DIR, "workspace", "skills");
+    for (const cat of SKILL_CATEGORIES) {
+      if (fs.existsSync(path.join(universalDir, cat, skillId))) return `../../workspace/skills/${cat}/${skillId}`;
+    }
+    return `../../workspace/skills/${skillId}`;
+  }
+
 
   // Minimum slots per type (at least 1 each for base structure)
   const MIN_SLOTS = { "helm": 1, "armor": 1, "accessory": 2, "utility": 1, "research": 1, "boots": 1 };
 
-  function makeEmptySlots(scheduledCount = 0, existingSlots = {}) {
+  function makeEmptySlots(scheduledCount = 0, existingSlots = {}, isCoder = false) {
     const slots = {};
     // Count existing slots per type
     const typeCounts = {};
@@ -1210,8 +1411,11 @@ const server = http.createServer(async (req, res) => {
       const num = parseInt(key.split("-").pop());
       typeCounts[type] = Math.max(typeCounts[type] || 0, num);
     }
-    // Create slots: max of MIN_SLOTS and existing count
-    for (const [type, min] of Object.entries(MIN_SLOTS)) {
+    // Coder profession: all expandable slots unlimited (99)
+    const CODER_SLOTS = { "helm": 99, "armor": 99, "accessory": 99, "utility": 99, "research": 99, "boots": 99 };
+    const minSlots = isCoder ? CODER_SLOTS : MIN_SLOTS;
+    // Create slots: max of minSlots and existing count
+    for (const [type, min] of Object.entries(minSlots)) {
       const count = Math.max(min, typeCounts[type] || 0);
       for (let i = 1; i <= count; i++) slots[`${type}-${i}`] = null;
     }
@@ -1340,9 +1544,11 @@ const server = http.createServer(async (req, res) => {
         const onDisk = getBotSkillsOnDisk(botId);
         const equippable = new Set(onDisk.filter(s => !registry.baseLayer.includes(s) && registry.skills[s] && !registry.skills[s].infrastructure && registry.skills[s].slot));
 
-        // Determine scheduled slot count from existing helm
+        // Determine scheduled slot count from existing helm/armor
         const prevHelm = existing.bots?.[botId]?.slots?.["helm-1"];
-        const schedCount = prevHelm === "management" ? 20 : 6;
+        const prevArmor = existing.bots?.[botId]?.slots?.["armor-1"];
+        const isCoder = prevArmor === "coder";
+        const schedCount = (prevHelm === "management" || isCoder) ? 99 : 6;
 
         // Start from existing slots, keep valid ones
         const prev = existing.bots?.[botId]?.slots || {};
@@ -1380,7 +1586,7 @@ const server = http.createServer(async (req, res) => {
         }
 
         // Ensure minimum empty slots exist
-        const finalSlots = makeEmptySlots(schedCount, slots);
+        const finalSlots = makeEmptySlots(schedCount, slots, isCoder);
         for (const [k, v] of Object.entries(slots)) finalSlots[k] = v;
 
         equipment.bots[botId] = { slots: finalSlots };
@@ -1423,11 +1629,12 @@ const server = http.createServer(async (req, res) => {
       // Block: scheduled skills can only go in scheduled slots
       if (skill.slot === "scheduled" && slotType !== "scheduled") throw new Error("定时任务技能只能装备到定时插槽");
       if (slotType === "scheduled" && skill.slot !== "scheduled") throw new Error("定时插槽只能装备定时任务技能");
-      // Permission: research slots require frontline helm
+      // Permission: research slots require frontline helm (unless coder profession)
       if (slotType === "research") {
         const curEquip = readBotEquipment();
         const helmSkill = curEquip.bots?.[botId]?.slots?.["helm-1"];
-        if (helmSkill !== "frontline") throw new Error("研究插槽需要装备「前台」工种才能解锁");
+        const armorSkill = curEquip.bots?.[botId]?.slots?.["armor-1"];
+        if (helmSkill !== "frontline" && armorSkill !== "coder") throw new Error("研究插槽需要装备「前台」工种或「coder」职业才能解锁");
       }
       // Dependency: requiresSkills — check dependent skills exist in bot workspace
       if (skill.requiresSkills && skill.requiresSkills.length > 0) {
@@ -1446,8 +1653,9 @@ const server = http.createServer(async (req, res) => {
       const equipment = readBotEquipment();
       if (!equipment.bots[botId]) equipment.bots[botId] = { slots: {} };
 
-      // Single-slot types: helm, armor, boots can only have 1 skill
-      const singleSlotTypes = new Set(["helm", "armor", "boots"]);
+      // Single-slot types: helm, armor, boots can only have 1 skill (coder unlocks helm & boots)
+      const armorSkill = equipment.bots[botId]?.slots?.["armor-1"];
+      const singleSlotTypes = new Set(armorSkill === "coder" ? [] : ["helm", "armor", "boots"]);
       if (singleSlotTypes.has(slotType)) {
         for (const [s, v] of Object.entries(equipment.bots[botId].slots)) {
           if (v && s.startsWith(slotType + "-") && s !== slot) {
@@ -1486,7 +1694,7 @@ const server = http.createServer(async (req, res) => {
       const targetPath = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills", skillId);
       try { fs.lstatSync(targetPath); } catch {
         if (skill.source === "universal") {
-          fs.symlinkSync(`../../workspace/skills/${skillId}`, targetPath);
+          fs.symlinkSync(resolveSkillSymlink(skillId), targetPath);
         } else if (skill.owner !== botId) {
           const absSource = path.join(OPENCLAW_DIR, botWorkspaceDir(skill.owner), "skills", skillId);
           fs.symlinkSync(absSource, targetPath);
@@ -1494,6 +1702,9 @@ const server = http.createServer(async (req, res) => {
       }
 
       equipment.bots[botId].slots[slot] = skillId;
+      // DEBUG: check if coder survived
+      const debugArmors = Object.entries(equipment.bots[botId].slots).filter(([k,v]) => k.startsWith("armor-") && v);
+      console.log(`[DEBUG equip] armor slots before write:`, JSON.stringify(debugArmors));
       writeBotEquipment(equipment);
       clearSkillCache();
       generateSkillsManifest(botId);
@@ -1595,8 +1806,8 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     try {
-      // Try universal skill first, then bot-specific
-      let filePath = path.join(OPENCLAW_DIR, "workspace", "skills", skillId, file);
+      // Try universal skill first (categorized), then bot-specific
+      let filePath = path.join(resolveSkillDir(skillId), file);
       if (!fs.existsSync(filePath)) {
         for (const botId of getAllBots()) {
           const alt = path.join(OPENCLAW_DIR, botWorkspaceDir(botId), "skills", skillId, file);
@@ -1979,6 +2190,14 @@ const server = http.createServer(async (req, res) => {
       }
       if (!mcporter.imports) mcporter.imports = [];
       writeMcporter(botId, mcporter);
+      // xiaohongshu-mcp 需要独立的 Chrome profile 目录，避免和 openclaw browser 冲突
+      if (gemId === "xiaohongshu-mcp") {
+        const profileDir = path.join(XHS_PROFILES_DIR, botId);
+        if (!fs.existsSync(profileDir)) {
+          fs.mkdirSync(profileDir, { recursive: true });
+          console.log(`📁 Auto-created xhs-profiles dir: ${profileDir}`);
+        }
+      }
       res.end(JSON.stringify({ status: "ok", botId, gemId }));
     } catch (e) {
       res.end(JSON.stringify({ status: "error", error: e.message }));
@@ -2215,7 +2434,7 @@ const server = http.createServer(async (req, res) => {
           const skillsDir = path.join(OPENCLAW_DIR, botWorkspaceDir(agentId), "skills");
           try { fs.mkdirSync(skillsDir, { recursive: true }); } catch {}
           if (skill.source === "universal") {
-            fs.symlinkSync(`../../workspace/skills/${skillId}`, skillTarget);
+            fs.symlinkSync(resolveSkillSymlink(skillId), skillTarget);
           } else if (skill.owner !== agentId) {
             const absSource = path.join(OPENCLAW_DIR, botWorkspaceDir(skill.owner), "skills", skillId);
             fs.symlinkSync(absSource, skillTarget);
@@ -2394,13 +2613,12 @@ const server = http.createServer(async (req, res) => {
       }, null, 4));
 
       // Symlink universal skills
-      const universalSkillsDir = path.join(OPENCLAW_DIR, "workspace", "skills");
       const defaultSkills = ["frontline", "xhs-op", "browser-base", "report-incident", "research-mcp"];
       for (const skill of defaultSkills) {
-        const target = path.join(universalSkillsDir, skill);
+        const skillDir = resolveSkillDir(skill);
         const link = path.join(wsDir, "skills", skill);
-        if (fs.existsSync(target) && !fs.existsSync(link)) {
-          fs.symlinkSync(`../../workspace/skills/${skill}`, link);
+        if (fs.existsSync(skillDir) && !fs.existsSync(link)) {
+          fs.symlinkSync(resolveSkillSymlink(skill), link);
         }
       }
 
@@ -2634,6 +2852,63 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (url.pathname === "/portfolio") {
+    const html = fs.readFileSync(path.join(__dirname, "portfolio.html"), "utf8");
+    sendCompressed(req, res, 200, { "Content-Type": "text/html; charset=utf-8" }, html);
+    return;
+  }
+
+  if (url.pathname === "/api/portfolio/summary" && req.method === "GET") {
+    try {
+      const py = `
+import sqlite3, json
+conn = sqlite3.connect('/home/rooot/.openclaw/data/tougu.db')
+conn.row_factory = sqlite3.Row
+accounts = conn.execute('SELECT * FROM bot_accounts').fetchall()
+result = []
+for a in accounts:
+    bot_id = a['bot_id']
+    holdings = conn.execute(
+        "SELECT h.product_id, h.amount_invested, h.market_value, h.weight, h.role, "
+        "h.unrealized_pnl, h.unrealized_pnl_pct, h.latest_nav, h.entry_nav, "
+        "i.strategy_name "
+        "FROM bot_holdings h LEFT JOIN tougu_info i ON h.product_id = i.strategy_id "
+        "WHERE h.bot_id = ? AND h.status = 'active' ORDER BY h.market_value DESC",
+        (bot_id,)
+    ).fetchall()
+    snap = conn.execute(
+        "SELECT * FROM bot_daily_snapshots WHERE bot_id = ? ORDER BY trade_date DESC LIMIT 1",
+        (bot_id,)
+    ).fetchone()
+    result.append({
+        'bot_id': bot_id,
+        'initial_capital': a['initial_capital'],
+        'cash': a['cash'],
+        'total_value': snap['total_value'] if snap else a['initial_capital'],
+        'net_value': snap['net_value'] if snap else 1.0,
+        'cumulative_return_pct': snap['cumulative_return_pct'] if snap else 0,
+        'daily_return_pct': snap['daily_return_pct'] if snap else 0,
+        'max_drawdown': snap['max_drawdown'] if snap else 0,
+        'trade_date': snap['trade_date'] if snap else None,
+        'holdings': [{'product_id': h['product_id'], 'product_name': h['strategy_name'] or h['product_id'],
+                       'amount': h['amount_invested'], 'market_value': h['market_value'],
+                       'weight': h['weight'], 'role': h['role'],
+                       'pnl': h['unrealized_pnl'], 'pnl_pct': h['unrealized_pnl_pct']}
+                      for h in holdings]
+    })
+conn.close()
+print(json.dumps(result, ensure_ascii=False))
+`;
+      const out = execSync(`python3 -c ${JSON.stringify(py)}`, { timeout: 5000, encoding: "utf8" });
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(out.trim());
+    } catch (e) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
   // --- Avatar API ---
   const IMG_EXTS = [".png", ".jpg", ".jpeg", ".webp"];
   const MIME_MAP = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp" };
@@ -2755,7 +3030,7 @@ const server = http.createServer(async (req, res) => {
         const hasExclude = fs.existsSync(path.join(dir, ".exclude"));
         const skillMd = path.join(dir, "SKILL.md");
         const sizeKB = fs.existsSync(skillMd) ? Math.round(fs.statSync(skillMd).size / 1024 * 10) / 10 : 0;
-        const liveMd = path.join(LIVE_SKILLS_DIR, name, "SKILL.md");
+        const liveMd = path.join(resolveSkillDir(name), "SKILL.md");
         const liveSizeKB = fs.existsSync(liveMd) ? Math.round(fs.statSync(liveMd).size / 1024 * 10) / 10 : 0;
         const directionFile = path.join(dir, ".direction");
         const direction = fs.existsSync(directionFile) ? fs.readFileSync(directionFile, "utf-8").trim() : "";
@@ -2789,13 +3064,14 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
     // Read both sandbox and live versions
     const sandboxMd = path.join(SKILLS_SANDBOX, name, "SKILL.md");
-    const liveMd = path.join(LIVE_SKILLS_DIR, name, "SKILL.md");
+    const liveSkillDir = resolveSkillDir(name);
+    const liveMd = path.join(liveSkillDir, "SKILL.md");
     try {
       const sandbox = fs.existsSync(sandboxMd) ? fs.readFileSync(sandboxMd, "utf-8") : "";
       const live = fs.existsSync(liveMd) ? fs.readFileSync(liveMd, "utf-8") : "";
       // List all files in the skill directory
       const sandboxDir = path.join(SKILLS_SANDBOX, name);
-      const liveDir = path.join(LIVE_SKILLS_DIR, name);
+      const liveDir = liveSkillDir;
       const sandboxFiles = fs.existsSync(sandboxDir) ? fs.readdirSync(sandboxDir).filter(f => !f.startsWith(".")) : [];
       const liveFiles = fs.existsSync(liveDir) ? fs.readdirSync(liveDir).filter(f => !f.startsWith(".")) : [];
       res.end(JSON.stringify({ name, sandbox, live, sandboxFiles, liveFiles }));
@@ -2813,9 +3089,11 @@ const server = http.createServer(async (req, res) => {
     child.on("close", (code) => {
       fs.closeSync(logFile);
       console.log(`[xhs-stats] collect finished with code ${code}`);
+      // Only invalidate cache AFTER collection finishes, so the next request
+      // rebuilds with fresh data. Don't clear before — that forces an immediate
+      // rebuild while redis is still busy with the collector, causing execSync hangs.
       cachedData = null; cacheTime = 0;
     });
-    cachedData = null; cacheTime = 0;
     res.end(JSON.stringify({ ok: true, message: "已触发 XHS 数据刷新" }));
     return;
   }
@@ -2864,7 +3142,7 @@ const server = http.createServer(async (req, res) => {
       ws.getRow(1).font = { bold: true, color: { argb: "FFFECA57" } };
       for (const item of items) {
         const f = item.name || "";
-        const botMatch = f.match(/_(\w+?)_/);
+        const botMatch = f.match(/_(\w+?)_/) || f.match(/-(bot\d+)-/);
         const bot = botMatch ? botMatch[1] : "?";
         const ls = xhsStats ? (xhsStats.bots?.[bot]?.loginStatus) : null;
         const status = ls ? (ls.creator ? "已登录" : "未登录") : "-";
@@ -2900,14 +3178,54 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // POST /api/skill-evolution/trigger — trigger sys2 to run evolution
+  // POST /api/skill-evolution/trigger — trigger sys2 to run evolution in a fresh session
   if (url.pathname === "/api/skill-evolution/trigger" && req.method === "POST") {
-    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
-    // Fire and forget — run sys2 agent with evolution prompt
-    runAgent(["agent", "--agent=sys2", "-m", "跑一遍技能进化"], 600000)
-      .then(r => console.log("[skill-evo] trigger done:", r.error || "ok"))
-      .catch(e => console.error("[skill-evo] trigger error:", e));
-    res.end(JSON.stringify({ ok: true, message: "已触发 sys2 进化任务" }));
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", async () => {
+      let skills = [];
+      try { skills = JSON.parse(body).skills || []; } catch {}
+
+      // Only remove lock files (not session files) — avoids destroying active sessions
+      const sys2Sessions = path.join(AGENTS_DIR, "sys2", "sessions");
+      try {
+        const files = await fs.promises.readdir(sys2Sessions);
+        await Promise.all(files.filter(f => f.endsWith(".lock")).map(f =>
+          fs.promises.unlink(path.join(sys2Sessions, f)).catch(() => {})
+        ));
+      } catch {}
+
+      // If specific skills selected, pause other .direction files (async)
+      const SKILLS_SANDBOX = path.join(OPENCLAW_DIR, "skills-sandbox");
+      const pausedDirs = [];
+      if (skills.length) {
+        try {
+          const dirs = await fs.promises.readdir(SKILLS_SANDBOX);
+          for (const name of dirs) {
+            if (skills.includes(name)) continue;
+            const dirFile = path.join(SKILLS_SANDBOX, name, ".direction");
+            try {
+              await fs.promises.access(dirFile);
+              await fs.promises.rename(dirFile, dirFile + ".paused");
+              pausedDirs.push(dirFile);
+            } catch {}
+          }
+        } catch (e) { console.error("[skill-evo] pause error:", e.message); }
+      }
+
+      const prompt = "跑一遍技能进化";
+      runAgent(["agent", "--agent=sys2", "-m", prompt], 600000)
+        .then(r => console.log("[skill-evo] trigger done:", r.error || "ok"))
+        .catch(e => console.error("[skill-evo] trigger error:", e))
+        .finally(async () => {
+          for (const f of pausedDirs) {
+            try { await fs.promises.rename(f + ".paused", f); } catch {}
+          }
+        });
+
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ ok: true, message: `已触发 sys2 进化任务${skills.length ? '（' + skills.join('、') + '）' : ''}` }));
+    });
     return;
   }
 
@@ -2957,7 +3275,7 @@ const server = http.createServer(async (req, res) => {
       if (fs.existsSync(p)) fs.unlinkSync(p);
     }
     // Restore .md files from live
-    const liveDir = path.join(LIVE_SKILLS_DIR, name);
+    const liveDir = resolveSkillDir(name);
     if (fs.existsSync(liveDir)) {
       for (const f of fs.readdirSync(liveDir)) {
         if (f.endsWith(".md")) {
@@ -2999,7 +3317,7 @@ const server = http.createServer(async (req, res) => {
             const hasDiff = fs.existsSync(diffPath);
             const hasSkill = fs.existsSync(skillPath);
             if (!hasDiff && !hasSkill) continue;
-            const liveSkillPath = path.join(OPENCLAW_DIR, "workspace/skills", name, "SKILL.md");
+            const liveSkillPath = path.join(resolveSkillDir(name), "SKILL.md");
             const beforeKB = fs.existsSync(liveSkillPath) ? (fs.statSync(liveSkillPath).size / 1024).toFixed(1) : "?";
             const afterKB = hasSkill ? (fs.statSync(skillPath).size / 1024).toFixed(1) : "?";
             const diff = hasDiff ? fs.readFileSync(diffPath, "utf-8") : "";
@@ -3052,13 +3370,23 @@ const server = http.createServer(async (req, res) => {
         if (password !== ADMIN_PASSWORD) { res.end(JSON.stringify({ error: "wrong password" })); return; }
         if (!fs.existsSync(dir)) { res.end(JSON.stringify({ error: "not found" })); return; }
 
-        const liveDir = path.join(LIVE_SKILLS_DIR, name);
+        let liveDir = resolveSkillDir(name);
 
         // Backup current live version before overwriting
         if (fs.existsSync(liveDir)) {
           const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-          const backupDir = path.join(LIVE_SKILLS_DIR, `${name}.backup-${ts}`);
+          const backupDir = path.join(LIVE_SKILLS_DIR, "_backups", `${name}.backup-${ts}`);
+          fs.mkdirSync(path.join(LIVE_SKILLS_DIR, "_backups"), { recursive: true });
           fs.cpSync(liveDir, backupDir, { recursive: true });
+        } else {
+          // New skill: determine category from sandbox skill.json slot field
+          const sandboxJson = path.join(SKILLS_SANDBOX, name, "skill.json");
+          let cat = "utility";
+          try {
+            const meta = JSON.parse(fs.readFileSync(sandboxJson, "utf8"));
+            if (SKILL_CATEGORIES.includes(meta.slot)) cat = meta.slot;
+          } catch {}
+          liveDir = path.join(LIVE_SKILLS_DIR, cat, name);
         }
 
         // Copy .md files to live
@@ -3109,7 +3437,7 @@ const server = http.createServer(async (req, res) => {
           if (fs.existsSync(p)) fs.unlinkSync(p);
         }
         // Overwrite sandbox .md files with live version
-        const liveDir = path.join(LIVE_SKILLS_DIR, name);
+        const liveDir = resolveSkillDir(name);
         if (fs.existsSync(liveDir) && fs.existsSync(sandboxDir)) {
           for (const f of fs.readdirSync(liveDir)) {
             if (f.endsWith(".md")) {
@@ -3132,11 +3460,242 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // === Publish Queue Hold/Review Endpoints ===
+
+  // POST /api/queue/publish-now — skip hold, wake sys1 immediately
+  if (url.pathname === "/api/queue/publish-now" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      try {
+        const { name } = JSON.parse(body || "{}");
+        const dir = path.join(PUBLISH_QUEUE, "pending", name);
+        if (!fs.existsSync(dir)) { res.end(JSON.stringify({ error: "not found in pending queue" })); return; }
+        const postMd = path.join(dir, "post.md");
+        const meta = fs.existsSync(postMd) ? readPostFull(postMd) : null;
+        releasedEntries.add(name);
+        wakeSys1ForEntry(name, meta);
+        cachedData = null; cacheTime = 0;
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+
+  // POST /api/queue/reject — reject post, move to rejected/
+  if (url.pathname === "/api/queue/reject" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      try {
+        const { name, reason } = JSON.parse(body || "{}");
+        const src = path.join(PUBLISH_QUEUE, "pending", name);
+        if (!fs.existsSync(src)) { res.end(JSON.stringify({ error: "not found in pending queue (may already be publishing)" })); return; }
+        const dst = path.join(PUBLISH_QUEUE, "rejected", name);
+        fs.renameSync(src, dst);
+        // Append rejection info to post.md
+        const postMd = path.join(dst, "post.md");
+        if (fs.existsSync(postMd)) {
+          const content = fs.readFileSync(postMd, "utf8");
+          const extra = `\n\n<!-- REJECTED at ${new Date().toISOString()} | reason: ${reason || "无"} -->`;
+          fs.writeFileSync(postMd, content + extra);
+        }
+        releasedEntries.delete(name);
+        cachedData = null; cacheTime = 0;
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+
+  // POST /api/queue/edit — edit pending post content
+  if (url.pathname === "/api/queue/edit" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      try {
+        const { name, title, content, text_image, desc, tags, visibility } = JSON.parse(body || "{}");
+        const dir = path.join(PUBLISH_QUEUE, "pending", name);
+        if (!fs.existsSync(dir)) { res.end(JSON.stringify({ error: "not found in pending queue" })); return; }
+        const postMd = path.join(dir, "post.md");
+        if (!fs.existsSync(postMd)) { res.end(JSON.stringify({ error: "post.md not found" })); return; }
+        let raw = fs.readFileSync(postMd, "utf8");
+        const meta = readPostFull(postMd) || {};
+        const esc = s => (s || "").replace(/"/g, '\\"');
+        const updated = [];
+        if (title !== undefined) {
+          raw = raw.replace(/^title:\s*".*?"$/m, `title: "${esc(title)}"`);
+          updated.push("title");
+        }
+        if (content !== undefined) {
+          raw = raw.replace(/^content:\s*"[\s\S]*?"$/m, `content: "${esc(content)}"`);
+          if ((meta.content_mode || meta.publish_type) !== "text_to_image") {
+            raw = raw.replace(/(^---\n[\s\S]*?\n---\n)[\s\S]*$/, `$1\n${content}\n`);
+          }
+          updated.push("content");
+        }
+        if (text_image !== undefined) {
+          // Update frontmatter text_image (multiline quoted value)
+          raw = raw.replace(/^text_image:\s*"[\s\S]*?"$/m, `text_image: "${esc(text_image)}"`);
+          // Also update the body (everything after the closing ---)
+          raw = raw.replace(/(^---\n(?:[\s\S]*?\n)?---\n)[\s\S]*$/, `$1\n${text_image}\n`);
+          updated.push("text_image");
+        }
+        if (desc !== undefined) {
+          raw = raw.replace(/^desc:\s*".*?"$/m, `desc: "${esc(desc)}"`);
+          updated.push("desc");
+        }
+        if (tags !== undefined) {
+          const normalizedTags = tags
+            .map(t => String(t || "").trim())
+            .map(t => t.replace(/^#+|#+$/g, "").replace(/\[话题\]$/g, "").trim())
+            .filter(Boolean);
+          const tagsYaml = "[" + normalizedTags.map(t => `"${esc(t)}"`).join(", ") + "]";
+          raw = raw.replace(/^tags:\s*\[.*?\]$/m, `tags: ${tagsYaml}`);
+          updated.push("tags");
+        }
+        if (visibility !== undefined) {
+          raw = raw.replace(/^visibility:\s*".*?"$/m, `visibility: "${visibility}"`);
+          updated.push("visibility");
+        }
+        fs.writeFileSync(postMd, raw);
+        cachedData = null; cacheTime = 0;
+        res.end(JSON.stringify({ ok: true, updated }));
+      } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+
+  // GET /api/queue/image — serve images from pending queue folders
+  if (url.pathname === "/api/queue/image" && req.method === "GET") {
+    const status = url.searchParams.get("status") || "pending";
+    const name = url.searchParams.get("name") || "";
+    const file = url.searchParams.get("file") || "";
+    if (!["pending", "publishing"].includes(status) || !name || !file) {
+      res.writeHead(400); res.end("Bad request"); return;
+    }
+    const imgPath = path.join(PUBLISH_QUEUE, status, name, file);
+    try {
+      const real = fs.realpathSync(imgPath);
+      if (!real.startsWith(fs.realpathSync(PUBLISH_QUEUE))) {
+        res.writeHead(403); res.end("Forbidden"); return;
+      }
+      if (!fs.existsSync(imgPath)) { res.writeHead(404); res.end("Not found"); return; }
+      const ext = path.extname(file).toLowerCase();
+      const types = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".mp4": "video/mp4" };
+      res.writeHead(200, { "Content-Type": types[ext] || "application/octet-stream", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
+      fs.createReadStream(imgPath).pipe(res);
+    } catch { res.writeHead(404); res.end("Not found"); }
+    return;
+  }
+
+  if (url.pathname === "/api/commercial/draft-requests" && req.method === "GET") {
+    try {
+      const status = url.searchParams.get("status") || "pending_review";
+      const result = await requestCommercial(`/api/research/draft-requests?status=${encodeURIComponent(status)}`);
+      res.writeHead(result.statusCode, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(result.data));
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  const commercialApproveMatch = url.pathname.match(/^\/api\/commercial\/draft-requests\/([^/]+)\/approve$/);
+  if (commercialApproveMatch && req.method === "POST") {
+    try {
+      const body = await readJsonBody(req);
+      const result = await requestCommercial(
+        `/api/research/draft-requests/${encodeURIComponent(commercialApproveMatch[1])}/approve`,
+        "POST",
+        body
+      );
+      res.writeHead(result.statusCode, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(result.data));
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  const commercialRejectMatch = url.pathname.match(/^\/api\/commercial\/draft-requests\/([^/]+)\/reject$/);
+  if (commercialRejectMatch && req.method === "POST") {
+    try {
+      const body = await readJsonBody(req);
+      const result = await requestCommercial(
+        `/api/research/draft-requests/${encodeURIComponent(commercialRejectMatch[1])}/reject`,
+        "POST",
+        body
+      );
+      res.writeHead(result.statusCode, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(result.data));
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
   res.writeHead(404);
   res.end("Not Found");
 });
 
+// === Hold Timer: auto-wake sys1 after HOLD_MINUTES ===
+setInterval(() => {
+  try {
+    const pendingDir = path.join(PUBLISH_QUEUE, "pending");
+    if (!fs.existsSync(pendingDir)) return;
+    const entries = fs.readdirSync(pendingDir).filter(f => !f.startsWith("."));
+    const now = Date.now();
+
+    for (const entry of entries) {
+      if (releasedEntries.has(entry)) continue;
+      const fullPath = path.join(pendingDir, entry);
+      if (!fs.statSync(fullPath).isDirectory()) continue;
+      const postMd = path.join(fullPath, "post.md");
+      if (!fs.existsSync(postMd)) continue;
+
+      const meta = readPostFull(postMd);
+      const submittedMs = meta?.submitted_at ? new Date(meta.submitted_at).getTime() : 0;
+      const holdDeadline = submittedMs ? submittedMs + HOLD_MINUTES * 60000 : 0;
+
+      // No submitted_at (legacy) or hold expired → release
+      if (!submittedMs || holdDeadline <= now) {
+        releasedEntries.add(entry);
+        wakeSys1ForEntry(entry, meta);
+      }
+    }
+
+    // Clean up entries that are no longer in pending (moved by sys1 or rejected)
+    for (const name of releasedEntries) {
+      if (!fs.existsSync(path.join(pendingDir, name))) {
+        releasedEntries.delete(name);
+      }
+    }
+  } catch (err) {
+    console.error("[hold-timer] error:", err.message);
+  }
+}, 30000);
+
 server.listen(PORT, () => {
   console.log(`📮 Agent Message Dashboard: http://localhost:${PORT}`);
   buildAvatarCache().catch(err => console.error("Avatar cache build failed:", err.message));
+  // 启动时检查：所有装备了 xiaohongshu-mcp 的 bot 必须有独立的 xhs-profiles 目录
+  for (const botId of getAllBots()) {
+    try {
+      const mcporter = readMcporter(botId);
+      if (mcporter.mcpServers?.["xiaohongshu-mcp"]) {
+        const profileDir = path.join(XHS_PROFILES_DIR, botId);
+        if (!fs.existsSync(profileDir)) {
+          fs.mkdirSync(profileDir, { recursive: true });
+          console.log(`📁 Auto-created missing xhs-profiles dir: ${profileDir}`);
+        }
+      }
+    } catch {}
+  }
 });

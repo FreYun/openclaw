@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-02 05:41:45
+> 更新时间：2026-04-07 07:03:55
 
 ## 职业
 
@@ -9,19 +9,19 @@
 
 ## 风格
 
-- 运营每日盘面复盘（daily-market-recap） — `skills/daily-market-recap/SKILL.md`
 - 公众号配图生成（mp-cover-art） — `skills/mp-cover-art/SKILL.md`
-- 叙事风格库（writing-styles） — `skills/writing-styles/SKILL.md`
 - 天天出版社内容风格（default-content-style） — `skills/default-content-style/SKILL.md`
 - 天天出版社封面（default-cover-style） — `skills/default-cover-style/SKILL.md`
 - 公众号投资报告（mp-content-writer） — `skills/mp-content-writer/SKILL.md`
-- 热点板块追踪（hotspot-sector-analysis） — `skills/hotspot-sector-analysis/SKILL.md`
+- 叙事风格库（writing-styles） — `skills/writing-styles/SKILL.md`
 
 ## 通用技能
 
 - 浏览器基础（browser-base） — `skills/browser-base/SKILL.md`
 - 异常上报（report-incident） — `skills/report-incident/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
+- 热点板块追踪（hotspot-sector-analysis） — `skills/hotspot-sector-analysis/SKILL.md`
+- 运营每日盘面复盘（daily-market-recap） — `skills/daily-market-recap/SKILL.md`
 
 ## 研究技能
 

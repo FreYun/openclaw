@@ -74,12 +74,20 @@ router.get("/:id", requireAuth, (req, res) => {
 
   const materials = db.prepare("SELECT * FROM order_materials WHERE order_id = ?").all(order.id);
   const drafts = db.prepare("SELECT * FROM drafts WHERE order_id = ? ORDER BY version DESC").all(order.id);
+  const latestGenerationRequest = db.prepare(`
+    SELECT *
+    FROM draft_generation_requests
+    WHERE order_id = ?
+    ORDER BY created_at DESC
+    LIMIT 1
+  `).get(order.id);
 
   res.json({
     ...order,
     reference_links: JSON.parse(order.reference_links),
     materials,
     drafts: drafts.map((d) => ({ ...d, tags: JSON.parse(d.tags) })),
+    latest_generation_request: latestGenerationRequest || null,
   });
 });
 
@@ -89,7 +97,7 @@ router.post("/:id/cancel", requireAuth, (req, res) => {
   const order = db.prepare("SELECT * FROM orders WHERE id = ? AND client_id = ?").get(req.params.id, req.clientId);
   if (!order) return res.status(404).json({ error: "订单不存在" });
 
-  const cancellable = ["pending", "draft_ready", "revision_requested", "approved"];
+  const cancellable = ["pending", "awaiting_review", "draft_ready", "revision_requested", "approved"];
   if (!cancellable.includes(order.status)) {
     return res.status(400).json({ error: `当前状态 (${order.status}) 不可取消` });
   }

@@ -1,0 +1,9 @@
+{
+  "name": "action-tracker-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "韭研公社异动数据采集脚本",
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}

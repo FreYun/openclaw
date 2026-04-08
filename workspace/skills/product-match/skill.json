@@ -1,7 +1,0 @@
-{
-  "name": "投顾产品选品",
-  "icon": "🎯",
-  "slot": "research",
-  "subType": "research",
-  "desc": "基于 bot 自身 memory 与统一候选池，为任意 bot 匹配适合它自己的投顾产品组合"
-}

@@ -1,0 +1,15 @@
+{
+  "name": "技能进化师",
+  "icon": "🧬",
+  "slot": "armor",
+  "desc": "OpenSpace 驱动的 skill 沙盒进化、审批合并、日报播报",
+  "requiresMcp": ["openspace"],
+  "subSkills": [
+    {
+      "name": "合并指引",
+      "icon": "📋",
+      "file": "merge-guide.md",
+      "desc": "审批合并沙盒版 skill 到线上的流程"
+    }
+  ]
+}

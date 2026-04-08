@@ -51,7 +51,7 @@ send_message(to: "target_agent", content: "...", trace: [{
 
 ## Image Generation: image-gen-mcp
 
-生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。
 
 ```
 npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'
@@ -82,29 +82,31 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 ## Bot 专属配置
 
 - **account_id：** bot10
-- **小红书 MCP 端口：** 18070
 - **MCP 服务名：** xiaohongshu-mcp
+- **MCP 架构：** 单进程多租户，所有 bot 共用 `:18060`，URL path 自动识别身份（mcporter.json 配置）
 
 ## 调用示例
 
+**所有工具都不传 `account_id`**，身份由 mcporter URL path 自动识别：
+
 ```bash
 # 检查登录状态
-npx mcporter call "xiaohongshu-mcp.check_login_status(account_id: 'bot10')"
+npx mcporter call "xiaohongshu-mcp.check_login_status()"
 
 # 搜索
-npx mcporter call "xiaohongshu-mcp.search_feeds(account_id: 'bot10', keyword: '测试关键词')"
+npx mcporter call "xiaohongshu-mcp.search_feeds(keyword: '测试关键词')"
 
 # 获取笔记详情
-npx mcporter call "xiaohongshu-mcp.get_feed_detail(account_id: 'bot10', feed_id: 'xxx', xsec_token: 'xxx')"
+npx mcporter call "xiaohongshu-mcp.get_feed_detail(feed_id: 'xxx', xsec_token: 'xxx')"
 
 # 获取用户主页
-npx mcporter call "xiaohongshu-mcp.get_user_profile(account_id: 'bot10', user_url: 'https://www.xiaohongshu.com/user/profile/xxx')"
+npx mcporter call "xiaohongshu-mcp.user_profile(user_id: 'xxx', xsec_token: 'xxx')"
 
 # 创作者后台
-npx mcporter call "xiaohongshu-mcp.get_creator_home(account_id: 'bot10')"
+npx mcporter call "xiaohongshu-mcp.get_creator_home()"
 
 # 查看通知评论
-npx mcporter call "xiaohongshu-mcp.get_notification_comments(account_id: 'bot10')"
+npx mcporter call "xiaohongshu-mcp.get_notification_comments()"
 ```
 
 ## 测试发帖（必须仅自己可见）

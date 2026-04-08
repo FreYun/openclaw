@@ -105,7 +105,7 @@
     justify-content: center;
     gap: 24px;
     margin-top: 12px;
-    font-size: 12px;
+    font-size: 16px;
     color: var(--text-secondary);
   }
   .status-bar .dot {
@@ -146,8 +146,9 @@
     border-color: var(--border-glow);
   }
   .card-title {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
+    font-family: var(--cn);
     color: var(--yellow);
     margin-bottom: 12px;
     padding-bottom: 8px;
@@ -211,7 +212,7 @@
     border-top: none;
     border-radius: 0 0 4px 4px;
     padding: 2px 10px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text);
     font-family: var(--cn);
     letter-spacing: 0.5px;
@@ -221,7 +222,7 @@
     z-index: 1;
   }
   .agent-chip .name {
-    font-size: 18px;
+    font-size: 20px;
     color: var(--green);
     margin-bottom: 4px;
     font-family: var(--cn);
@@ -229,7 +230,7 @@
   }
   .agent-chip .name.system { color: var(--purple); }
   .agent-chip .name span[style*="cursor:pointer"]:hover { text-decoration: underline; text-underline-offset: 3px; opacity: 0.85; }
-  .agent-chip .stat { color: var(--dim); margin: 3px 0; font-family: var(--cn); font-size: 13px; }
+  .agent-chip .stat { color: var(--dim); margin: 3px 0; font-family: var(--cn); font-size: 15px; }
   .agent-chip .stat b { color: var(--text); }
   .agent-chip .badge {
     position: absolute;
@@ -274,6 +275,29 @@
   .new-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(255,77,109,0.3); transform: translateY(-1px); }
   .new-btn:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.5); }
   .new-btn.success { background: var(--green); border-color: var(--green); color: #000; box-shadow: 0 0 12px rgba(0,229,195,0.3); }
+  .new-btn.review {
+    background: linear-gradient(135deg, rgba(77,166,255,0.22), rgba(0,229,195,0.16));
+    border: 1px solid rgba(77,166,255,0.75);
+    color: #dff4ff;
+    font-size: 12px;
+    padding: 8px 16px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    box-shadow: 0 0 0 1px rgba(77,166,255,0.15) inset, 0 0 18px rgba(77,166,255,0.22);
+    text-shadow: 0 0 10px rgba(77,166,255,0.2);
+    animation: reviewBtnPulse 2.8s ease-in-out infinite;
+  }
+  .new-btn.review:hover {
+    background: linear-gradient(135deg, rgba(77,166,255,0.95), rgba(0,229,195,0.78));
+    color: #08111f;
+    border-color: #7fd0ff;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.18) inset, 0 0 26px rgba(77,166,255,0.42);
+    transform: translateY(-2px) scale(1.02);
+  }
+  @keyframes reviewBtnPulse {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(77,166,255,0.15) inset, 0 0 18px rgba(77,166,255,0.18); }
+    50% { box-shadow: 0 0 0 1px rgba(77,166,255,0.22) inset, 0 0 26px rgba(77,166,255,0.34); }
+  }
 
   /* Publish Queue */
   .queue-row {
@@ -289,14 +313,16 @@
     font-size: 36px;
     font-weight: bold;
     margin: 6px 0;
-    font-family: var(--pixel);
+    font-family: var(--mono);
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: 0.02em;
   }
   .queue-count.pending { color: var(--yellow); text-shadow: 0 0 16px rgba(255,213,90,0.3); }
   .queue-count.publishing { color: var(--orange); text-shadow: 0 0 16px rgba(255,170,77,0.3); }
   .queue-count.published { color: var(--green); text-shadow: 0 0 16px rgba(0,229,195,0.3); }
   .queue-count.failed { color: var(--accent); text-shadow: 0 0 16px rgba(255,77,109,0.3); }
   .queue-label {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--dim);
   }
   .queue-label.clickable {
@@ -331,7 +357,7 @@
     gap: 8px;
     align-items: center;
     padding: 4px 12px 8px;
-    font-size: 11px;
+    font-size: 12px;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     margin-bottom: -1px;
@@ -345,12 +371,12 @@
     0% { background: rgba(255,77,109,0.25); box-shadow: inset 3px 0 0 var(--accent); }
     100% { background: transparent; box-shadow: inset 3px 0 0 transparent; }
   }
-  .msg .time { color: var(--dim); font-size: 9px; }
-  .msg .from { color: var(--green); text-align: right; font-size: 13px; font-family: var(--cn); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .msg .sess { font-size: 9px; font-family: monospace; line-height: 1; }
+  .msg .time { color: var(--dim); font-size: 11px; }
+  .msg .from { color: var(--green); text-align: right; font-size: 14px; font-family: var(--cn); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg .sess { font-size: 11px; font-family: monospace; line-height: 1.2; }
   .msg .sess a { color: var(--orange); text-decoration: none; padding: 1px 4px; border: 1px solid transparent; border-radius: 2px; transition: all 0.15s; opacity: 0.7; }
   .msg .sess a:hover { opacity: 1; color: var(--yellow); border-color: var(--yellow); background: rgba(254,202,87,0.1); }
-  .msg .to { color: var(--blue); font-size: 13px; font-family: var(--cn); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg .to { color: var(--blue); font-size: 14px; font-family: var(--cn); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .msg .content {
     color: var(--text);
     white-space: nowrap;
@@ -358,7 +384,7 @@
     text-overflow: ellipsis;
     max-width: 100%;
     font-family: var(--cn);
-    font-size: 14px;
+    font-size: 15px;
   }
   .msg .type-badge {
     display: inline-block;
@@ -394,7 +420,7 @@
   .cron-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 15px;
   }
   .cron-table th {
     text-align: left;
@@ -402,7 +428,7 @@
     padding: 5px 8px;
     border-bottom: 1px solid var(--border);
     font-weight: normal;
-    font-size: 12px;
+    font-size: 13px;
   }
   .cron-table td {
     padding: 5px 8px;
@@ -433,7 +459,7 @@
   /* Published Files */
   .pub-list {
     font-family: var(--cn);
-    font-size: 14px;
+    font-size: 15px;
     max-height: 200px;
     overflow-y: auto;
   }
@@ -442,18 +468,18 @@
     grid-template-columns: 6% 3% 10% 1fr 5% 5% 5% 5% 5% 5% 4% 5% 5% 4% 3%;
     align-items: center;
     padding: 8px 6px;
-    font-size: 14px;
+    font-size: 15px;
   }
   .pub-item {
     color: var(--text);
     border-bottom: 1px solid rgba(255,255,255,0.04);
   }
-  .pub-item .pub-col-date { color: var(--dim); font-size: 13px; font-family: monospace; }
-  .pub-item .pub-col-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--cn); font-size: 16px; }
+  .pub-item .pub-col-date { color: var(--dim); font-size: 14px; font-family: monospace; }
+  .pub-item .pub-col-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--cn); font-size: 17px; }
   .pub-header {
     color: #e89a3c;
     border-bottom: 1px solid rgba(232,154,60,0.25);
-    font-size: 13px;
+    font-size: 14px;
     font-family: var(--cn);
     position: sticky;
     top: 0;
@@ -461,14 +487,14 @@
     z-index: 10;
   }
   .pub-metric-cell, .pub-header .pub-col-num { text-align: right; font-size: 15px; font-family: monospace; white-space: nowrap; color: var(--text); }
-  .pub-header .pub-col-num { color: #e89a3c; font-size: 13px; cursor: pointer; user-select: none; }
+  .pub-header .pub-col-num { color: #e89a3c; font-size: 14px; cursor: pointer; user-select: none; }
   .pub-header .pub-col-num:hover { color: #f0c060; }
   .pub-header .pub-col-num.sort-active { color: #4fc3f7; }
   .pub-metric-cell.hi { color: #4fc3f7; text-shadow: 0 0 8px rgba(79,195,247,0.3); }
   .pub-stats-ts { font-size:11px; color:var(--dim); opacity:0.5; margin-left:8px; }
   .pub-item .bot-tag {
     display: inline-block;
-    font-size: 12px;
+    font-size: 13px;
     padding: 3px 7px;
     border-radius: 2px;
     font-family: var(--cn);
@@ -525,14 +551,14 @@
     border: 1px solid var(--border);
     border-radius: 6px;
     margin-bottom: 5px;
-    font-size: 13px;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
   }
   .cron-job-row:hover { border-color: var(--yellow); background: var(--yellow-soft); }
   .cron-job-row.disabled { opacity: 0.4; }
   .cron-job-name { flex: 1; font-family: var(--cn); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .cron-job-expr { font-family: monospace; font-size: 11px; color: var(--dim); flex-shrink: 0; }
+  .cron-job-expr { font-family: monospace; font-size: 12px; color: var(--dim); flex-shrink: 0; }
   .cron-job-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .cron-job-status.ok { background: var(--green); }
   .cron-job-status.err { background: var(--accent); }
@@ -550,16 +576,16 @@
   .cron-toggle.on::after { left: 20px; }
   .cron-del-btn {
     background: none; border: 1px solid var(--accent); color: var(--accent);
-    font-size: 10px; padding: 3px 8px; border-radius: 4px; cursor: pointer;
+    font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer;
     opacity: 0.4; transition: all 0.2s; flex-shrink: 0;
   }
   .cron-del-btn:hover { opacity: 1; background: var(--accent-soft); }
   .cron-create-form { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; }
   .cron-form-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .cron-form-row label { font-family: var(--cn); font-size: 13px; color: var(--dim); width: 60px; flex-shrink: 0; text-align: right; }
+  .cron-form-row label { font-family: var(--cn); font-size: 14px; color: var(--dim); width: 60px; flex-shrink: 0; text-align: right; }
   .cron-form-row select, .cron-form-row input {
     background: var(--bg-deep); color: var(--text); border: 1px solid var(--border);
-    border-radius: 5px; padding: 6px 10px; font-size: 12px; font-family: var(--cn);
+    border-radius: 5px; padding: 6px 10px; font-size: 13px; font-family: var(--cn);
     transition: border-color 0.2s;
   }
   .cron-form-row select:focus, .cron-form-row input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 8px rgba(77,166,255,0.15); }
@@ -572,11 +598,11 @@
   .cron-hour-cell:hover { border-color: var(--blue); color: var(--text); }
   .cron-hour-cell.selected { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); font-weight: bold; }
   .cron-hour-shortcuts { margin-left: 70px; margin-bottom: 6px; display: flex; gap: 6px; }
-  .cron-hour-shortcuts button { font-size: 10px; font-family: var(--cn); color: var(--dim); background: none; border: 1px solid var(--border); border-radius: 3px; padding: 2px 8px; cursor: pointer; transition: all 0.15s; }
+  .cron-hour-shortcuts button { font-size: 11px; font-family: var(--cn); color: var(--dim); background: none; border: 1px solid var(--border); border-radius: 3px; padding: 2px 8px; cursor: pointer; transition: all 0.15s; }
   .cron-hour-shortcuts button:hover { border-color: var(--blue); color: var(--blue); }
   .cron-submit-btn {
     background: var(--blue-soft); border: 1px solid var(--blue); color: var(--blue);
-    font-family: var(--cn); font-size: 13px; padding: 7px 20px; border-radius: 6px;
+    font-family: var(--cn); font-size: 14px; padding: 7px 20px; border-radius: 6px;
     cursor: pointer; margin-left: 70px; transition: all 0.2s ease;
   }
   .cron-submit-btn:hover { background: var(--blue); color: #fff; box-shadow: 0 0 12px rgba(77,166,255,0.3); }
@@ -685,7 +711,7 @@
     border: 1px solid var(--border);
     color: var(--dim);
     font-family: var(--pixel);
-    font-size: 10px;
+    font-size: 11px;
     padding: 6px 14px;
     border-radius: 5px;
     cursor: pointer;
@@ -711,7 +737,7 @@
     border: 1px solid var(--border);
     color: var(--text);
     font-family: var(--pixel);
-    font-size: 10px;
+    font-size: 11px;
     padding: 7px 12px;
     border-radius: 5px;
     width: 260px;
@@ -758,7 +784,7 @@
     background: var(--card);
     z-index: 1;
     font-family: var(--pixel);
-    font-size: 9px;
+    font-size: 10px;
   }
   .sess-row {
     border-top: 1px solid var(--border);
@@ -771,14 +797,14 @@
   .sess-check { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
   .del-btn {
     background: none; border: 1px solid var(--accent); color: var(--accent);
-    font-family: var(--pixel); font-size: 8px; padding: 3px 7px; border-radius: 4px;
+    font-family: var(--pixel); font-size: 9px; padding: 3px 8px; border-radius: 4px;
     cursor: pointer; opacity: 0.5; transition: all 0.2s;
   }
   .del-btn:hover { opacity: 1; background: var(--accent); color: #fff; box-shadow: 0 0 8px rgba(255,77,109,0.2); }
   .source-badge.heartbeat { background: rgba(255,159,67,0.2); color: var(--orange); border: 1px solid var(--orange); }
   .source-badge {
     display: inline-block;
-    font-size: 10px;
+    font-size: 11px;
     padding: 3px 8px;
     border-radius: 4px;
     font-family: var(--pixel);
@@ -1433,6 +1459,7 @@
     <span><span class="dot green" id="redisDot"></span> Redis</span>
     <span id="msgCount">--- msgs</span>
     <span id="lastUpdate">---</span>
+    <span id="chromePressure" style="cursor:help"><span class="dot green" id="chromeDot"></span> Chrome <span id="chromeCount">--</span></span>
   </div>
 </div>
 
@@ -1442,6 +1469,7 @@
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
       <span class="card-title" style="margin:0;padding:0;border:none;white-space:nowrap"><span class="icon">📦</span>发布队列</span>
       <button class="new-btn" onclick="openPubFullView()" style="font-size:9px;padding:2px 8px;margin:0">展开全部</button>
+      <button class="new-btn review" onclick="showDraftReviewModal()" style="margin:0">商单审批中心</button>
       <div class="queue-row" id="queueRow" style="flex:1;margin:0"></div>
       <div id="todayIdleAgents" style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0"></div>
     </div>
@@ -1492,8 +1520,8 @@
       </select>
       <input type="text" class="search-input" id="sessionSearchInput" placeholder="搜索..." oninput="renderSessions()" style="width:160px">
       <span style="color:var(--border)">|</span>
-      <button class="new-btn" id="bulkNewBtn" onclick="bulkAction('new')" style="font-size:9px">/new selected</button>
-      <button class="new-btn" id="bulkDelBtn" onclick="bulkAction('delete')" style="font-size:9px;border-color:var(--accent);color:var(--accent)">DEL selected</button>
+      <button class="new-btn" id="bulkNewBtn" onclick="bulkAction('new')" style="font-size:10px">/new selected</button>
+      <button class="new-btn" id="bulkDelBtn" onclick="bulkAction('delete')" style="font-size:10px;border-color:var(--accent);color:var(--accent)">DEL selected</button>
       <span id="selectedCount" style="color:var(--dim);font-size:11px"></span>
     </div>
     <div class="timeline" id="sessionsTable" style="max-height:500px"></div>
@@ -1535,17 +1563,17 @@
       <!-- Col 1: Plugin + Cron + MCP -->
       <div class="equip-col-infra">
         <div>
-          <div style="font-size:9px;color:var(--purple);margin-bottom:6px;font-family:var(--pixel)">PLUGINS</div>
+          <div style="font-size:10px;color:var(--purple);margin-bottom:6px;font-family:var(--pixel)">PLUGINS</div>
           <div id="pluginList" style="display:flex;flex-wrap:wrap;gap:4px"></div>
         </div>
         <div style="margin:12px 0 0">
-          <div style="font-size:9px;color:var(--yellow);margin-bottom:6px;font-family:var(--pixel)">CRON</div>
+          <div style="font-size:10px;color:var(--yellow);margin-bottom:6px;font-family:var(--pixel)">CRON</div>
           <div id="equipCronList" style="display:flex;flex-direction:column;gap:3px"></div>
         </div>
         <div class="gem-panel" style="margin:12px 0 0;padding:0;border:none">
           <div class="gem-panel-title">
-            <button id="gemToggleBtn" class="gem-tab-btn" onclick="toggleGemStore()" title="展开/收起 MCP 管理" style="font-size:9px;font-family:var(--pixel);color:var(--orange);background:none;border:none;cursor:pointer;padding:0">MCP</button>
-            <button onclick="toggleGemStore()" style="font-size:8px;font-family:var(--pixel);color:var(--dim);background:none;border:1px solid var(--border);border-radius:2px;cursor:pointer;padding:1px 5px;margin-left:4px" id="gemExpandBtn">▼</button>
+            <button id="gemToggleBtn" class="gem-tab-btn" onclick="toggleGemStore()" title="展开/收起 MCP 管理" style="font-size:10px;font-family:var(--pixel);color:var(--orange);background:none;border:none;cursor:pointer;padding:0">MCP</button>
+            <button onclick="toggleGemStore()" style="font-size:9px;font-family:var(--pixel);color:var(--dim);background:none;border:1px solid var(--border);border-radius:2px;cursor:pointer;padding:1px 5px;margin-left:4px" id="gemExpandBtn">▼</button>
           </div>
           <div id="gemList"></div>
           <div id="gemWarnings" class="gem-warnings"></div>
@@ -1599,6 +1627,20 @@
     <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
       <button class="chip-action-btn" onclick="closePwdDialog()">取消</button>
       <button class="chip-action-btn primary" id="pwdDialogConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="cat-detail-overlay" id="confirmDialogOverlay" style="z-index:10002" onclick="closeConfirmDialog(false)">
+  <div class="cat-detail-modal" onclick="event.stopPropagation()" style="min-width:320px;max-width:420px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 class="cat-detail-title" id="confirmDialogTitle" style="margin:0">确认操作</h3>
+      <button class="close-btn" onclick="closeConfirmDialog(false)" style="position:static">✕</button>
+    </div>
+    <div id="confirmDialogMsg" style="font-size:12px;color:var(--text);font-family:var(--cn);margin-bottom:16px;line-height:1.6;white-space:pre-wrap"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="chip-action-btn" onclick="closeConfirmDialog(false)">取消</button>
+      <button class="chip-action-btn primary" id="confirmDialogOk">确认</button>
     </div>
   </div>
 </div>
@@ -2694,6 +2736,7 @@ function render() {
   renderAgentStats();
   renderSessions();
   renderPublishQueue();
+  syncPendingCountdowns();
   renderTodayIdleAgents();
   renderFlowDiagram();
   renderTimeline();
@@ -2709,6 +2752,15 @@ function renderHeader() {
   const t = new Date(currentData.timestamp);
   document.getElementById("lastUpdate").textContent =
     `${t.getHours().toString().padStart(2,"0")}:${t.getMinutes().toString().padStart(2,"0")}:${t.getSeconds().toString().padStart(2,"0")}`;
+  // Chrome pressure indicator
+  const cp = currentData.chromePressure;
+  if (cp && cp.total >= 0) {
+    const dotClass = cp.level === "ok" ? "green" : cp.level === "warn" ? "yellow" : "red";
+    document.getElementById("chromeDot").className = `dot ${dotClass}`;
+    document.getElementById("chromeCount").textContent = cp.total;
+    document.getElementById("chromePressure").title =
+      `Rod: ${cp.rod} | Gateway: ${cp.gateway} | 其他: ${cp.other} | 本地连接: ${cp.localhostConns}`;
+  }
 }
 
 let _openSessionAgent = null; // track which agent's session dropdown is open
@@ -2776,13 +2828,13 @@ function renderAgentStats() {
         ${pixelAvatar}
         <div class="active-tag">${lastActive}</div>
         ${deleteBtn}
-        <div class="name ${isSystem ? 'system' : ''}" style="color:${color};font-family:var(--cn);font-size:15px;display:flex;align-items:center;gap:4px">
+        <div class="name ${isSystem ? 'system' : ''}" style="color:${color};font-family:var(--cn);font-size:17px;display:flex;align-items:center;gap:4px">
           <span>${dn(agent)}</span> ${feishuBadge}
         </div>
-        <div style="font-size:11px;color:var(--text);opacity:0.7;margin:2px 0">
+        <div style="font-size:13px;color:var(--text);opacity:0.78;margin:3px 0;font-family:var(--cn)">
           <span>${agent}</span>
         </div>
-        ${modelFull ? `<div style="font-size:8px;color:var(--text);opacity:0.55;font-family:var(--pixel)">${modelShort}</div>` : ''}
+        ${modelFull ? `<div style="font-size:11px;color:var(--text);opacity:0.68;font-family:var(--cn);line-height:1.2">${modelShort}</div>` : ''}
         ${volume > 20 ? `<div class="badge">${volume}</div>` : ''}
       </div>
     `;
@@ -2883,12 +2935,20 @@ function syncTimelineHeight() {
   timeline.style.maxHeight = Math.max(300, leftH - 90) + 'px';
 }
 
+function extractBot(name) {
+  const m = (name || "").match(/_(\w+?)_/) || (name || "").match(/-(bot\d+)-/);
+  return m ? m[1] : null;
+}
+
 function renderPublishQueue() {
   const q = currentData.publishQueue;
+  const heldCount = (q.pending || []).filter(i => i.isHeld).length;
+  const heldHint = heldCount > 0 ? `<div style="font-size:9px;color:#ffd55a;font-family:var(--cn);opacity:0.7;animation:pulse 2s infinite">${heldCount} 审核中</div>` : '';
   document.getElementById("queueRow").innerHTML = `
     <div class="queue-col">
       <div class="queue-label ${q.pending.length ? 'clickable' : ''}" style="${q.pending.length ? 'cursor:pointer' : ''}" onclick="${q.pending.length ? "showQueueDetail('pending')" : ''}">PENDING</div>
       <div class="queue-count pending">${q.pending.length}</div>
+      ${heldHint}
     </div>
     <div class="queue-arrow">→</div>
     <div class="queue-col">
@@ -2910,16 +2970,16 @@ function renderTodayIdleAgents() {
   // All bots that have ever published (the pool), excluding bot10 (测试君)
   const allBots = new Set();
   for (const item of currentData.publishQueue.published) {
-    const m = (item.name || "").match(/_(\w+?)_/);
-    if (m && m[1] !== "bot10") allBots.add(m[1]);
+    const m = extractBot(item.name);
+    if (m && m !== "bot10") allBots.add(m);
   }
   // Bots that published today
   const todayBots = new Set();
   for (const item of currentData.publishQueue.published) {
     const dateMatch = (item.name || "").match(/^(\d{4}-\d{2}-\d{2})/);
-    const botMatch = (item.name || "").match(/_(\w+?)_/);
-    if (dateMatch && botMatch && dateMatch[1] === today && botMatch[1] !== "bot10") {
-      todayBots.add(botMatch[1]);
+    const botMatch = extractBot(item.name);
+    if (dateMatch && botMatch && dateMatch[1] === today && botMatch !== "bot10") {
+      todayBots.add(botMatch);
     }
   }
   const idle = [...allBots].filter(b => !todayBots.has(b)).sort((a, b) => {
@@ -2938,17 +2998,106 @@ function renderTodayIdleAgents() {
   }
 }
 
+// === Pending queue countdown ===
+let pendingCountdowns = {};  // name -> remainingSec
+setInterval(() => {
+  for (const [name, sec] of Object.entries(pendingCountdowns)) {
+    if (sec > 0) pendingCountdowns[name]--;
+  }
+  // Update displayed countdowns if overlay is open
+  document.querySelectorAll("[data-countdown]").forEach(el => {
+    const n = el.getAttribute("data-countdown");
+    const sec = pendingCountdowns[n] || 0;
+    el.textContent = sec > 0 ? `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}` : "就绪";
+    el.style.color = sec > 0 ? "#ffd55a" : "#00e5c3";
+  });
+}, 1000);
+
+// Sync countdowns from API data
+function syncPendingCountdowns() {
+  const q = currentData?.publishQueue;
+  if (!q?.pending) return;
+  const fresh = {};
+  for (const item of q.pending) {
+    fresh[item.name] = item.remainingSec || 0;
+  }
+  pendingCountdowns = fresh;
+}
+
 function showQueueDetail(status) {
   const q = currentData.publishQueue;
   const items = q[status] || [];
   if (!items.length) return;
-  const color = status === 'pending' ? '#feca57' : '#ee5a24';
-  const label = status.toUpperCase();
 
-  // Remove existing queue overlay if any
+  // Non-pending: keep the old simple overlay
+  if (status !== 'pending') {
+    return showSimpleQueueOverlay(status, items);
+  }
+
+  // Remove existing overlay
   const existing = document.getElementById("queueOverlay");
   if (existing) existing.remove();
 
+  syncPendingCountdowns();
+
+  const html = items.map(item => {
+    const bot = item.accountId || item.account_id || '?';
+    const botColor = BOT_COLORS[bot] || '#888';
+    const title = item.title || item.name || '无标题';
+    const mode = item.content_mode || item.publish_type || '';
+    const modeBadge = mode ? `<span style="background:#333;color:#ccc;font-size:9px;padding:1px 5px;border-radius:3px;margin-left:6px">${mode}</span>` : '';
+    const timeMatch = item.name.match(/^(\d{4}-\d{2}-\d{2}T[\d-]+)/);
+    const time = timeMatch ? timeMatch[1].replace('T', ' ').replaceAll('-', ':').slice(5) : '';
+    const sec = pendingCountdowns[item.name] || 0;
+    const cdText = sec > 0 ? `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}` : "就绪";
+    const cdColor = sec > 0 ? "#ffd55a" : "#00e5c3";
+    const tags = (item.tags || []).map(t => `<span style="background:#2a2a4a;color:#aaa;font-size:9px;padding:1px 4px;border-radius:2px;margin-right:3px">#${t}</span>`).join('');
+    const vis = item.visibility || '';
+    const visBadge = vis ? `<span style="color:${vis === '公开可见' ? '#00e5c3' : '#ffd55a'};font-size:9px">${vis}</span>` : '';
+    const nameEsc = item.name.replace(/'/g, "\\'");
+
+    return `<div style="border:1px solid #333;border-radius:6px;padding:10px;margin-bottom:8px;background:#12142a">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span style="color:${botColor};font-weight:bold;font-size:12px">${dn(bot)}</span>${modeBadge}
+          <span style="color:#666;font-size:9px;font-family:monospace;margin-left:8px">${time}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${visBadge}
+          <span data-countdown="${item.name}" style="font-family:monospace;font-size:11px;color:${cdColor};font-weight:bold">${cdText}</span>
+        </div>
+      </div>
+      <div style="color:#eee;font-size:12px;margin-top:6px;font-family:var(--cn)">${title}</div>
+      ${tags ? `<div style="margin-top:4px">${tags}</div>` : ''}
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        <button onclick="showPendingPreview('${nameEsc}')" style="background:#2a2a4a;color:#ccc;border:1px solid #444;border-radius:4px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:var(--cn)">预览</button>
+        <button onclick="queuePublishNow('${nameEsc}')" style="background:#1a3a2a;color:#00e5c3;border:1px solid #00e5c366;border-radius:4px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:var(--cn)">立刻发布</button>
+        <button onclick="queueReject('${nameEsc}')" style="background:#3a1a1a;color:#ff4d6d;border:1px solid #ff4d6d66;border-radius:4px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:var(--cn)">打回</button>
+        <button onclick="showEditModal('${nameEsc}')" style="background:#2a2a3a;color:#4da6ff;border:1px solid #4da6ff66;border-radius:4px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:var(--cn)">修改</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const overlay = document.createElement('div');
+  overlay.id = 'queueOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+  overlay.innerHTML = `<div style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:18px;width:min(92vw,760px);min-width:min(92vw,520px);max-height:86vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span style="color:#ffd55a;font-size:14px;letter-spacing:1px;font-weight:bold">PENDING (${items.length})</span>
+      <span style="cursor:pointer;color:#888;font-size:16px" onclick="this.closest('#queueOverlay').remove()">&#10005;</span>
+    </div>
+    ${html}
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+// Simple overlay for publishing/published (unchanged behavior)
+function showSimpleQueueOverlay(status, items) {
+  const existing = document.getElementById("queueOverlay");
+  if (existing) existing.remove();
+  const color = status === 'publishing' ? '#ee5a24' : '#00e5c3';
+  const label = status.toUpperCase();
   let html = items.map(item => {
     const bot = item.accountId || '?';
     const botColor = BOT_COLORS[bot] || '#888';
@@ -2964,7 +3113,6 @@ function showQueueDetail(status) {
       ${item.summary ? `<div style="color:#888;font-size:9px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.summary.slice(0,80)}</div>` : ''}
     </div>`;
   }).join('');
-
   const overlay = document.createElement('div');
   overlay.id = 'queueOverlay';
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center';
@@ -2972,11 +3120,261 @@ function showQueueDetail(status) {
   overlay.innerHTML = `<div style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:16px;min-width:320px;max-width:500px;max-height:70vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <span style="color:${color};font-size:14px;letter-spacing:1px;font-weight:bold">${label} (${items.length})</span>
-      <span style="cursor:pointer;color:#888;font-size:16px" onclick="this.closest('#queueOverlay').remove()">✕</span>
+      <span style="cursor:pointer;color:#888;font-size:16px" onclick="this.closest('#queueOverlay').remove()">&#10005;</span>
     </div>
     ${html}
   </div>`;
   document.body.appendChild(overlay);
+}
+
+// === Pending Preview Modal ===
+function showPendingPreview(name) {
+  const q = currentData.publishQueue;
+  const item = (q.pending || []).find(i => i.name === name);
+  if (!item) return;
+
+  const existing = document.getElementById("previewOverlay");
+  if (existing) existing.remove();
+
+  const bot = item.accountId || item.account_id || '?';
+  const botColor = BOT_COLORS[bot] || '#888';
+  const mode = item.content_mode || item.publish_type || '';
+  const vis = item.visibility || '';
+  const style = item.image_style || '';
+  const schedAt = item.schedule_at || '';
+
+  // Images
+  const images = (item.images || []).map(img =>
+    `<img src="/api/queue/image?status=pending&name=${encodeURIComponent(item.name)}&file=${encodeURIComponent(img)}" style="max-width:120px;max-height:120px;border-radius:4px;border:1px solid #333;object-fit:cover">`
+  ).join('');
+
+  // Tags
+  const tags = (item.tags || []).map(t =>
+    `<span style="background:#2a2a4a;color:#aaa;font-size:10px;padding:2px 6px;border-radius:3px;margin-right:4px">#${t}</span>`
+  ).join('');
+
+  // Content display
+  let contentHtml = '';
+  if (mode === 'text_to_image' && item.text_image) {
+    contentHtml = `
+      <div style="margin-top:10px">
+        <div style="color:#888;font-size:10px;margin-bottom:4px">卡片文字 (text_image):</div>
+        <div style="background:#0c0e1a;border:1px solid #333;border-radius:4px;padding:10px;color:#ddd;font-size:11px;font-family:var(--cn);max-height:220px;overflow-y:auto;white-space:pre-wrap">${escHtml(item.body || item.text_image)}</div>
+      </div>
+      <div style="margin-top:8px">
+        <div style="color:#888;font-size:10px;margin-bottom:4px">图下正文 (content):</div>
+        <div style="background:#0c0e1a;border:1px solid #333;border-radius:4px;padding:10px;color:#ddd;font-size:11px;font-family:var(--cn);max-height:260px;overflow-y:auto;white-space:pre-wrap">${escHtml(item.content)}</div>
+      </div>`;
+  } else {
+    const text = item.body || item.content || '';
+    contentHtml = `
+      <div style="margin-top:10px">
+        <div style="color:#888;font-size:10px;margin-bottom:4px">正文:</div>
+        <div style="background:#0c0e1a;border:1px solid #333;border-radius:4px;padding:10px;color:#ddd;font-size:11px;font-family:var(--cn);max-height:320px;overflow-y:auto;white-space:pre-wrap">${escHtml(text)}</div>
+      </div>`;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'previewOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+  overlay.innerHTML = `<div style="background:#1a1a2e;border:1px solid #444;border-radius:8px;padding:20px;width:min(94vw,960px);min-width:min(94vw,560px);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <span style="color:${botColor};font-weight:bold;font-size:13px">${dn(bot)}</span>
+        <span style="background:#333;color:#ccc;font-size:9px;padding:1px 5px;border-radius:3px;margin-left:6px">${mode}</span>
+        ${style ? `<span style="background:#333;color:#ccc;font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px">${style}</span>` : ''}
+        ${vis ? `<span style="color:${vis === '公开可见' ? '#00e5c3' : '#ffd55a'};font-size:9px;margin-left:8px">${vis}</span>` : ''}
+      </div>
+      <span style="cursor:pointer;color:#888;font-size:16px" onclick="this.closest('#previewOverlay').remove()">&#10005;</span>
+    </div>
+    <div style="color:#fff;font-size:14px;font-family:var(--cn);font-weight:bold;margin-bottom:6px">${escHtml(item.title)}</div>
+    ${tags ? `<div style="margin-bottom:8px">${tags}</div>` : ''}
+    ${images ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${images}</div>` : ''}
+    ${contentHtml}
+    ${schedAt ? `<div style="color:#888;font-size:10px;margin-top:8px">定时发布: ${schedAt}</div>` : ''}
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// === Queue Actions ===
+async function queuePublishNow(name) {
+  if (!await askConfirm('📮 确认发布', '确认立刻发布此帖？')) return;
+  try {
+    const r = await fetch("/api/queue/publish-now", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name })
+    });
+    const data = await r.json();
+    if (data.ok) {
+      alert("已释放，印务局正在处理");
+      document.getElementById("queueOverlay")?.remove();
+      await fetchData();
+    } else {
+      alert("失败: " + (data.error || "未知错误"));
+    }
+  } catch (e) { alert("请求失败: " + e.message); }
+}
+
+async function queueReject(name) {
+  const reason = prompt("驳回原因（留空则不说明）：");
+  if (reason === null) return;
+  try {
+    const r = await fetch("/api/queue/reject", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, reason })
+    });
+    const data = await r.json();
+    if (data.ok) {
+      alert("已驳回");
+      document.getElementById("queueOverlay")?.remove();
+      await fetchData();
+    } else {
+      alert("失败: " + (data.error || "未知错误"));
+    }
+  } catch (e) { alert("请求失败: " + e.message); }
+}
+
+// === Edit Modal ===
+function showEditModal(name) {
+  const q = currentData.publishQueue;
+  const item = (q.pending || []).find(i => i.name === name);
+  if (!item) return;
+
+  const existing = document.getElementById("editOverlay");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'editOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:10001;display:flex;align-items:center;justify-content:center';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  const mode = item.content_mode || item.publish_type || '';
+  const tagsStr = (item.tags || []).join(', ');
+  const nameEsc = name.replace(/"/g, '&quot;');
+  const inputCss = 'width:100%;background:#0c0e1a;border:1px solid #333;border-radius:4px;padding:6px 8px;color:#eee;font-size:12px;font-family:var(--cn);box-sizing:border-box';
+  const textareaCss = 'width:100%;background:#0c0e1a;border:1px solid #333;border-radius:4px;padding:6px 8px;color:#eee;font-size:11px;font-family:var(--cn);resize:vertical;box-sizing:border-box';
+  const labelCss = 'color:#888;font-size:10px;display:block;margin-bottom:3px;font-family:var(--cn)';
+  const fieldWrap = 'margin-bottom:10px';
+
+  // Build mode-specific fields
+  let fieldsHtml = '';
+
+  if (mode === 'text_to_image') {
+    // 文字生图: 卡片文字 + 标题 + 正文 + 标签
+    fieldsHtml = `
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">卡片文字 (text_image)</label>
+        <textarea id="editTextImage" rows="12" style="${textareaCss}">${escHtml(item.body || item.text_image || '')}</textarea>
+      </div>
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">标题 (max 20字)</label>
+        <input id="editTitle" type="text" maxlength="20" value="${escHtml(item.title)}" style="${inputCss}">
+      </div>
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">图下正文 (content)</label>
+        <textarea id="editContent" rows="6" style="${textareaCss}">${escHtml(item.content || '')}</textarea>
+      </div>`;
+  } else if (mode === 'longform') {
+    // 长文: 标题 + 正文 + 摘要 + 标签
+    fieldsHtml = `
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">标题 (max 20字)</label>
+        <input id="editTitle" type="text" maxlength="20" value="${escHtml(item.title)}" style="${inputCss}">
+      </div>
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">正文</label>
+        <textarea id="editContent" rows="14" style="${textareaCss}">${escHtml(item.body || item.content || '')}</textarea>
+      </div>
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">摘要 (desc)</label>
+        <input id="editDesc" type="text" value="${escHtml(item.desc || '')}" style="${inputCss}">
+      </div>`;
+  } else {
+    // image / video / default: 标题 + 正文 + 标签
+    fieldsHtml = `
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">标题 (max 20字)</label>
+        <input id="editTitle" type="text" maxlength="20" value="${escHtml(item.title)}" style="${inputCss}">
+      </div>
+      <div style="${fieldWrap}">
+        <label style="${labelCss}">正文</label>
+        <textarea id="editContent" rows="14" style="${textareaCss}">${escHtml(item.body || item.content || '')}</textarea>
+      </div>`;
+  }
+
+  // Tags + visibility are common to all modes
+  fieldsHtml += `
+    <div style="${fieldWrap}">
+      <label style="${labelCss}">标签 (逗号分隔)</label>
+      <input id="editTags" type="text" value="${escHtml(tagsStr)}" style="${inputCss}">
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="${labelCss}">可见性</label>
+      <select id="editVisibility" style="background:#0c0e1a;border:1px solid #333;border-radius:4px;padding:6px 8px;color:#eee;font-size:12px;font-family:var(--cn)">
+        <option value="公开可见" ${item.visibility === '公开可见' ? 'selected' : ''}>公开可见</option>
+        <option value="仅自己可见" ${item.visibility === '仅自己可见' ? 'selected' : ''}>仅自己可见</option>
+        <option value="仅互关好友可见" ${item.visibility === '仅互关好友可见' ? 'selected' : ''}>仅互关好友可见</option>
+      </select>
+    </div>`;
+
+  const modeBadge = mode ? `<span style="background:#333;color:#ccc;font-size:9px;padding:1px 5px;border-radius:3px;margin-left:8px">${mode}</span>` : '';
+
+  overlay.innerHTML = `<div onclick="event.stopPropagation()" style="background:#1a1a2e;border:1px solid #444;border-radius:8px;padding:18px;min-width:600px;max-width:800px;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div><span style="color:#4da6ff;font-size:14px;font-weight:bold;font-family:var(--cn)">修改内容</span>${modeBadge}</div>
+      <span style="cursor:pointer;color:#888;font-size:16px" onclick="this.closest('#editOverlay').remove()">&#10005;</span>
+    </div>
+    ${fieldsHtml}
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="this.closest('#editOverlay').remove()" style="background:#2a2a3a;color:#888;border:1px solid #444;border-radius:4px;padding:5px 14px;font-size:11px;cursor:pointer;font-family:var(--cn)">取消</button>
+      <button onclick="savePostEdits('${nameEsc}','${mode}')" style="background:#1a3a4a;color:#4da6ff;border:1px solid #4da6ff66;border-radius:4px;padding:5px 14px;font-size:11px;cursor:pointer;font-family:var(--cn)">保存</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function savePostEdits(name, mode) {
+  const title = document.getElementById("editTitle")?.value;
+  const content = document.getElementById("editContent")?.value;
+  const textImage = document.getElementById("editTextImage")?.value;
+  const desc = document.getElementById("editDesc")?.value;
+  const tagsRaw = document.getElementById("editTags").value;
+  const visibility = document.getElementById("editVisibility").value;
+  const tags = tagsRaw.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+
+  const payload = { name, title, tags, visibility };
+  if (mode === 'text_to_image') {
+    payload.content = content;       // 图下正文 → frontmatter content
+    payload.text_image = textImage;  // 卡片文字 → frontmatter text_image + body
+  } else {
+    payload.content = content;       // 正文 → body (for image/video) or frontmatter content
+  }
+  if (desc !== undefined) payload.desc = desc;
+
+  try {
+    const r = await fetch("/api/queue/edit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await r.json();
+    if (data.ok) {
+      alert("已保存修改");
+      document.getElementById("editOverlay")?.remove();
+      document.getElementById("queueOverlay")?.remove();
+      await fetchData();
+    } else {
+      alert("保存失败: " + (data.error || "未知错误"));
+    }
+  } catch (e) { alert("请求失败: " + e.message); }
 }
 
 let flowDiagramCollapsed = false;
@@ -3193,7 +3591,7 @@ function renderTimeline() {
   const newIds = new Set();
   msgs.forEach(m => newIds.add(m.message_id));
 
-  const headerRow = `<div class="msg" style="position:sticky;top:0;background:var(--card);z-index:1;border-bottom:1px solid var(--border);padding:4px 12px;font-size:10px;color:var(--dim);font-family:var(--pixel)">
+  const headerRow = `<div class="msg" style="position:sticky;top:0;background:var(--card);z-index:1;border-bottom:1px solid var(--border);padding:4px 12px;font-size:12px;color:var(--dim);font-family:var(--pixel)">
     <span>TIME</span><span style="text-align:right">FROM</span><span>TO</span><span>CONTENT</span>
   </div>`;
   container.innerHTML = headerRow + msgs.slice(0, 150).map(msg => {
@@ -3539,7 +3937,7 @@ function fmtMetric(s) {
   return String(n);
 }
 
-let pubSortKey = null; // null = default, or "date"/"views"/"likes"/"comments"/"favorites"/"shares"
+let pubSortKey = "date"; // default sort by date descending
 let pubSortDesc = true;
 let pubExcludedBots = new Set(["bot10"]); // default exclude 测试君
 function sortPublished(key) {
@@ -3570,8 +3968,8 @@ function buildBotFilterHtml() {
   // Collect all bots from published items
   const allBots = new Set();
   for (const item of (currentData?.publishQueue?.published || [])) {
-    const m = (item.name || "").match(/_(\w+?)_/);
-    if (m) allBots.add(m[1]);
+    const m = extractBot(item.name);
+    if (m) allBots.add(m);
   }
   const sorted = [...allBots].sort((a, b) => {
     const na = a.match(/^bot(\d+)$/), nb = b.match(/^bot(\d+)$/);
@@ -3605,8 +4003,8 @@ function renderPublished() {
   // Apply bot filter
   if (pubExcludedBots.size > 0) {
     files = files.filter(item => {
-      const m = (item.name || "").match(/_(\w+?)_/);
-      return !m || !pubExcludedBots.has(m[1]);
+      const m = extractBot(item.name);
+      return !m || !pubExcludedBots.has(m);
     });
   }
 
@@ -3652,8 +4050,7 @@ function renderPublished() {
   list.innerHTML = headerHtml + files.slice(0, 30).map(item => {
     const f = typeof item === "string" ? item : item.name;
     const title = (item && item.title) || "";
-    const match = f.match(/_(\w+)_/);
-    const bot = match ? match[1] : "?";
+    const bot = extractBot(f) || "?";
     const color = BOT_COLORS[bot] || "#888";
     const dateMatch = f.match(/^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2})/);
     const date = dateMatch ? dateMatch[1].replace("T", " ") : "";
@@ -3669,9 +4066,15 @@ function renderPublished() {
     };
     const ls = loginStatus[bot];
     const statusDot = ls ? (ls.creator ? '🟢' : '🔴') : '<span style="opacity:0.15">-</span>';
+    // 失效检测：发布 >8h 且无任何数据
+    const pubDate = date ? new Date(date.replace(" ", "T").replace(/-(\d{2})$/, ":$1") + ":00") : null;
+    const hoursAgo = pubDate ? (Date.now() - pubDate.getTime()) / 3600000 : 0;
+    const hasAnyMetric = m && ["views","likes","comments","favorites","shares","impressions"].some(k => parseInt(m[k]) > 0);
+    const isStale = hoursAgo > 8 && !hasAnyMetric;
+    const staleStyle = isStale ? ';opacity:0.4;text-decoration:line-through' : '';
     return `
       <div class="pub-row pub-item">
-        <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span></span>
+        <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}${staleStyle}">${dn(bot)}</span></span>
         <span class="pub-col-num" style="text-align:center" title="创作者平台: ${ls?.creator ? '已登录' : '未登录'}">${statusDot}</span>
         <span class="pub-col-date">${date}</span>
         <span class="pub-col-title">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
@@ -3690,7 +4093,7 @@ function openPubFullView() {
 function closePubFullView() {
   document.getElementById("pubFullOverlay").classList.remove("show");
 }
-let pubFullSortKey = null;
+let pubFullSortKey = "date"; // default sort by date descending
 let pubFullSortDesc = true;
 function sortPubFull(key) {
   if (pubFullSortKey === key) pubFullSortDesc = !pubFullSortDesc;
@@ -3717,8 +4120,8 @@ function renderPubFullView() {
   // Apply bot filter
   if (pubExcludedBots.size > 0) {
     files = files.filter(item => {
-      const m = (item.name || "").match(/_(\w+?)_/);
-      return !m || !pubExcludedBots.has(m[1]);
+      const m = extractBot(item.name);
+      return !m || !pubExcludedBots.has(m);
     });
   }
   if (pubFullSortKey === "date") {
@@ -3753,8 +4156,7 @@ function renderPubFullView() {
   document.getElementById("pubFullList").innerHTML = header + files.map(item => {
     const f = typeof item === "string" ? item : item.name;
     const title = (item && item.title) || "";
-    const match = f.match(/_(\w+)_/);
-    const bot = match ? match[1] : "?";
+    const bot = extractBot(f) || "?";
     const color = BOT_COLORS[bot] || "#888";
     const dateMatch = f.match(/^(\d{4}-\d{2}-\d{2}T\d{2}-\d{2})/);
     const date = dateMatch ? dateMatch[1].replace("T", " ") : "";
@@ -3770,8 +4172,13 @@ function renderPubFullView() {
     };
     const ls = (currentData.xhsLoginStatus || {})[bot];
     const statusDot = ls ? (ls.creator ? '🟢' : '🔴') : '<span style="opacity:0.15">-</span>';
+    const pubDate = date ? new Date(date.replace(" ", "T").replace(/-(\d{2})$/, ":$1") + ":00") : null;
+    const hoursAgo = pubDate ? (Date.now() - pubDate.getTime()) / 3600000 : 0;
+    const hasAnyMetric = m && ["views","likes","comments","favorites","shares","impressions"].some(k => parseInt(m[k]) > 0);
+    const isStale = hoursAgo > 8 && !hasAnyMetric;
+    const staleStyle = isStale ? ';opacity:0.4;text-decoration:line-through' : '';
     return `<div class="pub-row pub-item">
-      <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}">${dn(bot)}</span></span>
+      <span><span class="bot-tag" style="background:${color}22;color:${color};border:1px solid ${color}${staleStyle}">${dn(bot)}</span></span>
       <span class="pub-col-num" style="text-align:center" title="创作者平台: ${ls?.creator ? '已登录' : '未登录'}">${statusDot}</span>
       <span class="pub-col-date">${date}</span>
       <span class="pub-col-title">${title || f.replace(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\w+_/, "").replace(".md","")}</span>
@@ -3916,12 +4323,12 @@ function renderSessions() {
     return `
       <div class="sess-row${checked ? ' selected' : ''}">
         <span><input type="checkbox" class="sess-check" ${checked ? 'checked' : ''} onchange="toggleSession('${sk}',this.checked)"></span>
-        <span style="color:var(--dim);font-size:10px">${ago}</span>
-        <span style="color:${color};font-size:12px;font-family:var(--cn);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${dn(s.agent)} (${s.agent})">${dn(s.agent)}</span>
-        <span><span class="source-badge ${s.source}" style="font-size:8px;padding:1px 5px">${s.source}</span></span>
-        <span style="font-size:10px;font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><a href="${chatUrl(s.key)}" target="_blank" class="sess-id" title="${s.key}" style="color:var(--orange)">${shortKey}</a></span>
+        <span style="color:var(--dim);font-size:11px">${ago}</span>
+        <span style="color:${color};font-size:14px;font-family:var(--cn);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${dn(s.agent)} (${s.agent})">${dn(s.agent)}</span>
+        <span><span class="source-badge ${s.source}" style="font-size:10px;padding:2px 6px">${s.source}</span></span>
+        <span style="font-size:12px;font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><a href="${chatUrl(s.key)}" target="_blank" class="sess-id" title="${s.key}" style="color:var(--orange)">${shortKey}</a></span>
         <span style="display:flex;gap:3px">
-          <button class="new-btn" onclick="event.stopPropagation();resetSession('${s.agent}','${s.sessionId}',this)" style="margin:0;font-size:7px;padding:2px 5px">/new</button>
+          <button class="new-btn" onclick="event.stopPropagation();resetSession('${s.agent}','${s.sessionId}',this)" style="margin:0;font-size:8px;padding:2px 6px">/new</button>
           <button class="del-btn" onclick="event.stopPropagation();deleteSession('${s.agent}','${s.sessionId}','${s.key.replace(/'/g,"\\'")}',this)">DEL</button>
         </span>
       </div>
@@ -3960,7 +4367,7 @@ function updateSelectedCount() {
 }
 
 async function deleteSession(agentId, sessionId, key, btn) {
-  if (!confirm(`删除会话 ${key.replace(/^agent:[^:]+:/, '')}？`)) return;
+  if (!await askConfirm('🗑️ 删除会话', `删除会话 ${key.replace(/^agent:[^:]+:/, '')}？`)) return;
   btn.disabled = true; btn.textContent = "...";
   try {
     const resp = await fetch("/api/session/delete", {
@@ -4019,7 +4426,7 @@ function deleteSessionInline(agentId, sessionId, key, btn) {
 async function bulkAction(action) {
   if (!selectedSessions.size) return;
   const label = action === "new" ? `/new ${selectedSessions.size} 个会话` : `删除 ${selectedSessions.size} 个会话`;
-  if (!confirm(`确认${label}？`)) return;
+  if (!await askConfirm('⚠️ 批量操作', `确认${label}？`)) return;
   const targets = [...selectedSessions].map(parseSessKey);
   const btn = document.getElementById(action === "new" ? "bulkNewBtn" : "bulkDelBtn");
   btn.disabled = true; btn.textContent = "...";
@@ -4275,6 +4682,184 @@ function showToast(title, msg, success) {
   setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity 0.3s"; setTimeout(() => el.remove(), 300); }, 3000);
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatLocalTime(value) {
+  if (!value) return "-";
+  const ts = /Z$/.test(value) ? value : `${value}Z`;
+  return new Date(ts).toLocaleString("zh-CN");
+}
+
+function draftRequestStatusMeta(status) {
+  return {
+    pending_review: { label: "待审批", color: "#ffd55a" },
+    approved: { label: "已批准", color: "#4da6ff" },
+    generating: { label: "生成中", color: "#4da6ff" },
+    completed: { label: "已完成", color: "#00e5c3" },
+    rejected: { label: "已驳回", color: "#ff4d6d" },
+    failed: { label: "失败", color: "#ff4d6d" },
+  }[status] || { label: status || "-", color: "var(--dim)" };
+}
+
+let draftReviewFilter = "pending_review";
+
+function summarizeDraftRequest(request) {
+  const snapshot = request.snapshot || {};
+  const order = snapshot.order || {};
+  const materials = Array.isArray(snapshot.materials) ? snapshot.materials : [];
+  const imageCount = materials.filter(m => String(m.file_type || "").startsWith("image/")).length;
+  const textCount = materials.filter(m => String(m.file_type || "").startsWith("text/")).length;
+  const materialNames = materials.slice(0, 6).map(m => escapeHtml(m.file_name || "-")).join(" · ");
+  const materialDirs = [...new Set(
+    materials
+      .map(m => String(m.file_path || "").replace(/\\/g, "/").replace(/\/[^/]+$/, ""))
+      .filter(Boolean)
+  )];
+  const snapshotPath = String(request.snapshot_path || "");
+  const revisionNote = request.revision_note || snapshot.generation_request?.revision_note || "";
+  const statusMeta = draftRequestStatusMeta(request.status);
+
+  return `
+    <div style="border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,0.03)">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+        <span style="font-family:var(--cn);font-size:16px;color:var(--text);font-weight:600">${escapeHtml(order.title || request.order_title || "(未命名订单)")}</span>
+        <span style="font-size:11px;border:1px solid ${statusMeta.color};color:${statusMeta.color};padding:2px 8px;border-radius:999px">${statusMeta.label}</span>
+        <span style="color:var(--dim);font-size:11px">V${escapeHtml(request.version)}</span>
+        <span style="color:var(--dim);font-size:11px">${escapeHtml(order.bot_id || request.bot_id || "-")}</span>
+        <span style="color:var(--dim);font-size:11px;margin-left:auto">${escapeHtml(formatLocalTime(request.created_at))}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-size:12px;font-family:var(--cn);margin-bottom:8px">
+        <div style="color:var(--dim)">客户：<span style="color:var(--text)">${escapeHtml(request.client_name || snapshot.client?.display_name || "-")}</span></div>
+        <div style="color:var(--dim)">公司：<span style="color:var(--text)">${escapeHtml(request.client_company || snapshot.client?.company || "-")}</span></div>
+        <div style="color:var(--dim)">素材：<span style="color:var(--text)">${materials.length} 份 / ${imageCount} 图 / ${textCount} 文</span></div>
+      </div>
+      <div style="margin-bottom:8px">
+        <div style="color:var(--dim);font-size:11px;margin-bottom:4px">需求</div>
+        <pre style="white-space:pre-wrap;word-break:break-word;background:#14182b;border:1px solid rgba(255,255,255,0.05);border-radius:6px;padding:10px;font-family:var(--cn);font-size:12px;color:var(--text);line-height:1.65;margin:0;max-height:150px;overflow:auto">${escapeHtml(order.requirements || "")}</pre>
+      </div>
+      ${revisionNote ? `<div style="margin-bottom:8px"><div style="color:#ffaa4d;font-size:11px;margin-bottom:4px">修改意见</div><div style="background:rgba(255,170,77,0.08);border:1px solid rgba(255,170,77,0.2);border-radius:6px;padding:8px 10px;font-size:12px;font-family:var(--cn);line-height:1.6">${escapeHtml(revisionNote)}</div></div>` : ""}
+      ${materialNames ? `<div style="color:var(--dim);font-size:11px;font-family:var(--cn);margin-bottom:8px">素材摘要：${materialNames}${materials.length > 6 ? " ..." : ""}</div>` : ""}
+      <div style="margin-bottom:8px">
+        <div style="color:var(--dim);font-size:11px;margin-bottom:4px">系统路径</div>
+        <div style="background:#101522;border:1px solid rgba(77,166,255,0.16);border-radius:6px;padding:8px 10px;font-size:11px;font-family:var(--mono);line-height:1.55;color:#9cc9ff;word-break:break-all">
+          <div><span style="color:var(--dim)">审批单：</span>${escapeHtml(snapshotPath || "-")}</div>
+          ${materialDirs.length ? materialDirs.map(dir => `<div><span style="color:var(--dim)">素材目录：</span>${escapeHtml(dir)}</div>`).join("") : `<div><span style="color:var(--dim)">素材目录：</span>-</div>`}
+        </div>
+      </div>
+      ${request.reviewer_note ? `<div style="color:#4da6ff;font-size:11px;font-family:var(--cn);margin-bottom:8px">审批备注：${escapeHtml(request.reviewer_note)}</div>` : ""}
+      ${request.status === "pending_review" ? `
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="evo-btn approve" onclick="approveDraftRequest('${escapeHtml(request.id)}')">批准并生成</button>
+          <button class="evo-btn danger" onclick="rejectDraftRequest('${escapeHtml(request.id)}')">驳回</button>
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
+async function showDraftReviewModal(filter = draftReviewFilter) {
+  draftReviewFilter = filter;
+  let modal = document.getElementById("draftReviewModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "draftReviewModal";
+    modal.className = "diff-modal";
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `<div class="diff-modal-content" style="max-width:980px;max-height:84vh">
+      <div class="diff-modal-header">
+        <span style="color:#4da6ff">🧾 商单审批</span>
+        <button class="evo-btn" onclick="document.getElementById('draftReviewModal').remove()">✕</button>
+      </div>
+      <div class="diff-modal-body" id="draftReviewModalBody" style="padding:10px 14px"><span style="color:var(--dim)">Loading...</span></div>
+    </div>`;
+    document.body.appendChild(modal);
+  } else {
+    modal.style.display = "flex";
+  }
+  await renderDraftReviewModal();
+}
+
+async function renderDraftReviewModal() {
+  const panel = document.getElementById("draftReviewModalBody");
+  if (!panel) return;
+
+  panel.innerHTML = `<span style="color:var(--dim)">Loading...</span>`;
+  try {
+    const res = await fetch(`/api/commercial/draft-requests?status=${encodeURIComponent(draftReviewFilter)}`);
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || "加载失败");
+
+    const requests = Array.isArray(data.requests) ? data.requests : [];
+    const pendingCount = requests.filter(r => r.status === "pending_review").length;
+    const allBtnActive = draftReviewFilter === "all";
+    const pendingBtnActive = draftReviewFilter === "pending_review";
+
+    panel.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="evo-btn ${pendingBtnActive ? "approve" : ""}" onclick="showDraftReviewModal('pending_review')">待审批</button>
+        <button class="evo-btn ${allBtnActive ? "approve" : ""}" onclick="showDraftReviewModal('all')">全部</button>
+        <span style="margin-left:auto;color:var(--dim);font-size:11px;font-family:var(--cn)">
+          当前 ${requests.length} 单${draftReviewFilter === "pending_review" ? ` · 待审批 ${pendingCount} 单` : ""}
+        </span>
+      </div>
+      ${requests.length
+        ? requests.map(summarizeDraftRequest).join("")
+        : `<div style="padding:30px 10px;text-align:center;color:var(--dim);font-family:var(--cn)">暂无审批单</div>`}
+    `;
+  } catch (err) {
+    panel.innerHTML = `<div style="color:#ff4d6d;font-family:var(--cn)">加载失败：${escapeHtml(err.message)}</div>`;
+  }
+}
+
+async function approveDraftRequest(id) {
+  const reviewerNote = window.prompt("审批备注（可留空）", "");
+  if (reviewerNote === null) return;
+  try {
+    const res = await fetch(`/api/commercial/draft-requests/${encodeURIComponent(id)}/approve`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reviewer_note: reviewerNote.trim() })
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || "审批失败");
+    showToast("商单审批", "已批准，开始生成", true);
+    await renderDraftReviewModal();
+    await fetchData();
+  } catch (err) {
+    showToast("商单审批", err.message, false);
+  }
+}
+
+async function rejectDraftRequest(id) {
+  const reviewerNote = window.prompt("请输入驳回原因");
+  if (reviewerNote === null) return;
+  if (!reviewerNote.trim()) {
+    showToast("商单审批", "驳回原因不能为空", false);
+    return;
+  }
+  try {
+    const res = await fetch(`/api/commercial/draft-requests/${encodeURIComponent(id)}/reject`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reviewer_note: reviewerNote.trim() })
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || "驳回失败");
+    showToast("商单审批", "已驳回审批单", true);
+    await renderDraftReviewModal();
+    await fetchData();
+  } catch (err) {
+    showToast("商单审批", err.message, false);
+  }
+}
+
 // Reset single session: send /new
 async function resetSession(agentId, sessionId, btn) {
   btn.disabled = true;
@@ -4397,7 +4982,7 @@ function renderEquipSessions(botId) {
       const shortKey = s.key.replace(/^agent:[^:]+:/, '');
       const url = chatUrl(s.key);
       const safeKey = s.key.replace(/'/g, "\\'");
-      return `<div style="border-top:1px solid var(--border);padding:6px 0;font-size:10px">
+      return `<div style="border-top:1px solid var(--border);padding:6px 0;font-size:12px">
         <div style="display:flex;align-items:center;gap:4px">
           <span class="source-badge ${s.source}" style="font-size:7px;padding:1px 4px">${s.source}</span>
           <span style="color:var(--dim)">${ago}</span>
@@ -4406,7 +4991,7 @@ function renderEquipSessions(botId) {
             <button class="del-btn" onclick="event.stopPropagation();deleteSessionInline('${botId}','${s.sessionId}','${safeKey}',this)" style="font-size:7px;padding:1px 4px">DEL</button>
           </span>
         </div>
-        <a href="${url}" target="_blank" style="color:var(--orange);text-decoration:none;font-family:monospace;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:220px;margin-top:2px" title="${s.key}">${shortKey}</a>
+        <a href="${url}" target="_blank" style="color:var(--orange);text-decoration:none;font-family:monospace;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:220px;margin-top:2px" title="${s.key}">${shortKey}</a>
       </div>`;
     }).join('');
   }
@@ -4429,7 +5014,7 @@ function renderArmory() {
   const curColor = BOT_COLORS[armoryCurrentBot] || '#888';
   document.getElementById("equipBotName").innerHTML = `
     <span style="color:${curColor};font-family:var(--cn);font-size:18px;cursor:pointer" onclick="renameAgent('${armoryCurrentBot}',event)" title="点击修改名称">${botName}</span>
-    <span style="color:var(--dim);font-size:12px">(${armoryCurrentBot})</span>
+    <span style="color:var(--dim);font-size:14px">(${armoryCurrentBot})</span>
     <input type="color" value="${curColor}" id="equipColorPicker" style="width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;vertical-align:middle" title="修改主色调" onchange="changeAgentColor('${armoryCurrentBot}',this.value)">
   `;
 
@@ -4461,6 +5046,7 @@ function renderArmory() {
   leftEl.innerHTML = ""; rightEl.innerHTML = ""; metaEl.innerHTML = "";
   const equippedSkillIds = new Set(Object.values(botSlots).filter(Boolean));
   const hasFrontline = botSlots["helm-1"] === "frontline";
+  const isCoder = botSlots["armor-1"] === "coder";
 
   // Group equipped skills by type
   const equippedByType = {};
@@ -4472,14 +5058,14 @@ function renderArmory() {
     equippedByType[type].push({ slotId, skillId, skill: registry.skills[skillId] });
   }
 
-  const singleTypes = new Set(["helm", "armor", "boots"]);
+  const singleTypes = new Set(isCoder ? [] : ["helm", "armor", "boots"]);
   const leftTypes = ["helm", "armor", "boots"];
   const rightTypes = ["accessory", "utility", "research"];
 
   function makeCatRow(cat) {
     const typeInfo = registry.slotTypes[cat.type];
     const items = equippedByType[cat.type] || [];
-    const isLocked = cat.type === "research" && !hasFrontline;
+    const isLocked = cat.type === "research" && !hasFrontline && !isCoder;
     const isSingle = singleTypes.has(cat.type);
 
     const row = document.createElement("div");
@@ -4962,13 +5548,14 @@ function openCatDetail(type, label, typeInfo) {
   activeCategoryModal = type;
   const { registry, equipment } = armoryData;
   const botSlots = equipment?.bots?.[armoryCurrentBot]?.slots || {};
+  const isCoder = botSlots["armor-1"] === "coder";
   document.getElementById("catDetailTitle").innerHTML = `${typeInfo?.icon || ""} ${label}`;
 
   function makeActionPanel(skillId, skill, opts) {
     const p = document.createElement("div"); p.className = "chip-actions";
     const btns = document.createElement("div"); btns.className = "chip-actions-btns";
     if (!opts.locked) {
-      const singleSlot = ["helm", "armor", "boots"].includes(type);
+      const singleSlot = (isCoder ? [] : ["helm", "armor", "boots"]).includes(type);
       const willReplace = !opts.equipped && (singleSlot || (type === "accessory" && skill.subType)) && eqItems.some(it => singleSlot || it.skill.subType === skill.subType);
       const ab = document.createElement("button");
       ab.className = "chip-action-btn " + (opts.equipped ? "danger" : "primary");
@@ -5061,8 +5648,42 @@ function openCatDetail(type, label, typeInfo) {
   // Available skills (filtered by subType if active)
   const avG = document.getElementById("catAvailableGrid"); avG.innerHTML = "";
   const filtered = catSubTypeFilter ? avail.filter(([, s]) => s.subType === catSubTypeFilter) : avail;
+  const multiSlot = !["helm", "armor", "boots"].includes(type) || isCoder;
+  if (multiSlot && filtered.length > 1) {
+    const bar = document.createElement("div");
+    bar.style.cssText = "display:flex;gap:8px;align-items:center;margin-bottom:8px";
+    const selAll = document.createElement("input"); selAll.type = "checkbox"; selAll.id = "catSelectAll"; selAll.style.accentColor = "#00b894";
+    selAll.onchange = () => { avG.querySelectorAll('.cat-multi-check').forEach(cb => cb.checked = selAll.checked); };
+    bar.appendChild(selAll);
+    const lb = document.createElement("label"); lb.htmlFor = "catSelectAll"; lb.textContent = "全选"; lb.style.cssText = "font-size:11px;color:var(--dim);font-family:var(--cn);cursor:pointer"; bar.appendChild(lb);
+    const batchBtn = document.createElement("button"); batchBtn.className = "chip-action-btn primary"; batchBtn.textContent = "批量装备";
+    batchBtn.style.cssText = "font-size:11px;padding:2px 10px;margin-left:auto";
+    batchBtn.onclick = async () => {
+      const checks = [...avG.querySelectorAll('.cat-multi-check:checked')];
+      if (!checks.length) return;
+      batchBtn.disabled = true; batchBtn.textContent = "⏳ 装备中...";
+      for (const cb of checks) {
+        const sid = cb.dataset.skillId;
+        const curSlots = (await fetch("/api/data").then(r=>r.json())).publishQueue ? {} : {};
+        await armoryEquip(armoryCurrentBot, findNextSlot(type, botSlots), sid);
+      }
+      batchBtn.disabled = false; batchBtn.textContent = "批量装备";
+      openCatDetail(type, label, typeInfo);
+    };
+    bar.appendChild(batchBtn);
+    avG.appendChild(bar);
+  }
   if (!filtered.length) avG.innerHTML = '<span style="color:var(--dim);font-size:11px;font-family:var(--cn)">无可用技能</span>';
-  for (const [id, skill] of filtered) avG.appendChild(makeChip(id, skill, "cat-avail-chip", { equipped: false }));
+  for (const [id, skill] of filtered) {
+    const chipWrapper = document.createElement("div"); chipWrapper.style.cssText = "display:flex;align-items:center;gap:4px";
+    if (multiSlot && filtered.length > 1) {
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.className = "cat-multi-check"; cb.dataset.skillId = id; cb.style.accentColor = "#00b894";
+      cb.onclick = (e) => e.stopPropagation();
+      chipWrapper.appendChild(cb);
+    }
+    chipWrapper.appendChild(makeChip(id, skill, "cat-avail-chip", { equipped: false }));
+    avG.appendChild(chipWrapper);
+  }
 
   document.getElementById("catDetailOverlay").classList.add("show");
 }
@@ -5098,6 +5719,22 @@ function askPassword(title, msg) {
 function closePwdDialog() {
   document.getElementById("pwdDialogOverlay").classList.remove("show");
   if (_pwdResolve) { _pwdResolve(null); _pwdResolve = null; }
+}
+
+let _confirmResolve = null;
+function askConfirm(title, msg) {
+  return new Promise((resolve) => {
+    _confirmResolve = resolve;
+    document.getElementById("confirmDialogTitle").textContent = title || "确认操作";
+    document.getElementById("confirmDialogMsg").textContent = msg || "";
+    document.getElementById("confirmDialogOverlay").classList.add("show");
+    const okBtn = document.getElementById("confirmDialogOk");
+    okBtn.onclick = () => { closeConfirmDialog(true); };
+  });
+}
+function closeConfirmDialog(result) {
+  document.getElementById("confirmDialogOverlay").classList.remove("show");
+  if (_confirmResolve) { _confirmResolve(result); _confirmResolve = null; }
 }
 
 function findNextSlot(type, botSlots) {
@@ -5354,7 +5991,7 @@ async function toggleEvoContent(name) {
 async function evoBatchExclude() {
   const checked = [...document.querySelectorAll('.evo-check:checked')].map(el => el.dataset.name);
   if (!checked.length) { alert("请先勾选要移除的技能"); return; }
-  if (!confirm(`移除 ${checked.length} 个技能：${checked.join(', ')}？`)) return;
+  if (!await askConfirm('⚠️ 移除技能', `移除 ${checked.length} 个技能：${checked.join(', ')}？`)) return;
   for (const name of checked) {
     await fetch(`/api/skill-evolution/pool/exclude/${name}`, { method: "POST" });
   }
@@ -5362,11 +5999,19 @@ async function evoBatchExclude() {
 }
 
 async function triggerEvolution(e) {
-  if (!confirm("立刻触发 sys2 执行一轮技能进化？")) return;
+  const selected = [...document.querySelectorAll('.evo-check:checked')].map(el => el.dataset.name);
+  const msg = selected.length
+    ? `只进化以下 ${selected.length} 个 skill：${selected.join('、')}？`
+    : "未勾选任何 skill，将按默认规则（.direction 文件）进化，确认？";
+  if (!await askConfirm("🧬 确认进化", msg)) return;
   const btn = e?.target || document.querySelector('[onclick*="triggerEvolution"]');
   if (btn) { btn.disabled = true; btn.textContent = "⏳ 进化中..."; }
   try {
-    const res = await fetch("/api/skill-evolution/trigger", { method: "POST" }).then(r => r.json());
+    const res = await fetch("/api/skill-evolution/trigger", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ skills: selected })
+    }).then(r => r.json());
     if (btn) btn.textContent = res.ok ? "✅ 已触发" : "❌ 失败";
   } catch (err) {
     if (btn) btn.textContent = "❌ 失败";
@@ -5392,13 +6037,13 @@ async function saveEvoDirection(name) {
 }
 
 async function evoDelete(name) {
-  if (!confirm(`彻底删除 ${name}？将从沙盒中完全移除，下次同步脚本会重新从线上复制。`)) return;
+  if (!await askConfirm('🗑️ 彻底删除', `彻底删除 ${name}？将从沙盒中完全移除，下次同步脚本会重新从线上复制。`)) return;
   await fetch(`/api/skill-evolution/pool/delete/${name}`, { method: "POST" });
   renderSkillEvoPanel();
 }
 
 async function evoReset(name) {
-  if (!confirm(`重置 ${name}？沙盒版将恢复为线上版，可重新参与进化。`)) return;
+  if (!await askConfirm('🔄 重置', `重置 ${name}？沙盒版将恢复为线上版，可重新参与进化。`)) return;
   await fetch(`/api/skill-evolution/pool/reset/${name}`, { method: "POST" });
   renderSkillEvoPanel();
 }
@@ -5446,7 +6091,7 @@ async function approveEvo(name) {
 }
 
 async function rejectEvo(name) {
-  if (!confirm(`驳回 ${name} 的进化？沙盒将恢复为线上版。`)) return;
+  if (!await askConfirm('❌ 驳回进化', `驳回 ${name} 的进化？沙盒将恢复为线上版。`)) return;
   const res = await fetch(`/api/skill-evolution/reject/${name}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -5877,7 +6522,7 @@ async function unsocketGem(botId, gemId) {
     const data = await res.json();
     if (data.status === "warning") {
       const skills = data.dependentSkills.join(", ");
-      if (!confirm(`以下技能依赖此宝石: ${skills}\n确认拔出?`)) return;
+      if (!await askConfirm('⚠️ 拔出宝石', `以下技能依赖此宝石: ${skills}\n确认拔出?`)) return;
       // Force unsocket
       const res2 = await fetch("/api/gems/unsocket", {
         method: "POST",

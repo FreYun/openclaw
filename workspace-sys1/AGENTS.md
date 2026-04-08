@@ -130,7 +130,7 @@ mv fails (entry gone) → another session handling it, skip silently.
 curl -s --connect-timeout 3 --max-time 5 http://localhost:18060/health
 npx mcporter call "xiaohongshu-mcp.check_login_status()"
 ```
-- Offline → attempt restart → still down: delete entry, notify submitter only (NO Feishu group)
+- Offline → **上报 mag1，不要自行重启 MCP** → delete entry, notify submitter only (NO Feishu group)
 - **Only `isCreatorLoggedIn` matters** — ignore main site login status
 - Not logged in → `mv` back to `pending/` → notify submitter to handle login
 

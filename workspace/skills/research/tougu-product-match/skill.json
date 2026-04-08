@@ -1,0 +1,7 @@
+{
+  "name": "tougu-product-match",
+  "icon": "🎯",
+  "slot": "research",
+  "subType": "research",
+  "desc": "优先回答 bot 自己当前的投顾组合与已买产品；如无现成结果，再结合投资策略摘要、memory 与候选池为 bot 自己完成投顾产品匹配"
+}

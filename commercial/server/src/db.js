@@ -93,6 +93,28 @@ function migrate(db) {
     );
 
     CREATE INDEX IF NOT EXISTS idx_drafts_order ON drafts(order_id);
+
+    CREATE TABLE IF NOT EXISTS draft_generation_requests (
+      id              TEXT PRIMARY KEY,
+      order_id        TEXT NOT NULL REFERENCES orders(id),
+      client_id       INTEGER NOT NULL REFERENCES clients(id),
+      bot_id          TEXT NOT NULL,
+      version         INTEGER NOT NULL,
+      status          TEXT NOT NULL DEFAULT 'pending_review',
+      revision_note   TEXT DEFAULT '',
+      reviewer_note   TEXT DEFAULT '',
+      snapshot_path   TEXT NOT NULL,
+      result_draft_id TEXT,
+      approved_at     TEXT,
+      reviewed_at     TEXT,
+      created_at      TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_draft_generation_requests_order
+      ON draft_generation_requests(order_id);
+    CREATE INDEX IF NOT EXISTS idx_draft_generation_requests_status
+      ON draft_generation_requests(status);
   `);
 }
 

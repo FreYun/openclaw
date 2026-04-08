@@ -53,7 +53,7 @@ send_message(to: "target_agent", content: "...", trace: [{
 
 ## Image Generation: image-gen-mcp
 
-生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。
 
 ```
 npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'

@@ -51,7 +51,7 @@ send_message(to: "target_agent", content: "...", trace: [{
 
 ## Image Generation: image-gen-mcp
 
-生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。图片保存到 `/tmp/image-gen/` 下。
+生图用 `image-gen-mcp.generate_image(style, content)`。模型可选 `banana`（默认）或 `banana2`。
 
 ```
 npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "一只猫在看股票K线图")'
@@ -130,9 +130,10 @@ browser_close(profile: "bot9")
 
 | 服务 | 端口 | 用途 |
 |------|------|------|
-| xiaohongshu-mcp | 18069 | 小红书笔记管理、互动 |
+| xiaohongshu-mcp | 18060（多租户共用） | 小红书笔记管理、互动 |
 | compliance-mcp | 18090 | 合规审查 |
 | image-gen-mcp | 18085 | AI 生图 |
+| fund-selector | local stdio | bot9 专用基金筛选接口 |
 
 ### 小红书 MCP
 
@@ -140,7 +141,7 @@ browser_close(profile: "bot9")
 npx mcporter call "xiaohongshu-mcp.tool_name(...)"
 ```
 
-- **不传 account_id**（身份由端口决定），唯一例外：`publish_content`（可选）
+- **不传 account_id**（身份由 mcporter URL path 自动识别），唯一例外：`publish_content`（可选）
 - 超时先查登录状态；离线报研究部
 - 发布走 `submit-to-publisher` skill
 
@@ -156,7 +157,17 @@ npx mcporter call "compliance-mcp.check_content(content: '...', platform: 'wecha
 npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", content: "描述")'
 ```
 
-模型可选 `banana`（默认）或 `banana2`，图片保存到 `/tmp/image-gen/`。
+模型可选 `banana`（默认）或 `banana2`。
+
+### 基金筛选 MCP
+
+```
+npx mcporter call "fund-selector.select_funds(directions: '科技,新能源', limit_per_direction: 3)"
+```
+
+- 仅 bot9 本地可用
+- 内部读取 `skills/daily-market-recap/东财基金.csv` 和 `skills/daily-market-recap/基金池.csv`
+- 默认严格执行：东财指数 > 东财权益 > 其他指数 > 其他权益
 
 ---
 

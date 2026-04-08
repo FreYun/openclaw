@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天天出版社 · 投资总览</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" media="print" onload="this.media='all'">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+::selection { background: rgba(255,77,109,0.25); color: #fff; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg: #0c0e1a;
+  --bg-deep: #080a14;
+  --card: #13162a;
+  --card-hover: #181c34;
+  --border: #1e2a4a;
+  --border-glow: #2a3a6a;
+  --accent: #ff4d6d;
+  --accent-soft: rgba(255,77,109,0.12);
+  --green: #00e5c3;
+  --green-soft: rgba(0,229,195,0.1);
+  --yellow: #ffd55a;
+  --yellow-soft: rgba(255,213,90,0.1);
+  --blue: #4da6ff;
+  --blue-soft: rgba(77,166,255,0.1);
+  --purple: #b8a9ff;
+  --purple-soft: rgba(184,169,255,0.1);
+  --orange: #ffaa4d;
+  --text: #e8eaf0;
+  --text-secondary: #b0b8c8;
+  --dim: #5a6580;
+  --pixel: 'Pixelify Sans', monospace;
+  --cn: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.05);
+  --card-radius: 8px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--pixel);
+  font-size: 14px;
+  line-height: 1.8;
+  padding: 24px;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(77,166,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(184,169,255,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 10% 60%, rgba(255,77,109,0.02) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+body > * { position: relative; z-index: 1; }
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 28px 0 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.4;
+}
+.header h1 {
+  font-size: 36px;
+  font-family: var(--pixel);
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 0 30px rgba(255,77,109,0.3), 0 2px 0 rgba(0,0,0,0.5);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.header .subtitle {
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+.summary-bar {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.summary-item { text-align: center; }
+.summary-item .label {
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.summary-item .value {
+  font-size: 20px;
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.summary-item .value.green { color: var(--green); }
+.summary-item .value.yellow { color: var(--yellow); }
+.summary-item .value.blue { color: var(--blue); }
+
+/* Ranking Table */
+.section-title {
+  font-size: 14px;
+  font-family: var(--cn);
+  font-weight: 600;
+  color: var(--yellow);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,213,90,0.08);
+}
+.ranking-card {
+  background: linear-gradient(135deg, var(--card) 0%, rgba(19,22,42,0.8) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 16px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 20px;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.rank-row:last-child { border-bottom: none; }
+.rank-row:hover { background: rgba(255,255,255,0.03); }
+.rank-row.inactive { opacity: 0.35; cursor: default; }
+.rank-row.inactive:hover { background: none; }
+.rank-num {
+  width: 22px;
+  text-align: center;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--dim);
+  flex-shrink: 0;
+}
+.rank-num.top { color: var(--yellow); font-weight: 700; }
+.rank-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-deep);
+}
+.rank-avatar.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 1.5px dashed var(--border);
+}
+.rank-name {
+  font-size: 13px;
+  font-family: var(--cn);
+  font-weight: 500;
+  color: var(--text);
+  min-width: 100px;
+}
+.rank-id {
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--dim);
+  min-width: 44px;
+}
+.rank-stat {
+  font-size: 12px;
+  font-family: var(--mono);
+  text-align: right;
+  min-width: 70px;
+}
+.rank-stat.positive { color: var(--green); }
+.rank-stat.negative { color: var(--accent); }
+.rank-stat.neutral { color: var(--text-secondary); }
+.rank-stat-label {
+  font-size: 9px;
+  color: var(--dim);
+  font-family: var(--cn);
+}
+.rank-holdings-preview {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+.rank-tag {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-family: var(--cn);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.rank-inactive-label {
+  font-size: 11px;
+  color: var(--dim);
+  font-family: var(--cn);
+}
+.rank-expand-icon {
+  font-size: 10px;
+  color: var(--dim);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+/* Detail Cards (collapsible) */
+.detail-wrapper {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s ease;
+}
+.detail-wrapper.open {
+  max-height: 600px;
+}
+.bot-detail {
+  background: linear-gradient(135deg, var(--card) 0%, rgba(19,22,42,0.8) 100%);
+  border: 1px solid var(--border-glow);
+  border-top: none;
+  border-radius: 0 0 var(--card-radius) var(--card-radius);
+  padding: 14px 16px;
+  margin: 0 6px;
+}
+
+/* Account Stats */
+.account-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat-item {
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.stat-item .stat-label {
+  font-size: 10px;
+  color: var(--dim);
+  font-family: var(--cn);
+  margin-bottom: 2px;
+}
+.stat-item .stat-value {
+  font-size: 15px;
+  font-family: var(--mono);
+  font-weight: 600;
+}
+.stat-item .stat-value.positive { color: var(--green); }
+.stat-item .stat-value.negative { color: var(--accent); }
+.stat-item .stat-value.neutral { color: var(--text); }
+
+/* Holdings */
+.holdings-title {
+  font-size: 11px;
+  color: var(--dim);
+  font-family: var(--cn);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.holding-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.holding-row:last-child { border-bottom: none; }
+.holding-name {
+  flex: 1;
+  font-family: var(--cn);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.holding-role {
+  font-size: 9px;
+  color: var(--dim);
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.03);
+  margin-right: 8px;
+  font-family: var(--cn);
+  white-space: nowrap;
+}
+.holding-weight {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--blue);
+  min-width: 48px;
+  text-align: right;
+}
+.holding-bar-bg {
+  width: 60px;
+  height: 4px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  margin-left: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.holding-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--blue);
+  transition: width 0.5s ease;
+}
+.cash-row { display: flex; align-items: center; padding: 4px 0; font-size: 12px; margin-top: 2px; }
+.cash-row .holding-name { color: var(--dim); }
+.cash-row .holding-weight { color: var(--yellow); }
+.cash-row .holding-bar { background: var(--yellow); }
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--dim);
+  font-size: 14px;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.loading .dots { animation: blink 1.2s infinite; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 投资总览</h1>
+  <div class="subtitle">PORTFOLIO OVERVIEW</div>
+  <div class="summary-bar" id="summaryBar">
+    <div class="summary-item"><div class="label">ACTIVE BOTS</div><div class="value blue" id="sumBots">--</div></div>
+    <div class="summary-item"><div class="label">TOTAL ASSETS</div><div class="value yellow" id="sumAssets">--</div></div>
+    <div class="summary-item"><div class="label">AVG RETURN</div><div class="value green" id="sumReturn">--</div></div>
+  </div>
+</div>
+
+<div class="loading" id="loading">Loading portfolio data<span class="dots">...</span></div>
+<div id="mainContent" style="display:none">
+  <div class="ranking-card">
+    <div class="section-title">📈 Bot 投资排行</div>
+    <div id="rankingTable"></div>
+  </div>
+</div>
+
+<script>
+const FMT = {
+  money(v) {
+    if (v == null) return '--';
+    return v >= 10000
+      ? (v / 10000).toFixed(2) + 'W'
+      : v.toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+  },
+  pct(v) {
+    if (v == null) return '--';
+    return (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+  },
+  nav(v) {
+    if (v == null) return '--';
+    return v.toFixed(4);
+  },
+  cls(v) {
+    if (v == null) return 'neutral';
+    return v > 0 ? 'positive' : v < 0 ? 'negative' : 'neutral';
+  }
+};
+
+let avatars = {};
+let agentMeta = {};
+let openBot = null; // currently expanded bot
+
+async function init() {
+  const [portfolioRes, avatarRes, agentsRes] = await Promise.all([
+    fetch('/api/portfolio/summary').then(r => r.json()).catch(() => []),
+    fetch('/api/bot/avatars').then(r => r.json()).catch(() => ({})),
+    fetch('/api/agents').then(r => r.json()).catch(() => ({})),
+  ]);
+
+  avatars = avatarRes;
+  agentMeta = agentsRes;
+
+  const allBotIds = Object.keys(agentMeta)
+    .filter(id => id.startsWith('bot'))
+    .sort((a, b) => parseInt(a.replace('bot','')) - parseInt(b.replace('bot','')));
+
+  const portfolioMap = {};
+  for (const p of portfolioRes) portfolioMap[p.bot_id] = p;
+
+  // Build sorted list: active bots sorted by return DESC, then inactive bots
+  const activeBots = allBotIds.filter(id => portfolioMap[id]).sort((a, b) => {
+    return (portfolioMap[b].cumulative_return_pct || 0) - (portfolioMap[a].cumulative_return_pct || 0);
+  });
+  const inactiveBots = allBotIds.filter(id => !portfolioMap[id]);
+  const sortedBots = [...activeBots, ...inactiveBots];
+
+  // Summary
+  const totalAssets = activeBots.reduce((s, id) => s + (portfolioMap[id].total_value || 0), 0);
+  const avgReturn = activeBots.length
+    ? activeBots.reduce((s, id) => s + (portfolioMap[id].cumulative_return_pct || 0), 0) / activeBots.length
+    : 0;
+
+  document.getElementById('sumBots').textContent = activeBots.length + ' / ' + allBotIds.length;
+  document.getElementById('sumAssets').textContent = FMT.money(totalAssets);
+  document.getElementById('sumReturn').textContent = FMT.pct(avgReturn);
+  document.getElementById('sumReturn').className = 'value ' + (avgReturn >= 0 ? 'green' : 'accent');
+
+  // Render ranking
+  const table = document.getElementById('rankingTable');
+  table.innerHTML = '';
+
+  sortedBots.forEach((botId, idx) => {
+    const meta = agentMeta[botId] || { name: botId, emoji: '' };
+    const p = portfolioMap[botId];
+    const isActive = !!p;
+
+    // Ranking row
+    const row = document.createElement('div');
+    row.className = 'rank-row' + (isActive ? '' : ' inactive');
+    if (isActive) row.onclick = () => toggleDetail(botId);
+
+    const avatarSrc = avatars[botId];
+    const avatarHtml = avatarSrc
+      ? `<img class="rank-avatar" src="${avatarSrc}">`
+      : `<div class="rank-avatar placeholder">${meta.emoji || '?'}</div>`;
+
+    const rank = idx + 1;
+    const rankClass = isActive && rank <= 3 ? ' top' : '';
+
+    if (isActive) {
+      const holdingTags = (p.holdings || []).slice(0, 3).map(h =>
+        `<span class="rank-tag">${h.product_name}</span>`
+      ).join('');
+
+      row.innerHTML = `
+        <span class="rank-num${rankClass}">${rank}</span>
+        ${avatarHtml}
+        <span class="rank-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</span>
+        <span class="rank-id">${botId}</span>
+        <div class="rank-holdings-preview">${holdingTags}</div>
+        <div style="text-align:right;min-width:80px">
+          <div class="rank-stat ${FMT.cls(p.cumulative_return_pct)}">${FMT.pct(p.cumulative_return_pct)}</div>
+          <div class="rank-stat-label">累计收益</div>
+        </div>
+        <div style="text-align:right;min-width:70px">
+          <div class="rank-stat neutral">${FMT.money(p.total_value)}</div>
+          <div class="rank-stat-label">总资产</div>
+        </div>
+        <span class="rank-expand-icon" id="arrow-${botId}">▼</span>
+      `;
+    } else {
+      row.innerHTML = `
+        <span class="rank-num">${rank}</span>
+        ${avatarHtml}
+        <span class="rank-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</span>
+        <span class="rank-id">${botId}</span>
+        <span class="rank-inactive-label">未开通</span>
+      `;
+    }
+
+    table.appendChild(row);
+
+    // Detail panel (collapsible)
+    if (isActive) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'detail-wrapper';
+      wrapper.id = 'detail-' + botId;
+
+      const cashWeight = p.total_value ? (p.cash / p.total_value * 100) : 0;
+
+      let holdingsHtml = '<div class="holdings-title">HOLDINGS</div>';
+      for (const h of (p.holdings || [])) {
+        const w = h.weight || 0;
+        holdingsHtml += `
+          <div class="holding-row">
+            <span class="holding-role">${h.role || ''}</span>
+            <span class="holding-name" title="${h.product_name}">${h.product_name}</span>
+            <span class="holding-weight">${w.toFixed(1)}%</span>
+            <div class="holding-bar-bg"><div class="holding-bar" style="width:${Math.min(w, 100)}%"></div></div>
+          </div>`;
+      }
+      holdingsHtml += `
+        <div class="cash-row">
+          <span class="holding-role" style="background:var(--yellow-soft);color:var(--yellow)">现金</span>
+          <span class="holding-name">Cash</span>
+          <span class="holding-weight">${cashWeight.toFixed(1)}%</span>
+          <div class="holding-bar-bg"><div class="holding-bar" style="width:${Math.min(cashWeight, 100)}%;background:var(--yellow)"></div></div>
+        </div>`;
+
+      wrapper.innerHTML = `
+        <div class="bot-detail">
+          <div class="account-stats">
+            <div class="stat-item">
+              <div class="stat-label">总资产</div>
+              <div class="stat-value neutral">${FMT.money(p.total_value)}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">净值</div>
+              <div class="stat-value neutral">${FMT.nav(p.net_value)}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">累计收益</div>
+              <div class="stat-value ${FMT.cls(p.cumulative_return_pct)}">${FMT.pct(p.cumulative_return_pct)}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">最大回撤</div>
+              <div class="stat-value ${p.max_drawdown < 0 ? 'negative' : 'neutral'}">${FMT.pct(p.max_drawdown)}</div>
+            </div>
+          </div>
+          ${holdingsHtml}
+          ${p.trade_date ? `<div style="text-align:right;font-size:10px;color:var(--dim);margin-top:8px;font-family:var(--mono)">as of ${p.trade_date}</div>` : ''}
+        </div>
+      `;
+
+      table.appendChild(wrapper);
+    }
+  });
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
+}
+
+function toggleDetail(botId) {
+  const wrapper = document.getElementById('detail-' + botId);
+  const arrow = document.getElementById('arrow-' + botId);
+  if (!wrapper) return;
+
+  if (openBot && openBot !== botId) {
+    // Close previous
+    const prev = document.getElementById('detail-' + openBot);
+    const prevArrow = document.getElementById('arrow-' + openBot);
+    if (prev) prev.classList.remove('open');
+    if (prevArrow) prevArrow.style.transform = '';
+  }
+
+  const isOpen = wrapper.classList.contains('open');
+  if (isOpen) {
+    wrapper.classList.remove('open');
+    arrow.style.transform = '';
+    openBot = null;
+  } else {
+    wrapper.classList.add('open');
+    arrow.style.transform = 'rotate(180deg)';
+    openBot = botId;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

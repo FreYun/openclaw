@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-02 05:41:45
+> 更新时间：2026-04-07 07:03:55
 
 ## 职业
 
@@ -27,4 +27,5 @@
 - 研究数据库（research-mcp） — `skills/research-mcp/SKILL.md`
 - TMT全景（tmt-landscape） — `skills/tmt-landscape/SKILL.md`
 - 光伏跟踪（solar-tracker） — `skills/solar-tracker/SKILL.md`
+- tougu-product-match（tougu-product-match） — `skills/tougu-product-match/SKILL.md`
 

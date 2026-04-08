@@ -1,0 +1,8 @@
+{
+  "name": "异动追踪",
+  "icon": "💥",
+  "slot": "research",
+  "subType": "research",
+  "desc": "韭研公社异动数据采集与板块分析",
+  "requiresSkills": ["browser-base"]
+}

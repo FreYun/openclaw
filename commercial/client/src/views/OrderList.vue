@@ -13,6 +13,7 @@ const statusFilter = ref('')
 
 const statusMap = {
   pending: { label: '待生成', type: 'info' },
+  awaiting_review: { label: '待研究部审批', type: 'warning' },
   generating: { label: '生成中', type: 'warning' },
   draft_ready: { label: '待审核', type: '' },
   revision_requested: { label: '修改中', type: 'warning' },

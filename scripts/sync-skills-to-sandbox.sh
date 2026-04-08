@@ -1,23 +1,16 @@
 #!/bin/bash
 # sync-skills-to-sandbox.sh
-# Sync safe skills from production to sandbox for OpenSpace evolution.
-# Skips red-zone skills and already-evolved sandbox copies.
+# Sync skills from production to sandbox for OpenSpace evolution.
+# Moves any .backup-* dirs to recycle bin.
 
 set -euo pipefail
 
 SRC="/home/rooot/.openclaw/workspace/skills"
 DST="/home/rooot/.openclaw/skills-sandbox"
+RECYCLE="$DST/.recycle"
 
-# Red zone: never sync these (testing = real side effects)
+# Exclude non-skill files only
 EXCLUDE=(
-  xhs-pub
-  gzh-publish
-  scheduled-post
-  submit-to-publisher
-  xhs-nurture
-  xhs-op
-  report-incident
-  contact-book
   META-SKILL-README.md
   SKILL-GUIDE.md
 )
@@ -30,11 +23,27 @@ is_excluded() {
   return 1
 }
 
-mkdir -p "$DST"
+mkdir -p "$DST" "$RECYCLE"
 
 synced=0
 skipped_exclude=0
 skipped_evolved=0
+recycled=0
+
+# Move .backup-* dirs from both workspace and sandbox to recycle bin
+for dir in "$SRC" "$DST"; do
+  for bak in "$dir"/*.backup-*/; do
+    [[ -d "$bak" ]] || continue
+    name=$(basename "$bak")
+    # Remove skill.json from backup before recycling
+    rm -f "$bak/skill.json"
+    # Prefix with source to avoid collisions
+    prefix="ws"
+    [[ "$dir" == "$DST" ]] && prefix="sb"
+    mv "$bak" "$RECYCLE/${prefix}-${name}" 2>/dev/null || true
+    recycled=$((recycled + 1))
+  done
+done
 
 for skill_dir in "$SRC"/*/; do
   name=$(basename "$skill_dir")
@@ -71,4 +80,4 @@ for skill_dir in "$SRC"/*/; do
 done
 
 echo ""
-echo "Sync complete: $synced synced, $skipped_exclude excluded (red zone), $skipped_evolved skipped (already evolved)"
+echo "Sync complete: $synced synced, $skipped_exclude excluded, $skipped_evolved skipped (evolved), $recycled recycled"

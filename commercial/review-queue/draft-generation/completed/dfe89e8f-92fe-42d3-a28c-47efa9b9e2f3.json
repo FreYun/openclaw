@@ -1,0 +1,85 @@
+{
+  "order": {
+    "id": "871da740-2180-4d49-a694-ab922a7475d1",
+    "title": "13123",
+    "bot_id": "bot7",
+    "status": "pending",
+    "requirements": "讲一下创新药",
+    "content_type": "image",
+    "max_revisions": 3,
+    "reference_links": [],
+    "created_at": "2026-04-07 06:57:04",
+    "updated_at": "2026-04-07 06:57:04"
+  },
+  "client": {
+    "id": 7,
+    "username": "test11",
+    "display_name": "test",
+    "company": "",
+    "phone": ""
+  },
+  "generation_request": {
+    "version": 1,
+    "revision_note": ""
+  },
+  "materials": [
+    {
+      "id": 46,
+      "file_name": "老K帖子草稿.docx (文字内容)",
+      "file_type": "text/plain",
+      "file_size": 2383,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/871da740-2180-4d49-a694-ab922a7475d1/materials/1775545025410_docx_content.txt",
+      "uploaded_at": "2026-04-07 06:57:05",
+      "text_content": "标题：AI吃电太狠了，绿电的逻辑变了\n\n先说我的判断：绿电正在从\"政策驱动\"变成\"算力刚需\"，这个逻辑切换很多人还没反应过来。\n\n\\[一\\] 算电协同，今年最大的政策新词\n\n今年两会首次把\"算电协同\"写入政府工作报告 💡 什么意思？AI数据中心要建，电从哪来？答案是绿电直供。\n\n3月23号国家数据局局长在中国发展高层论坛上给了一个硬指标：枢纽节点新建算力设施绿电占比要达到80%以上。这不是建议，是目标 📈 翻译成人话就是——未来新增算力，八成电都要走绿色通道。\n\n这才是绿电真正的需求增量，不是补贴，是刚需。\n\n\\[二\\] 需求端：AI \\+ 高温双重驱动\n\n国内token成本比国外便宜，越来越多海外需求往国内跑，算力出海带动电力消费持续攀升 🖥️ 再加上今年夏天居民用电又是高位，作为清洁可再生的绿电，需求只会越来越实。\n\n值得注意一点，这不是短期博弈，是结构性增量 ⚡\n\n\\[三\\] 容量电价：发电企业的定心丸\n\n年初国家主管部门发了114号文，完善发电侧容量电价机制。说白了就是——发电机组只要处于可用状态，不管实际发没发电，都能拿到固定补偿 💰\n\n这个机制解决了什么问题？盈利稳定性。以前电力企业靠天吃饭，现在有了\"保底工资\"，投Z回收更有保障了。\n\n\\[加一\\] 红利打底，不靠行情吃饭\n\n绿电指数成分股大部分属于公用事业，盈利稳定，股息率也稳 📊 根据wind数据，2024年度指数股息率2\\.28%。在当前市场环境下，能稳稳拿到分红，本身就是一种配置价值。\n\n\\[打卡\\] 怎么参与？\n\n看好绿电方向，标的太散，自己挑费劲 🤯 最省心的方式就是通过富国中证绿电ETF，一键打包风电、光伏、水电、核电。C类份额持有满7天免赎回费，适合想灵活进出的朋友。\n\n在我看来，绿电正处在\"政策定调→需求放量→盈利修复\"的早期阶段，值得认真看看 👊\n\n声明：个人观点和思考不构成投Z决策建议。没有群，不做投Z咨询，所有决策均应视自身风险承受能力以及预期目标来做出。\n\n\\#绿电\\[话题\\]\\# \\#算电协同\\[话题\\]\\# \\#基金\\[话题\\]\\# \\#新能源\\[话题\\]\\# \\#我的理财日记\\[话题\\]\\#"
+    },
+    {
+      "id": 47,
+      "file_name": "docx_img_1.png",
+      "file_type": "image/png",
+      "file_size": 1290192,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/871da740-2180-4d49-a694-ab922a7475d1/docx_images/docx_img_1.png",
+      "uploaded_at": "2026-04-07 06:57:05",
+      "text_content": null
+    },
+    {
+      "id": 48,
+      "file_name": "docx_img_2.png",
+      "file_type": "image/png",
+      "file_size": 1271682,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/871da740-2180-4d49-a694-ab922a7475d1/docx_images/docx_img_2.png",
+      "uploaded_at": "2026-04-07 06:57:05",
+      "text_content": null
+    },
+    {
+      "id": 49,
+      "file_name": "docx_img_3.jpg",
+      "file_type": "image/jpeg",
+      "file_size": 55199,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/871da740-2180-4d49-a694-ab922a7475d1/docx_images/docx_img_3.jpg",
+      "uploaded_at": "2026-04-07 06:57:05",
+      "text_content": null
+    }
+  ],
+  "drafts": [],
+  "request_id": "dfe89e8f-92fe-42d3-a28c-47efa9b9e2f3",
+  "status": "completed",
+  "created_at": "2026-04-07T06:57:28.320Z",
+  "updated_at": "2026-04-07T06:59:00.437Z",
+  "reviewer_note": "",
+  "approved_at": "2026-04-07T06:57:47.452Z",
+  "reviewed_at": "2026-04-07T06:57:47.452Z",
+  "result_draft_id": "35276c25-cc8c-4037-bfa1-a7bd05a82f4c",
+  "generation_started_at": "2026-04-07T06:57:47.460Z",
+  "completed_at": "2026-04-07T06:59:00.437Z",
+  "result": {
+    "title": "AI吃电太狠了，绿电的逻辑变了",
+    "tags": [
+      "绿电",
+      "算电协同",
+      "基J",
+      "新能源",
+      "我的理财日记"
+    ],
+    "image_style": "基础"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "人感诊断",
+  "icon": "🧬",
+  "slot": "utility",
+  "subType": "craft",
+  "desc": "检测AI味七宗罪，输出诊断报告和针对性处方"
+}

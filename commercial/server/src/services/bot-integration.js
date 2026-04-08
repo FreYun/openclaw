@@ -53,21 +53,23 @@ function runAgent(args, timeoutMs = 300000) {
  * - Text files: content is read inline
  * - Image files: absolute path is returned so the bot can Read them
  */
-function readMaterials(orderId) {
-  const db = getDb();
-  const materials = db
+function readMaterials(orderId, snapshot) {
+  const materials = snapshot?.materials || getDb()
     .prepare("SELECT * FROM order_materials WHERE order_id = ?")
     .all(orderId);
-
   const texts = [];
   const imagePaths = [];
-  for (const m of materials) {
-    if (m.file_type.startsWith("text/")) {
+  for (const material of materials) {
+    if (material.file_type.startsWith("text/")) {
+      if (typeof material.text_content === "string" && material.text_content.length > 0) {
+        texts.push(material.text_content);
+        continue;
+      }
       try {
-        texts.push(fs.readFileSync(m.file_path, "utf8"));
+        texts.push(fs.readFileSync(material.file_path, "utf8"));
       } catch {}
-    } else if (m.file_type.startsWith("image/")) {
-      imagePaths.push(m.file_path);
+    } else if (material.file_type.startsWith("image/")) {
+      imagePaths.push(material.file_path);
     }
   }
   return { texts, imagePaths };
@@ -78,9 +80,12 @@ function readMaterials(orderId) {
  * Does NOT use --session-id (conflicts with gateway session routing).
  * Instead, includes full context in each message.
  */
-export async function generateDraft(order, version, revisionNote) {
-  const { texts, imagePaths } = readMaterials(order.id);
-  const refLinks = JSON.parse(order.reference_links || "[]");
+export async function generateDraft(order, version, revisionNote, snapshot = null) {
+  const sourceOrder = snapshot?.order || order;
+  const { texts, imagePaths } = readMaterials(order.id, snapshot);
+  const refLinks = Array.isArray(sourceOrder.reference_links)
+    ? sourceOrder.reference_links
+    : JSON.parse(sourceOrder.reference_links || "[]");
 
   // Build materials section
   let materialsSection = "";
@@ -97,10 +102,10 @@ export async function generateDraft(order, version, revisionNote) {
     message = `你收到了一个商单任务。请以你的人设风格生成一篇小红书帖子。
 
 【客户要求】
-${order.requirements}
+${sourceOrder.requirements}
 
 ${materialsSection}${refLinks.length > 0 ? `【参考链接】\n${refLinks.join("\n")}\n` : ""}
-【内容类型】${order.content_type}
+【内容类型】${sourceOrder.content_type}
 
 请严格按以下 JSON 格式输出结果，不要包含其他文字：
 {
@@ -113,14 +118,14 @@ ${materialsSection}${refLinks.length > 0 ? `【参考链接】\n${refLinks.join(
   } else {
     // Revision: include previous draft for context + client feedback
     const db = getDb();
-    const prevDraft = db.prepare(
+    const prevDraft = snapshot?.drafts?.find((draft) => draft.version === version - 1) || db.prepare(
       "SELECT title, content, card_text, tags FROM drafts WHERE order_id = ? AND version = ?"
     ).get(order.id, version - 1);
 
     message = `你之前收到了一个商单任务，以下是上一版草稿和客户的修改意见。
 
 【原始要求】
-${order.requirements}
+${sourceOrder.requirements}
 
 【上一版草稿】
 标题：${prevDraft?.title || ""}

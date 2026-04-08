@@ -63,7 +63,7 @@ Director: Wei Zhongxian (mag1), concurrent role.
 
 | # | Agent ID | Name | Emoji | Focus | MCP Port | Status |
 |---|---------|------|-------|-------|---------|--------|
-| 1 | `bot1` | 来财妹妹 | ✨ | XHS content, lively & relatable | 18061 | Active |
+| 1 | `bot1` | 来财妹妹 | ✨ | XHS content, lively & relatable | 18060 | Active |
 | 2 | `bot2` | _(standby)_ | — | Unconfigured | 18062 | Inactive |
 | 3 | `bot3` | _(standby)_ | — | Unconfigured | 18063 | Inactive |
 | 4 | `bot4` | 研报搬运工阿泽 | 📊 | Research report → XHS content | 18064 | Active |

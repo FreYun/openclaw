@@ -6118,6 +6118,12 @@ function renderPluginPanel() {
 let gemData = null;      // { registry, bindings, skillGemDeps }
 let gemHealthData = null; // { gemId: { botId: { status, pid }, ... }, ... }
 let gemStoreOpen = false;
+let _xhsLiveBot = null; // currently running headed Chrome bot
+
+// 启动时获取当前 live 状态
+fetch('/api/xhs-live').then(r => r.json()).then(d => {
+  if (d.active) { _xhsLiveBot = d.botId; }
+}).catch(() => {});
 
 function toggleGemStore() {
   gemStoreOpen = !gemStoreOpen;
@@ -6286,6 +6292,26 @@ function renderGemPanel() {
       iconRow.innerHTML = '<span style="font-size:10px;color:var(--dim);font-family:var(--cn)">无宝石</span>';
     }
     listEl.appendChild(iconRow);
+    // Collapsed mode: XHS live status button
+    const xhsBindingC = bindings['xiaohongshu-mcp'];
+    if (xhsBindingC?.socketed) {
+      const isLiveC = !!_xhsLiveBot;
+      const liveLabelC = isLiveC ? ` 🔴${_xhsLiveBot}直播中` : '';
+      const liveBtn = document.createElement("div");
+      liveBtn.style.cssText = "margin-top:6px;display:flex;gap:4px";
+      liveBtn.innerHTML = `<button onclick="event.stopPropagation();openXhsLive('${bot}')" style="
+        display:flex;align-items:center;gap:5px;flex:1;padding:4px 6px;
+        background:rgba(233,69,96,0.08);border:1px solid rgba(233,69,96,0.3);border-radius:3px;
+        cursor:pointer;font-family:var(--cn);font-size:10px;color:var(--text);transition:border-color 0.15s;
+      " onmouseover="this.style.borderColor='#e94560'" onmouseout="this.style.borderColor='rgba(233,69,96,0.3)'">
+        📺 <span>实时状态</span>
+        <span style="margin-left:auto;font-size:9px;color:var(--dim)">${liveLabelC} ▸</span>
+      </button>${isLiveC ? `<button onclick="event.stopPropagation();stopXhsLive()" style="
+        padding:4px 6px;background:rgba(233,69,96,0.15);border:1px solid var(--accent);border-radius:3px;
+        cursor:pointer;font-family:var(--cn);font-size:10px;color:var(--accent);
+      " title="关闭有头浏览器">✕</button>` : ''}`;
+      listEl.appendChild(liveBtn);
+    }
     return;
   }
 
@@ -6337,6 +6363,48 @@ function renderGemPanel() {
   if (warnings.length > 0) {
     warnEl.innerHTML = warnings.map(w => `<div>${w}</div>`).join("");
   }
+
+  // Expanded mode: XHS live status button
+  const xhsBindingE = bindings['xiaohongshu-mcp'];
+  if (xhsBindingE?.socketed) {
+    const isLiveE = !!_xhsLiveBot;
+    const liveLabelE = isLiveE ? ` 🔴${_xhsLiveBot}直播中` : '';
+    const liveBtn = document.createElement("div");
+    liveBtn.style.cssText = "margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);display:flex;gap:4px";
+    liveBtn.innerHTML = `<button onclick="event.stopPropagation();openXhsLive('${bot}')" style="
+      display:flex;align-items:center;gap:6px;flex:1;padding:5px 8px;
+      background:rgba(233,69,96,0.08);border:1px solid rgba(233,69,96,0.3);border-radius:3px;
+      cursor:pointer;font-family:var(--cn);font-size:11px;color:var(--text);transition:border-color 0.15s;
+    " onmouseover="this.style.borderColor='#e94560'" onmouseout="this.style.borderColor='rgba(233,69,96,0.3)'">
+      📺 <span>小红书实时状态</span>
+      <span style="margin-left:auto;font-size:9px;color:var(--dim)">${liveLabelE} ▸</span>
+    </button>${isLiveE ? `<button onclick="event.stopPropagation();stopXhsLive()" style="
+      padding:5px 8px;background:rgba(233,69,96,0.15);border:1px solid var(--accent);border-radius:3px;
+      cursor:pointer;font-family:var(--cn);font-size:11px;color:var(--accent);
+    " title="关闭有头浏览器">✕</button>` : ''}`;
+    listEl.appendChild(liveBtn);
+  }
+}
+
+// (moved to top of gem section)
+
+async function openXhsLive(botId) {
+  try {
+    const res = await fetch(`/api/xhs-live/${botId}`, { method: 'POST' });
+    const data = await res.json();
+    if (!data.ok) { alert('启动失败: ' + (data.error || '未知错误')); return; }
+    _xhsLiveBot = botId;
+    renderGemPanel();
+  } catch (e) { alert('请求失败: ' + e.message); return; }
+  setTimeout(() => window.open('http://172.31.41.68:6081/vnc.html', '_blank'), 1500);
+}
+
+async function stopXhsLive() {
+  try {
+    await fetch('/api/xhs-live', { method: 'DELETE' });
+    _xhsLiveBot = null;
+    renderGemPanel();
+  } catch (e) { console.error('stopXhsLive error:', e); }
 }
 
 function toggleGemTools(e, btn, botId, gemId) {

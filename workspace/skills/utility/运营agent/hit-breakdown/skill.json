@@ -4,5 +4,13 @@
   "slot": "utility",
   "subType": "craft",
   "desc": "跨领域采集高互动帖子，拆解通用爆款规律，沉淀为可复用的模式库",
-  "requiresMcp": ["xiaohongshu-mcp"]
+  "requiresMcp": ["xiaohongshu-mcp"],
+  "subSkills": [
+    {
+      "name": "爆款模式库",
+      "icon": "📊",
+      "file": "patterns.md",
+      "desc": "跨领域通用爆款模式，持续迭代"
+    }
+  ]
 }

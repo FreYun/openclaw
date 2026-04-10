@@ -1,159 +1,206 @@
 ---
 name: tougu-db-refresh
-description: 通过 tougu_tools.py 的五个查询函数拉取投顾数据，并写入 tougu.db 的五张标准表。用于定时刷新全局产品数据（所有 bot 共用，全局只需执行一次）。
+description: 通过 research-mcp 的投顾查询工具拉取数据，写入 tougu.db 的产品侧标准表。全局每天执行一次，所有 bot 共用。
 ---
 
 # 投顾数据库刷新 /tougu-db-refresh
 
-**重要**：这是全局数据刷新任务，不绑定任何单个 bot。产品数据对所有 bot 是一样的，全局每天只需执行一次。后续这些函数会注册到 research-mcp，届时直接通过 MCP 调用替代 Python 函数调用。
+**重要**：这是全局数据刷新任务，不绑定任何单个 bot。产品数据对所有 bot 是一样的，全局每天只需执行一次。
 
-这个 skill 不修改 `tougu_tools.py` 本身。
+这个 skill 的职责是：
 
-它的职责是：
-
-1. 调用 [tougu_tools.py](../../../workspace-bot1/memory/portfolio/code/mcp/tougu_tools.py) 里的五个函数作为数据源
-2. 解析函数返回的 `columns + data` 结构
+1. 调用 research-mcp 的投顾查询工具作为数据源
+2. 解析返回的 `columns + data` 结构
 3. 将结果写入 `/home/rooot/.openclaw/data/tougu.db`
 
-目标表（产品侧 5 表，供 tougu-portfolio-mcp 读取）：
+## 数据源：research-mcp 工具
 
-- `tougu_info` — 产品基本信息（含 min_deposit / max_deposit / buy_status）
-- `tougu_nav` — 每日净值（**关键表：收益计算依赖此数据**）
-- `tougu_performance` — 多区间绩效
-- `tougu_portfolio` — 持仓基金明细
-- `tougu_equity_analysis` — 权益主题分析
+通过 MCP 调用 research-mcp 上的工具：
 
-## 数据源函数
+| 工具 | 目标表 | 请求方式 | 状态 |
+|------|--------|---------|------|
+| `get_strategy_info()` | `tougu_info` | 全量单次 | ✅ 可用 |
+| `get_strategy_nav()` | `tougu_nav` | 全量单次 | ✅ 可用 |
+| `get_strategy_performance(strategy=批次)` | `tougu_performance` | **分批 25 个/次** | ✅ 可用 |
+| `get_strategy_portfolio(strategy=批次)` | `tougu_portfolio` | **分批 25 个/次** | ✅ 可用 |
+| `get_strategy_equity_analysis(strategy=批次)` | `tougu_equity_analysis` | **分批 25 个/次** | ✅ 可用 |
 
-按以下顺序调用：
+## 分批请求规则（通用）
 
-1. `tool_get_strategy_info(strategy=None)`
-2. `tool_get_strategy_nav(strategy=None, as_of_date=None)`
-3. `tool_get_strategy_performance(strategy=None, as_of_date=None)`
-4. `tool_get_strategy_portfolio(strategy=None, as_of_date=None)`
-5. `tool_get_strategy_equity_analysis(strategy=None, as_of_date=None)`
+**⚠️ performance / portfolio / equity_analysis 绝对不能无参数全量请求，会导致 MCP 服务 502 崩溃。这是已验证的生产事故。**
 
-源文件位置：
-- [tougu_tools.py](../../../workspace-bot1/memory/portfolio/code/mcp/tougu_tools.py)
+这三个工具必须分批调用：
+
+```
+批次大小: 25 个产品
+总批次数: ceil(产品总数 / 25) ≈ 44 批
+每批间隔: 1 秒
+超时设置: 单批 120 秒
+参数格式: tool_name(strategy="ID1,ID2,...,ID25")
+```
+
+分批流程：
+1. 从 `tougu_info` 读取全部 `strategy_id` 列表
+2. 按 50 个一组切分
+3. 逐批调用，每批返回后立即写入目标表
+4. 每批间隔 2 秒
+5. 单批失败记录 ID 列表，全部跑完后重试一次
+
+## 执行流程
+
+按以下顺序执行：
+
+### Step 1: 刷新 tougu_info
+
+```
+调用: get_strategy_info()  （无参数，全量）
+预期: ~1088 个产品
+写入: 按 strategy_id upsert
+```
+
+### Step 2: 刷新 tougu_nav
+
+```
+调用: get_strategy_nav()  （无参数，全量最新净值）
+预期: ~1064 个产品
+写入: 按 (strategy_id, nav_date) upsert
+```
+
+### Step 3: 分批刷新 tougu_performance
+
+```
+调用: get_strategy_performance(strategy="批次ID")  分批 25 个/次
+写入: 按 (strategy_id, as_of_date, period) upsert
+```
+
+### Step 4: 分批刷新 tougu_portfolio
+
+```
+调用: get_strategy_portfolio(strategy="批次ID")  分批 25 个/次
+写入: 按 (strategy_id, nav_date) 先删后插（同一事务内完成）
+```
+
+### Step 5: 分批刷新 tougu_equity_analysis
+
+```
+调用: get_strategy_equity_analysis(strategy="批次ID")  分批 25 个/次
+写入: 宽表转长表，按 (strategy_id, nav_date) 先删后插（同一事务内完成）
+```
 
 ## 写库规则
 
 ### 1. tougu_info
-把 `tool_get_strategy_info` 返回的中文列映射到：
+`get_strategy_info` 返回的中文列映射：
 
-- `策略ID` -> `strategy_id`
-- `策略名称` -> `strategy_name`
-- `管理人` -> `manager`
-- `最大申购限额` -> `max_deposit`
-- `最小申购限额` -> `min_deposit`
-- `策略介绍` -> `introduction`
-- `策略简介` -> `resume`
-- `管理费率` -> `strategy_rate`
-- `业绩基准` -> `benchmark`
-- `目标年化收益率` -> `target_annual_yield`
-- `申购状态` -> `buy_status`
+| 返回列 | 目标字段 |
+|--------|---------|
+| `策略ID` | `strategy_id` |
+| `策略名称` | `strategy_name` |
+| `管理人` | `manager` |
+| `最大申购限额` | `max_deposit` |
+| `最小申购限额` | `min_deposit` |
+| `策略介绍` | `introduction` |
+| `策略简介` | `resume` |
+| `管理费率` | `strategy_rate` |
+| `业绩基准` | `benchmark` |
+| `目标年化收益率` | `target_annual_yield` |
+| `申购状态` | `buy_status` |
 
 写入方式：按 `strategy_id` upsert。
 
 ### 2. tougu_nav
-把 `tool_get_strategy_nav` 返回的中文列映射到：
+`get_strategy_nav` 返回的中文列映射：
 
-- `策略ID` -> `strategy_id`
-- `策略名称` -> `strategy_name`
-- `净值日期` -> `nav_date`
-- `净值` -> `nav`
+| 返回列 | 目标字段 |
+|--------|---------|
+| `策略ID` | `strategy_id` |
+| `策略名称` | `strategy_name` |
+| `净值日期` | `nav_date` |
+| `净值` | `nav` |
 
 写入方式：按 `(strategy_id, nav_date)` upsert。
 
 ### 3. tougu_performance
-把 `tool_get_strategy_performance` 的每一行写入：
+`get_strategy_performance` 每批返回的中文列映射：
 
-- `策略ID` -> `strategy_id`
-- `策略名称` -> `strategy_name`
-- `截止日期` -> `as_of_date`
-- `区间` -> `period`
-- `收益率` -> `return_pct`
-- `最大回撤` -> `max_drawdown_pct`
-- `波动率` -> `volatility_pct`
-- `夏普比率` -> `sharpe_ratio`
-- `卡玛比率` -> `calmar_ratio`
+| 返回列 | 目标字段 |
+|--------|---------|
+| `策略ID` | `strategy_id` |
+| `策略名称` | `strategy_name` |
+| `截止日期` | `as_of_date` |
+| `区间` | `period` |
+| `收益率` | `return_pct` |
+| `最大回撤` | `max_drawdown_pct` |
+| `波动率` | `volatility_pct` |
+| `夏普比率` | `sharpe_ratio` |
+| `卡玛比率` | `calmar_ratio` |
 
 写入方式：按 `(strategy_id, as_of_date, period)` upsert。
 
 ### 4. tougu_portfolio
-把 `tool_get_strategy_portfolio` 的每一行写入：
+`get_strategy_portfolio` 每批返回的中文列映射：
 
-- `策略ID` -> `strategy_id`
-- `策略名称` -> `strategy_name`
-- `持仓日期` -> `nav_date`
-- `基金代码` -> `fund_code`
-- `基金名称` -> `fund_name`
-- `基金类型` -> `fund_type`
-- `持仓比例` -> `weight_pct`
-- `标签日期` -> `label_date`
-- `主题1` -> `theme_1`
-- `主题1占比` -> `theme_1_pct`
-- `主题2` -> `theme_2`
-- `主题2占比` -> `theme_2_pct`
+| 返回列 | 目标字段 |
+|--------|---------|
+| `策略ID` | `strategy_id` |
+| `策略名称` | `strategy_name` |
+| `持仓日期` | `nav_date` |
+| `基金代码` | `fund_code` |
+| `基金名称` | `fund_name` |
+| `基金类型` | `fund_type` |
+| `持仓比例` | `weight_pct` |
+| `标签日期` | `label_date` |
+| `主题1` | `theme_1` |
+| `主题1占比` | `theme_1_pct` |
+| `主题2` | `theme_2` |
+| `主题2占比` | `theme_2_pct` |
 
-写入方式：按 `(strategy_id, nav_date)` 先删后插，避免同一批持仓重复累计。
+写入方式：按 `(strategy_id, nav_date)` 先删后插，同一事务内完成，避免持仓重复累计。
 
 ### 5. tougu_equity_analysis
-`tool_get_strategy_equity_analysis` 的返回是宽表：
+`get_strategy_equity_analysis` 返回宽表，固定前 3 列（`策略ID`、`策略名称`、`持仓日期`），后面每列是动态主题名。
 
-- 固定前 3 列：`策略ID`、`策略名称`、`持仓日期`
-- 后面每一列都是一个动态主题
+落库时转成长表：
 
-落库时要转成长表写入：
+| 目标字段 | 来源 |
+|---------|------|
+| `strategy_id` | 第 1 列 `策略ID` |
+| `strategy_name` | 第 2 列 `策略名称` |
+| `nav_date` | 第 3 列 `持仓日期` |
+| `sector` | 第 4+ 列的**列名**（动态主题名） |
+| `sector_pct_in_equity` | 第 4+ 列的**值** |
 
-- `strategy_id`
-- `strategy_name`
-- `nav_date`
-- `sector`
-- `sector_pct_in_equity`
-
-写入方式：按 `(strategy_id, nav_date)` 先删后插。
-
-## 执行方式
-
-优先直接运行一个内联 Python 刷新逻辑，示例流程：
-
-1. `import tougu_tools`
-2. 调 5 个函数拿结果
-3. 校验 `success == True`
-4. 用 `sqlite3` 连接 `tougu.db`
-5. 按上面的映射规则写表
-6. 输出每张表刷新了多少条记录
+写入方式：按 `(strategy_id, nav_date)` 先删后插，同一事务内完成。
 
 ## 失败处理
 
-- 某个函数返回 `success=False`，停止后续写入并报告失败原因
-- 不要写入半截结构化脏数据
-- 对 `tougu_portfolio` / `tougu_equity_analysis`，必须在同一事务中完成“删旧 + 插新”
+- 某个工具返回 `success=False`，记录错误信息，**继续执行下一个工具**（不要整体中断）
+- 分批时单批失败，记录失败批次的 ID 列表，全部批次跑完后重试失败批次一次
+- 对 `tougu_portfolio` / `tougu_equity_analysis`，必须在同一事务中完成"删旧 + 插新"
 
 ## 验证
 
-刷新后至少检查：
+刷新后检查：
 
-1. `tougu_info` 是否有行数
-2. `tougu_nav` 是否有行数
-3. `tougu_performance` 是否有行数
-4. `tougu_portfolio` 是否有行数
-5. `tougu_equity_analysis` 是否有行数
+1. `tougu_info` 行数（预期 ~1088）
+2. `tougu_nav` 最新 nav_date 是否为今天或最近交易日
+3. `tougu_performance` 最新 as_of_date 是否更新
+4. `tougu_portfolio` 行数 > 0
+5. `tougu_equity_analysis` 行数 > 0
 6. 随机抽样 1 个 `strategy_id`，检查五张表是否能对应上
 
 ## 输出要求
 
-执行完后只汇报：
+执行完后汇报：
 
-- 五个函数是否成功
+- 五个工具各自是否成功
 - 五张表各写入多少行
-- 是否有失败项
-
-不要改 `tougu_tools.py`。只把它当作数据源。
+- 分批执行情况（总批次/成功/失败）
+- 是否有失败项及原因
 
 ## 注意事项
 
-- `tougu_nav` 是整个投资链路最关键的表。没有净值数据，bot 的 `record_daily_snapshot` 会 fallback 到 1.0，收益率永远为 0%。净值灌入后收益计算自动生效。
-- `tougu_performance` 每天按新 as_of_date 追加，长期会膨胀（~240 万行/年）。建议定期清理只保留最近 7 天的 as_of_date。
-- `tougu_info` 和 `tougu_portfolio` 是覆盖/删后重插，不会膨胀。
+- `tougu_nav` 是整个投资链路最关键的表。没有净值数据，bot 的收益快照会 fallback 到 1.0，收益率永远为 0%
+- `tougu_performance` 每天按新 as_of_date 追加，长期会膨胀。建议定期清理只保留最近 7 天的 as_of_date
+- `tougu_info` 是覆盖写入，不会膨胀
+- **performance / portfolio / equity_analysis 全量无参数请求会打崩 MCP 服务**，这是已验证的生产事故，绝对不能做

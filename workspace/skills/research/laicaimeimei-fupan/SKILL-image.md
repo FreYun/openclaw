@@ -106,7 +106,7 @@ Content: {实际传给 generate_image 的 content}
 用户确认后，在投稿流程中将封面图作为帖子图片：
 
 ```bash
-folder=$(bash ~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh \
+folder=$(bash skills/xhs-op/submit-to-publisher.sh \
   -a bot1 -t "标题" -b /tmp/post_body_$$.txt \
   -m image -r "direct:ou_xxx" \
   -i "{Step 4 的 DEST 路径}" \

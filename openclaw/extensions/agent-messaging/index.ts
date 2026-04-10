@@ -1,5 +1,6 @@
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk";
 import { emptyPluginConfigSchema } from "openclaw/plugin-sdk";
+import { createArchive } from "./src/archive.js";
 import { createStore } from "./src/store.js";
 import { registerMessagingTools } from "./src/tools.js";
 
@@ -9,9 +10,10 @@ const plugin = {
   description: "Unified inter-agent messaging with trace-based routing (Redis backend)",
   configSchema: emptyPluginConfigSchema(),
   register(api: OpenClawPluginApi) {
-    const store = createStore();
+    const archive = createArchive();
+    const store = createStore(undefined, archive);
     registerMessagingTools(api, store);
-    api.logger.info("agent-messaging: registered 6 messaging tools (Redis backend)");
+    api.logger.info("agent-messaging: registered 6 messaging tools (Redis + SQLite archive)");
   },
 };
 

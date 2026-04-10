@@ -96,6 +96,14 @@ function getPortfolioSummary() {
   }
 }
 
+function getPortfolioDetails() {
+  try {
+    return execSync(`python3 ${PORTFOLIO_PY} --details`, { timeout: 5000, encoding: "utf8" }).trim();
+  } catch (e) {
+    return JSON.stringify({ error: e.message });
+  }
+}
+
 // --- HTTP server ---
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
@@ -114,6 +122,14 @@ const server = http.createServer((req, res) => {
   // Portfolio data
   if (url.pathname === "/api/portfolio/summary") {
     const data = getPortfolioSummary();
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(data);
+    return;
+  }
+
+  // Portfolio details (holdings history + nav time-series)
+  if (url.pathname === "/api/portfolio/details") {
+    const data = getPortfolioDetails();
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(data);
     return;

@@ -158,6 +158,7 @@ cat /home/rooot/.openclaw/workspace-botN/memory/topic-library.md
 
 **周度规划（每周一额外做）**：
 - 读取各 bot 的 `SOUL.md`（确认人设和内容支柱）
+- 参考 `hit-breakdown/patterns.md` 近期活跃模式，推荐选题方向时可附带模式建议
 - 通读各 bot 素材库，从中挑选本周选题，补充未来 7 天排期
 - 跨 bot 撞题检查（见下方规则）
 - 更新「数据回顾」和「月度方向」

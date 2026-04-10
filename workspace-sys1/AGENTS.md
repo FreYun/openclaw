@@ -128,7 +128,7 @@ mv fails (entry gone) → another session handling it, skip silently.
 
 ```bash
 curl -s --connect-timeout 3 --max-time 5 http://localhost:18060/health
-npx mcporter call "xiaohongshu-mcp.check_login_status()"
+npx mcporter call "xhs-{account_id}.check_login_status()"
 ```
 - Offline → **上报 mag1，不要自行重启 MCP** → delete entry, notify submitter only (NO Feishu group)
 - **Only `isCreatorLoggedIn` matters** — ignore main site login status
@@ -142,17 +142,17 @@ npx mcporter call "xiaohongshu-mcp.check_login_status()"
 
 **text_to_image:**
 ```bash
-npx mcporter call --timeout 180000 "xiaohongshu-mcp.publish_content(title:'{t}', content:'{c}', text_image:'{body}', text_to_image:true, image_style:'{style}', tags:[...], visibility:'{v}', is_original:{bool}, schedule_at:'{sa}')"
+npx mcporter call --timeout 180000 "xhs-{account_id}.publish_content(title:'{t}', content:'{c}', text_image:'{body}', text_to_image:true, image_style:'{style}', tags:[...], visibility:'{v}', is_original:{bool}, schedule_at:'{sa}')"
 ```
 
 **image:**
 ```bash
-npx mcporter call --timeout 180000 "xiaohongshu-mcp.publish_content(title:'{t}', content:'{body}', text_to_image:false, images:['/abs/path/1.jpg',...], tags:[...], visibility:'{v}', is_original:{bool}, schedule_at:'{sa}')"
+npx mcporter call --timeout 180000 "xhs-{account_id}.publish_content(title:'{t}', content:'{body}', text_to_image:false, images:['/abs/path/1.jpg',...], tags:[...], visibility:'{v}', is_original:{bool}, schedule_at:'{sa}')"
 ```
 
 **longform:**
 ```bash
-npx mcporter call --timeout 180000 "xiaohongshu-mcp.publish_longform(title:'{t}', content:'{body}', tags:[...], visibility:'{v}')"
+npx mcporter call --timeout 180000 "xhs-{account_id}.publish_longform(title:'{t}', content:'{body}', tags:[...], visibility:'{v}')"
 ```
 
 ### 6. Archive

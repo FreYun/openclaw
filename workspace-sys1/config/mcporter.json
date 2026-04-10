@@ -1,68 +1,62 @@
 {
-  "mcpServers": {
-    "xhs-bot1": {
-      "url": "http://localhost:18060/mcp/bot1"
+    "mcpServers": {
+        "xhs-bot1": {
+            "url": "http://localhost:18060/mcp/bot1"
+        },
+        "xhs-bot2": {
+            "url": "http://localhost:18060/mcp/bot2"
+        },
+        "xhs-bot3": {
+            "url": "http://localhost:18060/mcp/bot3"
+        },
+        "xhs-bot4": {
+            "url": "http://localhost:18060/mcp/bot4"
+        },
+        "xhs-bot5": {
+            "url": "http://localhost:18060/mcp/bot5"
+        },
+        "xhs-bot6": {
+            "url": "http://localhost:18060/mcp/bot6"
+        },
+        "xhs-bot7": {
+            "url": "http://localhost:18060/mcp/bot7"
+        },
+        "xhs-bot8": {
+            "url": "http://localhost:18060/mcp/bot8"
+        },
+        "xhs-bot9": {
+            "url": "http://localhost:18060/mcp/bot9"
+        },
+        "xhs-bot10": {
+            "url": "http://localhost:18060/mcp/bot10"
+        },
+        "xhs-bot11": {
+            "url": "http://localhost:18060/mcp/bot11"
+        },
+        "xhs-bot12": {
+            "url": "http://localhost:18060/mcp/bot12"
+        },
+        "xhs-bot13": {
+            "url": "http://localhost:18060/mcp/bot13"
+        },
+        "xhs-bot14": {
+            "url": "http://localhost:18060/mcp/bot14"
+        },
+        "xhs-bot15": {
+            "url": "http://localhost:18060/mcp/bot15"
+        },
+        "xhs-bot16": {
+            "url": "http://localhost:18060/mcp/bot16"
+        },
+        "xhs-bot17": {
+            "url": "http://localhost:18060/mcp/bot17"
+        },
+        "xhs-bot18": {
+            "url": "http://localhost:18060/mcp/bot18"
+        },
+        "xhs-bot19": {
+            "url": "http://localhost:18060/mcp/bot19"
+        }
     },
-    "xhs-bot2": {
-      "url": "http://localhost:18060/mcp/bot2"
-    },
-    "xhs-bot3": {
-      "url": "http://localhost:18060/mcp/bot3"
-    },
-    "xhs-bot4": {
-      "url": "http://localhost:18060/mcp/bot4"
-    },
-    "xhs-bot5": {
-      "url": "http://localhost:18060/mcp/bot5"
-    },
-    "xhs-bot6": {
-      "url": "http://localhost:18060/mcp/bot6"
-    },
-    "xhs-bot7": {
-      "url": "http://localhost:18060/mcp/bot7"
-    },
-    "xhs-bot8": {
-      "url": "http://localhost:18060/mcp/bot8"
-    },
-    "xhs-bot9": {
-      "url": "http://localhost:18060/mcp/bot9"
-    },
-    "xhs-bot10": {
-      "url": "http://localhost:18060/mcp/bot10"
-    },
-    "xhs-bot11": {
-      "url": "http://localhost:18060/mcp/bot11"
-    },
-    "xhs-bot12": {
-      "url": "http://localhost:18060/mcp/bot12"
-    },
-    "xhs-bot13": {
-      "url": "http://localhost:18060/mcp/bot13"
-    },
-    "xhs-bot14": {
-      "url": "http://localhost:18060/mcp/bot14"
-    },
-    "xhs-bot15": {
-      "url": "http://localhost:18060/mcp/bot15"
-    },
-    "xhs-bot16": {
-      "url": "http://localhost:18060/mcp/bot16"
-    },
-    "xhs-bot17": {
-      "url": "http://localhost:18060/mcp/bot17"
-    },
-    "xhs-bot18": {
-      "url": "http://localhost:18060/mcp/bot18"
-    },
-    "xhs-bot19": {
-      "url": "http://localhost:18060/mcp/bot19"
-    },
-    "xiaohongshu-mcp": {
-      "url": "http://localhost:18060/mcp/sys1"
-    },
-    "xhs-bot12-direct": {
-      "baseUrl": "http://localhost:18060/mcp/bot12"
-    }
-  },
-  "imports": []
+    "imports": []
 }

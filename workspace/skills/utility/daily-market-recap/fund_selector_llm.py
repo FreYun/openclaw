@@ -18,9 +18,19 @@ import openpyxl
 
 BASE_DIR = Path(__file__).resolve().parent
 EASTMONEY_CSV = BASE_DIR / "东财基金.csv"
-INDEX_XLSX = BASE_DIR / "202604-指数基金池.xlsx"
-EQUITY_XLSX = BASE_DIR / "202604-权益基金池.xlsx"
 RULES_MD = BASE_DIR / "基金推荐规则.md"
+
+
+def _find_latest(pattern: str) -> Path:
+    """按文件名倒序找最新的 YYYYMM-xxx.xlsx，找不到则报错。"""
+    matches = sorted(BASE_DIR.glob(pattern), reverse=True)
+    if not matches:
+        raise FileNotFoundError(f"找不到匹配 {pattern} 的文件，请先运行 download_fund_pools.py 下载基金池")
+    return matches[0]
+
+
+INDEX_XLSX = _find_latest("*-指数基金池.xlsx")
+EQUITY_XLSX = _find_latest("*-权益基金池.xlsx")
 
 LAYER_PRIORITY = {
     "东财指数": 1,
@@ -30,8 +40,14 @@ LAYER_PRIORITY = {
 }
 ALLOWED_LAYERS = ("东财指数", "东财权益", "其他指数", "其他权益")
 
-LLM_API_URL = os.environ.get("FUND_SELECTOR_API_URL", "")
-LLM_API_KEY = os.environ.get("FUND_SELECTOR_API_KEY", "")
+LLM_API_URL = os.environ.get(
+    "FUND_SELECTOR_API_URL",
+    "https://dd-ai-api.eastmoney.com/v1/chat/completions",
+)
+LLM_API_KEY = os.environ.get(
+    "FUND_SELECTOR_API_KEY",
+    "XFEyNVb9Hmdkl77H5fD76aB1552046Cc9cC5667f3cEd3c69",
+)
 LLM_MODEL = os.environ.get("FUND_SELECTOR_MODEL", "kimi-k2.5")
 LLM_TIMEOUT = float(os.environ.get("FUND_SELECTOR_TIMEOUT", "60"))
 MCP_TIMEOUT = float(os.environ.get("FUND_SELECTOR_MCP_TIMEOUT", "30"))
@@ -395,7 +411,7 @@ def map_index_rows(rows: list[dict[str, Any]]) -> list[Candidate]:
                 name=name,
                 manager=str(row.get("基金经理") or "").strip(),
                 layer="其他指数",
-                source="202604-指数基金池.xlsx",
+                source=INDEX_XLSX.name,
                 board=board,
                 tracking_index=str(row.get("指数名称") or "").strip(),
                 theme=str(row.get("主题(近一年)") or "").strip(),
@@ -428,7 +444,7 @@ def map_equity_rows(rows: list[dict[str, Any]]) -> list[Candidate]:
                 name=name,
                 manager=str(row.get("基金经理") or "").strip(),
                 layer="其他权益",
-                source="202604-权益基金池.xlsx",
+                source=EQUITY_XLSX.name,
                 board=board,
                 tracking_index="",
                 theme=text_fields_for_board(row.get("主题(最新)"), row.get("主题(近一年)")),
@@ -623,7 +639,7 @@ def fetch_fund_basicinfo_by_codes(codes: list[str]) -> tuple[dict[str, FundInfo]
             check=True,
             capture_output=True,
             text=True,
-            cwd=str(BASE_DIR.parent.parent),
+            cwd=None,  # inherit caller's cwd (bot workspace) so mcporter finds config/mcporter.json
             timeout=MCP_TIMEOUT,
         )
     except Exception as exc:
@@ -733,6 +749,9 @@ def normalize_selected_funds(selected_funds: list[dict[str, Any]], candidate_poo
                 current["manager"] = preferred.manager or current["manager"]
                 debug_entry["normalized"] = preferred.code != fund.get("code") or preferred.name != fund.get("name")
                 debug_entry["reason"] = "etf_purchase_to_c_or_plain"
+            else:
+                debug_entry["reason"] = "etf_normalization_failed"
+                debug_entry["needs_manual_resolution"] = True
 
         if is_a_share(current.get("name", "")):
             sibling_map = fetched_map
@@ -748,6 +767,9 @@ def normalize_selected_funds(selected_funds: list[dict[str, Any]], candidate_poo
                 current["manager"] = preferred_c.manager or current["manager"]
                 debug_entry["normalized"] = True
                 debug_entry["reason"] = "a_to_c"
+            else:
+                debug_entry["reason"] = "a_to_c_normalization_failed"
+                debug_entry["needs_manual_resolution"] = True
 
         debug_entry["final_name"] = current.get("name")
         debug_entry["final_code"] = current.get("code")
@@ -758,16 +780,8 @@ def normalize_selected_funds(selected_funds: list[dict[str, Any]], candidate_poo
 
 
 def call_llm(topic: str, normalized_board: str | None, allowed_layers: list[str], candidates: list[Candidate], limit: int) -> dict[str, Any]:
-    if not LLM_API_URL:
-        raise RuntimeError(
-            "缺少环境变量 FUND_SELECTOR_API_URL，请设置 LLM API 地址，"
-            "例如: export FUND_SELECTOR_API_URL='https://api.example.com/v1/chat/completions'"
-        )
     if not LLM_API_KEY:
-        raise RuntimeError(
-            "缺少环境变量 FUND_SELECTOR_API_KEY，请设置 LLM API Key，"
-            "例如: export FUND_SELECTOR_API_KEY='your-api-key'"
-        )
+        raise RuntimeError("缺少 FUND_SELECTOR_API_KEY 或 GLM_API_KEY")
 
     rules_digest = extract_rules_digest()
     payload = {
@@ -927,6 +941,22 @@ def select_for_topic(topic: str, all_candidates: list[Candidate], limit: int, de
     validated = validate_llm_result(llm_result, layers_used, candidate_pool, limit)
     normalized_funds, normalization_debug = normalize_selected_funds(validated["selected_funds"], candidate_pool)
     validated["selected_funds"] = normalized_funds
+
+    # Collect warnings for funds that couldn't be normalized (ETF/A-share with MCP failure)
+    warnings: list[str] = []
+    for entry in normalization_debug:
+        if entry.get("needs_manual_resolution"):
+            original = f"{entry['original_name']}（{entry['original_code']}）"
+            codes = entry.get("purchase_codes", [])
+            mcp_err = entry.get("mcp_error") or "unknown"
+            warnings.append(
+                f"⚠️ {original} 是ETF/A份额，需要转换为可购买的C份额联接基金，"
+                f"但 research-mcp 查询失败（{mcp_err}）。"
+                f"可购买代码：{','.join(codes) if codes else '无'}。"
+                f"请手动确认正确的C份额代码和名称后替换。"
+            )
+    validated["warnings"] = warnings
+
     display = "、".join(format_fund_display(fund) for fund in validated["selected_funds"])
     validated["display"] = f"{topic}：{display}" if display else ""
     if debug:
@@ -960,10 +990,14 @@ def main() -> int:
     limit = max(2, min(int(args.limit), 3))
     all_candidates = load_all_candidates()
     results = [select_for_topic(topic, all_candidates, limit, args.debug) for topic in topics]
+    all_warnings: list[str] = []
+    for item in results:
+        all_warnings.extend(item.get("warnings", []))
     payload = {
         "topics": topics,
         "results": results,
         "display_lines": [item["display"] for item in results if item.get("display")],
+        "warnings": all_warnings,
     }
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0

@@ -19,6 +19,7 @@ description: >
 | [内容策划.md](内容策划.md) | **每次写笔记前必读** — 标题优化、内容结构、写作红线、质量自检 |
 | [daily-post.md](daily-post.md) | 每日自动发帖 SOP — 选题→研究→调用内容策划→发布 |
 | [hot_shot.md](hot_shot.md) | daily-post 选题时读取，了解当前平台热点 |
+| `xhs-topic-collector` skill | 素材巡逻、灵感池管理 — **含30条上限和过期清理规则** |
 | [投稿发布.md](投稿发布.md) | 内容成稿后提交发布时 |
 
 ---

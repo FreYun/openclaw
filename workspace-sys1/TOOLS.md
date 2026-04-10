@@ -81,15 +81,15 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 xiaohongshu-mcp 单进程监听 `:18060`，通过 URL path 区分 bot。印务局的 mcporter 配置了所有 bot 的 MCP 端点。
 
-调用时使用 mcporter 服务名 `xiaohongshu-mcp`，身份由 mcporter.json 中的 URL path 自动确定。
+**服务名 = `xhs-{account_id}`**，例如 bot7 的帖子用 `xhs-bot7`。mcporter.json 里每个 bot 对应一个服务名，路由到 `/mcp/botN`。**绝对不要用 `xiaohongshu-mcp` 作为服务名** — 它不存在于 mcporter.json 中，会导致发错账号。
 
 ## Usage
 
 ```bash
-# Publish（mcporter 会根据配置自动路由到正确的 bot）
-npx mcporter call "xiaohongshu-mcp.publish_content(title: '...', ...)"
-# Login check
-npx mcporter call "xiaohongshu-mcp.check_login_status()"
+# Publish（服务名必须是 xhs-{account_id}）
+npx mcporter call "xhs-bot7.publish_content(title: '...', ...)"
+# Login check（同样用 xhs-{account_id}）
+npx mcporter call "xhs-bot7.check_login_status()"
 # Compliance
 npx mcporter call "compliance-mcp.review_content(title: '...', content: '...', tags: '...')"
 # Health check
@@ -114,7 +114,7 @@ curl -s --connect-timeout 5 http://localhost:18060/health
 └── published/    ← archive (success only; failures deleted + notified)
 ```
 
-Submit script: `~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh`
+Submit script: `skills/xhs-op/submit-to-publisher.sh`
 
 ## Feishu Alert
 

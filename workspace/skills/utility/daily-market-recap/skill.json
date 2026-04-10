@@ -37,6 +37,12 @@
       "desc": "观点归因规则、引用清单格式"
     },
     {
+      "name": "基金池自动下载",
+      "icon": "⬇️",
+      "file": "download_fund_pools.py",
+      "desc": "每月从腾讯文档自动下载权益基金池和指数基金池 xlsx，登录二维码通过飞书发送"
+    },
+    {
       "name": "数据核查",
       "icon": "🔍",
       "file": "../fact-check/SKILL.md",

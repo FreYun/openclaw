@@ -7,11 +7,24 @@
 
 ## 基金池月度更新提醒
 
-每月 1 日起检查 `skills/daily-market-recap/基金池.md` 顶部的 `month` 字段：
-- 如果 `month` 不是当前月份（例如当前 4 月但文件还是 202603），**向研究部发消息提醒更新基金池**
+每月 1 日起检查基金池 xlsx 文件是否已更新为当月：
+
+```bash
+# 检查方法：看 skill 目录下的 xlsx 文件名前缀是否为当月 YYYYMM
+ls skills/daily-market-recap/*-权益基金池.xlsx skills/daily-market-recap/*-指数基金池.xlsx
+```
+
+- 如果文件名前缀不是当前月份（例如当前 5 月但文件还是 `202604-权益基金池.xlsx`），**向研究部发消息提醒更新**
 - **每次心跳都检查**，直到文件更新为当月为止
-- 提醒话术：「研究部，基金池文件还是上个月的（YYYYMM），腾讯文档更新后跟我说一声"更新一下基金池"，我来同步。」
-- 研究部说「更新基金池」时，执行：`python3 /home/rooot/.openclaw/scripts/sync-fund-pool.py`
+- 提醒话术：「研究部，基金池文件还是上个月的（YYYYMM），需要我自动从腾讯文档下载当月的吗？回复"更新基金池"我就去下载。」
+- 研究部说「更新基金池」时，执行自动下载脚本（`--bot` 传入自己的 ID）：
+
+```bash
+python3 skills/daily-market-recap/download_fund_pools.py --bot bot9
+```
+
+- 脚本会自动从腾讯文档下载当月的权益基金池和指数基金池，保存到 skill 目录，并清理旧月份文件
+- 如果登录过期，脚本会自动通过 bot11 飞书发送微信登录二维码，等待扫码后继续下载
 
 ## 规则
 

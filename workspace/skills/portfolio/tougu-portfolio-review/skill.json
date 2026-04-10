@@ -1,7 +1,7 @@
 {
   "name": "tougu-portfolio-review",
   "icon": "📊",
-  "slot": "research",
-  "subType": "research",
+  "slot": "portfolio",
+  "subType": "portfolio",
   "desc": "定期模拟 bot 自己复查投顾持仓，对比当前组合与目标组合，决定保持、调仓或切换，并写回测试期 markdown 状态"
 }

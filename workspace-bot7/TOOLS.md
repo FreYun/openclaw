@@ -106,3 +106,48 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 - 深度报道：36kr、晚点 LatePost、路透中文、财新
 
 每次行业研究至少覆盖 2 个站点。
+
+---
+
+## 投顾组合管理: tougu-portfolio-mcp
+
+投顾产品池查询、持仓管理、巡检调仓记录、收益快照追踪。数据存储在本地 SQLite，所有 bot 共用。
+
+### 产品查询
+
+| 工具 | 功能 | 示例 |
+|------|------|------|
+| `get_product_pool` | 按档位筛选产品池 | `get_product_pool(risk_band=3)` → 第三档产品 |
+| `get_product_detail` | 单产品详情+绩效+主题 | `get_product_detail(product_id="WJOMCF4")` |
+| `get_product_performance` | 产品多区间绩效 | `get_product_performance(product_id="WJOMCF4")` |
+
+### 持仓管理
+
+| 工具 | 功能 |
+|------|------|
+| `get_bot_holdings` | 获取当前活跃持仓 |
+| `save_bot_holdings` | 更新持仓（关闭旧仓+写入新仓） |
+| `init_bot_holdings` | 首次初始化持仓 |
+
+### 巡检与调仓
+
+| 工具 | 功能 |
+|------|------|
+| `check_cooldown` | 检查冷静期 |
+| `save_review` | 保存巡检结论 (KEEP/REBALANCE/SWITCH) |
+| `save_rebalance_actions` | 保存调仓动作明细 |
+| `get_review_history` | 查询巡检历史 |
+
+### 收益快照
+
+| 工具 | 功能 |
+|------|------|
+| `record_daily_snapshot` | 记录当日收益快照（需传入各产品当日收益率） |
+| `get_performance_curve` | 获取收益曲线 |
+
+### 数据更新
+
+| 工具 | 功能 |
+|------|------|
+| `update_products` | 批量刷新产品池数据 |
+| `update_product_metrics` | 批量刷新产品绩效指标 |

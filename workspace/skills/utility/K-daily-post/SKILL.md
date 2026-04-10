@@ -125,7 +125,7 @@ cat > /tmp/post_body_$$.txt << 'BODYEOF'
 正文全文（图下正文）
 BODYEOF
 
-folder=$(bash ~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh \
+folder=$(bash skills/xhs-op/submit-to-publisher.sh \
   -a bot7 -t "标题" -b /tmp/post_body_$$.txt \
   -m image -r "direct:ou_xxx" \
   -i "/abs/path/to/cover.png" \

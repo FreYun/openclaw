@@ -25,6 +25,11 @@
 - 商单写作（shangdan-card） — `skills/shangdan-card/SKILL.md`
 - 小红书素材巡逻（xhs-topic-collector） — `skills/xhs-topic-collector/SKILL.md`
 
+## 投顾技能
+
+- 投顾产品匹配（tougu-product-match） — `skills/portfolio/tougu-product-match/SKILL.md`
+- 投顾组合巡检（tougu-portfolio-review） — `skills/portfolio/tougu-portfolio-review/SKILL.md`
+
 ## 研究技能
 
 - 财报横评（earnings-digest） — `skills/earnings-digest/SKILL.md`

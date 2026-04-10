@@ -11,6 +11,9 @@
         },
         "compliance-mcp": {
             "url": "http://localhost:18090/mcp"
+        },
+        "tougu-portfolio-mcp": {
+            "url": "http://localhost:18070/mcp"
         }
     },
     "imports": []

@@ -1,9 +1,10 @@
 import Redis from "ioredis";
 import type { AgentMessage, MessageStatus } from "./types.js";
+import type { MessageArchive } from "./archive.js";
 
 const PREFIX = "agentmsg";
 const TTL_SECONDS = 7 * 24 * 3600; // 7 days
-const STREAM_MAXLEN = 1000;
+const STREAM_MAXLEN = 200;
 
 export interface MessageStore {
   save(msg: AgentMessage): Promise<void>;
@@ -14,7 +15,7 @@ export interface MessageStore {
   disconnect(): Promise<void>;
 }
 
-export function createStore(redisUrl = "redis://127.0.0.1:6379"): MessageStore {
+export function createStore(redisUrl = "redis://127.0.0.1:6379", archive?: MessageArchive): MessageStore {
   const redis = new Redis(redisUrl, { lazyConnect: false, maxRetriesPerRequest: 3 });
 
   function detailKey(id: string) {
@@ -72,6 +73,14 @@ export function createStore(redisUrl = "redis://127.0.0.1:6379"): MessageStore {
       msg.message_id,
     );
     await pipeline.exec();
+    // Archive to SQLite (best-effort, don't block on failure)
+    if (archive) {
+      try {
+        archive.save(msg);
+      } catch (err) {
+        console.error("[agent-messaging] archive write failed:", err);
+      }
+    }
   }
 
   async function get(messageId: string): Promise<AgentMessage | null> {

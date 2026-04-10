@@ -64,6 +64,29 @@ const ADMIN_PASSWORD = "openclaw2026";
 const DELETE_PASSWORD = "delete2026";
 const SYSTEM_BOT_IDS = new Set(["mag1", "sys1", "sys2", "sys3"]);
 const XHS_MCP_BIN = "/home/rooot/MCP/xiaohongshu-mcp/xiaohongshu-mcp";
+const XHS_HEADED_BIN = "/home/rooot/MCP/xiaohongshu-mcp/headed-login";
+const XHS_PROFILES_BASE = "/home/rooot/.xhs-profiles";
+
+// --- XHS Live View (headed Chrome on VNC) ---
+let xhsLiveProc = null; // { proc, botId }
+function killXhsLive() {
+  if (xhsLiveProc) {
+    try { process.kill(-xhsLiveProc.proc.pid, "SIGTERM"); } catch {}
+    xhsLiveProc = null;
+  }
+}
+function startXhsLive(botId) {
+  killXhsLive();
+  const proc = spawn(XHS_HEADED_BIN, ["-bot", botId, "-profiles-base", XHS_PROFILES_BASE], {
+    env: { ...process.env, DISPLAY: ":99" },
+    detached: true,
+    stdio: "ignore",
+  });
+  proc.unref();
+  proc.on("exit", () => { if (xhsLiveProc?.proc === proc) xhsLiveProc = null; });
+  xhsLiveProc = { proc, botId };
+  return proc.pid;
+}
 
 // --- Avatar thumbnail cache ---
 const AVATAR_CACHE_DIR = path.join(__dirname, "avatar-cache");
@@ -439,6 +462,7 @@ function getXhsStats() {
     return JSON.parse(fs.readFileSync(XHS_STATS_FILE, "utf8"));
   } catch { return null; }
 }
+
 
 function normalizeTitle(t) {
   return (t || "").trim().replace(/\s+/g, " ").replace(/^["']|["']$/g, "");
@@ -2081,6 +2105,45 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // POST /api/xhs-live/:botId — launch headed Chrome on VNC for live viewing
+  const xhsLiveMatch = url.pathname.match(/^\/api\/xhs-live\/([^/]+)$/);
+  if (xhsLiveMatch && req.method === "POST") {
+    const botId = xhsLiveMatch[1];
+    if (!/^bot\d+$/.test(botId)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "invalid bot id" }));
+      return;
+    }
+    try {
+      const pid = startXhsLive(botId);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, botId, pid }));
+    } catch (e) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // DELETE /api/xhs-live — kill headed Chrome
+  if (url.pathname === "/api/xhs-live" && req.method === "DELETE") {
+    killXhsLive();
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ok: true }));
+    return;
+  }
+
+  // GET /api/xhs-live — current live view status
+  if (url.pathname === "/api/xhs-live" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({
+      active: !!xhsLiveProc,
+      botId: xhsLiveProc?.botId || null,
+      pid: xhsLiveProc?.proc?.pid || null,
+    }));
+    return;
+  }
+
   // GET /api/gems/health — parallel health checks
   if (url.pathname === "/api/gems/health" && req.method === "GET") {
     res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
@@ -2238,7 +2301,7 @@ const server = http.createServer(async (req, res) => {
       }
       const mcporter = readMcporter(botId);
       const special = gem.specialBots?.[botId];
-      if (special?.multi) {
+      if (special?.multi && special.entries) {
         for (const key of Object.keys(special.entries)) {
           delete mcporter.mcpServers[key];
         }

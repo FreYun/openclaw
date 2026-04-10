@@ -73,7 +73,7 @@ Step 8: 记录收益快照
    - 返回账户信息：initial_capital, cash, total_value, net_value
 2. `memory/portfolio/当前投顾持仓.md`（备用）
 
-无持仓时，先跑 product-match 生成目标组合，再通过 `init_bot_holdings` 初始化。
+无持仓时，先跑 product-match 生成目标组合，再通过 `init_bot_holdings` 初始化。初始化时 `allocations_json` 中每个产品必须携带 `thesis` 字段（从目标组合的"选择原因"提取），该理由会写入 `bot_rebalance_actions.reason`，后续可查。
 
 ### 3. 目标组合
 
@@ -172,6 +172,7 @@ SWITCH 条件（全部满足）：
 - `quantity`：= amount / nav_used
 - `cash_delta`：SELL 为正（+），BUY 为负（-）
 - `before_market_value` / `after_market_value`
+- `reason`：**必填**，该笔操作的具体理由（为什么买入/卖出这个产品、金额为什么是这个数）
 
 买入前校验：
 - 可用现金 ≥ 买入金额
@@ -185,13 +186,18 @@ SWITCH 条件（全部满足）：
 1. `save_review(bot_id, decision, reason, review_md, cooldown_days, cash_before, cash_after, portfolio_value_before, portfolio_value_after, invested_value_before, invested_value_after, turnover_amount, turnover_ratio)` → 获取 review_id
 
 2. 如有调仓：`save_rebalance_actions(bot_id, review_id, actions_json)`
+   - **每笔动作必须填写 `reason` 字段**，说明该笔买入/卖出的具体理由（如"风险匹配度下降，减仓降低波动暴露"、"新增卫星仓位，补充科技赛道暴露"）
+   - reason 不能为空或用通用占位符，必须针对该笔具体操作
    ```json
    [
      {"product_id":"X", "action_type":"SELL", "amount":5000, "nav_used":1.16,
       "quantity":4310, "cash_delta":5000, "before_weight":30, "after_weight":25,
-      "before_market_value":30000, "after_market_value":25000, "reason":"..."},
+      "before_market_value":30000, "after_market_value":25000,
+      "reason":"近3月最大回撤扩大至15%，超出风险带上限，减仓控制波动"},
      {"product_id":"Y", "action_type":"BUY", "amount":5000, "nav_used":1.13,
-      "quantity":4425, "cash_delta":-5000, ...}
+      "quantity":4425, "cash_delta":-5000, "before_weight":0, "after_weight":5,
+      "before_market_value":0, "after_market_value":5000,
+      "reason":"新增卫星仓位，该产品夏普比率同类前20%，补充消费赛道暴露"}
    ]
    ```
 

@@ -3,5 +3,5 @@
   "icon": "🗄️",
   "slot": "utility",
   "subType": "duty",
-  "desc": "调用 tougu_tools.py 的四个函数并写入 tougu.db"
+  "desc": "通过 research-mcp 拉取投顾数据并写入 tougu.db（performance 分批 50/次）"
 }

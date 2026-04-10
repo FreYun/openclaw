@@ -133,7 +133,12 @@
       "Bash(find /home/rooot/.openclaw/openclaw -path */extensions/* -name *.ts)",
       "WebFetch(domain:www.swsresearch.com)",
       "Bash(pnpm tsdown:*)",
-      "Bash(pnpm exec:*)"
+      "Bash(pnpm exec:*)",
+      "Bash(npm ls:*)",
+      "Bash(lsof -ti:18060)",
+      "Read(//home/rooot/.openclaw/Spider_XHS/**)",
+      "WebFetch(domain:pdf.dfcfw.com)",
+      "WebFetch(domain:data.eastmoney.com)"
     ],
     "additionalDirectories": [
       "/home/rooot/.openclaw/workspace-sys1/publish-queue/pending",

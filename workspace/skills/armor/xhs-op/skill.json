@@ -28,8 +28,8 @@
     {
       "name": "素材积累",
       "icon": "📦",
-      "file": "素材积累.md",
-      "desc": "素材巡逻、灵感池管理"
+      "skill": "xhs-topic-collector",
+      "desc": "素材巡逻、灵感池管理（使用 xhs-topic-collector skill，含30条上限和清理规则）"
     },
     {
       "name": "投稿发布",

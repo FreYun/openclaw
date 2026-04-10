@@ -115,103 +115,265 @@ body > * { position: relative; z-index: 1; }
   font-weight: 700;
 }
 .summary-item .value.green { color: var(--green); }
+.summary-item .value.accent { color: var(--accent); }
 .summary-item .value.yellow { color: var(--yellow); }
 .summary-item .value.blue { color: var(--blue); }
 
-/* Ranking Table */
-.section-title {
-  font-size: 14px;
-  font-family: var(--cn);
-  font-weight: 600;
-  color: var(--yellow);
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(255,213,90,0.08);
-}
-.ranking-card {
-  background: linear-gradient(135deg, var(--card) 0%, rgba(19,22,42,0.8) 100%);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  padding: 16px;
-  box-shadow: var(--card-shadow);
-  margin-bottom: 20px;
-}
-.rank-row {
+/* Collapsible Section Header */
+.section-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 6px;
+  padding: 10px 14px;
+  border: 2px solid var(--yellow);
   border-radius: 6px;
+  background: rgba(255,213,90,0.05);
   cursor: pointer;
+  margin-bottom: 12px;
   transition: background 0.2s;
-  border-bottom: 1px solid rgba(255,255,255,0.02);
+  user-select: none;
 }
-.rank-row:last-child { border-bottom: none; }
-.rank-row:hover { background: rgba(255,255,255,0.03); }
-.rank-row.inactive { opacity: 0.35; cursor: default; }
-.rank-row.inactive:hover { background: none; }
-.rank-num {
-  width: 22px;
-  text-align: center;
-  font-size: 12px;
-  font-family: var(--mono);
+.section-header:hover { background: rgba(255,213,90,0.1); }
+.section-header.blue-section {
+  border-color: var(--blue);
+  background: rgba(77,166,255,0.05);
+}
+.section-header.blue-section:hover { background: rgba(77,166,255,0.1); }
+.section-header .section-icon { font-size: 18px; }
+.section-header .section-title {
+  font-size: 15px;
+  font-family: var(--cn);
+  font-weight: 600;
+  color: var(--yellow);
+  flex: 1;
+}
+.section-header.blue-section .section-title { color: var(--blue); }
+.section-header .section-count {
+  font-size: 11px;
+  font-family: var(--cn);
+  color: var(--text-secondary);
+}
+.section-header .section-toggle {
+  font-size: 11px;
+  font-family: var(--cn);
   color: var(--dim);
-  flex-shrink: 0;
+  white-space: nowrap;
 }
-.rank-num.top { color: var(--yellow); font-weight: 700; }
-.rank-avatar {
-  width: 32px;
-  height: 32px;
+
+/* ====== Section 1: Leaderboard ====== */
+.leaderboard {
+  background: linear-gradient(135deg, var(--card) 0%, rgba(19,22,42,0.8) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 4px 0;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+.lb-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+.lb-table th {
+  font-size: 10px;
+  font-family: var(--cn);
+  color: var(--dim);
+  font-weight: 400;
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.lb-table th.right, .lb-table td.right { text-align: right; }
+.lb-table th.center, .lb-table td.center { text-align: center; }
+.lb-table td {
+  padding: 9px 10px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  vertical-align: middle;
+}
+.lb-table tr:last-child td { border-bottom: none; }
+.lb-table tr:hover td { background: rgba(255,255,255,0.02); }
+.lb-table tr.inactive td { opacity: 0.35; }
+
+.lb-rank {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--dim);
+  width: 28px;
+  text-align: center;
+}
+.lb-rank.top { color: var(--yellow); font-weight: 700; }
+.lb-bot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lb-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-deep);
+}
+.lb-avatar.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px dashed var(--border);
+}
+.lb-name {
+  font-family: var(--cn);
+  font-weight: 500;
+  color: var(--text);
+  font-size: 13px;
+}
+.lb-id {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+}
+.lb-val {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.lb-val.positive { color: var(--accent); }
+.lb-val.negative { color: var(--green); }
+.lb-val.neutral { color: var(--text-secondary); }
+.lb-spark { width: 80px; height: 28px; }
+.lb-inactive-label {
+  font-size: 11px;
+  color: var(--dim);
+  font-family: var(--cn);
+}
+
+/* ====== Section 2: Detail Cards ====== */
+.bot-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.bot-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 18px;
+  transition: all 0.25s ease;
+  box-shadow: var(--card-shadow);
+}
+.bot-card:hover {
+  border-color: var(--border-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* Card Header */
+.bot-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.bot-card-avatar {
+  width: 38px; height: 38px;
   border-radius: 50%;
   border: 1.5px solid var(--border);
   object-fit: cover;
   flex-shrink: 0;
   background: var(--bg-deep);
 }
-.rank-avatar.placeholder {
+.bot-card-avatar.placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
   border: 1.5px dashed var(--border);
 }
-.rank-name {
-  font-size: 13px;
+.bot-card-info { flex: 1; }
+.bot-card-name {
+  font-size: 14px;
   font-family: var(--cn);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
-  min-width: 100px;
 }
-.rank-id {
+.bot-card-id {
   font-size: 10px;
   font-family: var(--mono);
   color: var(--dim);
-  min-width: 44px;
 }
-.rank-stat {
-  font-size: 12px;
+.bot-card-return {
+  font-size: 14px;
   font-family: var(--mono);
-  text-align: right;
-  min-width: 70px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
 }
-.rank-stat.positive { color: var(--green); }
-.rank-stat.negative { color: var(--accent); }
-.rank-stat.neutral { color: var(--text-secondary); }
-.rank-stat-label {
+.bot-card-return.positive { color: var(--accent); background: var(--accent-soft); }
+.bot-card-return.negative { color: var(--green); background: var(--green-soft); }
+.bot-card-return.neutral { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+
+/* Account Stats Row */
+.card-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.card-stat {
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+.card-stat .cs-label {
   font-size: 9px;
   color: var(--dim);
   font-family: var(--cn);
+  margin-bottom: 1px;
 }
-.rank-holdings-preview {
-  flex: 1;
+.card-stat .cs-value {
+  font-size: 13px;
+  font-family: var(--mono);
+  font-weight: 600;
+}
+.card-stat .cs-value.positive { color: var(--accent); }
+.card-stat .cs-value.negative { color: var(--green); }
+.card-stat .cs-value.neutral { color: var(--text); }
+
+/* Holdings Table in Card */
+.card-section-label {
+  font-size: 10px;
+  color: var(--dim);
+  font-family: var(--cn);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.card-holding-item {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+}
+.card-holding-item:last-child { border-bottom: none; }
+.card-holding-top {
   display: flex;
-  gap: 4px;
-  min-width: 0;
-  overflow: hidden;
+  align-items: center;
+  gap: 6px;
 }
-.rank-tag {
+.card-holding-status {
   font-size: 9px;
-  padding: 1px 6px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--cn);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.card-holding-status.active { background: var(--green-soft); color: var(--green); }
+.card-holding-status.closed { background: rgba(255,255,255,0.04); color: var(--dim); }
+.card-holding-role {
+  font-size: 9px;
+  padding: 1px 5px;
   border-radius: 3px;
   background: var(--blue-soft);
   color: var(--blue);
@@ -219,123 +381,87 @@ body > * { position: relative; z-index: 1; }
   white-space: nowrap;
   flex-shrink: 0;
 }
-.rank-inactive-label {
-  font-size: 11px;
-  color: var(--dim);
-  font-family: var(--cn);
-}
-.rank-expand-icon {
-  font-size: 10px;
-  color: var(--dim);
-  transition: transform 0.2s;
-  flex-shrink: 0;
-}
-
-/* Detail Cards (collapsible) */
-.detail-wrapper {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.35s ease;
-}
-.detail-wrapper.open {
-  max-height: 600px;
-}
-.bot-detail {
-  background: linear-gradient(135deg, var(--card) 0%, rgba(19,22,42,0.8) 100%);
-  border: 1px solid var(--border-glow);
-  border-top: none;
-  border-radius: 0 0 var(--card-radius) var(--card-radius);
-  padding: 14px 16px;
-  margin: 0 6px;
-}
-
-/* Account Stats */
-.account-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.stat-item {
-  background: rgba(255,255,255,0.02);
-  border-radius: 6px;
-  padding: 8px 10px;
-}
-.stat-item .stat-label {
-  font-size: 10px;
-  color: var(--dim);
-  font-family: var(--cn);
-  margin-bottom: 2px;
-}
-.stat-item .stat-value {
-  font-size: 15px;
-  font-family: var(--mono);
-  font-weight: 600;
-}
-.stat-item .stat-value.positive { color: var(--green); }
-.stat-item .stat-value.negative { color: var(--accent); }
-.stat-item .stat-value.neutral { color: var(--text); }
-
-/* Holdings */
-.holdings-title {
-  font-size: 11px;
-  color: var(--dim);
-  font-family: var(--cn);
-  margin-bottom: 6px;
-  letter-spacing: 1px;
-}
-.holding-row {
-  display: flex;
-  align-items: center;
-  padding: 4px 0;
-  font-size: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.02);
-}
-.holding-row:last-child { border-bottom: none; }
-.holding-name {
+.card-holding-name {
   flex: 1;
+  font-size: 12px;
   font-family: var(--cn);
-  color: var(--text-secondary);
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.holding-role {
-  font-size: 9px;
-  color: var(--dim);
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: rgba(255,255,255,0.03);
-  margin-right: 8px;
-  font-family: var(--cn);
-  white-space: nowrap;
-}
-.holding-weight {
+.card-holding-pnl {
+  font-size: 11px;
   font-family: var(--mono);
-  font-size: 12px;
-  color: var(--blue);
-  min-width: 48px;
+  min-width: 50px;
   text-align: right;
-}
-.holding-bar-bg {
-  width: 60px;
-  height: 4px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 2px;
-  margin-left: 8px;
-  overflow: hidden;
   flex-shrink: 0;
 }
-.holding-bar {
-  height: 100%;
-  border-radius: 2px;
-  background: var(--blue);
-  transition: width 0.5s ease;
+.card-holding-weight {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--blue);
+  min-width: 42px;
+  text-align: right;
+  flex-shrink: 0;
 }
-.cash-row { display: flex; align-items: center; padding: 4px 0; font-size: 12px; margin-top: 2px; }
-.cash-row .holding-name { color: var(--dim); }
-.cash-row .holding-weight { color: var(--yellow); }
-.cash-row .holding-bar { background: var(--yellow); }
+.card-holding-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 3px;
+  padding-left: 4px;
+}
+.card-holding-thesis {
+  font-size: 11px;
+  font-family: var(--cn);
+  color: var(--dim);
+  flex: 1;
+  line-height: 1.5;
+}
+.card-holding-date {
+  font-size: 9px;
+  font-family: var(--mono);
+  color: var(--dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* NAV Chart */
+.nav-chart-wrapper {
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  padding: 10px 12px 6px;
+  margin-top: 14px;
+}
+.nav-chart-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.nav-chart-title .chart-label {
+  font-size: 10px;
+  color: var(--dim);
+  font-family: var(--cn);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.nav-chart-title .chart-nav-value {
+  font-size: 13px;
+  font-family: var(--mono);
+  font-weight: 600;
+}
+.nav-chart-dates {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+.nav-chart-dates span {
+  font-size: 9px;
+  font-family: var(--mono);
+  color: var(--dim);
+}
 
 /* Loading */
 .loading {
@@ -362,10 +488,44 @@ body > * { position: relative; z-index: 1; }
 
 <div class="loading" id="loading">Loading portfolio data<span class="dots">...</span></div>
 <div id="mainContent" style="display:none">
-  <div class="ranking-card">
-    <div class="section-title">📈 Bot 投资排行</div>
-    <div id="rankingTable"></div>
+
+  <!-- Section 1: Leaderboard -->
+  <div class="section-header" onclick="toggleSection('ranking')">
+    <span class="section-icon">📈</span>
+    <span class="section-title">业绩排行榜</span>
+    <span class="section-count" id="rankingCount"></span>
+    <span class="section-toggle" id="rankingToggle">▲ 收起</span>
   </div>
+  <div id="rankingBody">
+    <div class="leaderboard">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th class="center">#</th>
+            <th>Bot</th>
+            <th class="right">累计收益</th>
+            <th class="right">日收益</th>
+            <th class="right">最大回撤</th>
+            <th class="right">总资产</th>
+            <th class="center">走势</th>
+          </tr>
+        </thead>
+        <tbody id="rankingTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 2: Detail Cards -->
+  <div class="section-header blue-section" onclick="toggleSection('details')">
+    <span class="section-icon">📋</span>
+    <span class="section-title">投资详情</span>
+    <span class="section-count" id="detailsCount"></span>
+    <span class="section-toggle" id="detailsToggle">▲ 收起</span>
+  </div>
+  <div id="detailsBody">
+    <div class="bot-cards-grid" id="botCardsGrid"></div>
+  </div>
+
 </div>
 
 <script>
@@ -392,13 +552,234 @@ const FMT = {
 
 let avatars = {};
 let agentMeta = {};
-let openBot = null; // currently expanded bot
+
+function toggleSection(id) {
+  const body = document.getElementById(id + 'Body');
+  const toggle = document.getElementById(id + 'Toggle');
+  if (!body) return;
+  const isVisible = body.style.display !== 'none';
+  body.style.display = isVisible ? 'none' : '';
+  if (toggle) toggle.textContent = isVisible ? '▼ 展开' : '▲ 收起';
+}
+
+// Render sparkline SVG (mini chart for leaderboard)
+function renderSparkline(snapshots, botId) {
+  if (!snapshots || snapshots.length < 2) return '<span style="color:var(--dim);font-size:10px">--</span>';
+  const W = 80, H = 28, PX = 2, PY = 4;
+  const navs = snapshots.map(s => s.nav);
+  const minN = Math.min(...navs), maxN = Math.max(...navs);
+  const range = maxN - minN || 0.001;
+  const lastNav = navs[navs.length - 1];
+  const color = lastNav >= 1.0 ? 'var(--green)' : 'var(--accent)';
+  const gid = 'sp-' + botId;
+
+  const pts = snapshots.map((s, i) => {
+    const x = PX + (i / (snapshots.length - 1)) * (W - 2 * PX);
+    const y = PY + (1 - (s.nav - minN) / range) * (H - 2 * PY);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  const area = `M${pts[0]} ` + pts.map(p => `L${p}`).join(' ') +
+    ` L${(PX + (W - 2 * PX)).toFixed(1)},${H} L${PX},${H} Z`;
+
+  return `<svg class="lb-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${color}" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#${gid})"/>
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+// Render large NAV chart (for detail card)
+function renderNavChart(container, snapshots, botId) {
+  if (!snapshots || snapshots.length < 2) {
+    container.innerHTML = '<div style="text-align:center;padding:20px 0;color:var(--dim);font-size:11px;font-family:var(--cn)">净值数据不足</div>';
+    return;
+  }
+  const W = 340, H = 110, PX = 2, PY = 12;
+  const navs = snapshots.map(s => s.nav);
+  const minN = Math.min(...navs), maxN = Math.max(...navs);
+  const range = maxN - minN || 0.001;
+  const lastNav = navs[navs.length - 1];
+  const isPositive = lastNav >= 1.0;
+  const lineColor = isPositive ? 'var(--green)' : 'var(--accent)';
+  const gid = 'nav-' + botId;
+
+  const points = snapshots.map((s, i) => {
+    const x = PX + (i / (snapshots.length - 1)) * (W - 2 * PX);
+    const y = PY + (1 - (s.nav - minN) / range) * (H - 2 * PY);
+    return { x, y };
+  });
+
+  const polyline = points.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const areaPath = `M${points[0].x.toFixed(1)},${points[0].y.toFixed(1)} ` +
+    points.map(p => `L${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') +
+    ` L${points[points.length-1].x.toFixed(1)},${H} L${points[0].x.toFixed(1)},${H} Z`;
+
+  const dots = points.map(p =>
+    `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="${lineColor}" opacity="0.8"/>`
+  ).join('');
+
+  const baseY = PY + (1 - (1.0 - minN) / range) * (H - 2 * PY);
+  const baseLine = (baseY > PY && baseY < H - PY)
+    ? `<line x1="${PX}" y1="${baseY.toFixed(1)}" x2="${W - PX}" y2="${baseY.toFixed(1)}" stroke="var(--dim)" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>`
+    : '';
+
+  const retPct = snapshots[snapshots.length - 1].return_pct;
+  const navCls = FMT.cls(retPct);
+
+  container.innerHTML = `
+    <div class="nav-chart-wrapper">
+      <div class="nav-chart-title">
+        <span class="chart-label">净值走势</span>
+        <span class="chart-nav-value ${navCls}">${FMT.nav(lastNav)} (${FMT.pct(retPct)})</span>
+      </div>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none">
+        <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="${lineColor}" stop-opacity="0.02"/>
+        </linearGradient></defs>
+        <path d="${areaPath}" fill="url(#${gid})"/>
+        ${baseLine}
+        <polyline points="${polyline}" fill="none" stroke="${lineColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        ${dots}
+      </svg>
+      <div class="nav-chart-dates">
+        <span>${snapshots[0].date.slice(5)}</span>
+        <span>${snapshots[snapshots.length - 1].date.slice(5)}</span>
+      </div>
+    </div>`;
+}
+
+// Render leaderboard
+function renderLeaderboard(sortedBots, portfolioMap, detailsData) {
+  const tbody = document.getElementById('rankingTableBody');
+  tbody.innerHTML = '';
+  const activeBots = sortedBots.filter(id => portfolioMap[id]);
+  document.getElementById('rankingCount').textContent = activeBots.length + ' 人参赛';
+
+  sortedBots.forEach((botId, idx) => {
+    const meta = agentMeta[botId] || { name: botId, emoji: '' };
+    const p = portfolioMap[botId];
+    const isActive = !!p;
+    const rank = idx + 1;
+
+    const tr = document.createElement('tr');
+    if (!isActive) tr.className = 'inactive';
+
+    const avatarSrc = avatars[botId];
+    const avatarHtml = avatarSrc
+      ? `<img class="lb-avatar" src="${avatarSrc}">`
+      : `<div class="lb-avatar placeholder">${meta.emoji || '?'}</div>`;
+
+    if (isActive) {
+      const d = detailsData[botId] || { snapshots: [] };
+      const sparkHtml = renderSparkline(d.snapshots, botId);
+
+      tr.innerHTML = `
+        <td class="lb-rank${rank <= 3 ? ' top' : ''}">${rank}</td>
+        <td><div class="lb-bot">${avatarHtml}<div><div class="lb-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</div><div class="lb-id">${botId}</div></div></div></td>
+        <td class="right"><span class="lb-val ${FMT.cls(p.cumulative_return_pct)}">${FMT.pct(p.cumulative_return_pct)}</span></td>
+        <td class="right"><span class="lb-val ${FMT.cls(p.daily_return_pct)}">${FMT.pct(p.daily_return_pct)}</span></td>
+        <td class="right"><span class="lb-val ${p.max_drawdown < 0 ? 'negative' : 'neutral'}">${FMT.pct(p.max_drawdown)}</span></td>
+        <td class="right"><span class="lb-val neutral">${FMT.money(p.total_value)}</span></td>
+        <td class="center">${sparkHtml}</td>`;
+    } else {
+      tr.innerHTML = `
+        <td class="lb-rank">${rank}</td>
+        <td><div class="lb-bot">${avatarHtml}<div><div class="lb-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</div><div class="lb-id">${botId}</div></div></div></td>
+        <td colspan="5"><span class="lb-inactive-label">未开通</span></td>`;
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+// Render detail cards
+function renderBotCards(activeBots, portfolioMap, details) {
+  const grid = document.getElementById('botCardsGrid');
+  grid.innerHTML = '';
+  document.getElementById('detailsCount').textContent = activeBots.length + ' 个账户';
+
+  for (const botId of activeBots) {
+    const meta = agentMeta[botId] || { name: botId, emoji: '' };
+    const p = portfolioMap[botId];
+    const d = details[botId] || { holdings: [], snapshots: [], account: {} };
+
+    const card = document.createElement('div');
+    card.className = 'bot-card';
+
+    const avatarSrc = avatars[botId];
+    const avatarHtml = avatarSrc
+      ? `<img class="bot-card-avatar" src="${avatarSrc}">`
+      : `<div class="bot-card-avatar placeholder">${meta.emoji || '?'}</div>`;
+
+    const retPct = p ? p.cumulative_return_pct : 0;
+    const retCls = FMT.cls(retPct);
+
+    // Account stats
+    const cashRatio = p && p.total_value ? (p.cash / p.total_value * 100) : 0;
+
+    // Holdings list
+    let holdingsHtml = '';
+    for (const h of d.holdings) {
+      const statusCls = h.status === 'active' ? 'active' : 'closed';
+      const statusText = h.status === 'active' ? '持有' : '已清';
+      const pnlCls = FMT.cls(h.pnl_pct);
+      const pnlText = h.pnl_pct != null ? FMT.pct(h.pnl_pct) : '--';
+      const dateText = h.entry_date ? h.entry_date.slice(5) + ' 入' : '';
+
+      holdingsHtml += `
+        <div class="card-holding-item">
+          <div class="card-holding-top">
+            <span class="card-holding-status ${statusCls}">${statusText}</span>
+            <span class="card-holding-role">${h.role || ''}</span>
+            <span class="card-holding-name" title="${h.product_name}">${h.product_name}</span>
+            <span class="card-holding-pnl ${pnlCls}">${pnlText}</span>
+            <span class="card-holding-weight">${h.weight ? h.weight.toFixed(1) + '%' : '--'}</span>
+          </div>
+          <div class="card-holding-meta">
+            ${h.thesis ? `<span class="card-holding-thesis">${h.thesis}</span>` : ''}
+            ${dateText ? `<span class="card-holding-date">${dateText}</span>` : ''}
+          </div>
+        </div>`;
+    }
+    if (!d.holdings.length) {
+      holdingsHtml = '<div style="color:var(--dim);font-size:11px;font-family:var(--cn);padding:8px 0">暂无持仓数据</div>';
+    }
+
+    card.innerHTML = `
+      <div class="bot-card-header">
+        ${avatarHtml}
+        <div class="bot-card-info">
+          <div class="bot-card-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</div>
+          <div class="bot-card-id">${botId}</div>
+        </div>
+        <span class="bot-card-return ${retCls}">${FMT.pct(retPct)}</span>
+      </div>
+      <div class="card-stats">
+        <div class="card-stat"><div class="cs-label">总资产</div><div class="cs-value neutral">${FMT.money(p.total_value)}</div></div>
+        <div class="card-stat"><div class="cs-label">净值</div><div class="cs-value neutral">${FMT.nav(p.net_value)}</div></div>
+        <div class="card-stat"><div class="cs-label">最大回撤</div><div class="cs-value ${p.max_drawdown < 0 ? 'negative' : 'neutral'}">${FMT.pct(p.max_drawdown)}</div></div>
+        <div class="card-stat"><div class="cs-label">现金比例</div><div class="cs-value neutral">${cashRatio.toFixed(1)}%</div></div>
+      </div>
+      <div class="card-section-label">持仓明细</div>
+      ${holdingsHtml}
+      <div id="navChart-${botId}"></div>
+    `;
+
+    grid.appendChild(card);
+    renderNavChart(document.getElementById('navChart-' + botId), d.snapshots, botId);
+  }
+}
 
 async function init() {
-  const [portfolioRes, avatarRes, agentsRes] = await Promise.all([
+  const [portfolioRes, avatarRes, agentsRes, detailsRes] = await Promise.all([
     fetch('/api/portfolio/summary').then(r => r.json()).catch(() => []),
     fetch('/api/bot/avatars').then(r => r.json()).catch(() => ({})),
     fetch('/api/agents').then(r => r.json()).catch(() => ({})),
+    fetch('/api/portfolio/details').then(r => r.json()).catch(() => ({})),
   ]);
 
   avatars = avatarRes;
@@ -411,7 +792,6 @@ async function init() {
   const portfolioMap = {};
   for (const p of portfolioRes) portfolioMap[p.bot_id] = p;
 
-  // Build sorted list: active bots sorted by return DESC, then inactive bots
   const activeBots = allBotIds.filter(id => portfolioMap[id]).sort((a, b) => {
     return (portfolioMap[b].cumulative_return_pct || 0) - (portfolioMap[a].cumulative_return_pct || 0);
   });
@@ -427,146 +807,13 @@ async function init() {
   document.getElementById('sumBots').textContent = activeBots.length + ' / ' + allBotIds.length;
   document.getElementById('sumAssets').textContent = FMT.money(totalAssets);
   document.getElementById('sumReturn').textContent = FMT.pct(avgReturn);
-  document.getElementById('sumReturn').className = 'value ' + (avgReturn >= 0 ? 'green' : 'accent');
+  document.getElementById('sumReturn').className = 'value ' + (avgReturn >= 0 ? 'accent' : 'green');
 
-  // Render ranking
-  const table = document.getElementById('rankingTable');
-  table.innerHTML = '';
-
-  sortedBots.forEach((botId, idx) => {
-    const meta = agentMeta[botId] || { name: botId, emoji: '' };
-    const p = portfolioMap[botId];
-    const isActive = !!p;
-
-    // Ranking row
-    const row = document.createElement('div');
-    row.className = 'rank-row' + (isActive ? '' : ' inactive');
-    if (isActive) row.onclick = () => toggleDetail(botId);
-
-    const avatarSrc = avatars[botId];
-    const avatarHtml = avatarSrc
-      ? `<img class="rank-avatar" src="${avatarSrc}">`
-      : `<div class="rank-avatar placeholder">${meta.emoji || '?'}</div>`;
-
-    const rank = idx + 1;
-    const rankClass = isActive && rank <= 3 ? ' top' : '';
-
-    if (isActive) {
-      const holdingTags = (p.holdings || []).slice(0, 3).map(h =>
-        `<span class="rank-tag">${h.product_name}</span>`
-      ).join('');
-
-      row.innerHTML = `
-        <span class="rank-num${rankClass}">${rank}</span>
-        ${avatarHtml}
-        <span class="rank-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</span>
-        <span class="rank-id">${botId}</span>
-        <div class="rank-holdings-preview">${holdingTags}</div>
-        <div style="text-align:right;min-width:80px">
-          <div class="rank-stat ${FMT.cls(p.cumulative_return_pct)}">${FMT.pct(p.cumulative_return_pct)}</div>
-          <div class="rank-stat-label">累计收益</div>
-        </div>
-        <div style="text-align:right;min-width:70px">
-          <div class="rank-stat neutral">${FMT.money(p.total_value)}</div>
-          <div class="rank-stat-label">总资产</div>
-        </div>
-        <span class="rank-expand-icon" id="arrow-${botId}">▼</span>
-      `;
-    } else {
-      row.innerHTML = `
-        <span class="rank-num">${rank}</span>
-        ${avatarHtml}
-        <span class="rank-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</span>
-        <span class="rank-id">${botId}</span>
-        <span class="rank-inactive-label">未开通</span>
-      `;
-    }
-
-    table.appendChild(row);
-
-    // Detail panel (collapsible)
-    if (isActive) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'detail-wrapper';
-      wrapper.id = 'detail-' + botId;
-
-      const cashWeight = p.total_value ? (p.cash / p.total_value * 100) : 0;
-
-      let holdingsHtml = '<div class="holdings-title">HOLDINGS</div>';
-      for (const h of (p.holdings || [])) {
-        const w = h.weight || 0;
-        holdingsHtml += `
-          <div class="holding-row">
-            <span class="holding-role">${h.role || ''}</span>
-            <span class="holding-name" title="${h.product_name}">${h.product_name}</span>
-            <span class="holding-weight">${w.toFixed(1)}%</span>
-            <div class="holding-bar-bg"><div class="holding-bar" style="width:${Math.min(w, 100)}%"></div></div>
-          </div>`;
-      }
-      holdingsHtml += `
-        <div class="cash-row">
-          <span class="holding-role" style="background:var(--yellow-soft);color:var(--yellow)">现金</span>
-          <span class="holding-name">Cash</span>
-          <span class="holding-weight">${cashWeight.toFixed(1)}%</span>
-          <div class="holding-bar-bg"><div class="holding-bar" style="width:${Math.min(cashWeight, 100)}%;background:var(--yellow)"></div></div>
-        </div>`;
-
-      wrapper.innerHTML = `
-        <div class="bot-detail">
-          <div class="account-stats">
-            <div class="stat-item">
-              <div class="stat-label">总资产</div>
-              <div class="stat-value neutral">${FMT.money(p.total_value)}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">净值</div>
-              <div class="stat-value neutral">${FMT.nav(p.net_value)}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">累计收益</div>
-              <div class="stat-value ${FMT.cls(p.cumulative_return_pct)}">${FMT.pct(p.cumulative_return_pct)}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">最大回撤</div>
-              <div class="stat-value ${p.max_drawdown < 0 ? 'negative' : 'neutral'}">${FMT.pct(p.max_drawdown)}</div>
-            </div>
-          </div>
-          ${holdingsHtml}
-          ${p.trade_date ? `<div style="text-align:right;font-size:10px;color:var(--dim);margin-top:8px;font-family:var(--mono)">as of ${p.trade_date}</div>` : ''}
-        </div>
-      `;
-
-      table.appendChild(wrapper);
-    }
-  });
+  renderLeaderboard(sortedBots, portfolioMap, detailsRes);
+  renderBotCards(activeBots, portfolioMap, detailsRes);
 
   document.getElementById('loading').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
-}
-
-function toggleDetail(botId) {
-  const wrapper = document.getElementById('detail-' + botId);
-  const arrow = document.getElementById('arrow-' + botId);
-  if (!wrapper) return;
-
-  if (openBot && openBot !== botId) {
-    // Close previous
-    const prev = document.getElementById('detail-' + openBot);
-    const prevArrow = document.getElementById('arrow-' + openBot);
-    if (prev) prev.classList.remove('open');
-    if (prevArrow) prevArrow.style.transform = '';
-  }
-
-  const isOpen = wrapper.classList.contains('open');
-  if (isOpen) {
-    wrapper.classList.remove('open');
-    arrow.style.transform = '';
-    openBot = null;
-  } else {
-    wrapper.classList.add('open');
-    arrow.style.transform = 'rotate(180deg)';
-    openBot = botId;
-  }
 }
 
 init();

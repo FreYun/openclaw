@@ -159,7 +159,7 @@ cat > /tmp/post_body_$$.txt << 'BODYEOF'
 {正文内容，完整不得省略}
 BODYEOF
 
-folder=$(bash ~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh \
+folder=$(bash skills/xhs-op/submit-to-publisher.sh \
   -a bot1 -t "{标题}" -b /tmp/post_body_$$.txt \
   -m image -r "direct:ou_xxx" \
   -i "{Step 9 的封面图路径}" \

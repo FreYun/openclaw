@@ -1,1 +1,1 @@
-bot3,bot7,bot6
+bot3,bot6,bot7

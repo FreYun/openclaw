@@ -135,7 +135,7 @@ cat > /tmp/post_body_$$.txt << 'BODYEOF'
 {从报告提取的正文内容，口语化改写}
 BODYEOF
 
-folder=$(bash ~/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh \
+folder=$(bash skills/xhs-op/submit-to-publisher.sh \
   -a bot2 -t "{标题}" -b /tmp/post_body_$$.txt \
   -m image -r "direct:ou_xxx" \
   -i "image/YYYY-MM-DD-主题-配图/01-封面.png,image/YYYY-MM-DD-主题-配图/02-概念解析.png,image/YYYY-MM-DD-主题-配图/03-产业链全景.png,image/YYYY-MM-DD-主题-配图/04-上游深挖.png,image/YYYY-MM-DD-主题-配图/05-中游深挖.png,image/YYYY-MM-DD-主题-配图/06-下游深挖.png,image/YYYY-MM-DD-主题-配图/07-国产替代.png,image/YYYY-MM-DD-主题-配图/08-投资视角.png" \

@@ -4,7 +4,7 @@
   "slot": "utility",
   "subType": "content",
   "desc": "热点板块深度分析文章：编辑给出板块名称，AI自主搜集素材，按四模块结构（行情播报→深度分析→机构观点→相关基金）输出公众号初稿",
-  "requiresMcp": [],
+  "requiresMcp": ["research-mcp"],
   "subSkills": [
     {
       "name": "写作指南",

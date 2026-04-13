@@ -19,6 +19,7 @@ from parser import (
     RawMarketData,
     build_raw_market_data,
     compute_index_ma,
+    compute_pct_change,
     compute_volume_ratio,
     fetch_index_daily,
     parse_daily_review,
@@ -234,6 +235,42 @@ class TestComputeVolumeRatio:
 
 
 # --------------------------------------------------------------------------- #
+# compute_pct_change
+# --------------------------------------------------------------------------- #
+
+
+class TestComputePctChange:
+    def test_flat_series_zero_pct(self):
+        df = _make_index_df(n_days=10)
+        target = df.iloc[-1]["date"]
+        assert compute_pct_change(df, target) == pytest.approx(0.0)
+
+    def test_positive_pct(self):
+        # close 从 100 涨到 103 → +3%
+        close = [100.0] * 9 + [103.0]
+        df = _make_index_df(n_days=10, close_series=close)
+        target = df.iloc[-1]["date"]
+        assert compute_pct_change(df, target) == pytest.approx(3.0)
+
+    def test_negative_pct(self):
+        close = [100.0] * 9 + [96.85]
+        df = _make_index_df(n_days=10, close_series=close)
+        target = df.iloc[-1]["date"]
+        assert compute_pct_change(df, target) == pytest.approx(-3.15, rel=1e-3)
+
+    def test_first_row_raises(self):
+        df = _make_index_df(n_days=10)
+        target = df.iloc[0]["date"]
+        with pytest.raises(ValueError, match="no previous"):
+            compute_pct_change(df, target)
+
+    def test_target_not_found_raises(self):
+        df = _make_index_df(n_days=10)
+        with pytest.raises(KeyError):
+            compute_pct_change(df, "1999-01-01")
+
+
+# --------------------------------------------------------------------------- #
 # fetch_index_daily: 只测缓存读取路径, 不打网络
 # --------------------------------------------------------------------------- #
 
@@ -289,6 +326,9 @@ class TestBuildRawMarketData:
         assert result.hs300 is not None
         assert result.csi1000 is not None
         assert result.volume_ratio_5_20 == pytest.approx(1.0)
+        # pct_change 字段在平坦序列下为 0
+        assert result.hs300_pct_change == pytest.approx(0.0)
+        assert result.csi1000_pct_change == pytest.approx(0.0)
         # 无缺失维度
         assert result.missing_dims == []
 

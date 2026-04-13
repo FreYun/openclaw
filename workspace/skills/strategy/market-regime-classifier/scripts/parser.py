@@ -47,6 +47,10 @@ class RawMarketData:
     csi1000: Optional[dict] = None
     volume_ratio_5_20: Optional[float] = None
 
+    # 当日涨跌幅 (逃生门判断需要), 单位: 百分比, 如 -3.15 表示 -3.15%
+    hs300_pct_change: Optional[float] = None
+    csi1000_pct_change: Optional[float] = None
+
     # 诊断信息
     missing_dims: list = field(default_factory=list)
     warnings: list = field(default_factory=list)
@@ -212,6 +216,27 @@ def compute_index_ma(df: pd.DataFrame, target_date: str) -> dict:
     }
 
 
+def compute_pct_change(df: pd.DataFrame, target_date: str) -> float:
+    """target_date 当日相对上一交易日的收盘价涨跌幅 (%, 如 -3.15 表 -3.15%)。
+
+    异常:
+        KeyError   — target_date 不在 df 中
+        ValueError — target_date 是 df 的第一条, 无前一日可比
+    """
+    df = df.sort_values("date").reset_index(drop=True)
+    mask = df["date"] == target_date
+    if not mask.any():
+        raise KeyError(f"target_date {target_date!r} not in index data")
+    idx = int(df.index[mask][0])
+    if idx < 1:
+        raise ValueError(f"no previous trading day before {target_date}")
+    prev_close = float(df.iloc[idx - 1]["close"])
+    today_close = float(df.iloc[idx]["close"])
+    if prev_close == 0:
+        raise ValueError(f"previous close is zero at {target_date}")
+    return (today_close - prev_close) / prev_close * 100.0
+
+
 def compute_volume_ratio(df: pd.DataFrame, target_date: str) -> float:
     """5 日均量 / 20 日均量 (含 target_date 当日)。
 
@@ -318,13 +343,18 @@ def build_raw_market_data(
             logger.warning("fetch CSI1000 failed: %s", e)
             result.warnings.append(f"fetch_csi1000_failed: {e}")
 
-    # MA
+    # MA + 涨跌幅
     if hs300_data is not None:
         try:
             result.hs300 = compute_index_ma(hs300_data, date)
         except (KeyError, ValueError) as e:
             logger.warning("compute HS300 MA failed: %s", e)
             result.warnings.append(f"hs300_ma_failed: {e}")
+        try:
+            result.hs300_pct_change = compute_pct_change(hs300_data, date)
+        except (KeyError, ValueError) as e:
+            logger.warning("compute HS300 pct_change failed: %s", e)
+            result.warnings.append(f"hs300_pct_change_failed: {e}")
 
     if csi1000_data is not None:
         try:
@@ -332,6 +362,11 @@ def build_raw_market_data(
         except (KeyError, ValueError) as e:
             logger.warning("compute CSI1000 MA failed: %s", e)
             result.warnings.append(f"csi1000_ma_failed: {e}")
+        try:
+            result.csi1000_pct_change = compute_pct_change(csi1000_data, date)
+        except (KeyError, ValueError) as e:
+            logger.warning("compute CSI1000 pct_change failed: %s", e)
+            result.warnings.append(f"csi1000_pct_change_failed: {e}")
 
     if result.hs300 is None or result.csi1000 is None:
         result.missing_dims.append("ma_position")

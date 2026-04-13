@@ -11,11 +11,12 @@
 | `management` | 管理 | 全局管理者：监控所有 agent、调度任务、处理异常、审批变更 |
 | `ops` | 内务 | 内部运维：基础设施管理、发布执行、研发支持，不面向公众 |
 
-## 👔 职业 (Armor) (8)
+## 👔 职业 (Armor) (9)
 
 | Skill | 名称 | 说明 |
 |-------|------|------|
 | `coder` | 全知全能-外挂（普通bot勿装) | 开发者职业 — 装备后解锁全部技能槽位，无数量上限 |
+| `content-ops` | 内容运营 Agent | 内容运营主编层：选题排期、审稿、人感诊断、爆款拆解 |
 | `gzh-publish` | 公众号发文 | 微信公众号发文流程：登录、浏览器操作、排版、保存草稿、发表、留言互动 |
 | `mag1-mgm` | 公公运营术 | 印务局全流程运营：agent 通讯调度、飞书群管理、发布结果上报、各 agent 职能速查 |
 | `skill-evolution` | 技能进化师 | OpenSpace 驱动的 skill 沙盒进化、审批合并、日报播报 |
@@ -54,7 +55,7 @@
 | `xuanma-cover` | 宣妈封面生成 | 宣妈专属封面图生成：角色形象、卡片/写实两套模板、配色表情速查、生图调用 |
 | `xuanma-style` | 宣妈内容风格 | 宣妈小红书内容形式与风格规范：日常简评、月度复盘、排版、封面、通用红线 |
 
-## 🔧 通用技能 (Utility) (22)
+## 🔧 通用技能 (Utility) (20)
 
 | Skill | 名称 | 说明 |
 |-------|------|------|
@@ -69,7 +70,6 @@
 | `hotspot-sector-analysis` | 热点板块追踪 | 热点板块深度分析文章：编辑给出板块名称，AI自主搜集素材，按四模块结构（行情播报→深度分析→机构观点→相关基金）输出公众号初稿 |
 | `james-topic-research` | 詹姆斯话题库 | 小红书詹姆斯话题热点、评论阵营与蹭热度角度 |
 | `report-incident` | 异常上报 | 运行时异常记录与通知魏忠贤 |
-| `scheduled-post` | 定时发稿 | 草稿审批 + 投稿管道：合规 → draft-review → 魏忠贤 → 印务局 |
 | `security-audit` | 安全审计 | 安全巡检、漏洞评估、权限审查 |
 | `shangdan-card` | 商单写作 | 商单多图帖：3-4张知识卡片（逻辑讲解+示意图+业绩图+风险提示）+ 配套正文 |
 | `skill-generate` | 技能生成器 | 按照 META-SKILL-README.md 规范，通过 Claude Code 生成新 skill |
@@ -79,7 +79,6 @@
 | `weread-reader` | 微信读书 | 微信读书网页版阅读与书架管理 |
 | `xhs-topic-collector` | 小红书素材巡逻 |  |
 | `xhs-writing` | 小红书写稿经验 | 通用排版、标题、限流防范 |
-| `运营agent` | 运营agent |  |
 
 ## ⚔️ 研究技能 (Research) (29)
 
@@ -115,7 +114,13 @@
 | `tougu-portfolio-review` | tougu-portfolio-review | 定期模拟 bot 自己复查投顾持仓，对比当前组合与目标组合，决定保持、调仓或切换，并写回测试期 markdown 状态 |
 | `tougu-product-match` | tougu-product-match | 优先回答 bot 自己当前的投顾组合与已买产品；如无现成结果，再结合投资策略摘要、memory 与候选池为 bot 自己完成投顾产品匹配 |
 
-## ⏰ 定时任务 (Scheduled) (12)
+## 📊 策略 (Strategy) (1)
+
+| Skill | 名称 | 说明 |
+|-------|------|------|
+| `market-regime-classifier` | 市场Regime判断器 | 读取复盘MD + akshare指数数据，六维打分→5档regime（强牛/强势震荡/中性震荡/弱势震荡/熊）→输出战法推荐和仓位上限，带3日确认+逃生门机制。通用 skill，策略型 bot 通过 symlink 使用 |
+
+## ⏰ 定时任务 (Scheduled) (8)
 
 | Skill | 名称 | 说明 |
 |-------|------|------|
@@ -125,14 +130,9 @@
 | `cron-incidents-check-weekend` | 异常巡检(周末) | 周末早晚各一次检查 incidents.jsonl 异常 |
 | `cron-xhs-nurture-dispatch` | 养号调度 | 每天5轮从 bot1-7 中随机挑3个执行小红书养号 |
 | `daily-review-data` | 每日复盘数据采集 | 一键采集A股市场全景、日内画像、情绪、板块轮动、连板、资金、股东、ERP数据，输出结构化复盘MD |
-| `james-daily-post` | 老詹定时发帖 | 内容生产：看行情 → 选题（多资产轮换） → 写稿 → 生图，产出后交 scheduled-post 审批投稿 |
-| `meme-daily-post` | meme定时发帖 | 内容生产：看行情 → 选题 → 写稿 → 生图，产出后交 scheduled-post 审批投稿 |
-| `xhs-nurture` | 养号互动 | 小红书养号：搜索→点赞→评论→通知回复 |
-| `xiaotian-daily-post` | 小天定时发帖 | 内容生产：拉金价 → 选题 → 写稿 → 生图，产出后交 scheduled-post 审批投稿 |
-| `xuanma-daily-post` | 宣妈定时发帖 | 内容生产：拉金价 → 选题 → 写稿 → 生成封面文字，默认走 text_to_image 笔记，产出后交 scheduled-post 审批投稿 |
 | `zsxq-reader` | 知识星球 | 知识星球情报采集与摘要 |
 
 ---
 
-**Total: 99 skills**
+**Total: 94 skills**
 

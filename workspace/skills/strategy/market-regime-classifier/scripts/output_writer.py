@@ -144,6 +144,35 @@ def _fmt_breakdown_value(val) -> str:
     return str(val)
 
 
+def _fmt_ma_position_raw(val) -> str:
+    """ma_position 字段是嵌套 dict, 需要压成一行人看的简短摘要。
+
+    接受两种格式:
+    - 真实数据: {hs300: {close, ma*, ...}, csi1000: {...}, hs300_pct_change, csi1000_pct_change}
+    - 测试 mock: {hs300: "above_20", csi1000: "..."}  (简化占位符)
+    - 其它: 退化到标量格式
+    """
+    if not isinstance(val, dict):
+        return _fmt_breakdown_value(val)
+
+    def _short(idx):
+        if idx is None:
+            return "-"
+        if isinstance(idx, dict) and "close" in idx and "ma20" in idx:
+            return f"c={idx['close']:.0f} MA20={idx['ma20']:.0f}"
+        return str(idx)
+
+    hs300 = val.get("hs300")
+    csi1000 = val.get("csi1000")
+    hs_chg = val.get("hs300_pct_change")
+    csi_chg = val.get("csi1000_pct_change")
+
+    chg_part = ""
+    if isinstance(hs_chg, (int, float)) and isinstance(csi_chg, (int, float)):
+        chg_part = f" (日涨跌 HS300 {hs_chg:+.2f}% / CSI1000 {csi_chg:+.2f}%)"
+    return f"HS300 {_short(hs300)} / CSI1000 {_short(csi1000)}{chg_part}"
+
+
 def render_md(result: ClassifyResult) -> str:
     """渲染 spec §7 风格的 MD 报告。"""
     regime_name = REGIME_CODE_TO_NAME[result.regime_code]
@@ -206,7 +235,11 @@ def render_md(result: ClassifyResult) -> str:
     for key, label in dim_labels:
         score = result.score_breakdown.get(key, 0)
         raw_val = raw.get(key)
-        lines.append(f"| {label} | {_fmt_breakdown_value(raw_val)} | {_fmt_score(score)} |")
+        if key == "ma_position":
+            raw_text = _fmt_ma_position_raw(raw_val)
+        else:
+            raw_text = _fmt_breakdown_value(raw_val)
+        lines.append(f"| {label} | {raw_text} | {_fmt_score(score)} |")
 
     lines.append("")
     lines.append("## 战法推荐详情")

@@ -47,11 +47,16 @@ def _score_ma_for_index(close: float, ma5: float, ma20: float, ma60: float, ma25
      0: 站上 20, 60 不定
     -1: 跌破 20
     -2: MA 空头排列 (MA5<MA20<MA60<MA250)
+
+    实现细节:
+    - "站上" (above_X) 采用 >= 包含持平, 与中文金融约定一致 (close 刚好
+      等于均线应判为 "站稳" 而非 "跌破")。合成 flat DF 因此得 +1。
+    - "多头/空头排列" 采用严格 > / <, 相等的均线不构成层级。
     """
-    above_5 = close > ma5
-    above_20 = close > ma20
-    above_60 = close > ma60
-    above_250 = close > ma250
+    above_5 = close >= ma5
+    above_20 = close >= ma20
+    above_60 = close >= ma60
+    above_250 = close >= ma250
     bull_alignment = ma5 > ma20 > ma60 > ma250
     bear_alignment = ma5 < ma20 < ma60 < ma250
 

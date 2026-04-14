@@ -62,6 +62,7 @@ class RawMarketData:
 
 
 # regex 都用宽松匹配, 允许 ** 加粗与否, 允许中英文冒号混用
+# 新格式 (daily_review.py 自动产出, 单行): "上涨：**662** 家 / 下跌：**4786** 家 / 平盘：377 家"
 _RE_BREADTH = re.compile(
     r"上涨[:：]\s*\*{0,2}(\d+)\*{0,2}\s*家\s*/\s*下跌[:：]\s*\*{0,2}(\d+)\*{0,2}\s*家"
     r"(?:\s*/\s*平盘[:：]\s*\*{0,2}(\d+)\*{0,2})?"
@@ -69,6 +70,37 @@ _RE_BREADTH = re.compile(
 _RE_LU_LD = re.compile(r"涨停[:：]跌停\s*\|?\s*\*{0,2}(\d+)\*{0,2}\s*[:：]\s*\*{0,2}(\d+)\*{0,2}")
 _RE_SENTIMENT_SCORE = re.compile(r"情绪评分\s*\|?\s*\*{0,2}(\d+(?:\.\d+)?)\*{0,2}\s*/\s*100")
 _RE_MAX_STREAK = re.compile(r"最高连板[:：]\s*\*{0,2}(-?\d+)\*{0,2}\s*板")
+
+# 老格式 (手工/遗留复盘 MD, 分市场多行). 例:
+#   - 上涨：257 家（上证）/ 241 家（深证）
+#   - 平盘：11 家（上证）/ 13 家（深证）
+#   - 下跌：2075 家（上证）/ 2661 家（深证）
+# 每行可能含任意市场数, 全部累加。
+_RE_BREADTH_ROW = re.compile(r"^\s*[-\*]?\s*(上涨|下跌|平盘)[:：](.+?)$", re.MULTILINE)
+_RE_JIA_NUM = re.compile(r"(\d+)\s*家")
+
+
+def _extract_multi_market_breadth(text: str):
+    """老格式 fallback: 分市场多行的涨跌家数。
+
+    例如:
+        - 上涨：257 家（上证）/ 241 家（深证）
+        - 下跌：2075 家（上证）/ 2661 家（深证）
+        - 平盘：11 家（上证）/ 13 家（深证）
+
+    每一行里可能含多个 "N 家" (上证 + 深证 + 北交所 …), 全部加总。
+    返回 (up, down, flat) 元组, 上涨/下跌任一为 None 则返回 None。
+    """
+    sums = {"上涨": None, "下跌": None, "平盘": None}
+    for category, content in _RE_BREADTH_ROW.findall(text):
+        if sums.get(category) is not None:
+            continue  # 已经记录过, 不覆盖 (防止误匹配到表格里同名的行)
+        nums = [int(n) for n in _RE_JIA_NUM.findall(content)]
+        if nums:
+            sums[category] = sum(nums)
+    if sums["上涨"] is None or sums["下跌"] is None:
+        return None
+    return sums["上涨"], sums["下跌"], sums["平盘"] or 0
 
 
 def parse_daily_review(md_path: str) -> dict:
@@ -84,18 +116,31 @@ def parse_daily_review(md_path: str) -> dict:
         max_streak: int                 — 最高连板
 
     不抛异常 (除非文件不存在)。解析失败的字段由上游按降级处理。
+
+    兼容两种 MD 格式:
+    - 新格式 (daily_review.py 自动产出, 单行汇总)
+    - 老格式 (遗留手工 MD, 分市场多行). 老格式里通常只能恢复涨跌家数,
+      情绪/连板字段本身就不存在, 会进入 missing_dims。
     """
     with open(md_path, encoding="utf-8") as f:
         text = f.read()
 
     result: dict = {}
 
-    # 涨跌家数
+    # 涨跌家数 (primary 新格式 → fallback 老格式)
+    up = down = flat = None
     m = _RE_BREADTH.search(text)
     if m:
         up = int(m.group(1))
         down = int(m.group(2))
         flat = int(m.group(3)) if m.group(3) else 0
+    else:
+        fb = _extract_multi_market_breadth(text)
+        if fb is not None:
+            up, down, flat = fb
+            logger.debug("parse_daily_review: using multi-market fallback breadth")
+
+    if up is not None and down is not None:
         result["advance_count"] = up
         result["decline_count"] = down
         result["flat_count"] = flat

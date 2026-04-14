@@ -28,6 +28,7 @@ from parser import (
 
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 REVIEW_MD_2026_03_20 = os.path.join(FIXTURE_DIR, "复盘_2026-03-20.md")
+REVIEW_MD_2026_03_19_LEGACY = os.path.join(FIXTURE_DIR, "复盘_2026-03-19_legacy.md")
 
 
 # --------------------------------------------------------------------------- #
@@ -63,6 +64,76 @@ class TestParseDailyReviewFixture:
     def test_max_streak(self, parsed):
         # "最高连板：**0** 板"
         assert parsed["max_streak"] == 0
+
+
+# --------------------------------------------------------------------------- #
+# parse_daily_review: 老格式 fallback (分市场多行)
+# --------------------------------------------------------------------------- #
+
+
+class TestParseDailyReviewLegacyFormat:
+    """2026-03-19 是老版手写复盘 MD, 分上证/深证两列, 情绪/连板字段缺失。"""
+
+    @pytest.fixture(scope="class")
+    def parsed(self):
+        return parse_daily_review(REVIEW_MD_2026_03_19_LEGACY)
+
+    def test_advance_decline_recovered_via_fallback(self, parsed):
+        # 上涨: 257+241=498; 下跌: 2075+2661=4736; 平盘: 11+13=24
+        assert parsed["advance_count"] == 498
+        assert parsed["decline_count"] == 4736
+        assert parsed["flat_count"] == 24
+        expected = 498 / (498 + 4736 + 24)
+        assert parsed["advance_decline_ratio"] == pytest.approx(expected, rel=1e-9)
+
+    def test_sentiment_fields_genuinely_missing(self, parsed):
+        # 老 MD 里情绪评分章节写"待补充", 涨停:跌停 不存在
+        assert "sentiment_delta" not in parsed
+        assert "sentiment_index" not in parsed
+
+    def test_max_streak_missing(self, parsed):
+        # 老 MD 完全没有连板统计
+        assert "max_streak" not in parsed
+
+
+class TestExtractMultiMarketBreadth:
+    def test_two_markets_sum(self, tmp_path):
+        md = tmp_path / "m.md"
+        md.write_text(
+            "**涨跌家数：**\n"
+            "- 上涨：100 家（上证）/ 200 家（深证）\n"
+            "- 下跌：500 家（上证）/ 800 家（深证）\n"
+            "- 平盘：10 家（上证）/ 20 家（深证）\n",
+            encoding="utf-8",
+        )
+        result = parse_daily_review(str(md))
+        assert result["advance_count"] == 300
+        assert result["decline_count"] == 1300
+        assert result["flat_count"] == 30
+
+    def test_three_markets_sum(self, tmp_path):
+        md = tmp_path / "m.md"
+        md.write_text(
+            "- 上涨：100 家（上证）/ 200 家（深证）/ 50 家（北交所）\n"
+            "- 下跌：400 家（上证）/ 500 家（深证）/ 100 家（北交所）\n",
+            encoding="utf-8",
+        )
+        result = parse_daily_review(str(md))
+        assert result["advance_count"] == 350
+        assert result["decline_count"] == 1000
+
+    def test_primary_format_wins_over_fallback(self, tmp_path):
+        # 同一文件里同时出现两种格式 → 主格式优先
+        md = tmp_path / "m.md"
+        md.write_text(
+            "- 上涨：**600** 家 / 下跌：**4000** 家 / 平盘：400 家\n"
+            "- 上涨：100 家（上证）/ 200 家（深证）\n"
+            "- 下跌：999 家（上证）/ 999 家（深证）\n",
+            encoding="utf-8",
+        )
+        result = parse_daily_review(str(md))
+        assert result["advance_count"] == 600  # 主格式的值
+        assert result["decline_count"] == 4000
 
 
 # --------------------------------------------------------------------------- #

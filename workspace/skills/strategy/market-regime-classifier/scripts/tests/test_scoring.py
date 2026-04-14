@@ -7,7 +7,6 @@
 import pytest
 
 from scoring import (
-    _round_half_away_from_zero,
     _score_ma_for_index,
     score_advance_decline,
     score_ma_position,
@@ -17,29 +16,6 @@ from scoring import (
     score_volume_trend,
     total_score,
 )
-
-
-# --------------------------------------------------------------------------- #
-# 辅助: 四舍五入 (远离零)
-# --------------------------------------------------------------------------- #
-
-
-@pytest.mark.parametrize(
-    "x,expected",
-    [
-        (0.0, 0),
-        (0.4, 0),
-        (0.5, 1),
-        (0.6, 1),
-        (1.5, 2),
-        (-0.5, -1),
-        (-1.5, -2),
-        (-0.49, 0),
-        (2.0, 2),
-    ],
-)
-def test_round_half_away_from_zero(x, expected):
-    assert _round_half_away_from_zero(x) == expected
 
 
 # --------------------------------------------------------------------------- #
@@ -64,9 +40,20 @@ class TestScoreMaForIndex:
         # 站上 5/20/60, 但 MA250 混乱或未站上
         assert _score_ma_for_index(close=100, ma5=99, ma20=98, ma60=97, ma250=105) == 1
 
-    def test_plus_one_above_all_but_no_bull_alignment(self):
-        # 站上全部均线但不严格多头排列: 由 +1 分支兜住 (不是 +2)
-        assert _score_ma_for_index(close=110, ma5=100, ma20=101, ma60=99, ma250=95) == 1
+    def test_above_all_but_ma5_dead_cross_falls_to_zero(self):
+        # 站上全部均线, 但 MA5 100 < MA20 101 (死叉). 2026-04-13 修订后:
+        # +1 档要求 MA5 >= MA20, 所以这个 case 降到 0 (不再是 +1)。
+        # 语义: 虽然 close 仍在均线之上, 短期动能已转弱 (顶部死叉信号)。
+        assert _score_ma_for_index(close=110, ma5=100, ma20=101, ma60=99, ma250=95) == 0
+
+    def test_plus_one_requires_ma5_not_below_ma20(self):
+        # close 远上, MA5 刚好等于 MA20 → 不算死叉, 仍然 +1
+        assert _score_ma_for_index(close=110, ma5=100, ma20=100, ma60=99, ma250=95) == 1
+
+    def test_ma5_death_cross_blocks_plus_one_even_with_close_high(self):
+        # 典型"顶部转折": close 还在 MA20 上, 但 MA5 跌穿 MA20
+        # 实际案例: HS300 2026-03-12 (close 4688, MA5 4669, MA20 4685)
+        assert _score_ma_for_index(close=4688, ma5=4669, ma20=4685, ma60=4676, ma250=4293) == 0
 
     def test_zero_above_20_not_60(self):
         assert _score_ma_for_index(close=100, ma5=101, ma20=98, ma60=102, ma250=95) == 0
@@ -89,29 +76,50 @@ class TestScoreMaForIndex:
 
 
 class TestScoreMaPosition:
-    def test_average_plus_two(self):
+    """两指数合并 = min() (2026-04-13 修订, 原为 avg+round)。
+
+    背后原因: 避免"一强一弱"被算术平均抹平成假强势, 与 spec §6
+    "宁可踏空不可站岗" 的设计原则一致。
+    """
+
+    def test_both_bull_returns_plus_two(self):
         bull = _make_index(110, 108, 105, 100, 95)
         assert score_ma_position(bull, bull) == 2
 
-    def test_average_rounds_half_away(self):
-        # HS300 +2, CSI1000 +1 → 平均 1.5 → +2 (spec §4 示例)
+    def test_divergent_plus2_and_plus1_takes_min(self):
+        # HS300 +2, CSI1000 +1 → min = +1 (修订前是 avg → +2)
         hs300 = _make_index(110, 108, 105, 100, 95)  # +2
         csi1000 = _make_index(100, 99, 98, 97, 105)  # +1 (站 5/20/60 未站 250)
-        assert score_ma_position(hs300, csi1000) == 2
+        assert score_ma_position(hs300, csi1000) == 1
 
-    def test_average_minus_half_rounds_to_minus_one(self):
-        # -1 + 0 = -1 → -0.5 → -1
+    def test_divergent_minus1_and_zero_takes_min(self):
         weak = _make_index(98, 100, 99, 95, 105)  # -1
         zero = _make_index(100, 101, 98, 102, 95)  # 0
         assert score_ma_position(weak, zero) == -1
 
-    def test_average_zero(self):
+    def test_both_zero(self):
         zero = _make_index(100, 101, 98, 102, 95)  # 0
         assert score_ma_position(zero, zero) == 0
 
-    def test_average_minus_two(self):
+    def test_both_bear_returns_minus_two(self):
         bear = _make_index(80, 85, 90, 95, 100)
         assert score_ma_position(bear, bear) == -2
+
+    def test_one_strong_bull_one_bear_takes_bear(self):
+        # 极端背离: HS300 多头+2 + CSI1000 空头-2 → min = -2
+        # 大盘强中小盘崩 也算危险信号, 不应被 avg=0 掩盖
+        bull = _make_index(110, 108, 105, 100, 95)  # +2
+        bear = _make_index(80, 85, 90, 95, 100)  # -2
+        assert score_ma_position(bull, bear) == -2
+
+    def test_real_case_hs300_dead_cross_csi1000_bull_2026_03_12(self):
+        # 实际数据: 2026-03-12
+        # HS300 有 MA5 死叉 MA20 → 0 (修订后)
+        # CSI1000 真·多头排列 → +2
+        # 合成: min(0, 2) = 0 (修订前是 avg (+1,+2)=+1.5→+2, 假强势)
+        hs300 = _make_index(close=4688, ma5=4669, ma20=4685, ma60=4676, ma250=4293)
+        csi1000 = _make_index(close=8336, ma5=8300, ma20=8276, ma60=8003, ma250=7035)
+        assert score_ma_position(hs300, csi1000) == 0
 
 
 # --------------------------------------------------------------------------- #

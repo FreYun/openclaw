@@ -20,7 +20,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import TypedDict
 
 
@@ -43,8 +42,8 @@ def _score_ma_for_index(close: float, ma5: float, ma20: float, ma60: float, ma25
     """单个指数按 spec §4 的均线规则打 -2 ~ +2 分。
 
     +2: 站上 5/20/60/250 且 MA 多头排列 (MA5>MA20>MA60>MA250)
-    +1: 站上 5/20/60
-     0: 站上 20, 60 不定
+    +1: 站上 5/20/60 且 MA5 >= MA20 (短期均线未死叉)
+     0: 站上 20, 但短期均线已死叉 (MA5 < MA20) 或 60 位置不定
     -1: 跌破 20
     -2: MA 空头排列 (MA5<MA20<MA60<MA250)
 
@@ -52,6 +51,10 @@ def _score_ma_for_index(close: float, ma5: float, ma20: float, ma60: float, ma25
     - "站上" (above_X) 采用 >= 包含持平, 与中文金融约定一致 (close 刚好
       等于均线应判为 "站稳" 而非 "跌破")。合成 flat DF 因此得 +1。
     - "多头/空头排列" 采用严格 > / <, 相等的均线不构成层级。
+    - +1 档新增 "MA5 >= MA20" 约束 (2026-04-13 修订): spec §4 原表只看
+      close 位置, 无法识别 "顶部死叉但 close 还没破 MA20" 的见顶信号。
+      例: HS300 2026-03-12 close 4688 站上全部均线但 MA5 4669 < MA20 4685,
+      原规则给 +1, 新规则降到 0 (更真实反映趋势转弱)。
     """
     above_5 = close >= ma5
     above_20 = close >= ma20
@@ -59,6 +62,7 @@ def _score_ma_for_index(close: float, ma5: float, ma20: float, ma60: float, ma25
     above_250 = close >= ma250
     bull_alignment = ma5 > ma20 > ma60 > ma250
     bear_alignment = ma5 < ma20 < ma60 < ma250
+    ma5_not_dead_cross = ma5 >= ma20  # 短期均线未死叉
 
     # 最悲观: 空头排列直接 -2, 不论价格位置
     if bear_alignment:
@@ -66,37 +70,39 @@ def _score_ma_for_index(close: float, ma5: float, ma20: float, ma60: float, ma25
     # 最乐观: 站上全部均线 + 多头排列
     if above_5 and above_20 and above_60 and above_250 and bull_alignment:
         return 2
-    # +1: 站上 5/20/60 (不要求 MA 多头排列, 也不要求站上 250)
-    if above_5 and above_20 and above_60:
+    # +1: 站上 5/20/60, 且 MA5 未死叉 MA20 (新增约束)
+    if above_5 and above_20 and above_60 and ma5_not_dead_cross:
         return 1
-    # 0: 站上 20, 60 位置不定
+    # 0: 站上 20, 60 位置不定 (或短期死叉)
     if above_20:
         return 0
     # 其余 (跌破 20 但未空头排列) → -1
     return -1
 
 
-def _round_half_away_from_zero(x: float) -> int:
-    """四舍五入到最近整数, 零点处向远离零的方向。
-
-    Python 内置 round() 使用 banker's rounding (round half to even), 对
-    打分场景不直观: round(0.5) == 0, round(-0.5) == 0。本函数保证
-    0.5 → 1, -0.5 → -1, 1.5 → 2, -1.5 → -2, 与 spec §4 示例
-    "沪深300 +2、中证1000 +1, 平均 1.5 → +2" 一致。
-    """
-    return int(math.copysign(math.floor(abs(x) + 0.5), x)) if x != 0 else 0
-
-
 def score_ma_position(hs300: IndexMA, csi1000: IndexMA) -> int:
-    """HS300 与 CSI1000 各自打分, 算术平均后四舍五入到整数 (spec §4)。"""
+    """HS300 与 CSI1000 各自打分, 取最小值 (2026-04-13 修订)。
+
+    spec §4 原规定是"算术平均四舍五入", 示例 "+2 + +1 → +1.5 → +2"。
+    但这会让一个强指数把另一个弱指数拉上去 (例: 2026-03-12 HS300 +1 +
+    CSI1000 +2 → +2 假强势, 实际是普跌日)。
+
+    改为 min() 的理由:
+    - 与 spec §6 "宁可踏空不可站岗" 的设计原则一致 (3 日确认的悲观缓冲、
+      上行逃生门的 AND 严格条件, 都是这个原则)
+    - 两个指数任何一个转弱, MA 维度整体就降级
+    - 大盘 (HS300) 与中小盘 (CSI1000) 背离本身就是风险信号, 不应被
+      算术平均抹平
+
+    此改动使 spec §4 的 "+2 + +1 → +2" 示例不再成立, 改为 → +1。
+    """
     s1 = _score_ma_for_index(
         hs300["close"], hs300["ma5"], hs300["ma20"], hs300["ma60"], hs300["ma250"]
     )
     s2 = _score_ma_for_index(
         csi1000["close"], csi1000["ma5"], csi1000["ma20"], csi1000["ma60"], csi1000["ma250"]
     )
-    avg = (s1 + s2) / 2.0
-    return _round_half_away_from_zero(avg)
+    return min(s1, s2)
 
 
 # --------------------------------------------------------------------------- #

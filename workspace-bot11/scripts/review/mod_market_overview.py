@@ -104,8 +104,36 @@ def _fetch_indices_ts(date_str):
     return results
 
 
-def _fetch_breadth_ak():
-    """akshare 获取涨跌家数（使用实时行情计算）"""
+def _fetch_limit_counts_zt_pool(date_str):
+    """从东方财富涨停/跌停板池拉真实涨停数 / 跌停数。
+
+    2026-04-13 加入, 替换原来的 "pct_chg >= 9.8 粗筛" 逻辑。原逻辑问题:
+    - ST 股 5% 涨停被漏 (硬编码 9.8 阈值)
+    - 股价收于 9.85% 但未真正封板的个股被误算
+    - 跟 mod_limit_up_tracking 的数据源不一致, 导致复盘 MD 跨章节矛盾
+
+    东财涨停板池是真实封板判定, 无限额, 只保留近 2-3 周数据。失败时返回
+    (None, None) 由上游保留 pct_chg 粗筛结果作 fallback。
+    """
+    try:
+        date_fmt = date_str.replace("-", "")
+        zt = ak.stock_zt_pool_em(date=date_fmt)
+        dt = ak.stock_zt_pool_dtgc_em(date=date_fmt)
+        limit_up = len(zt) if zt is not None and not zt.empty else 0
+        limit_down = len(dt) if dt is not None and not dt.empty else 0
+        return limit_up, limit_down
+    except Exception as e:
+        logging.warning(f"东财涨跌停板池拉取失败 ({date_str}): {e}")
+        return None, None
+
+
+def _fetch_breadth_ak(date_str=None):
+    """akshare 获取涨跌家数（使用实时行情计算）。
+
+    total/up/down/flat/total_amount 用 stock_zh_a_spot_em 的全量快照;
+    limit_up/limit_down 优先用东财涨停板池 (需要 date_str), 失败时 fallback
+    到 pct_chg 粗筛。
+    """
     try:
         df = ak.stock_zh_a_spot_em()
         if df is None or df.empty:
@@ -116,28 +144,33 @@ def _fetch_breadth_ak():
         down = len(df[df["涨跌幅"] < 0])
         flat = total - up - down
 
-        # 涨停跌停判断
-        limit_up = 0
-        limit_down = 0
-        for _, row in df.iterrows():
-            code = str(row["代码"])
-            pct = row["涨跌幅"]
-            price = row["最新价"]
-            if price == 0:
-                continue
+        # 优先从东财涨停池拿精确的 limit_up / limit_down
+        limit_up = None
+        limit_down = None
+        if date_str:
+            limit_up, limit_down = _fetch_limit_counts_zt_pool(date_str)
 
-            # 板块阈值
-            if code.startswith(("30", "68")):
-                threshold = 19.8
-            elif code.startswith(("8", "4")):
-                threshold = 29.8
-            else:
-                threshold = 9.8
-
-            if pct >= threshold:
-                limit_up += 1
-            elif pct <= -threshold:
-                limit_down += 1
+        # Fallback: pct_chg 粗筛
+        if limit_up is None or limit_down is None:
+            logging.info("breadth: 东财板池不可用, fallback 到 pct_chg 粗筛")
+            limit_up = 0
+            limit_down = 0
+            for _, row in df.iterrows():
+                code = str(row["代码"])
+                pct = row["涨跌幅"]
+                price = row["最新价"]
+                if price == 0:
+                    continue
+                if code.startswith(("30", "68")):
+                    threshold = 19.8
+                elif code.startswith(("8", "4")):
+                    threshold = 29.8
+                else:
+                    threshold = 9.8
+                if pct >= threshold:
+                    limit_up += 1
+                elif pct <= -threshold:
+                    limit_down += 1
 
         # 总成交额（亿元）
         total_amount = df["成交额"].sum() / 1e8
@@ -176,7 +209,11 @@ def _cross_validate(ak_data, ts_data):
 
 
 def _fetch_breadth_ts(date_str):
-    """tushare 获取涨跌家数（通过全市场日线数据计算）"""
+    """tushare 获取涨跌家数（历史日期用, 通过全市场日线数据计算）。
+
+    total/up/down/flat/total_amount 来自 pro.daily 的全量行情;
+    limit_up/limit_down 优先从东财涨停板池拿, 失败 fallback 到 pct_chg 粗筛。
+    """
     try:
         pro = get_tushare_pro()
         date_fmt = date_str.replace("-", "")
@@ -191,21 +228,27 @@ def _fetch_breadth_ts(date_str):
         down = len(df[df["pct_chg"] < 0])
         flat = total - up - down
 
-        limit_up = 0
-        limit_down = 0
-        for _, row in df.iterrows():
-            code = str(row["ts_code"])
-            pct = row["pct_chg"]
-            if code.startswith(("30", "68")):
-                threshold = 19.8
-            elif code.startswith(("8", "4")):
-                threshold = 29.8
-            else:
-                threshold = 9.8
-            if pct >= threshold:
-                limit_up += 1
-            elif pct <= -threshold:
-                limit_down += 1
+        # 优先从东财涨停池拿精确值
+        limit_up, limit_down = _fetch_limit_counts_zt_pool(date_str)
+
+        # Fallback: tushare pct_chg 粗筛
+        if limit_up is None or limit_down is None:
+            logging.info("breadth (ts): 东财板池不可用, fallback 到 tushare pct_chg 粗筛")
+            limit_up = 0
+            limit_down = 0
+            for _, row in df.iterrows():
+                code = str(row["ts_code"])
+                pct = row["pct_chg"]
+                if code.startswith(("30", "68")):
+                    threshold = 19.8
+                elif code.startswith(("8", "4")):
+                    threshold = 29.8
+                else:
+                    threshold = 9.8
+                if pct >= threshold:
+                    limit_up += 1
+                elif pct <= -threshold:
+                    limit_down += 1
 
         # 总成交额: tushare amount 单位为千元
         total_amount = df["amount"].sum() / 1e5  # 千元 → 亿元
@@ -246,15 +289,16 @@ def fetch_market_overview(date_str):
 
     # 3. 涨跌家数
     # akshare stock_zh_a_spot_em 是实时快照，仅当天有效；历史日期必须用 tushare
+    # limit_up/limit_down 子字段会被两个路径优先从东财涨停板池拿, date_str 是为此需要
     today = datetime.now().strftime("%Y-%m-%d")
     if date_str == today:
-        breadth = _fetch_breadth_ak()
+        breadth = _fetch_breadth_ak(date_str)
         if breadth is None:
             breadth = _fetch_breadth_ts(date_str)
     else:
         breadth = _fetch_breadth_ts(date_str)
         if breadth is None:
-            breadth = _fetch_breadth_ak()  # 最后兜底
+            breadth = _fetch_breadth_ak(date_str)  # 最后兜底
 
     # 4. 交叉验证
     validation = _cross_validate(indices_ak, indices_ts)

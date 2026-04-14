@@ -1,174 +1,150 @@
 """
 模块：连板 & 题材前瞻
 - 今日涨停股列表
-- 连板高度统计（tushare limit_list_d）
+- 连板高度统计
 - 按题材/行业分组
+
+数据源 (2026-04-13 重构):
+  akshare stock_zt_pool_em / stock_zt_pool_dtgc_em (东方财富涨停板池)
+
+原来用 tushare limit_list_d, 但该接口每小时最多 1 次调用, 在历史回放
+场景下绝大部分日子会被静默 rate-limit 成 "返回空列表 → 今日涨停 0 家",
+导致复盘 MD 数据长期不准。东财涨停板池的优点:
+  - 无调用限额
+  - 涨停/跌停分两个接口独立拉
+  - 连板数直接作为字段返回 (`连板数`), 不用另算
+  - 所属行业已在同一个接口里 (`所属行业`), 省掉 stock_basic 二次调用
+  - 真实"封板" 判定, 不是用 pct_chg >= 9.8 粗筛
+
+已知限制: 东财仅保留最近 2-3 周数据, 更早的日期会返回空。对日常每天
+跑的 daily_review 完全够用, 但历史回放会受限。
 """
 
 import logging
-import time
 import akshare as ak
 import pandas as pd
 from collections import Counter
 
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import get_tushare_pro
+
+def _code_to_ts(code: str) -> str:
+    """6 位 A 股代码 → tushare 风格 'NNNNNN.SH/SZ/BJ'。
+
+    仅用于显示兼容 (renderer 用 ts_code 字段)。
+    """
+    code = str(code).zfill(6)
+    if code.startswith("6"):
+        return f"{code}.SH"
+    if code.startswith(("0", "3")):
+        return f"{code}.SZ"
+    if code.startswith(("4", "8")):
+        return f"{code}.BJ"
+    return code
 
 
-def _get_limit_up_threshold(code):
-    """根据代码判断涨停阈值"""
-    if code.startswith(("30", "68")):
-        return 19.8  # 创业板/科创板 20%
-    elif code.startswith(("8", "4")):
-        return 29.8  # 北交所 30%
-    else:
-        return 9.8   # 主板 10%
+def _fetch_zt_pool(date_str: str):
+    """akshare 涨停板池, 返回 DataFrame。失败或空返回 None。
 
-
-def _fetch_limit_up_ak():
-    """akshare 实时行情筛选涨停股"""
+    date_str 格式: 'YYYY-MM-DD', 内部转换为 'YYYYMMDD'。
+    """
     try:
-        df = ak.stock_zh_a_spot_em()
-        if df is None or df.empty:
-            return []
-
-        limit_ups = []
-        for _, row in df.iterrows():
-            code = str(row["代码"])
-            pct = row["涨跌幅"]
-            price = row["最新价"]
-
-            if price == 0:
-                continue
-
-            threshold = _get_limit_up_threshold(code)
-            if pct >= threshold:
-                limit_ups.append({
-                    "code": code,
-                    "name": row.get("名称", ""),
-                    "pct_chg": float(pct),
-                    "amount": float(row.get("成交额", 0)) / 1e8,  # 亿
-                    "price": float(price),
-                })
-
-        return limit_ups
-    except Exception as e:
-        logging.warning(f"akshare 获取涨停列表失败: {e}")
-        return []
-
-
-def _fetch_limit_list_ts(date_str):
-    """tushare 获取涨停列表（含连板信息）"""
-    try:
-        pro = get_tushare_pro()
         date_fmt = date_str.replace("-", "")
-
-        df = pro.limit_list_d(
-            trade_date=date_fmt,
-            limit_type="U",  # U=涨停
-        )
-        time.sleep(0.15)
-
+        df = ak.stock_zt_pool_em(date=date_fmt)
         if df is None or df.empty:
-            return []
-
-        results = []
-        for _, row in df.iterrows():
-            code = str(row.get("ts_code", ""))
-            # up_stat 格式: "连板天数/区间涨停次数" 如 "3/5"
-            up_stat = str(row.get("up_stat", "1/1"))
-            try:
-                consecutive = int(up_stat.split("/")[0])
-            except (ValueError, IndexError):
-                consecutive = 1
-
-            results.append({
-                "ts_code": code,
-                "name": row.get("name", ""),
-                "close": float(row.get("close", 0)),
-                "pct_chg": float(row.get("pct_chg", 0)),
-                "fd_amount": float(row.get("fd_amount", 0)),  # 封单金额（万）
-                "first_time": str(row.get("first_time", "")),
-                "last_time": str(row.get("last_time", "")),
-                "open_times": int(row.get("open_times", 0)),  # 打开次数
-                "consecutive": consecutive,
-                "up_stat": up_stat,
-            })
-
-        # 按连板天数降序
-        results.sort(key=lambda x: x["consecutive"], reverse=True)
-        return results
+            return None
+        return df
     except Exception as e:
-        logging.warning(f"tushare 获取涨停列表失败: {e}")
-        return []
+        logging.warning(f"akshare 涨停板池拉取失败 ({date_str}): {e}")
+        return None
 
 
-def _analyze_themes(limit_list_ts):
-    """分析涨停股的题材分布（简化版：使用行业分类）"""
-    if not limit_list_ts:
-        return {}
-
+def _fetch_dt_pool(date_str: str):
+    """akshare 跌停板池, 返回 DataFrame。失败或空返回 None。"""
     try:
-        pro = get_tushare_pro()
-        codes = [item["ts_code"] for item in limit_list_ts]
-
-        # 获取股票行业信息
-        basics = pro.stock_basic(
-            exchange="",
-            list_status="L",
-            fields="ts_code,name,industry",
-        )
-        time.sleep(0.15)
-
-        if basics is None or basics.empty:
-            return {}
-
-        industry_map = dict(zip(basics["ts_code"], basics["industry"]))
-
-        # 统计各行业涨停数
-        industries = [industry_map.get(code, "未知") for code in codes]
-        counter = Counter(industries)
-
-        return dict(counter.most_common(10))
+        date_fmt = date_str.replace("-", "")
+        df = ak.stock_zt_pool_dtgc_em(date=date_fmt)
+        if df is None or df.empty:
+            return None
+        return df
     except Exception as e:
-        logging.warning(f"涨停题材分析失败: {e}")
-        return {}
+        logging.warning(f"akshare 跌停板池拉取失败 ({date_str}): {e}")
+        return None
 
 
-def fetch_limit_up_data(date_str):
-    """主函数：获取连板 & 题材前瞻"""
-    from datetime import datetime
+def _zt_pool_to_items(zt_df: pd.DataFrame) -> list:
+    """把涨停池 DF 转成 renderer 兼容的 item 列表, 按连板数降序。
 
-    # 1. tushare 涨停列表（含连板信息，更丰富）
-    limit_list_ts = _fetch_limit_list_ts(date_str)
+    输入字段 (akshare stock_zt_pool_em):
+        代码 / 名称 / 涨跌幅 / 最新价 / 成交额 / 流通市值 / 总市值 /
+        换手率 / 封板资金 / 首次封板时间 / 最后封板时间 / 炸板次数 /
+        涨停统计 / 连板数 / 所属行业
+    输出字段 (匹配原 tushare 版本的 renderer 用法):
+        ts_code / name / close / pct_chg / fd_amount / first_time /
+        last_time / open_times / consecutive / up_stat / industry
+    """
+    items = []
+    for _, row in zt_df.iterrows():
+        code = str(row.get("代码", "")).zfill(6)
+        items.append({
+            "ts_code": _code_to_ts(code),
+            "name": str(row.get("名称", "")),
+            "close": float(row.get("最新价", 0) or 0),
+            "pct_chg": float(row.get("涨跌幅", 0) or 0),
+            "fd_amount": float(row.get("封板资金", 0) or 0),  # 元
+            "first_time": str(row.get("首次封板时间", "")),
+            "last_time": str(row.get("最后封板时间", "")),
+            "open_times": int(row.get("炸板次数", 0) or 0),
+            "consecutive": int(row.get("连板数", 1) or 1),
+            "up_stat": str(row.get("涨停统计", "")),
+            "industry": str(row.get("所属行业", "未知")),
+        })
+    items.sort(key=lambda x: x["consecutive"], reverse=True)
+    return items
 
-    # 2. akshare 涨停列表（实时快照，仅当天有效）
-    today = datetime.now().strftime("%Y-%m-%d")
-    if date_str == today:
-        limit_list_ak = _fetch_limit_up_ak()
-    else:
-        limit_list_ak = []
 
-    # 3. 连板高度统计
+def fetch_limit_up_data(date_str: str) -> dict:
+    """主函数：获取连板 & 题材前瞻。
+
+    返回 dict 结构与原版兼容 (renderer 消费的字段):
+        limit_up_count_ak         东财涨停池行数 (主口径)
+        limit_up_count_ts         保留为 0 (不再用 tushare, 仅保留字段名)
+        limit_down_count          东财跌停池行数
+        max_consecutive           最高连板数
+        consecutive_dist          {板数: 只数}
+        theme_dist                {行业: 涨停只数} top 10
+        top_consecutive           连板数降序的前 10 只
+        total_limit_up            主口径=limit_up_count_ak
+    """
+    zt_df = _fetch_zt_pool(date_str)
+    dt_df = _fetch_dt_pool(date_str)
+
+    limit_ups = _zt_pool_to_items(zt_df) if zt_df is not None else []
+
+    # 连板统计
     max_consecutive = 0
-    consecutive_dist = {}  # {板数: 数量}
-    if limit_list_ts:
-        for item in limit_list_ts:
-            c = item["consecutive"]
-            if c > max_consecutive:
-                max_consecutive = c
-            consecutive_dist[c] = consecutive_dist.get(c, 0) + 1
+    consecutive_dist: dict = {}
+    for item in limit_ups:
+        c = item["consecutive"]
+        if c > max_consecutive:
+            max_consecutive = c
+        consecutive_dist[c] = consecutive_dist.get(c, 0) + 1
 
-    # 4. 题材分布
-    theme_dist = _analyze_themes(limit_list_ts)
+    # 题材分布 (直接从 `所属行业` 字段统计, 无需二次调用)
+    theme_dist: dict = {}
+    if limit_ups:
+        theme_counter = Counter(item["industry"] for item in limit_ups)
+        theme_dist = dict(theme_counter.most_common(10))
+
+    # 跌停数
+    limit_down_count = int(len(dt_df)) if dt_df is not None else 0
 
     return {
-        "limit_up_count_ak": len(limit_list_ak),
-        "limit_up_count_ts": len(limit_list_ts),
+        "limit_up_count_ak": len(limit_ups),
+        "limit_up_count_ts": 0,  # 遗留字段, 已弃用 tushare, 保留 key 避免破坏下游
+        "limit_down_count": limit_down_count,
         "max_consecutive": max_consecutive,
-        "consecutive_dist": consecutive_dist,  # {1: 30, 2: 5, 3: 2, ...}
-        "theme_dist": theme_dist,  # {"半导体": 5, "医药": 3, ...}
-        "top_consecutive": limit_list_ts[:10] if limit_list_ts else [],  # 连板最高的前10
-        "total_limit_up": max(len(limit_list_ak), len(limit_list_ts)),
+        "consecutive_dist": consecutive_dist,
+        "theme_dist": theme_dist,
+        "top_consecutive": limit_ups[:10],
+        "total_limit_up": len(limit_ups),
+        "data_source": "akshare_east_money_zt_pool",
     }

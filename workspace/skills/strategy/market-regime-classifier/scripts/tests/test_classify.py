@@ -91,14 +91,14 @@ class TestClassifyFirstRun:
             csi1000_df=df,
         )
         assert isinstance(result, ClassifyResult)
-        # MD 侧字段都抽到了 → missing 只有 ma/volume 相关可能为空
-        assert result.missing_dims == []
-        assert result.confidence == "high"
-        # fixture 数据: sentiment_index=25 (-1), delta=10 (0), streak=0 (-2),
-        # ratio=0.1136 (-2). 平坦合成 index → ma=+1 (close 持平所有均线视为
-        # 站上), volume=0 → total = -4
-        assert result.score_total == -4
-        # -4 ∈ [-5, -2] → WEAK_RANGE (但首次运行 bootstrap, 维持 NEUTRAL)
+        # max_streak 被一致性检测标为 missing (fixture 里涨停>0 但最高连板=0)
+        assert result.missing_dims == ["streak_height"]
+        assert result.confidence == "medium"  # 1 维缺失 → medium
+        # fixture 数据: sentiment_index=25 (-1), delta=10 (0), streak=missing(0),
+        # ratio=0.1136 (-2). 平坦合成 index → ma=+1, volume=0
+        # total = +1 - 2 + 0 - 1 + 0 + 0 = -2
+        assert result.score_total == -2
+        # -2 ∈ [-5, -2] → WEAK_RANGE, 但首次运行 bootstrap → 维持 NEUTRAL
         assert result.regime_code == "NEUTRAL_RANGE"
         assert result.bootstrap is True
         assert result.switched is False

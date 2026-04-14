@@ -151,10 +151,12 @@ def parse_daily_review(md_path: str) -> dict:
         logger.debug("parse_daily_review: breadth not found in %s", md_path)
 
     # 涨停:跌停
+    limit_up_count = None  # 记下来给一致性检测用
     m = _RE_LU_LD.search(text)
     if m:
         lu = int(m.group(1))
         ld = int(m.group(2))
+        limit_up_count = lu
         result["sentiment_delta"] = lu - ld
     else:
         logger.debug("parse_daily_review: 涨停:跌停 not found")
@@ -169,7 +171,20 @@ def parse_daily_review(md_path: str) -> dict:
     # 最高连板
     m = _RE_MAX_STREAK.search(text)
     if m:
-        result["max_streak"] = int(m.group(1))
+        max_streak = int(m.group(1))
+        # 一致性检测: 如果有涨停但最高连板=0, 数学上不可能
+        # (任何涨停股至少是 1 板 → max_streak >= 1), 说明上游数据源静默失败。
+        # 典型场景: daily_review.py 的 mod_limit_up_tracking 原版用 tushare
+        # limit_list_d (每小时 1 次限额), 被 rate-limit 时静默返回 [] → 0 板。
+        # 这种"假零"会让 classifier 恒打 -2, 应标记为 missing 不参与打分。
+        if max_streak == 0 and limit_up_count is not None and limit_up_count > 0:
+            logger.warning(
+                "parse_daily_review: 数据矛盾 (%s 涨停>0 但最高连板=0), "
+                "疑似上游数据源失败, 将 max_streak 标为 missing",
+                os.path.basename(md_path),
+            )
+        else:
+            result["max_streak"] = max_streak
     else:
         logger.debug("parse_daily_review: 最高连板 not found")
 

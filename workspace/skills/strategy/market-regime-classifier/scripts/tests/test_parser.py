@@ -61,9 +61,11 @@ class TestParseDailyReviewFixture:
         # "情绪评分 **25** / 100（偏空低迷）"
         assert parsed["sentiment_index"] == 25.0
 
-    def test_max_streak(self, parsed):
-        # "最高连板：**0** 板"
-        assert parsed["max_streak"] == 0
+    def test_max_streak_flagged_as_missing(self, parsed):
+        # 2026-03-20 fixture 里 "涨停:跌停 32:22" + "最高连板 **0** 板" 是上游
+        # tushare limit_list_d 被 rate-limit 的典型 silent failure, parser 的
+        # 一致性检测应把 max_streak 标为 missing (不是 0)。
+        assert "max_streak" not in parsed
 
 
 # --------------------------------------------------------------------------- #
@@ -139,6 +141,56 @@ class TestExtractMultiMarketBreadth:
 # --------------------------------------------------------------------------- #
 # parse_daily_review: 合成最小 MD
 # --------------------------------------------------------------------------- #
+
+
+class TestParseDailyReviewConsistency:
+    """数据一致性检测: 涨停>0 + 最高连板=0 是上游数据源失败的信号。
+
+    任何涨停股至少是 1 板, 所以 max_streak=0 与 "有涨停" 矛盾。原因通常是
+    daily_review.py 的 mod_limit_up_tracking 在被 tushare 限额 rate-limit
+    后静默返回空列表 → 渲染成 "最高连板 0 板"。classifier 应标为 missing
+    而不是误打 -2。
+    """
+
+    def test_contradiction_marks_streak_missing(self, tmp_path):
+        md = tmp_path / "m.md"
+        md.write_text(
+            "| 涨停:跌停 | 60:15 |\n"
+            "- 最高连板：**0** 板\n",
+            encoding="utf-8",
+        )
+        result = parse_daily_review(str(md))
+        assert result["sentiment_delta"] == 45  # 60-15
+        assert "max_streak" not in result  # 被防御性检测判为 missing
+
+    def test_consistent_zero_limit_up_allows_streak_zero(self, tmp_path):
+        # 真实 0 涨停的日子 (极端熊市), max_streak=0 不触发矛盾, 正常保留
+        md = tmp_path / "m.md"
+        md.write_text(
+            "| 涨停:跌停 | 0:30 |\n"
+            "- 最高连板：**0** 板\n",
+            encoding="utf-8",
+        )
+        result = parse_daily_review(str(md))
+        assert result["sentiment_delta"] == -30
+        assert result["max_streak"] == 0  # 一致, 保留
+
+    def test_positive_streak_always_kept(self, tmp_path):
+        md = tmp_path / "m.md"
+        md.write_text(
+            "| 涨停:跌停 | 60:15 |\n"
+            "- 最高连板：**4** 板\n",
+            encoding="utf-8",
+        )
+        result = parse_daily_review(str(md))
+        assert result["max_streak"] == 4
+
+    def test_no_limit_up_info_streak_still_kept(self, tmp_path):
+        # 没有涨停:跌停 行 (老格式) → limit_up_count 未知 → 不触发检测
+        md = tmp_path / "m.md"
+        md.write_text("- 最高连板：**0** 板\n", encoding="utf-8")
+        result = parse_daily_review(str(md))
+        assert result["max_streak"] == 0
 
 
 class TestParseDailyReviewSynthetic:
@@ -391,7 +443,8 @@ class TestBuildRawMarketData:
         # MD 侧
         assert result.sentiment_index == 25.0
         assert result.sentiment_delta == 10
-        assert result.max_streak == 0
+        # max_streak 被一致性检测标为 missing (fixture 里 涨停>0 但最高连板=0)
+        assert result.max_streak is None
         assert result.advance_decline_ratio == pytest.approx(662 / 5825)
         # 指数侧
         assert result.hs300 is not None
@@ -400,8 +453,8 @@ class TestBuildRawMarketData:
         # pct_change 字段在平坦序列下为 0
         assert result.hs300_pct_change == pytest.approx(0.0)
         assert result.csi1000_pct_change == pytest.approx(0.0)
-        # 无缺失维度
-        assert result.missing_dims == []
+        # streak_height 作为 missing 维度记录
+        assert result.missing_dims == ["streak_height"]
 
     def test_md_path_none_marks_md_dims_missing(self):
         df = _make_index_df(n_days=260)

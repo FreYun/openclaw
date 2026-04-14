@@ -21,6 +21,7 @@ from parser import (
     compute_index_ma,
     compute_pct_change,
     compute_volume_ratio,
+    fetch_full_market_volume,
     fetch_index_daily,
     parse_daily_review,
 )
@@ -391,6 +392,99 @@ class TestComputePctChange:
         df = _make_index_df(n_days=10)
         with pytest.raises(KeyError):
             compute_pct_change(df, "1999-01-01")
+
+
+# --------------------------------------------------------------------------- #
+# fetch_full_market_volume: 缓存合成路径 (不打网络)
+# --------------------------------------------------------------------------- #
+
+
+class TestFetchFullMarketVolumeFromCache:
+    """直接构造上证/深证的 _em 缓存文件, 验证合成逻辑正确。"""
+
+    def _write_cache(self, cache_dir, symbol, dates, amounts):
+        df = pd.DataFrame({
+            "date": dates,
+            "open": [100.0] * len(dates),
+            "close": [100.0] * len(dates),
+            "high": [100.0] * len(dates),
+            "low": [100.0] * len(dates),
+            "volume": [1e8] * len(dates),
+            "amount": amounts,
+        })
+        df.to_csv(
+            os.path.join(cache_dir, f"index_{symbol}_em.csv"),
+            index=False,
+        )
+
+    def test_combines_shanghai_and_shenzhen_amount(self, tmp_path):
+        cd = str(tmp_path)
+        dates = ["2026-03-23", "2026-03-24", "2026-03-25"]
+        # 上证 9000/9500/9678 亿, 深证 11000/11500/12120 亿
+        self._write_cache(cd, "sh000001", dates, [9.0e11, 9.5e11, 9.678e11])
+        self._write_cache(cd, "sz399001", dates, [1.1e12, 1.15e12, 1.212e12])
+
+        df = fetch_full_market_volume(cd)
+        assert list(df.columns) == ["date", "volume"]
+        assert len(df) == 3
+        # 2026-03-25: 9678 + 12120 = 21798 亿
+        row = df[df["date"] == "2026-03-25"].iloc[0]
+        assert row["volume"] == pytest.approx(9.678e11 + 1.212e12)
+
+    def test_inner_join_drops_missing_dates(self, tmp_path):
+        cd = str(tmp_path)
+        # 上证有 3 天, 深证只有 2 天 → 合并后 2 天
+        self._write_cache(cd, "sh000001", ["2026-03-23", "2026-03-24", "2026-03-25"], [1, 2, 3])
+        self._write_cache(cd, "sz399001", ["2026-03-24", "2026-03-25"], [10, 20])
+        df = fetch_full_market_volume(cd)
+        assert len(df) == 2
+        assert set(df["date"]) == {"2026-03-24", "2026-03-25"}
+
+    def test_sorted_by_date(self, tmp_path):
+        cd = str(tmp_path)
+        dates = ["2026-03-25", "2026-03-23", "2026-03-24"]
+        self._write_cache(cd, "sh000001", dates, [3, 1, 2])
+        self._write_cache(cd, "sz399001", dates, [30, 10, 20])
+        df = fetch_full_market_volume(cd)
+        assert list(df["date"]) == ["2026-03-23", "2026-03-24", "2026-03-25"]
+
+
+class TestBuildRawWithFullMarketDf:
+    def test_injected_full_market_df_used_for_volume(self):
+        # 构造 hs300/csi1000 DF 用于 MA, 另构造 full_market_df 用于 volume
+        hs_df = _make_index_df(n_days=260, volume_series=[1000.0] * 260)
+        cs_df = _make_index_df(n_days=260, volume_series=[1000.0] * 260)
+        # 全市场 DF 的 volume 非常放量: 最近 5 日 3x 于前 15 天
+        vol_series = [100.0] * 255 + [300.0] * 5
+        full_df = _make_index_df(n_days=260, volume_series=vol_series)
+
+        target = hs_df.iloc[-1]["date"]
+        r = build_raw_market_data(
+            date=target,
+            md_path=None,
+            hs300_df=hs_df,
+            csi1000_df=cs_df,
+            full_market_df=full_df,
+        )
+        # volume_ratio 应该基于 full_df 算出: 5日均 300, 20日均 = (15*100+5*300)/20 = 150
+        # ratio = 300 / 150 = 2.0
+        assert r.volume_ratio_5_20 == pytest.approx(2.0)
+
+    def test_no_full_market_df_falls_back_to_hs300_with_warning(self):
+        hs_df = _make_index_df(n_days=260, volume_series=[2000.0] * 260)
+        cs_df = _make_index_df(n_days=260, volume_series=[2000.0] * 260)
+        target = hs_df.iloc[-1]["date"]
+        r = build_raw_market_data(
+            date=target,
+            md_path=None,
+            hs300_df=hs_df,
+            csi1000_df=cs_df,
+            full_market_df=None,
+            cache_dir=None,  # 不触发自动 fetch
+        )
+        # fallback 到 hs300, volume_ratio 算出 1.0 (flat)
+        assert r.volume_ratio_5_20 == pytest.approx(1.0)
+        assert any("hs300_proxy" in w for w in r.warnings)
 
 
 # --------------------------------------------------------------------------- #

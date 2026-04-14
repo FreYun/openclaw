@@ -200,6 +200,9 @@ def parse_daily_review(md_path: str) -> dict:
 INDEX_SYMBOLS = {
     "hs300": "sh000300",
     "csi1000": "sh000852",
+    # 以下两个用于合成全市场成交额 (spec §4 维度 6)
+    "shanghai": "sh000001",
+    "shenzhen": "sz399001",
 }
 
 
@@ -207,19 +210,25 @@ def fetch_index_daily(
     symbol: str,
     cache_dir: str,
     refresh: bool = False,
+    use_em: bool = False,
 ) -> pd.DataFrame:
     """拉取指数日线数据, 带本地 CSV 缓存。
 
     symbol: akshare 格式的指数代码 (如 'sh000300' / 'sh000852')
-    cache_dir: 缓存目录, 文件命名 index_{symbol}.csv
+    cache_dir: 缓存目录, 文件命名 index_{symbol}.csv 或 index_{symbol}_em.csv
     refresh: True 时强制重新拉取并覆盖缓存
+    use_em: True 用 stock_zh_index_daily_em (含 amount 成交额列),
+            False (默认) 用 stock_zh_index_daily (只含 volume 成交量列)
 
-    返回 DataFrame, 列: date (str YYYY-MM-DD), open, high, low, close, volume
+    返回 DataFrame, 列:
+      use_em=False: date, open, high, low, close, volume
+      use_em=True:  date, open, close, high, low, volume, amount
     按 date 升序排列。
 
     akshare 接口偶发失败时会抛出原始异常, 由上游捕获后降级。
     """
-    cache_path = os.path.join(cache_dir, f"index_{symbol}.csv")
+    suffix = "_em" if use_em else ""
+    cache_path = os.path.join(cache_dir, f"index_{symbol}{suffix}.csv")
 
     if os.path.exists(cache_path) and not refresh:
         try:
@@ -232,7 +241,10 @@ def fetch_index_daily(
     # 拉新数据
     import akshare as ak
 
-    df = ak.stock_zh_index_daily(symbol=symbol)
+    if use_em:
+        df = ak.stock_zh_index_daily_em(symbol=symbol)
+    else:
+        df = ak.stock_zh_index_daily(symbol=symbol)
     df = df.copy()
     df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
     df = df.sort_values("date").reset_index(drop=True)
@@ -240,6 +252,45 @@ def fetch_index_daily(
     os.makedirs(cache_dir, exist_ok=True)
     df.to_csv(cache_path, index=False)
     return df
+
+
+def fetch_full_market_volume(cache_dir: str, refresh: bool = False) -> pd.DataFrame:
+    """合成全市场成交额历史 (上证 + 深证).
+
+    2026-04-13 引入 (原本用 HS300 volume 作代理, 只覆盖 300 只大盘股)。
+    现在用 akshare 东财版 `stock_zh_index_daily_em` 拉上证/深证指数的
+    `amount` 列 (元), 两市相加得到全市场 (主板 + 中小板 + 创业板 + 科创板
+    + 北交所的一个子集) 成交额日序列。
+
+    返回 DataFrame 列: date, volume (全市场成交额, 元)
+    约定用 "volume" 列名是为了让 compute_volume_ratio 不用改接口。
+
+    数据起点约 1990-12 (上证开市), 但早期两市合计值较小, 近 20 年
+    数据完全够 5/20 日均量比。
+
+    对比 HS300 代理:
+    - 2026-03-25 HS300 单日 volume 2.63e10 (只 300 只), 全市场 amount
+      合计 2.18e12, 后者比前者大 80 倍, 也更稳定
+    - 跟 daily_review MD 里 "全市场成交额 21929 亿" 只差 ~0.6%
+      (差在没算北交所的一小部分)
+    """
+    sh = fetch_index_daily(INDEX_SYMBOLS["shanghai"], cache_dir, refresh, use_em=True)
+    sz = fetch_index_daily(INDEX_SYMBOLS["shenzhen"], cache_dir, refresh, use_em=True)
+
+    if "amount" not in sh.columns or "amount" not in sz.columns:
+        raise ValueError(
+            "fetch_full_market_volume: 上证/深证 DF 缺少 amount 列, "
+            "确认使用了 use_em=True"
+        )
+
+    merged = pd.merge(
+        sh[["date", "amount"]].rename(columns={"amount": "amount_sh"}),
+        sz[["date", "amount"]].rename(columns={"amount": "amount_sz"}),
+        on="date",
+        how="inner",
+    )
+    merged["volume"] = merged["amount_sh"] + merged["amount_sz"]
+    return merged[["date", "volume"]].sort_values("date").reset_index(drop=True)
 
 
 # --------------------------------------------------------------------------- #
@@ -300,8 +351,10 @@ def compute_pct_change(df: pd.DataFrame, target_date: str) -> float:
 def compute_volume_ratio(df: pd.DataFrame, target_date: str) -> float:
     """5 日均量 / 20 日均量 (含 target_date 当日)。
 
-    用 HS300 成交量作为全市场成交量代理: spec §4 没有指定成交量来源,
-    选 HS300 是因为我们本就要为 MA 维度拉它的日线, 无需额外 akshare 调用。
+    DataFrame 需要 date 列 + volume 列。volume 语义不限定: 可以是指数
+    成交量 (股数), 也可以是指数/全市场成交额 (元), 只要口径一致。
+    2026-04-13 起编排器传入的是 `fetch_full_market_volume` 的全市场
+    成交额 (上证 + 深证 amount 合计), 比原来的 HS300 volume 代理更准。
 
     异常:
         KeyError   — target_date 不在 df 中
@@ -336,15 +389,21 @@ def build_raw_market_data(
     cache_dir: Optional[str] = None,
     hs300_df: Optional[pd.DataFrame] = None,
     csi1000_df: Optional[pd.DataFrame] = None,
+    full_market_df: Optional[pd.DataFrame] = None,
 ) -> RawMarketData:
     """从复盘 MD + akshare 构建 RawMarketData。
 
     参数:
-        date          — 目标交易日 'YYYY-MM-DD'
-        md_path       — 复盘 MD 路径, 为 None 时跳过 MD 解析
-        cache_dir     — akshare 缓存目录, 为 None 时不做 akshare 拉取
-        hs300_df      — 预加载的 HS300 日线 DF (测试/离线模式用)
-        csi1000_df    — 预加载的 CSI1000 日线 DF
+        date            — 目标交易日 'YYYY-MM-DD'
+        md_path         — 复盘 MD 路径, 为 None 时跳过 MD 解析
+        cache_dir       — akshare 缓存目录, 为 None 时不做 akshare 拉取
+        hs300_df        — 预加载的 HS300 日线 DF (测试/离线模式用)
+        csi1000_df      — 预加载的 CSI1000 日线 DF
+        full_market_df  — 预加载的全市场成交额 DF (date + volume), 用于
+                          volume_trend 维度; 未提供时若 cache_dir 可用,
+                          自动合成 (上证 + 深证 amount)。为了向后兼容,
+                          允许未传且 cache_dir 不可用, 此时 fallback
+                          到 hs300_df 的 volume 字段。
 
     每个失败的维度都被记入 result.missing_dims 列表, 不抛异常。
     """
@@ -431,10 +490,24 @@ def build_raw_market_data(
     if result.hs300 is None or result.csi1000 is None:
         result.missing_dims.append("ma_position")
 
-    # 成交量 (用 HS300)
-    if hs300_data is not None:
+    # 成交量 (优先用全市场成交额, fallback HS300 成交量)
+    volume_source_df = full_market_df
+    if volume_source_df is None and cache_dir is not None:
         try:
-            result.volume_ratio_5_20 = compute_volume_ratio(hs300_data, date)
+            volume_source_df = fetch_full_market_volume(cache_dir)
+        except Exception as e:
+            logger.warning("fetch full market volume failed: %s", e)
+            result.warnings.append(f"fetch_full_market_failed: {e}")
+
+    if volume_source_df is None:
+        # 最终 fallback: HS300 成交量 (旧代理方式)
+        volume_source_df = hs300_data
+        if volume_source_df is not None:
+            result.warnings.append("volume_trend_using_hs300_proxy")
+
+    if volume_source_df is not None:
+        try:
+            result.volume_ratio_5_20 = compute_volume_ratio(volume_source_df, date)
         except (KeyError, ValueError) as e:
             logger.warning("compute volume ratio failed: %s", e)
             result.warnings.append(f"volume_ratio_failed: {e}")

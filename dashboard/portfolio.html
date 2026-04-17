@@ -28,9 +28,9 @@ html { scroll-behavior: smooth; }
   --purple: #b8a9ff;
   --purple-soft: rgba(184,169,255,0.1);
   --orange: #ffaa4d;
-  --text: #e8eaf0;
-  --text-secondary: #b0b8c8;
-  --dim: #5a6580;
+  --text: #f2f4fa;
+  --text-secondary: #d4dae8;
+  --dim: #8a94ad;
   --pixel: 'Pixelify Sans', monospace;
   --cn: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -318,7 +318,7 @@ body > * { position: relative; z-index: 1; }
 /* Account Stats Row */
 .card-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 8px;
   margin-bottom: 14px;
 }
@@ -328,10 +328,12 @@ body > * { position: relative; z-index: 1; }
   padding: 6px 8px;
 }
 .card-stat .cs-label {
-  font-size: 9px;
-  color: var(--dim);
+  font-size: 10px;
+  color: var(--text-secondary);
   font-family: var(--cn);
-  margin-bottom: 1px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
 }
 .card-stat .cs-value {
   font-size: 13px;
@@ -390,20 +392,35 @@ body > * { position: relative; z-index: 1; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.card-holding-pnl {
-  font-size: 11px;
-  font-family: var(--mono);
-  min-width: 50px;
-  text-align: right;
+.card-holding-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.15;
   flex-shrink: 0;
 }
-.card-holding-weight {
-  font-size: 11px;
+.card-holding-metric .chm-label {
+  font-size: 10px;
+  font-family: var(--cn);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  margin-bottom: 1px;
+}
+.card-holding-metric .chm-value {
+  font-size: 10px;
   font-family: var(--mono);
-  color: var(--blue);
+}
+.card-holding-pnl {
+  min-width: 50px;
+}
+.card-holding-pnl .chm-value.positive { color: var(--accent); }
+.card-holding-pnl .chm-value.negative { color: var(--green); }
+.card-holding-pnl .chm-value.neutral  { color: var(--text-secondary); }
+.card-holding-weight {
   min-width: 42px;
-  text-align: right;
-  flex-shrink: 0;
+}
+.card-holding-weight .chm-value {
+  color: var(--blue);
 }
 .card-holding-meta {
   display: flex;
@@ -463,6 +480,181 @@ body > * { position: relative; z-index: 1; }
   color: var(--dim);
 }
 
+/* Date Picker Bar */
+.date-picker-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.date-picker-bar .dp-label {
+  font-size: 11px;
+  font-family: var(--cn);
+  color: var(--dim);
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.dp-btn {
+  font-size: 11px;
+  font-family: var(--cn);
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.dp-btn:hover { border-color: var(--border-glow); color: var(--text); }
+.dp-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.dp-select {
+  font-size: 11px;
+  font-family: var(--mono);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  outline: none;
+}
+.dp-select:focus { border-color: var(--accent); }
+.dp-range-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--dim);
+  margin-left: 8px;
+}
+
+/* ====== Section 3: Comparison ====== */
+.cmp-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.cmp-controls .cmp-label {
+  font-size: 11px;
+  font-family: var(--cn);
+  color: var(--dim);
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.cmp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-family: var(--cn);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.cmp-chip:hover { border-color: var(--border-glow); color: var(--text); }
+.cmp-chip.selected { border-color: var(--purple); background: var(--purple-soft); color: var(--purple); font-weight: 600; }
+.cmp-chip .cmp-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cmp-chip-avatar {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cmp-chart-card {
+  background: linear-gradient(135deg, var(--card) 0%, rgba(19,22,42,0.8) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 16px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 16px;
+}
+.cmp-chart-title {
+  font-size: 11px;
+  color: var(--dim);
+  font-family: var(--cn);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.cmp-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.cmp-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-family: var(--cn);
+  color: var(--text-secondary);
+}
+.cmp-legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cmp-legend-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  margin-left: 2px;
+}
+
+/* Comparison Metrics Table */
+.cmp-metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cmp-metrics-table th {
+  font-size: 10px;
+  font-family: var(--cn);
+  color: var(--dim);
+  font-weight: 400;
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.cmp-metrics-table th.right { text-align: right; }
+.cmp-metrics-table td {
+  padding: 7px 10px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  vertical-align: middle;
+}
+.cmp-metrics-table td.right { text-align: right; }
+.cmp-metrics-table tr:last-child td { border-bottom: none; }
+.cmp-metrics-table .cmp-bot-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cmp-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--dim);
+  font-size: 12px;
+  font-family: var(--cn);
+}
+
 /* Loading */
 .loading {
   text-align: center;
@@ -497,6 +689,7 @@ body > * { position: relative; z-index: 1; }
     <span class="section-toggle" id="rankingToggle">▲ 收起</span>
   </div>
   <div id="rankingBody">
+    <div class="date-picker-bar" id="dpBar-ranking"></div>
     <div class="leaderboard">
       <table class="lb-table">
         <thead>
@@ -523,7 +716,30 @@ body > * { position: relative; z-index: 1; }
     <span class="section-toggle" id="detailsToggle">▲ 收起</span>
   </div>
   <div id="detailsBody">
+    <div class="date-picker-bar" id="dpBar-details"></div>
     <div class="bot-cards-grid" id="botCardsGrid"></div>
+  </div>
+
+  <!-- Section 3: Comparison -->
+  <div class="section-header" style="border-color:var(--purple);background:rgba(184,169,255,0.05)" onclick="toggleSection('compare')">
+    <span class="section-icon">🔀</span>
+    <span class="section-title" style="color:var(--purple)">投资对比</span>
+    <span class="section-toggle" id="compareToggle">▲ 收起</span>
+  </div>
+  <div id="compareBody">
+    <div class="date-picker-bar" id="dpBar-compare"></div>
+    <div class="cmp-controls" id="cmpControls">
+      <span class="cmp-label">选择 Bot：</span>
+    </div>
+    <div class="cmp-chart-card">
+      <div class="cmp-chart-title">收益率走势对比</div>
+      <div id="cmpChart"></div>
+      <div class="cmp-legend" id="cmpLegend"></div>
+    </div>
+    <div class="cmp-chart-card">
+      <div class="cmp-chart-title">业绩指标对比</div>
+      <div id="cmpMetrics"></div>
+    </div>
   </div>
 
 </div>
@@ -550,8 +766,12 @@ const FMT = {
   }
 };
 
-let avatars = {};
-let agentMeta = {};
+// ====== Global state ======
+let avatars = {}, agentMeta = {};
+let G = {}; // global data cache for re-rendering
+
+// Per-section date range state
+const sectionRange = { ranking: 'all', details: 'all', compare: 'all' };
 
 function toggleSection(id) {
   const body = document.getElementById(id + 'Body');
@@ -562,19 +782,167 @@ function toggleSection(id) {
   if (toggle) toggle.textContent = isVisible ? '▼ 展开' : '▲ 收起';
 }
 
-// Render sparkline SVG (mini chart for leaderboard)
-function renderSparkline(snapshots, botId) {
-  if (!snapshots || snapshots.length < 2) return '<span style="color:var(--dim);font-size:10px">--</span>';
+// ====== Date range logic ======
+function filterSnapshots(snapshots, startDate) {
+  if (!startDate || !snapshots || !snapshots.length) return snapshots || [];
+  const filtered = snapshots.filter(s => s.date >= startDate);
+  if (filtered.length === 0) return [];
+  const baseNav = filtered[0].nav;
+  return filtered.map(s => ({
+    ...s,
+    return_pct: baseNav ? ((s.nav / baseNav) - 1) * 100 : 0,
+  }));
+}
+
+function calcReturnFromDate(snapshots, startDate) {
+  const filtered = filterSnapshots(snapshots, startDate);
+  if (filtered.length < 1) return null;
+  return filtered[filtered.length - 1].return_pct;
+}
+
+function resolveStartDate(range, section) {
+  if (range === 'all') return null;
+  if (range === 'custom') {
+    const sel = document.getElementById('dateSelect-' + section);
+    return sel ? sel.value || null : null;
+  }
+  const now = new Date();
+  if (range === '1w') now.setDate(now.getDate() - 7);
+  else if (range === '1m') now.setMonth(now.getMonth() - 1);
+  else if (range === '3m') now.setMonth(now.getMonth() - 3);
+  return now.toISOString().slice(0, 10);
+}
+
+// Build a date picker bar inside a container element
+function buildDatePicker(containerId, section) {
+  const bar = document.getElementById(containerId);
+  if (!bar) return;
+  const ranges = [
+    { key: 'all', label: '全部' },
+    { key: '1w', label: '近1周' },
+    { key: '1m', label: '近1月' },
+    { key: '3m', label: '近3月' },
+    { key: 'custom', label: '自选日期' },
+  ];
+  let html = '<span class="dp-label">收益起算日：</span>';
+  for (const r of ranges) {
+    const active = sectionRange[section] === r.key ? ' active' : '';
+    html += `<button class="dp-btn${active}" data-range="${r.key}" data-section="${section}" onclick="setRange('${r.key}','${section}')">${r.label}</button>`;
+  }
+  const sortedDates = G.sortedDates || [];
+  const hidden = sectionRange[section] === 'custom' ? '' : 'display:none;';
+  html += `<select class="dp-select" id="dateSelect-${section}" style="${hidden}" onchange="onDateSelectChange('${section}')">`;
+  html += sortedDates.map(d => `<option value="${d}">${d}</option>`).join('');
+  html += '</select>';
+  html += `<span class="dp-range-label" id="rangeLabel-${section}"></span>`;
+  bar.innerHTML = html;
+  updateRangeLabel(section);
+}
+
+function setRange(range, section) {
+  sectionRange[section] = range;
+  // Update buttons within this section's bar
+  const bar = document.getElementById('dpBar-' + section);
+  if (bar) {
+    bar.querySelectorAll('.dp-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.range === range);
+    });
+    const sel = document.getElementById('dateSelect-' + section);
+    if (sel) sel.style.display = range === 'custom' ? '' : 'none';
+  }
+  updateRangeLabel(section);
+  refreshSection(section);
+}
+
+function onDateSelectChange(section) {
+  sectionRange[section] = 'custom';
+  const bar = document.getElementById('dpBar-' + section);
+  if (bar) {
+    bar.querySelectorAll('.dp-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.range === 'custom');
+    });
+  }
+  updateRangeLabel(section);
+  refreshSection(section);
+}
+
+function updateRangeLabel(section) {
+  const label = document.getElementById('rangeLabel-' + section);
+  if (!label) return;
+  const startDate = resolveStartDate(sectionRange[section], section);
+  const latestDate = G.latestDate || '';
+  if (startDate) {
+    label.textContent = startDate + ' ~ ' + latestDate;
+  } else {
+    label.textContent = latestDate ? '截至 ' + latestDate : '';
+  }
+}
+
+function refreshSection(section) {
+  const startDate = resolveStartDate(sectionRange[section], section);
+  const { allBotIds, portfolioMap, detailsRes } = G;
+
+  if (section === 'ranking') {
+    const returnMap = {};
+    for (const botId of allBotIds) {
+      if (!portfolioMap[botId]) continue;
+      const d = detailsRes[botId] || { snapshots: [] };
+      returnMap[botId] = calcReturnFromDate(d.snapshots, startDate);
+    }
+    const activeBots = allBotIds.filter(id => portfolioMap[id]).sort((a, b) =>
+      (returnMap[b] ?? -Infinity) - (returnMap[a] ?? -Infinity)
+    );
+    const inactiveBots = allBotIds.filter(id => !portfolioMap[id]);
+    const sortedBots = [...activeBots, ...inactiveBots];
+
+    // Update summary bar based on ranking section
+    const totalAssets = activeBots.reduce((s, id) => s + (portfolioMap[id].total_value || 0), 0);
+    const validReturns = activeBots.filter(id => returnMap[id] != null);
+    const avgReturn = validReturns.length
+      ? validReturns.reduce((s, id) => s + returnMap[id], 0) / validReturns.length : 0;
+    document.getElementById('sumBots').textContent = activeBots.length + ' / ' + allBotIds.length;
+    document.getElementById('sumAssets').textContent = FMT.money(totalAssets);
+    document.getElementById('sumReturn').textContent = FMT.pct(avgReturn);
+    document.getElementById('sumReturn').className = 'value ' + (avgReturn >= 0 ? 'accent' : 'green');
+
+    renderLeaderboard(sortedBots, portfolioMap, detailsRes, returnMap, startDate);
+  } else if (section === 'details') {
+    const returnMap = {};
+    for (const botId of allBotIds) {
+      if (!portfolioMap[botId]) continue;
+      const d = detailsRes[botId] || { snapshots: [] };
+      returnMap[botId] = calcReturnFromDate(d.snapshots, startDate);
+    }
+    const activeBots = allBotIds.filter(id => portfolioMap[id]).sort((a, b) =>
+      (returnMap[b] ?? -Infinity) - (returnMap[a] ?? -Infinity)
+    );
+    renderBotCards(activeBots, portfolioMap, detailsRes, returnMap, startDate);
+  } else if (section === 'compare') {
+    renderComparison();
+  }
+}
+
+// Refresh all three sections
+function refreshAll() {
+  refreshSection('ranking');
+  refreshSection('details');
+  refreshSection('compare');
+}
+
+// ====== Sparkline (mini chart) ======
+function renderSparkline(snapshots, botId, startDate) {
+  const data = filterSnapshots(snapshots, startDate);
+  if (!data || data.length < 2) return '<span style="color:var(--dim);font-size:10px">--</span>';
   const W = 80, H = 28, PX = 2, PY = 4;
-  const navs = snapshots.map(s => s.nav);
+  const navs = data.map(s => s.nav);
   const minN = Math.min(...navs), maxN = Math.max(...navs);
   const range = maxN - minN || 0.001;
-  const lastNav = navs[navs.length - 1];
-  const color = lastNav >= 1.0 ? 'var(--green)' : 'var(--accent)';
+  const ret = data[data.length - 1].return_pct;
+  const color = getBotColor(botId);
   const gid = 'sp-' + botId;
 
-  const pts = snapshots.map((s, i) => {
-    const x = PX + (i / (snapshots.length - 1)) * (W - 2 * PX);
+  const pts = data.map((s, i) => {
+    const x = PX + (i / (data.length - 1)) * (W - 2 * PX);
     const y = PY + (1 - (s.nav - minN) / range) * (H - 2 * PY);
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
@@ -592,23 +960,24 @@ function renderSparkline(snapshots, botId) {
   </svg>`;
 }
 
-// Render large NAV chart (for detail card)
-function renderNavChart(container, snapshots, botId) {
-  if (!snapshots || snapshots.length < 2) {
+// ====== Large NAV chart ======
+function renderNavChart(container, snapshots, botId, startDate) {
+  const data = filterSnapshots(snapshots, startDate);
+  if (!data || data.length < 2) {
     container.innerHTML = '<div style="text-align:center;padding:20px 0;color:var(--dim);font-size:11px;font-family:var(--cn)">净值数据不足</div>';
     return;
   }
   const W = 340, H = 110, PX = 2, PY = 12;
-  const navs = snapshots.map(s => s.nav);
+  const navs = data.map(s => s.nav);
   const minN = Math.min(...navs), maxN = Math.max(...navs);
   const range = maxN - minN || 0.001;
   const lastNav = navs[navs.length - 1];
-  const isPositive = lastNav >= 1.0;
-  const lineColor = isPositive ? 'var(--green)' : 'var(--accent)';
+  const ret = data[data.length - 1].return_pct;
+  const lineColor = getBotColor(botId);
   const gid = 'nav-' + botId;
 
-  const points = snapshots.map((s, i) => {
-    const x = PX + (i / (snapshots.length - 1)) * (W - 2 * PX);
+  const points = data.map((s, i) => {
+    const x = PX + (i / (data.length - 1)) * (W - 2 * PX);
     const y = PY + (1 - (s.nav - minN) / range) * (H - 2 * PY);
     return { x, y };
   });
@@ -622,19 +991,19 @@ function renderNavChart(container, snapshots, botId) {
     `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="${lineColor}" opacity="0.8"/>`
   ).join('');
 
-  const baseY = PY + (1 - (1.0 - minN) / range) * (H - 2 * PY);
+  const baseNav = data[0].nav;
+  const baseY = PY + (1 - (baseNav - minN) / range) * (H - 2 * PY);
   const baseLine = (baseY > PY && baseY < H - PY)
     ? `<line x1="${PX}" y1="${baseY.toFixed(1)}" x2="${W - PX}" y2="${baseY.toFixed(1)}" stroke="var(--dim)" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>`
     : '';
 
-  const retPct = snapshots[snapshots.length - 1].return_pct;
-  const navCls = FMT.cls(retPct);
+  const navCls = FMT.cls(ret);
 
   container.innerHTML = `
     <div class="nav-chart-wrapper">
       <div class="nav-chart-title">
         <span class="chart-label">净值走势</span>
-        <span class="chart-nav-value ${navCls}">${FMT.nav(lastNav)} (${FMT.pct(retPct)})</span>
+        <span class="chart-nav-value" style="display:none"></span>
       </div>
       <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none">
         <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
@@ -647,14 +1016,14 @@ function renderNavChart(container, snapshots, botId) {
         ${dots}
       </svg>
       <div class="nav-chart-dates">
-        <span>${snapshots[0].date.slice(5)}</span>
-        <span>${snapshots[snapshots.length - 1].date.slice(5)}</span>
+        <span>${data[0].date.slice(5)}</span>
+        <span>${data[data.length - 1].date.slice(5)}</span>
       </div>
     </div>`;
 }
 
-// Render leaderboard
-function renderLeaderboard(sortedBots, portfolioMap, detailsData) {
+// ====== Leaderboard ======
+function renderLeaderboard(sortedBots, portfolioMap, detailsData, returnMap, startDate) {
   const tbody = document.getElementById('rankingTableBody');
   tbody.innerHTML = '';
   const activeBots = sortedBots.filter(id => portfolioMap[id]);
@@ -676,12 +1045,13 @@ function renderLeaderboard(sortedBots, portfolioMap, detailsData) {
 
     if (isActive) {
       const d = detailsData[botId] || { snapshots: [] };
-      const sparkHtml = renderSparkline(d.snapshots, botId);
+      const sparkHtml = renderSparkline(d.snapshots, botId, startDate);
+      const ret = returnMap[botId];
 
       tr.innerHTML = `
         <td class="lb-rank${rank <= 3 ? ' top' : ''}">${rank}</td>
         <td><div class="lb-bot">${avatarHtml}<div><div class="lb-name">${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}</div><div class="lb-id">${botId}</div></div></div></td>
-        <td class="right"><span class="lb-val ${FMT.cls(p.cumulative_return_pct)}">${FMT.pct(p.cumulative_return_pct)}</span></td>
+        <td class="right"><span class="lb-val ${FMT.cls(ret)}">${FMT.pct(ret)}</span></td>
         <td class="right"><span class="lb-val ${FMT.cls(p.daily_return_pct)}">${FMT.pct(p.daily_return_pct)}</span></td>
         <td class="right"><span class="lb-val ${p.max_drawdown < 0 ? 'negative' : 'neutral'}">${FMT.pct(p.max_drawdown)}</span></td>
         <td class="right"><span class="lb-val neutral">${FMT.money(p.total_value)}</span></td>
@@ -696,8 +1066,8 @@ function renderLeaderboard(sortedBots, portfolioMap, detailsData) {
   });
 }
 
-// Render detail cards
-function renderBotCards(activeBots, portfolioMap, details) {
+// ====== Detail cards ======
+function renderBotCards(activeBots, portfolioMap, details, returnMap, startDate) {
   const grid = document.getElementById('botCardsGrid');
   grid.innerHTML = '';
   document.getElementById('detailsCount').textContent = activeBots.length + ' 个账户';
@@ -715,11 +1085,33 @@ function renderBotCards(activeBots, portfolioMap, details) {
       ? `<img class="bot-card-avatar" src="${avatarSrc}">`
       : `<div class="bot-card-avatar placeholder">${meta.emoji || '?'}</div>`;
 
-    const retPct = p ? p.cumulative_return_pct : 0;
+    const retPct = returnMap[botId] ?? 0;
     const retCls = FMT.cls(retPct);
 
-    // Account stats
     const cashRatio = p && p.total_value ? (p.cash / p.total_value * 100) : 0;
+
+    // Compute interval metrics from filtered snapshots
+    const fData = filterSnapshots(d.snapshots, startDate);
+    let cardMaxDD = 0, cardVol = null, cardCalmar = '--', cardSharpe = '--';
+    if (fData.length > 1) {
+      let peak = fData[0].nav;
+      for (const pt of fData) {
+        if (pt.nav > peak) peak = pt.nav;
+        const dd = (pt.nav / peak - 1) * 100;
+        if (dd < cardMaxDD) cardMaxDD = dd;
+      }
+    }
+    if (fData.length > 2) {
+      const dailyRets = [];
+      for (let i = 1; i < fData.length; i++) {
+        dailyRets.push((fData[i].nav / fData[i-1].nav - 1) * 100);
+      }
+      const mean = dailyRets.reduce((s, v) => s + v, 0) / dailyRets.length;
+      const variance = dailyRets.reduce((s, v) => s + (v - mean) ** 2, 0) / dailyRets.length;
+      cardVol = Math.sqrt(variance);
+      if (cardVol > 0) cardSharpe = (mean / cardVol).toFixed(2);
+    }
+    if (retPct != null && cardMaxDD < 0) cardCalmar = (retPct / Math.abs(cardMaxDD)).toFixed(2);
 
     // Holdings list
     let holdingsHtml = '';
@@ -736,8 +1128,14 @@ function renderBotCards(activeBots, portfolioMap, details) {
             <span class="card-holding-status ${statusCls}">${statusText}</span>
             <span class="card-holding-role">${h.role || ''}</span>
             <span class="card-holding-name" title="${h.product_name}">${h.product_name}</span>
-            <span class="card-holding-pnl ${pnlCls}">${pnlText}</span>
-            <span class="card-holding-weight">${h.weight ? h.weight.toFixed(1) + '%' : '--'}</span>
+            <span class="card-holding-metric card-holding-pnl">
+              <span class="chm-label">收益率</span>
+              <span class="chm-value ${pnlCls}">${pnlText}</span>
+            </span>
+            <span class="card-holding-metric card-holding-weight">
+              <span class="chm-label">仓位</span>
+              <span class="chm-value">${h.weight ? h.weight.toFixed(1) + '%' : '--'}</span>
+            </span>
           </div>
           <div class="card-holding-meta">
             ${h.thesis ? `<span class="card-holding-thesis">${h.thesis}</span>` : ''}
@@ -760,20 +1158,292 @@ function renderBotCards(activeBots, portfolioMap, details) {
       </div>
       <div class="card-stats">
         <div class="card-stat"><div class="cs-label">总资产</div><div class="cs-value neutral">${FMT.money(p.total_value)}</div></div>
-        <div class="card-stat"><div class="cs-label">净值</div><div class="cs-value neutral">${FMT.nav(p.net_value)}</div></div>
-        <div class="card-stat"><div class="cs-label">最大回撤</div><div class="cs-value ${p.max_drawdown < 0 ? 'negative' : 'neutral'}">${FMT.pct(p.max_drawdown)}</div></div>
         <div class="card-stat"><div class="cs-label">现金比例</div><div class="cs-value neutral">${cashRatio.toFixed(1)}%</div></div>
       </div>
       <div class="card-section-label">持仓明细</div>
       ${holdingsHtml}
       <div id="navChart-${botId}"></div>
+      <div class="card-stats" style="margin-top:12px">
+        <div class="card-stat"><div class="cs-label">收益率</div><div class="cs-value ${retCls}">${FMT.pct(retPct)}</div></div>
+        <div class="card-stat"><div class="cs-label">最大回撤</div><div class="cs-value ${cardMaxDD < 0 ? 'negative' : 'neutral'}">${FMT.pct(cardMaxDD)}</div></div>
+        <div class="card-stat"><div class="cs-label">夏普比率</div><div class="cs-value neutral">${cardSharpe}</div></div>
+        <div class="card-stat"><div class="cs-label">卡玛比率</div><div class="cs-value neutral">${cardCalmar}</div></div>
+      </div>
     `;
 
     grid.appendChild(card);
-    renderNavChart(document.getElementById('navChart-' + botId), d.snapshots, botId);
+    renderNavChart(document.getElementById('navChart-' + botId), d.snapshots, botId, startDate);
   }
 }
 
+// ====== Section 3: Comparison ======
+// Bot color map — synced with 18888 dashboard
+const _BOT_COLOR_MAP = {
+  bot1: "#f8a4c8", bot2: "#85c1e9", bot3: "#98d8c8", bot4: "#f7dc6f",
+  bot5: "#f0d264", bot6: "#f0b27a", bot7: "#7fb3d8", bot8: "#80cbc4",
+  bot9: "#ce93d8", bot10: "#aed6f1", bot11: "#fdcb6e",
+};
+function getBotColor(botId) {
+  if (_BOT_COLOR_MAP[botId]) return _BOT_COLOR_MAP[botId];
+  // Golden-angle hue fallback for new bots (same as 18888)
+  const m = botId.match(/^bot(\d+)$/);
+  const hue = m ? (parseInt(m[1]) * 137.508) % 360 : (() => {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < botId.length; i++) { h ^= botId.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+    return ((h >>> 0) % 360);
+  })();
+  return `hsl(${hue}, 70%, 65%)`;
+}
+let selectedBots = new Set();
+
+function initCompareControls(activeBots) {
+  const controls = document.getElementById('cmpControls');
+  // Keep the label, clear the rest
+  controls.innerHTML = '<span class="cmp-label">选择 Bot：</span>';
+  activeBots.forEach((botId, i) => {
+    const meta = agentMeta[botId] || { name: botId, emoji: '' };
+    const color = getBotColor(botId);
+    const avatarSrc = avatars[botId];
+    const avatarHtml = avatarSrc
+      ? `<img class="cmp-chip-avatar" src="${avatarSrc}">`
+      : '';
+
+    const chip = document.createElement('span');
+    chip.className = 'cmp-chip' + (selectedBots.has(botId) ? ' selected' : '');
+    chip.dataset.botId = botId;
+    chip.innerHTML = `<span class="cmp-dot" style="background:${color}"></span>${avatarHtml}${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}`;
+    chip.onclick = () => {
+      if (selectedBots.has(botId)) selectedBots.delete(botId);
+      else selectedBots.add(botId);
+      chip.classList.toggle('selected');
+      renderComparison();
+    };
+    controls.appendChild(chip);
+  });
+}
+
+function renderComparison() {
+  const startDate = resolveStartDate(sectionRange.compare, 'compare');
+  const { detailsRes, portfolioMap } = G;
+  const bots = [...selectedBots].filter(id => detailsRes[id]);
+
+  renderComparisonChart(bots, detailsRes, startDate);
+  renderComparisonMetrics(bots, detailsRes, portfolioMap, startDate);
+}
+
+function renderComparisonChart(bots, detailsRes, startDate) {
+  const container = document.getElementById('cmpChart');
+  const legend = document.getElementById('cmpLegend');
+
+  if (bots.length === 0) {
+    container.innerHTML = '<div class="cmp-empty">请选择至少一个 Bot 进行对比</div>';
+    legend.innerHTML = '';
+    return;
+  }
+
+  // Prepare data: convert NAV to return % series for each bot
+  const allSeries = [];
+  const activeBots = G.allBotIds.filter(id => G.portfolioMap[id]);
+
+  bots.forEach((botId) => {
+    const d = detailsRes[botId] || { snapshots: [] };
+    const data = filterSnapshots(d.snapshots, startDate);
+    const idx = activeBots.indexOf(botId);
+    const color = getBotColor(botId);
+    allSeries.push({ botId, data, color });
+  });
+
+  // Find global date range and return range
+  let allReturns = [], allDateSet = new Set();
+  for (const s of allSeries) {
+    for (const pt of s.data) {
+      allReturns.push(pt.return_pct);
+      allDateSet.add(pt.date);
+    }
+  }
+  if (allReturns.length === 0) {
+    container.innerHTML = '<div class="cmp-empty">所选 Bot 在此时间范围内无数据</div>';
+    legend.innerHTML = '';
+    return;
+  }
+
+  const allDates = [...allDateSet].sort();
+  const minR = Math.min(...allReturns, 0);
+  const maxR = Math.max(...allReturns, 0);
+  const rangeR = maxR - minR || 0.01;
+
+  const W = 800, H = 240, PX = 6, PY = 20;
+
+  // Zero line
+  const zeroY = PY + (1 - (0 - minR) / rangeR) * (H - 2 * PY);
+  const zeroLine = `<line x1="${PX}" y1="${zeroY.toFixed(1)}" x2="${W - PX}" y2="${zeroY.toFixed(1)}" stroke="var(--dim)" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>`;
+
+  // Y axis labels
+  const yLabels = [maxR, 0, minR].map(v => {
+    const y = PY + (1 - (v - minR) / rangeR) * (H - 2 * PY);
+    return `<text x="${PX}" y="${y - 3}" fill="var(--dim)" font-size="8" font-family="var(--mono)">${v >= 0 ? '+' : ''}${v.toFixed(2)}%</text>`;
+  }).join('');
+
+  // Render each bot's line
+  let lines = '';
+  for (const s of allSeries) {
+    if (s.data.length < 2) continue;
+    const pts = s.data.map(pt => {
+      const dateIdx = allDates.indexOf(pt.date);
+      const x = PX + (dateIdx / Math.max(allDates.length - 1, 1)) * (W - 2 * PX);
+      const y = PY + (1 - (pt.return_pct - minR) / rangeR) * (H - 2 * PY);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    lines += `<polyline points="${pts.join(' ')}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
+    // Dots
+    for (const pt of pts) {
+      const [cx, cy] = pt.split(',');
+      lines += `<circle cx="${cx}" cy="${cy}" r="2.5" fill="${s.color}" opacity="0.7"/>`;
+    }
+  }
+
+  // Date labels
+  const dateLabels = allDates.length >= 2
+    ? `<text x="${PX}" y="${H - 2}" fill="var(--dim)" font-size="8" font-family="var(--mono)">${allDates[0].slice(5)}</text>
+       <text x="${W - PX}" y="${H - 2}" fill="var(--dim)" font-size="8" font-family="var(--mono)" text-anchor="end">${allDates[allDates.length - 1].slice(5)}</text>`
+    : '';
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="xMidYMid meet" style="display:block">
+      ${zeroLine}
+      ${yLabels}
+      ${lines}
+      ${dateLabels}
+    </svg>`;
+
+  // Legend
+  legend.innerHTML = allSeries.map(s => {
+    const meta = agentMeta[s.botId] || { name: s.botId };
+    const lastRet = s.data.length ? s.data[s.data.length - 1].return_pct : null;
+    return `<span class="cmp-legend-item">
+      <span class="cmp-legend-dot" style="background:${s.color}"></span>
+      ${meta.emoji ? meta.emoji + ' ' : ''}${meta.name}
+      <span class="cmp-legend-val ${FMT.cls(lastRet)}">${FMT.pct(lastRet)}</span>
+    </span>`;
+  }).join('');
+}
+
+// Metrics sort state: { col: string, asc: boolean }
+let cmpSort = { col: null, asc: false };
+
+function computeBotMetrics(bots, detailsRes, portfolioMap, startDate) {
+  const activeBots = G.allBotIds.filter(id => G.portfolioMap[id]);
+  return bots.map(botId => {
+    const meta = agentMeta[botId] || { name: botId, emoji: '' };
+    const p = portfolioMap[botId];
+    const d = detailsRes[botId] || { snapshots: [] };
+    const data = filterSnapshots(d.snapshots, startDate);
+    const idx = activeBots.indexOf(botId);
+    const color = getBotColor(botId);
+
+    const ret = data.length ? data[data.length - 1].return_pct : null;
+    let maxDD = 0;
+    if (data.length > 1) {
+      let peak = data[0].nav;
+      for (const pt of data) {
+        if (pt.nav > peak) peak = pt.nav;
+        const dd = (pt.nav / peak - 1) * 100;
+        if (dd < maxDD) maxDD = dd;
+      }
+    }
+    let vol = null;
+    if (data.length > 2) {
+      const dailyRets = [];
+      for (let i = 1; i < data.length; i++) dailyRets.push((data[i].nav / data[i-1].nav - 1) * 100);
+      const mean = dailyRets.reduce((s, v) => s + v, 0) / dailyRets.length;
+      const variance = dailyRets.reduce((s, v) => s + (v - mean) ** 2, 0) / dailyRets.length;
+      vol = Math.sqrt(variance);
+    }
+    const calmarNum = (ret != null && maxDD < 0) ? ret / Math.abs(maxDD) : null;
+    let sharpeNum = null;
+    if (vol != null && vol > 0) {
+      const dailyRets = [];
+      for (let i = 1; i < data.length; i++) dailyRets.push((data[i].nav / data[i-1].nav - 1) * 100);
+      const mean = dailyRets.reduce((s, v) => s + v, 0) / dailyRets.length;
+      sharpeNum = mean / vol;
+    }
+
+    return { botId, meta, p, color, ret, maxDD, calmarNum, sharpeNum, vol, totalValue: p ? p.total_value : 0 };
+  });
+}
+
+function sortMetricsData(metricsData, col, asc) {
+  const key = { ret: 'ret', maxDD: 'maxDD', calmar: 'calmarNum', sharpe: 'sharpeNum', vol: 'vol', total: 'totalValue' }[col];
+  if (!key) return metricsData;
+  return [...metricsData].sort((a, b) => {
+    const va = a[key] ?? -Infinity, vb = b[key] ?? -Infinity;
+    return asc ? va - vb : vb - va;
+  });
+}
+
+function onCmpSort(col) {
+  if (cmpSort.col === col) {
+    cmpSort.asc = !cmpSort.asc;
+  } else {
+    cmpSort.col = col;
+    cmpSort.asc = false; // default descending
+  }
+  renderComparison();
+}
+
+function renderComparisonMetrics(bots, detailsRes, portfolioMap, startDate) {
+  const container = document.getElementById('cmpMetrics');
+  if (bots.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let metricsData = computeBotMetrics(bots, detailsRes, portfolioMap, startDate);
+  if (cmpSort.col) metricsData = sortMetricsData(metricsData, cmpSort.col, cmpSort.asc);
+
+  const cols = [
+    { key: 'ret', label: '区间收益' },
+    { key: 'maxDD', label: '最大回撤' },
+    { key: 'calmar', label: '卡玛比率' },
+    { key: 'sharpe', label: '夏普比率' },
+    { key: 'vol', label: '日波动率' },
+    { key: 'total', label: '总资产' },
+  ];
+
+  const thHtml = cols.map(c => {
+    const arrow = cmpSort.col === c.key ? (cmpSort.asc ? ' ↑' : ' ↓') : '';
+    const activeStyle = cmpSort.col === c.key ? 'color:var(--text);cursor:pointer' : 'cursor:pointer';
+    return `<th class="right" style="${activeStyle}" onclick="onCmpSort('${c.key}')">${c.label}${arrow}</th>`;
+  }).join('');
+
+  let rows = '';
+  for (const m of metricsData) {
+    const avatarHtml = avatars[m.botId]
+      ? `<img style="width:20px;height:20px;border-radius:50%;object-fit:cover" src="${avatars[m.botId]}">`
+      : '';
+
+    rows += `<tr>
+      <td><div class="cmp-bot-cell"><span class="cmp-legend-dot" style="background:${m.color}"></span>${avatarHtml}<span style="font-family:var(--cn);font-size:12px">${m.meta.emoji ? m.meta.emoji + ' ' : ''}${m.meta.name}</span></div></td>
+      <td class="right"><span class="lb-val ${FMT.cls(m.ret)}">${FMT.pct(m.ret)}</span></td>
+      <td class="right"><span class="lb-val ${m.maxDD < 0 ? 'negative' : 'neutral'}">${FMT.pct(m.maxDD)}</span></td>
+      <td class="right"><span class="lb-val neutral">${m.calmarNum != null ? m.calmarNum.toFixed(2) : '--'}</span></td>
+      <td class="right"><span class="lb-val neutral">${m.sharpeNum != null ? m.sharpeNum.toFixed(2) : '--'}</span></td>
+      <td class="right"><span class="lb-val neutral">${m.vol != null ? m.vol.toFixed(3) + '%' : '--'}</span></td>
+      <td class="right"><span class="lb-val neutral">${FMT.money(m.totalValue)}</span></td>
+    </tr>`;
+  }
+
+  container.innerHTML = `
+    <table class="cmp-metrics-table">
+      <thead><tr>
+        <th>Bot</th>
+        ${thHtml}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ====== Init ======
 async function init() {
   const [portfolioRes, avatarRes, agentsRes, detailsRes] = await Promise.all([
     fetch('/api/portfolio/summary').then(r => r.json()).catch(() => []),
@@ -792,28 +1462,33 @@ async function init() {
   const portfolioMap = {};
   for (const p of portfolioRes) portfolioMap[p.bot_id] = p;
 
-  const activeBots = allBotIds.filter(id => portfolioMap[id]).sort((a, b) => {
-    return (portfolioMap[b].cumulative_return_pct || 0) - (portfolioMap[a].cumulative_return_pct || 0);
-  });
-  const inactiveBots = allBotIds.filter(id => !portfolioMap[id]);
-  const sortedBots = [...activeBots, ...inactiveBots];
+  // Collect all available snapshot dates
+  const allDates = new Set();
+  for (const bid of Object.keys(detailsRes)) {
+    for (const s of (detailsRes[bid]?.snapshots || [])) {
+      allDates.add(s.date);
+    }
+  }
+  const sortedDates = [...allDates].sort();
+  const latestDate = sortedDates.length ? sortedDates[sortedDates.length - 1] : '';
 
-  // Summary
-  const totalAssets = activeBots.reduce((s, id) => s + (portfolioMap[id].total_value || 0), 0);
-  const avgReturn = activeBots.length
-    ? activeBots.reduce((s, id) => s + (portfolioMap[id].cumulative_return_pct || 0), 0) / activeBots.length
-    : 0;
+  // Store globally for re-rendering on date change
+  G = { allBotIds, portfolioMap, detailsRes, latestDate, sortedDates };
 
-  document.getElementById('sumBots').textContent = activeBots.length + ' / ' + allBotIds.length;
-  document.getElementById('sumAssets').textContent = FMT.money(totalAssets);
-  document.getElementById('sumReturn').textContent = FMT.pct(avgReturn);
-  document.getElementById('sumReturn').className = 'value ' + (avgReturn >= 0 ? 'accent' : 'green');
+  // Build per-section date pickers
+  buildDatePicker('dpBar-ranking', 'ranking');
+  buildDatePicker('dpBar-details', 'details');
+  buildDatePicker('dpBar-compare', 'compare');
 
-  renderLeaderboard(sortedBots, portfolioMap, detailsRes);
-  renderBotCards(activeBots, portfolioMap, detailsRes);
+  // Init comparison: auto-select all active bots
+  const activeBots = allBotIds.filter(id => portfolioMap[id]);
+  selectedBots = new Set(activeBots);
+  initCompareControls(activeBots);
 
   document.getElementById('loading').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
+
+  refreshAll();
 }
 
 init();

@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { getDb } from "../db.js";
 import { requireAuth } from "../auth.js";
-import { submitToPublisher } from "../services/publish-bridge.js";
 
 const router = Router();
 
@@ -39,33 +38,30 @@ router.post("/:id/schedule", requireAuth, (req, res) => {
   res.json({ success: true, schedule_at });
 });
 
-// POST /api/orders/:id/publish - submit to publish queue
-router.post("/:id/publish", requireAuth, async (req, res) => {
+// POST /api/orders/:id/submit-publish - client submits the approved draft for
+// research department's final publish review. This does NOT push to the
+// publisher queue directly — research must confirm via
+// POST /api/research/orders/:id/confirm-publish.
+router.post("/:id/submit-publish", requireAuth, (req, res) => {
   const db = getDb();
   const order = db.prepare("SELECT * FROM orders WHERE id = ? AND client_id = ?").get(req.params.id, req.clientId);
   if (!order) return res.status(404).json({ error: "订单不存在" });
 
-  const publishable = ["approved", "scheduled"];
-  if (!publishable.includes(order.status)) {
-    return res.status(400).json({ error: `当前状态 (${order.status}) 不可发布` });
+  const submittable = ["approved", "scheduled"];
+  if (!submittable.includes(order.status)) {
+    return res.status(400).json({ error: `当前状态 (${order.status}) 不可提交发布申请` });
   }
 
-  const draft = db.prepare("SELECT * FROM drafts WHERE order_id = ? AND status = 'approved'").get(order.id);
+  const draft = db.prepare("SELECT id, version FROM drafts WHERE order_id = ? AND status = 'approved'").get(order.id);
   if (!draft) {
     return res.status(400).json({ error: "没有已批准的草稿" });
   }
 
-  try {
-    const folder = await submitToPublisher(order, draft);
-    db.prepare("UPDATE orders SET status = 'publishing', publish_folder = ?, updated_at = datetime('now') WHERE id = ?").run(
-      folder,
-      order.id
-    );
-    res.json({ success: true, publish_folder: folder });
-  } catch (err) {
-    console.error(`Publish failed for order ${order.id}:`, err);
-    res.status(500).json({ error: "发布失败: " + err.message });
-  }
+  db.prepare(
+    "UPDATE orders SET status = 'awaiting_publish_review', updated_at = datetime('now') WHERE id = ?"
+  ).run(order.id);
+
+  res.json({ success: true, status: "awaiting_publish_review", draft_version: draft.version });
 });
 
 // GET /api/orders/:id/publish-status - check publish status

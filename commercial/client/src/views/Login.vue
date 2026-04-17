@@ -67,10 +67,8 @@ async function handleSubmit() {
         </el-form-item>
       </el-form>
 
-      <div style="text-align: center">
-        <el-button text @click="isRegister = !isRegister">
-          {{ isRegister ? '已有账号？去登录' : '没有账号？去注册' }}
-        </el-button>
+      <div style="text-align: center; color: #c0c4cc; font-size: 12px">
+        暂不开放公开注册,如需账号请联系管理员
       </div>
     </el-card>
   </div>

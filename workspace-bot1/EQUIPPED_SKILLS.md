@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-07 07:03:55
+> 更新时间：2026-04-17 00:51:51
 
 ## 职业
 
@@ -34,6 +34,5 @@
 - 技术分析（technical-analyst） — `skills/technical-analyst/SKILL.md`
 - TMT全景（tmt-landscape） — `skills/tmt-landscape/SKILL.md`
 - 光伏跟踪（solar-tracker） — `skills/solar-tracker/SKILL.md`
-- tougu-portfolio-review（tougu-portfolio-review） — `skills/tougu-portfolio-review/SKILL.md`
-- tougu-product-match（tougu-product-match） — `skills/tougu-product-match/SKILL.md`
+- 妙想模拟盘（mx-moni） — `skills/mx-moni/SKILL.md`
 

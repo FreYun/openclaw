@@ -104,7 +104,7 @@ if os.path.exists(main_skills):
             desc = get_skill_desc(p)
             privates.append((s, desc))
     if privates:
-        lines.append("## bot_main（魏忠贤）")
+        lines.append("## mag1（魏忠贤）")
         lines.append("")
         lines.append("| Skill | 描述 |")
         lines.append("|-------|------|")
@@ -129,7 +129,7 @@ lines = [
 
 configs = {
     **{f"bot{i}": f"{BASE}/workspace-bot{i}/config/mcporter.json" for i in range(1, 11)},
-    "bot_main": f"{BASE}/workspace/config/mcporter.json",
+    "mag1": f"{BASE}/workspace-mag1/config/mcporter.json",
     "mcp_publisher": f"{BASE}/workspace-sys1/config/mcporter.json",
 }
 for agent, path in sorted(configs.items()):

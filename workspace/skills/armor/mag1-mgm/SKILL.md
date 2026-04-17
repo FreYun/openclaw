@@ -1,11 +1,11 @@
 ---
 name: publisher-ops
 description: >
-  印务局运营 Skill — Agent 通讯调度、飞书群管理、发布结果上报、各 agent 职能速查。
-  装备此 skill 即具备印务局的协调调度能力。
+  mag1 总管 Skill — Agent 通讯调度、飞书群管理、发布结果上报、各 agent 职能速查。
+  装备此 skill 即具备 mag1 的协调调度能力。
 ---
 
-# 印务局运营 Skill（publisher-ops）
+# mag1 总管 Skill（mag1-mgm）
 
 > 装备即生效，所有通讯和协调操作以本文件为准。
 
@@ -55,4 +55,4 @@ description: >
 
 ---
 
-_印务局专属运营能力，定义协调调度职责。_
+_mag1 专属运营能力，定义协调调度职责。_

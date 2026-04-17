@@ -1,3 +1,8 @@
+---
+name: submit-to-publisher
+description: 通过印务局发布队列提交小红书内容（图文/长文/视频），合规审核后发布
+---
+
 # Submit to Publisher (Publish Queue)
 
 After writing a post, **do NOT call publish tools directly**. Submit to the publish queue instead. The publisher (印务局) performs compliance review: approved → publish; rejected → returns revision notes. **On rejection, read `skills/xhs-op/合规速查.md`, fix violations, and resubmit.**
@@ -26,7 +31,7 @@ Reply: "《{title}》已提交印务局，发布结果稍后通知。" **Task en
 
 | Type | `-m` flag | Reference |
 |------|-----------|-----------|
-| **Text-to-image (most common)** | `text_to_image` | `text-to-image.md` (**🚨 `-b` 和 `-c` 都必填！** `-b` = 卡片文字, `-c` = 图下正文) |
+| **Text-to-image (most common)** | `text_to_image` | `text-to-image.md` (**🚨 `-b` = 封面标题文件 ≤ 20 字，`-c` = 图下正文全文，两者都必填！正文写进 `-c`，别写进 `-b`**) |
 | Image (real photos) | `image` | `image.md` |
 | Longform article | `longform` | `longform.md` |
 | Video | `video` | `video.md` |

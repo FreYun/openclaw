@@ -1,0 +1,98 @@
+{
+  "top": [
+    {
+      "name": "线下药店",
+      "pct_chg": 6.01,
+      "amount": 0.0,
+      "leader": "华人健康",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "快递",
+      "pct_chg": 6.01,
+      "amount": 0.0,
+      "leader": "顺丰控股",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "宠物食品",
+      "pct_chg": 5.72,
+      "amount": 0.0,
+      "leader": "中宠股份",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "医药商业",
+      "pct_chg": 4.35,
+      "amount": 0.0,
+      "leader": "华人健康",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "国际工程",
+      "pct_chg": 3.93,
+      "amount": 0.0,
+      "leader": "中工国际",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    }
+  ],
+  "bottom": [
+    {
+      "name": "氮肥",
+      "pct_chg": -3.44,
+      "amount": 0.0,
+      "leader": "四川美丰",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "能源金属",
+      "pct_chg": -3.85,
+      "amount": 0.0,
+      "leader": "西藏矿业",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "锂",
+      "pct_chg": -4.28,
+      "amount": 0.0,
+      "leader": "西藏矿业",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "逆变器",
+      "pct_chg": -4.47,
+      "amount": 0.0,
+      "leader": "昱能科技",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    },
+    {
+      "name": "钨",
+      "pct_chg": -4.91,
+      "amount": 0.0,
+      "leader": "翔鹭钨业",
+      "leader_pct": 0.0,
+      "up_count": 0,
+      "down_count": 0
+    }
+  ],
+  "total": 496,
+  "source": "tushare"
+}

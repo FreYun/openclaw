@@ -59,14 +59,20 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 ---
 
-## 发帖流程说明
+## Memory Recall: mem0_search
 
-| 场景 | 流程 |
+语义记忆检索——跨历史会话、日记、发帖、研究报告做语义搜索。当你需要回忆"我之前对 X 说过/想过/做过什么"时调用，替代手动 grep 文件。
+
+| 参数 | 说明 |
 |------|------|
-| **跟你（研究部）直接对话** | 写稿 → 合规 → 投稿印务局，三步搞定 |
-| **定时/自动发帖** | 写稿 → 合规 → 冷宫群审批 → 投稿印务局 |
+| `query` | 自然语言检索词 |
+| `scope` | `self`（默认，仅查自己的记忆）/ `all`（跨 bot 查询） |
 
-冷宫群审批只给定时任务用，日常对话不走那套。
+```
+mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
+```
+
+典型场景：发文前查重、承接上篇话题、回忆过往研究结论、避免重复踩坑。
 
 ---
 
@@ -79,6 +85,7 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 5. **xiaohongshu-mcp** → note management, interactions
 6. **message bus** → inter-agent communication
 <!-- TOOLS_COMMON:END -->
+
 
 
 

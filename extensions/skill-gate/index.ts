@@ -59,7 +59,15 @@ function loadEquipment(logger: { warn: (msg: string) => void }): Record<string, 
 
 // ─── Prime Directive ─────────────────────────────────────────────────
 // Injected as the FIRST thing every agent sees on every session start.
-const PRIME_DIRECTIVE = "⚡ Skill-first: check EQUIPPED_SKILLS.md before acting.";
+const SKILL_FIRST = "⚡ Skill-first: check EQUIPPED_SKILLS.md before acting.";
+
+function buildPrimeDirective(): string {
+  const now = new Date();
+  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const ts = `${weekdays[now.getDay()]} ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  return `${SKILL_FIRST} | Now: ${ts}`;
+}
 
 const skillGatePlugin = {
   id: "skill-gate",
@@ -77,7 +85,7 @@ const skillGatePlugin = {
 
     // ── Prime Directive: inject at top of every agent session ──────────
     api.on("before_agent_start", async () => {
-      return { prependContext: PRIME_DIRECTIVE };
+      return { prependContext: buildPrimeDirective() };
     }, { priority: 1000 }); // Highest priority — first thing injected
 
     // ── Tool Gate: block unequipped tool calls ────────────────────────

@@ -1,0 +1,7 @@
+{
+  "name": "个股定位",
+  "icon": "📍",
+  "slot": "research",
+  "desc": "多周期个股位置感分析，独立于持仓成本",
+  "subType": "research"
+}

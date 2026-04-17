@@ -1,6 +1,6 @@
 """classify.py 的集成测试 — 纯 classify() 编排函数 + CLI 入口。
 
-不依赖 akshare 网络: 所有测试通过 hs300_df / csi1000_df 注入合成 DF。
+不依赖 Tushare 网络: 所有测试通过 hs300_df / csi1000_df 注入合成 DF。
 """
 
 import json

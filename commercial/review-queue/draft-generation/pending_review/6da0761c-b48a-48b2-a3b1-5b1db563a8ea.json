@@ -1,0 +1,31 @@
+{
+  "order": {
+    "id": "4c1c59be-9e4d-4afa-a2f5-37d7e35ccafd",
+    "title": "123",
+    "bot_id": "bot7",
+    "status": "pending",
+    "requirements": "讲一下半导体",
+    "content_type": "text_to_image",
+    "max_revisions": 3,
+    "reference_links": [],
+    "created_at": "2026-04-14 08:59:01",
+    "updated_at": "2026-04-14 08:59:01"
+  },
+  "client": {
+    "id": 7,
+    "username": "test11",
+    "display_name": "test",
+    "company": "",
+    "phone": ""
+  },
+  "generation_request": {
+    "version": 1,
+    "revision_note": ""
+  },
+  "materials": [],
+  "drafts": [],
+  "request_id": "6da0761c-b48a-48b2-a3b1-5b1db563a8ea",
+  "status": "pending_review",
+  "created_at": "2026-04-14T08:59:05.022Z",
+  "updated_at": "2026-04-14T08:59:05.022Z"
+}

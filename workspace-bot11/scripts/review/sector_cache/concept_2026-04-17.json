@@ -1,0 +1,58 @@
+{
+  "top": [
+    {
+      "name": "昨日连板",
+      "pct_chg": 7.04,
+      "leader": "均瑶健康"
+    },
+    {
+      "name": "昨日打二板以上表现",
+      "pct_chg": 5.98,
+      "leader": "博云新材"
+    },
+    {
+      "name": "昨日连板_含一字",
+      "pct_chg": 3.96,
+      "leader": "均瑶健康"
+    },
+    {
+      "name": "玻璃基板",
+      "pct_chg": 2.99,
+      "leader": "彩虹股份"
+    },
+    {
+      "name": "第四代半导体",
+      "pct_chg": 2.71,
+      "leader": "衢州发展"
+    }
+  ],
+  "bottom": [
+    {
+      "name": "CRO",
+      "pct_chg": -2.02,
+      "leader": "药康生物"
+    },
+    {
+      "name": "重组蛋白",
+      "pct_chg": -2.17,
+      "leader": "锦波生物"
+    },
+    {
+      "name": "肝素概念",
+      "pct_chg": -2.25,
+      "leader": "华润双鹤"
+    },
+    {
+      "name": "旅游酒店",
+      "pct_chg": -2.28,
+      "leader": "金马游乐"
+    },
+    {
+      "name": "同步磁阻电机",
+      "pct_chg": -2.77,
+      "leader": "卧龙电驱"
+    }
+  ],
+  "total": 493,
+  "source": "akshare"
+}

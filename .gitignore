@@ -11,6 +11,8 @@ credentials/
 cookies.json
 openclaw.json
 openclaw.json.bak*
+.mx_apikey
+workspace-bot*/.mx_apikey
 
 # Runtime & logs
 logs/
@@ -46,3 +48,7 @@ fly.private.toml
 workspace-bot*/memory/
 workspace-main/memory/
 memory/
+
+# Strategy 运行时缓存 — market.db 一律放 /home/rooot/database/, 禁止出现在仓库内
+workspace/skills/strategy/.cache/
+workspace/skills/strategy/*/.cache/

@@ -313,12 +313,6 @@ meme爱理财内容风格：persona、写作语气、行情反应模板、日常
 
 ## 🔧 通用技能
 
-### 📮 定时发稿（scheduled-post）
-
-草稿审批 + 投稿管道：合规 → draft-review → 魏忠贤 → 印务局
-
-**详细文档**：Read `skills/scheduled-post/SKILL.md`
-
 ### 🌐 浏览器基础（browser-base）
 
 浏览器使用规范：profile 管理、标签页生命周期、超时处理

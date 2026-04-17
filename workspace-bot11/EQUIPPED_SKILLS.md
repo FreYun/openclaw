@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-07 07:03:55
+> 更新时间：2026-04-17 00:51:51
 
 ## 职业
 
@@ -32,4 +32,7 @@
 - 存储芯片产业链（memory-chip-tracker） — `skills/memory-chip-tracker/SKILL.md`
 - 研究数据库（research-mcp） — `skills/research-mcp/SKILL.md`
 - 航天产业链（space-tracker） — `skills/space-tracker/SKILL.md`
+- 妙想模拟盘（mx-moni） — `skills/mx-moni/SKILL.md`
+- 个股定位（stock-locator） — `skills/stock-locator/SKILL.md`
+- 行业深研（industry-deep-dive） — `skills/industry-deep-dive/SKILL.md`
 

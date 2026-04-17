@@ -59,6 +59,23 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 ---
 
+## Memory Recall: mem0_search
+
+语义记忆检索——跨历史会话、日记、发帖、研究报告做语义搜索。当你需要回忆"我之前对 X 说过/想过/做过什么"时调用，替代手动 grep 文件。
+
+| 参数 | 说明 |
+|------|------|
+| `query` | 自然语言检索词 |
+| `scope` | `self`（默认，仅查自己的记忆）/ `all`（跨 bot 查询） |
+
+```
+mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
+```
+
+典型场景：发文前查重、承接上篇话题、回忆过往研究结论、避免重复踩坑。
+
+---
+
 ## Tool Priority
 
 1. **memory** → check history first, update incrementally
@@ -68,6 +85,7 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 5. **xiaohongshu-mcp** → note management, interactions
 6. **message bus** → inter-agent communication
 <!-- TOOLS_COMMON:END -->
+
 
 
 

@@ -1,0 +1,16 @@
+{
+  "name": "行业深研",
+  "icon": "🔭",
+  "slot": "research",
+  "subType": "research",
+  "desc": "任意行业产业链深研，输出tracker级知识",
+  "requiresMcp": ["research-mcp"],
+  "subSkills": [
+    {
+      "name": "研报阅读协议",
+      "icon": "📄",
+      "file": "report-reading.md",
+      "desc": "PDF下载/验证/pdftotext提取/通读标注流程"
+    }
+  ]
+}

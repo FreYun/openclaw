@@ -11,7 +11,20 @@ import draftsRoutes from "./routes/drafts.js";
 import uploadsRoutes from "./routes/uploads.js";
 import publishRoutes from "./routes/publish.js";
 import researchRoutes from "./routes/research.js";
+import adminRoutes from "./routes/admin.js";
 import { ensureBotCatalog } from "./services/bot-catalog.js";
+import { reconcilePublishingOrders } from "./services/publish-bridge.js";
+import { seedWhitelistAccounts } from "./services/whitelist-seed.js";
+import { sweepStaleArtifacts } from "./services/order-cleanup.js";
+
+// Force stdio to blocking (synchronous) writes — when commercial is launched
+// via nohup and redirected to /tmp/commercial-18900.log, Node's default async
+// piped-file mode block-buffers logs, which hides live diagnostics. Blocking
+// writes make every console.log/error land on disk immediately.
+try {
+  if (process.stdout._handle?.setBlocking) process.stdout._handle.setBlocking(true);
+  if (process.stderr._handle?.setBlocking) process.stderr._handle.setBlocking(true);
+} catch {}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT || "18900");
@@ -40,6 +53,7 @@ app.use("/api/orders", draftsRoutes);
 app.use("/api/orders", uploadsRoutes);
 app.use("/api/orders", publishRoutes);
 app.use("/api/research", researchRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Serve Vue SPA in production
 const clientDist = path.resolve(__dirname, "../../client/dist");
@@ -56,6 +70,28 @@ app.get(/^\/(?!api).*/, (req, res) => {
 // Init DB and sync bot catalog on startup
 getDb();
 ensureBotCatalog();
+seedWhitelistAccounts();
+
+// Reconcile orders stuck in `publishing` once on boot, then every 60s.
+// Handles dashboard "打回" / sys1 moves that commercial otherwise can't see.
+// Also piggybacks a safety-net sweep of iteration scratch for any order that
+// has silently reached a terminal state without going through the usual hooks.
+function safeReconcile() {
+  try {
+    const n = reconcilePublishingOrders();
+    if (n > 0) console.log(`[boot] Reconciled ${n} publishing order(s)`);
+  } catch (err) {
+    console.error("[boot] Reconcile failed:", err);
+  }
+  try {
+    const n = sweepStaleArtifacts();
+    if (n > 0) console.log(`[boot] Swept ${n} stale artifact(s)`);
+  } catch (err) {
+    console.error("[boot] Sweep failed:", err);
+  }
+}
+safeReconcile();
+setInterval(safeReconcile, 60 * 1000);
 
 app.listen(PORT, () => {
   console.log(`Commercial Order System running on :${PORT}`);

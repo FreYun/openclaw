@@ -15,8 +15,10 @@ spec §7 的 JSON 字段名是下游约定, 改名要非常小心。
 from __future__ import annotations
 
 import json
+import logging
 import os
 import re
+import sys
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -447,8 +449,144 @@ def write_outputs(
     json_path: str,
     log_path: str,
 ) -> dict:
-    """一次性写 MD / JSON / 追加日志, 返回实际写入的路径字典。"""
-    write_md(result, md_path)
-    write_json(result, json_path)
-    append_log(result, log_path)
-    return {"md": md_path, "json": json_path, "log": log_path}
+    """一次性写 MD / JSON / 追加日志, 返回实际写入的路径字典。
+
+    同时写入 market.db.regime_daily (CLASSIFIER_OUTPUT 控制双写, 默认 both)。
+    """
+    output_target = os.environ.get("CLASSIFIER_OUTPUT", "both").lower()
+    paths = {}
+
+    if output_target in ("file", "both"):
+        write_md(result, md_path)
+        write_json(result, json_path)
+        append_log(result, log_path)
+        paths = {"md": md_path, "json": json_path, "log": log_path}
+
+    if output_target in ("db", "both"):
+        try:
+            _write_regime_to_db(result_to_json(result))
+            _write_regime_to_classify_daily(result)
+            paths["db"] = "market.db.regime_daily + regime_classify_daily"
+        except Exception as e:
+            logging.warning(f"market.db 写入失败 (CLASSIFIER_OUTPUT={output_target}): {e}")
+
+    return paths
+
+
+def _write_regime_to_classify_daily(result: ClassifyResult):
+    """把 ClassifyResult 同步写入 regime_classify_daily (rules_version='v2')。
+
+    字段口径与 backfill/load_to_db.py 保持一致, 下游按 regime_name + switched
+    查仓位规则 (见 memory/position-sizing-v2-entry-only.md)。
+    """
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _classifier_root = os.path.dirname(_here)
+    _strategy_root = os.path.dirname(_classifier_root)
+    _lib_dir = os.path.join(_strategy_root, "_lib")
+    if _lib_dir not in sys.path:
+        sys.path.insert(0, _lib_dir)
+    import db as _db
+
+    conn = _db.get_market_db()
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO regime_classify_daily (
+                trade_date, rules_version, total_score,
+                score_ma_position, score_advance_decline, score_sentiment_delta,
+                score_sentiment_index, score_streak_height, score_volume_trend,
+                regime_code, regime_name, last_regime_code, switched, bootstrap,
+                emergency_switch, emergency_direction, emergency_reason,
+                confidence, missing_dims
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """,
+            (
+                result.date,
+                "v2",
+                result.score_total,
+                result.score_breakdown.get("ma_position"),
+                result.score_breakdown.get("advance_decline"),
+                result.score_breakdown.get("sentiment_delta"),
+                result.score_breakdown.get("sentiment_index"),
+                result.score_breakdown.get("streak_height"),
+                result.score_breakdown.get("volume_trend"),
+                result.regime_code,
+                REGIME_CODE_TO_NAME[result.regime_code],
+                result.last_regime_code,
+                1 if result.switched else 0,
+                1 if result.bootstrap else 0,
+                1 if result.emergency_switch else 0,
+                result.emergency_direction,
+                ";".join(result.emergency_reason) if result.emergency_reason else None,
+                result.confidence,
+                ";".join(result.missing_dims) if result.missing_dims else None,
+            ),
+        )
+        conn.commit()
+        logging.info(f"market.db 写入 regime_classify_daily(v2): date={result.date}")
+    finally:
+        conn.close()
+
+
+def _write_regime_to_db(payload: dict):
+    """把 result_to_json 的 dict 写入 market.db.regime_daily。"""
+    # 按需 import, 避免单元测试时强制依赖 _lib/db
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _classifier_root = os.path.dirname(_here)
+    _strategy_root = os.path.dirname(_classifier_root)
+    _lib_dir = os.path.join(_strategy_root, "_lib")
+    if _lib_dir not in sys.path:
+        sys.path.insert(0, _lib_dir)
+    import db as _db
+    import json as _json
+
+    _db.init_market_db()
+    conn = _db.get_market_db()
+    try:
+        date = payload["date"]
+        score = payload.get("score", {})
+        breakdown = score.get("breakdown", {}) if isinstance(score, dict) else {}
+        playbook = payload.get("playbook", {}) or {}
+        pos_limit = playbook.get("position_limit", {}) or {}
+
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO regime_daily (
+                date, regime_code, regime_name, score_total,
+                score_ma_position, score_advance_decline, score_sentiment_delta,
+                score_sentiment_index, score_streak_height, score_volume_trend,
+                raw_data_json, confidence, missing_dims_json, last_regime,
+                switched, emergency_switch, emergency_reason_json, switch_warning,
+                playbook_recommended_json, playbook_forbidden_json,
+                position_limit_total, position_limit_single
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                date,
+                payload.get("regime_code", ""),
+                payload.get("regime", ""),
+                int(score.get("total", 0) or 0) if isinstance(score, dict) else 0,
+                breakdown.get("ma_position"),
+                breakdown.get("advance_decline"),
+                breakdown.get("sentiment_delta"),
+                breakdown.get("sentiment_index"),
+                breakdown.get("streak_height"),
+                breakdown.get("volume_trend"),
+                _json.dumps(payload.get("raw_data"), ensure_ascii=False),
+                payload.get("confidence", "high"),
+                _json.dumps(payload.get("missing_dims", []), ensure_ascii=False),
+                payload.get("last_regime"),
+                1 if payload.get("switched") else 0,
+                1 if payload.get("emergency_switch") else 0,
+                _json.dumps(payload.get("emergency_reason", []), ensure_ascii=False),
+                payload.get("switch_warning"),
+                _json.dumps(playbook.get("recommended", []), ensure_ascii=False),
+                _json.dumps(playbook.get("forbidden", []), ensure_ascii=False),
+                float(pos_limit.get("total", 0) or 0),
+                float(pos_limit.get("single", 0) or 0),
+            ),
+        )
+        conn.commit()
+        logging.info(f"market.db 写入 regime_daily: date={date}")
+    finally:
+        conn.close()

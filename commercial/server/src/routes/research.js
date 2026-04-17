@@ -7,6 +7,7 @@ import {
   readDraftReviewSnapshot,
 } from "../services/draft-review-queue.js";
 import { startDraftGenerationFromRequest } from "./drafts.js";
+import { submitToPublisher } from "../services/publish-bridge.js";
 
 const router = Router();
 
@@ -132,6 +133,122 @@ router.post("/draft-requests/:id/reject", (req, res) => {
     status: "rejected",
     order_status: nextOrderStatus,
   });
+});
+
+// ---------------------------------------------------------------------------
+// Publish review endpoints (new "research department is the final publish gate" flow)
+// ---------------------------------------------------------------------------
+
+// GET /api/research/publish-queue - list orders awaiting publish review.
+// Each order is enriched with its latest approved draft so the dashboard can
+// render everything research needs to decide inline, without a second call.
+router.get("/publish-queue", (req, res) => {
+  const db = getDb();
+  const rows = db.prepare(`
+    SELECT o.id, o.title, o.bot_id, o.status, o.schedule_at, o.updated_at,
+           o.requirements, o.content_type, o.reference_links,
+           c.display_name AS client_name, c.company AS client_company, c.phone AS client_phone
+    FROM orders o
+    LEFT JOIN clients c ON c.id = o.client_id
+    WHERE o.status = 'awaiting_publish_review'
+    ORDER BY o.updated_at ASC
+  `).all();
+
+  const draftStmt = db.prepare(
+    "SELECT * FROM drafts WHERE order_id = ? AND status = 'approved' ORDER BY version DESC LIMIT 1"
+  );
+  const materialsStmt = db.prepare(
+    "SELECT id, file_name, file_type, file_size FROM order_materials WHERE order_id = ? ORDER BY sort_order ASC, id ASC"
+  );
+
+  const parseTags = (raw) => {
+    try { return JSON.parse(raw || "[]"); } catch { return []; }
+  };
+  const parseLinks = (raw) => {
+    try { return JSON.parse(raw || "[]"); } catch { return []; }
+  };
+
+  const enriched = rows.map((order) => {
+    const draft = draftStmt.get(order.id);
+    return {
+      ...order,
+      reference_links: parseLinks(order.reference_links),
+      materials: materialsStmt.all(order.id),
+      draft: draft
+        ? { ...draft, tags: parseTags(draft.tags) }
+        : null,
+    };
+  });
+
+  res.json({ orders: enriched });
+});
+
+// GET /api/research/orders/:id - load order with its approved draft for review
+router.get("/orders/:id", (req, res) => {
+  const db = getDb();
+  const order = db.prepare(`
+    SELECT o.*, c.display_name AS client_name, c.company AS client_company, c.phone AS client_phone
+    FROM orders o
+    LEFT JOIN clients c ON c.id = o.client_id
+    WHERE o.id = ?
+  `).get(req.params.id);
+  if (!order) return res.status(404).json({ error: "订单不存在" });
+
+  const draft = db.prepare(
+    "SELECT * FROM drafts WHERE order_id = ? AND status = 'approved' ORDER BY version DESC LIMIT 1"
+  ).get(order.id);
+
+  res.json({ order, draft });
+});
+
+// POST /api/research/orders/:id/confirm-publish - research confirms the publish,
+// actually pushes the draft to the publisher queue.
+router.post("/orders/:id/confirm-publish", async (req, res) => {
+  const db = getDb();
+  const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(req.params.id);
+  if (!order) return res.status(404).json({ error: "订单不存在" });
+  if (order.status !== "awaiting_publish_review") {
+    return res.status(400).json({ error: `当前状态 (${order.status}) 不可确认发布` });
+  }
+
+  const draft = db.prepare(
+    "SELECT * FROM drafts WHERE order_id = ? AND status = 'approved'"
+  ).get(order.id);
+  if (!draft) {
+    return res.status(400).json({ error: "没有已批准的草稿" });
+  }
+
+  try {
+    const folder = await submitToPublisher(order, draft);
+    db.prepare(
+      "UPDATE orders SET status = 'publishing', publish_folder = ?, updated_at = datetime('now') WHERE id = ?"
+    ).run(folder, order.id);
+    res.json({ success: true, status: "publishing", publish_folder: folder });
+  } catch (err) {
+    console.error(`[research] confirm-publish failed for order ${order.id}:`, err);
+    res.status(500).json({ error: "发布失败: " + err.message });
+  }
+});
+
+// POST /api/research/orders/:id/reject-publish - research rejects the publish
+// submission, sends the order back to the client (status → approved) so they
+// can resubmit or revise.
+router.post("/orders/:id/reject-publish", (req, res) => {
+  const { reason } = req.body || {};
+  const db = getDb();
+  const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(req.params.id);
+  if (!order) return res.status(404).json({ error: "订单不存在" });
+  if (order.status !== "awaiting_publish_review") {
+    return res.status(400).json({ error: `当前状态 (${order.status}) 不可驳回发布` });
+  }
+
+  db.prepare(
+    "UPDATE orders SET status = 'approved', updated_at = datetime('now') WHERE id = ?"
+  ).run(order.id);
+
+  // Note: reject reason currently not persisted to a dedicated column. If
+  // auditability becomes a requirement, add an orders.publish_review_note column.
+  res.json({ success: true, status: "approved", reason: reason || "" });
 });
 
 export default router;

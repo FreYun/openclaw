@@ -1,0 +1,98 @@
+{
+  "top": [
+    {
+      "name": "钴",
+      "pct_chg": 13.38,
+      "amount": 0.0,
+      "leader": "腾远钴业",
+      "leader_pct": 20.0,
+      "up_count": 2,
+      "down_count": 0
+    },
+    {
+      "name": "国际工程",
+      "pct_chg": 5.67,
+      "amount": 0.0,
+      "leader": "中工国际",
+      "leader_pct": 9.96,
+      "up_count": 4,
+      "down_count": 0
+    },
+    {
+      "name": "能源金属",
+      "pct_chg": 5.42,
+      "amount": 0.0,
+      "leader": "腾远钴业",
+      "leader_pct": 20.0,
+      "up_count": 11,
+      "down_count": 0
+    },
+    {
+      "name": "航天装备Ⅲ",
+      "pct_chg": 5.22,
+      "amount": 0.0,
+      "leader": "航天环宇",
+      "leader_pct": 12.85,
+      "up_count": 9,
+      "down_count": 0
+    },
+    {
+      "name": "航天装备Ⅱ",
+      "pct_chg": 5.22,
+      "amount": 0.0,
+      "leader": "航天环宇",
+      "leader_pct": 12.85,
+      "up_count": 9,
+      "down_count": 0
+    }
+  ],
+  "bottom": [
+    {
+      "name": "稀土",
+      "pct_chg": -2.07,
+      "amount": 0.0,
+      "leader": "中稀有色",
+      "leader_pct": -1.01,
+      "up_count": 0,
+      "down_count": 4
+    },
+    {
+      "name": "油服工程",
+      "pct_chg": -2.27,
+      "amount": 0.0,
+      "leader": "海油工程",
+      "leader_pct": 1.71,
+      "up_count": 2,
+      "down_count": 12
+    },
+    {
+      "name": "钾肥",
+      "pct_chg": -2.46,
+      "amount": 0.0,
+      "leader": "藏格矿业",
+      "leader_pct": 3.0,
+      "up_count": 2,
+      "down_count": 2
+    },
+    {
+      "name": "油田服务",
+      "pct_chg": -2.79,
+      "amount": 0.0,
+      "leader": "海油发展",
+      "leader_pct": -1.77,
+      "up_count": 0,
+      "down_count": 8
+    },
+    {
+      "name": "氨纶",
+      "pct_chg": -2.95,
+      "amount": 0.0,
+      "leader": "华峰化学",
+      "leader_pct": -2.95,
+      "up_count": 0,
+      "down_count": 1
+    }
+  ],
+  "total": 496,
+  "source": "akshare"
+}

@@ -12,7 +12,8 @@ usage() {
 必填:
   -a ACCOUNT_ID    bot1-bot18
   -t TITLE         标题（≤20中文字）
-  -b BODY_FILE     正文文件路径（避免 shell 转义）
+  -b BODY_FILE     卡片文字文件路径（text_to_image 模式下 = 封面标题 ≤20字，不是正文！
+                   正文写在 -c 参数里。image/longform/video 模式下 = 正文/caption）
   -m MODE          text_to_image | image | longform | video
   -r REPLY_TO      飞书回调目标，如 direct:ou_xxx
 

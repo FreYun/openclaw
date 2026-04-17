@@ -17,6 +17,7 @@ description: ">"
 2. **用完必须关** — 无论任务成功还是失败，结束前必须执行 `browser close`，否则渲染进程持续吃 CPU，下次使用报错
 3. **ref 即用即弃** — snapshot 返回的 `ref` 只在当前页面状态有效，页面变化后必须重新 snapshot
 4. **不要囤标签** — 同时最多开 2-3 个 tab，多了会卡
+5. **🔴 飞书扫码必须发图** — 若会话来自飞书且页面出现二维码，必须立即将二维码截图发送到飞书对话，再用 AskUserQuestion 通知用户扫码。用户在飞书中看不到 AI 侧截图，不发图则用户永远看不到二维码，任务卡死。
 
 > 🚨🚨🚨 **【强制铁律·绝无例外】用完必须关闭浏览器** 🚨🚨🚨
 >
@@ -31,7 +32,7 @@ description: ">"
 > - 任何其他情况 → 必须 close
 >
 >
-> **⚠️ 唯一例外：扫码登录** — 若页面显示二维码要求用户扫码，**不要立即关闭浏览器**。应 snapshot 确认二维码可见，**若会话来自飞书则必须将二维码截图发送到飞书对话中**，再用 AskUserQuestion 通知用户扫码，等待登录成功后再继续任务，任务完成后再执行 close。
+> **⚠️ 唯一例外：扫码登录** — 若页面显示二维码：①不要关闭浏览器 ②snapshot 确认二维码可见 ③**🔴 若会话来自飞书：立即将截图发送到飞书对话**（不发图用户看不到二维码）④AskUserQuestion 通知用户扫码 ⑤等待登录成功后继续任务 ⑥任务完成后再执行 close。
 > **没有 close 的流程 = 错误的流程。渲染进程将持续占用 CPU，下次使用浏览器将报错。**
 > **如果你只记得一件事，记住这件事：用完关浏览器。**
 
@@ -96,44 +97,6 @@ browser(action="act", request={"kind": "act", "action": "scroll down"}, profile=
 - `press Tab` — 按 Tab 切换焦点
 - `go back` — 浏览器后退
 
-### 执行 JavaScript（evaluate）
-
-当 snapshot 无法获取动态渲染的数据（如 JS 加载的表格、图表）时，用 evaluate 直接执行 JS 提取。
-
-**基本用法：**
-```
-browser(action="act", request={"kind": "evaluate", "fn": "() => document.title"}, profile="your_account_id")
-```
-
-**在特定元素上执行（配合 ref）：**
-```
-browser(action="act", request={"kind": "evaluate", "fn": "(el) => el.innerText", "ref": "element_ref"}, profile="your_account_id")
-```
-
-**典型场景：**
-
-提取动态表格数据（snapshot 拿不到的）：
-```
-browser(action="act", request={"kind": "evaluate", "fn": "() => Array.from(document.querySelectorAll('table tbody tr')).map(r => r.innerText)"}, profile="your_account_id")
-```
-
-读取页面 SSR 数据：
-```
-browser(action="act", request={"kind": "evaluate", "fn": "() => JSON.stringify(window.__INITIAL_STATE__)"}, profile="your_account_id")
-```
-
-获取所有链接文本：
-```
-browser(action="act", request={"kind": "evaluate", "fn": "() => Array.from(document.querySelectorAll('a')).map(a => ({text: a.innerText.trim(), href: a.href})).filter(a => a.text)"}, profile="your_account_id")
-```
-
-**规则：**
-- `fn` 必须是合法的 JS 函数体字符串（箭头函数或普通函数）
-- 返回值自动序列化为 JSON
-- 带 `ref` 时，函数接收元素作为第一个参数
-- 不带 `ref` 时，函数在页面全局上下文执行
-- **优先用 snapshot**，只在 snapshot 拿不到所需数据时才用 evaluate
-
 ### 查看标签页
 
 **实际调用：**
@@ -166,7 +129,17 @@ browser(action="close", profile="your_account_id")
 5. ★ close  — 必须执行，无论成功或失败
 ```
 
-**第 5 步几乎没有例外。** 任务提前退出、报错中断、用户打断、找不到内容——所有情况都必须在退出前执行 `browser close`。**唯一例外：** 页面需要用户扫码登录时，保持浏览器打开等待扫码完成，之后再 close。
+**第 5 步几乎没有例外。** 任务提前退出、报错中断、用户打断、找不到内容——所有情况都必须在退出前执行 `browser close`。**唯一例外：扫码登录分支（见下）。**
+
+**扫码登录分支（替代标准第 3-5 步）：**
+```
+3a. snapshot        — 确认二维码可见
+3b. 发图到飞书       — 🔴 若会话来自飞书：必须将截图发送到飞书对话（用户在飞书看不到 AI 侧截图，不发图任务卡死）
+3c. AskUserQuestion — 通知用户扫码
+3d. 等待            — 等用户确认登录成功
+3e. 继续任务         — 执行原本的操作步骤
+5.  ★ close         — 任务完成后执行
+```
 
 > 🔴 **close 检查清单**（在结束任何浏览器任务前自问）：
 > - [ ] 我是否执行了 `browser(action="close", profile="your_account_id")`？
@@ -197,19 +170,6 @@ browser(action="act", request={"kind": "act", "action": "press Enter"}, profile=
 browser(action="snapshot", profile="your_account_id")
 browser(action="act", request={"kind": "click", "ref": "report_link_ref"}, profile="your_account_id")
 browser(action="snapshot", profile="your_account_id")
-browser(action="close", profile="your_account_id")
-```
-
-**示例：用 evaluate 提取动态页面数据**
-
-**概念流程：** open → 等待加载 → evaluate 提取 → close
-
-**实际调用：**
-```
-browser(action="open", url="https://www.cls.cn/telegraph", profile="your_account_id")
-browser(action="snapshot", profile="your_account_id")
-# snapshot 确认页面加载后，用 evaluate 提取电报快讯
-browser(action="act", request={"kind": "evaluate", "fn": "() => Array.from(document.querySelectorAll('.telegraph-content-box')).slice(0, 10).map(e => e.innerText)"}, profile="your_account_id")
 browser(action="close", profile="your_account_id")
 ```
 

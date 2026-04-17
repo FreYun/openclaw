@@ -1,9 +1,9 @@
 """
 模块：市场全景
-- 三大指数 + 沪深300 行情
+- 三大指数 + 沪深300 行情 (Tushare `index_daily` 为主, akshare 为历史 OHLC 备份)
 - 全市场成交额
-- 涨跌家数、涨停跌停数
-- akshare 主 / tushare 交叉验证
+- 涨跌家数 (Tushare `daily` 全市场日线为主, akshare 实时快照仅当天兜底)
+- 涨停跌停数 (东财 `stock_zt_pool_em` — Tushare limit_list_d 有 1/天限额弃用)
 """
 
 import logging
@@ -78,7 +78,11 @@ def _fetch_indices_ak(date_str):
 
 
 def _fetch_indices_ts(date_str):
-    """tushare 获取指数行情（用于交叉验证）"""
+    """tushare 获取指数行情 (主数据源)。
+
+    返回 dict 格式和 akshare 路径兼容, 含 OHLC + volume + amount + pct_chg。
+    Tushare amount 单位为千元, 转换为元以保持和 akshare 一致。
+    """
     results = {}
     try:
         pro = get_tushare_pro()
@@ -93,7 +97,13 @@ def _fetch_indices_ts(date_str):
                 if df is not None and len(df) > 0:
                     r = df.iloc[0]
                     results[name] = {
+                        "open": float(r["open"]),
                         "close": float(r["close"]),
+                        "high": float(r["high"]),
+                        "low": float(r["low"]),
+                        "volume": float(r.get("vol", 0)),
+                        # tushare amount 单位千元 → 元 (对齐 akshare 口径)
+                        "amount": float(r.get("amount", 0)) * 1000,
                         "pct_chg": float(r["pct_chg"]),
                     }
                 time.sleep(0.15)
@@ -268,30 +278,29 @@ def _fetch_breadth_ts(date_str):
 
 
 def fetch_market_overview(date_str):
-    """主函数：获取市场全景数据"""
-    # 1. 指数行情 (akshare 主)
-    indices_ak = _fetch_indices_ak(date_str)
+    """主函数：获取市场全景数据。
 
-    # 2. tushare 指数行情 (验证/备选)
+    2026-04-14 翻转优先级: Tushare `index_daily` 为主, akshare 仅做历史验证/备份。
+    Tushare 稳定性优于 akshare 东财接口, 且覆盖 OHLC + volume + amount 完整字段。
+    """
+    # 1. 指数行情 (tushare 主)
     indices_ts = _fetch_indices_ts(date_str)
 
-    # 如果 akshare 没有数据，用 tushare 补充
-    if not indices_ak and indices_ts:
-        indices_ak = indices_ts
-    else:
-        for name in list(indices_ts.keys()):
-            if name not in indices_ak:
-                indices_ak[name] = indices_ts[name]
-            elif indices_ak[name].get("close", 0) == 0 and name in indices_ts:
-                indices_ak[name] = indices_ts[name]
-            elif indices_ak[name].get("pct_chg", 0) == 0 and name in indices_ts:
-                indices_ak[name]["pct_chg"] = indices_ts[name].get("pct_chg", 0)
+    # 2. akshare 指数行情 (备份 / 交叉验证)
+    indices_ak = _fetch_indices_ak(date_str)
+
+    # 以 tushare 为基准, akshare 补缺 (某些历史日期 tushare 偶尔缺数据)
+    indices = dict(indices_ts)
+    for name, data in indices_ak.items():
+        if name not in indices or indices[name].get("close", 0) == 0:
+            indices[name] = data
 
     # 3. 涨跌家数
     # akshare stock_zh_a_spot_em 是实时快照，仅当天有效；历史日期必须用 tushare
     # limit_up/limit_down 子字段会被两个路径优先从东财涨停板池拿, date_str 是为此需要
     today = datetime.now().strftime("%Y-%m-%d")
     if date_str == today:
+        # 当天优先 akshare 实时快照 (tushare daily 日终才更新)
         breadth = _fetch_breadth_ak(date_str)
         if breadth is None:
             breadth = _fetch_breadth_ts(date_str)
@@ -300,11 +309,11 @@ def fetch_market_overview(date_str):
         if breadth is None:
             breadth = _fetch_breadth_ak(date_str)  # 最后兜底
 
-    # 4. 交叉验证
+    # 4. 交叉验证 (akshare vs tushare close 差异)
     validation = _cross_validate(indices_ak, indices_ts)
 
     return {
-        "indices": indices_ak,
+        "indices": indices,
         "breadth": breadth,
         "_validation": validation,
     }

@@ -68,7 +68,6 @@
   ↓
 9. 记录日志
    python3 ~/.openclaw/scripts/log-publish.py ...
-   更新 memory/发帖记录.md（异步，不阻塞下一条）
 ```
 
 ---

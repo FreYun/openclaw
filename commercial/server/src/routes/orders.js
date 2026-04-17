@@ -2,14 +2,18 @@ import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { getDb } from "../db.js";
 import { requireAuth } from "../auth.js";
+import { cleanupOrderArtifacts } from "../services/order-cleanup.js";
 
 const router = Router();
 
-// POST /api/orders - create order
+// POST /api/orders - create order.
+// requirements / title / reference_links / materials are now optional here — the
+// client can start with just { bot_id, content_type } and fill in the rest on
+// the OrderDetail page (via PATCH /orders/:id and POST /orders/:id/materials).
 router.post("/", requireAuth, (req, res) => {
   const { bot_id, title, requirements, content_type, reference_links, max_revisions } = req.body;
-  if (!bot_id || !requirements) {
-    return res.status(400).json({ error: "bot_id 和 requirements 为必填项" });
+  if (!bot_id) {
+    return res.status(400).json({ error: "bot_id 为必填项" });
   }
 
   const db = getDb();
@@ -25,7 +29,7 @@ router.post("/", requireAuth, (req, res) => {
     req.clientId,
     bot_id,
     title || "",
-    requirements,
+    requirements || "",
     content_type || "text_to_image",
     JSON.stringify(reference_links || []),
     max_revisions || 3
@@ -33,6 +37,62 @@ router.post("/", requireAuth, (req, res) => {
 
   const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(id);
   res.status(201).json({ ...order, reference_links: JSON.parse(order.reference_links) });
+});
+
+// PATCH /api/orders/:id - inline edit title / requirements / reference_links /
+// content_type. Only allowed while the order is in a "client can still shape
+// the brief" status.
+router.patch("/:id", requireAuth, (req, res) => {
+  const db = getDb();
+  const order = db.prepare("SELECT * FROM orders WHERE id = ? AND client_id = ?").get(req.params.id, req.clientId);
+  if (!order) return res.status(404).json({ error: "订单不存在" });
+
+  const editable = ["pending", "draft_ready", "revision_requested", "approved", "awaiting_review"];
+  if (!editable.includes(order.status)) {
+    return res.status(400).json({ error: `当前状态 (${order.status}) 不可编辑订单` });
+  }
+
+  const body = req.body || {};
+  const updates = [];
+  const params = [];
+
+  if (typeof body.title === "string") {
+    if (body.title.length > 100) return res.status(400).json({ error: "标题过长" });
+    updates.push("title = ?");
+    params.push(body.title);
+  }
+  if (typeof body.requirements === "string") {
+    if (body.requirements.length > 10000) return res.status(400).json({ error: "内容要求过长" });
+    updates.push("requirements = ?");
+    params.push(body.requirements);
+  }
+  if (Array.isArray(body.reference_links)) {
+    const cleaned = body.reference_links
+      .map((l) => (typeof l === "string" ? l.trim() : ""))
+      .filter(Boolean)
+      .slice(0, 20);
+    updates.push("reference_links = ?");
+    params.push(JSON.stringify(cleaned));
+  }
+  if (typeof body.content_type === "string") {
+    const allowed = ["text_to_image", "image", "longform"];
+    if (!allowed.includes(body.content_type)) {
+      return res.status(400).json({ error: "无效的内容类型" });
+    }
+    updates.push("content_type = ?");
+    params.push(body.content_type);
+  }
+
+  if (updates.length === 0) {
+    return res.status(400).json({ error: "没有可更新字段" });
+  }
+
+  updates.push("updated_at = datetime('now')");
+  params.push(order.id);
+  db.prepare(`UPDATE orders SET ${updates.join(", ")} WHERE id = ?`).run(...params);
+
+  const updated = db.prepare("SELECT * FROM orders WHERE id = ?").get(order.id);
+  res.json({ ...updated, reference_links: JSON.parse(updated.reference_links || "[]") });
 });
 
 // GET /api/orders - list my orders
@@ -72,7 +132,9 @@ router.get("/:id", requireAuth, (req, res) => {
   ).get(req.params.id, req.clientId);
   if (!order) return res.status(404).json({ error: "订单不存在" });
 
-  const materials = db.prepare("SELECT * FROM order_materials WHERE order_id = ?").all(order.id);
+  const materials = db
+    .prepare("SELECT * FROM order_materials WHERE order_id = ? ORDER BY sort_order ASC, id ASC")
+    .all(order.id);
   const drafts = db.prepare("SELECT * FROM drafts WHERE order_id = ? ORDER BY version DESC").all(order.id);
   const latestGenerationRequest = db.prepare(`
     SELECT *
@@ -103,6 +165,11 @@ router.post("/:id/cancel", requireAuth, (req, res) => {
   }
 
   db.prepare("UPDATE orders SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?").run(order.id);
+  // Sweep iteration scratch (draft-live snapshot + bot session). DB rows and
+  // uploaded materials are kept for audit.
+  try { cleanupOrderArtifacts(order.id); } catch (err) {
+    console.error(`[orders] cleanup after cancel failed:`, err.message);
+  }
   res.json({ success: true });
 });
 

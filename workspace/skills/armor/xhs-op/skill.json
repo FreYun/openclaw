@@ -26,6 +26,12 @@
       "desc": "选题推荐、内容生成、风格适配"
     },
     {
+      "name": "养号流程",
+      "icon": "🤝",
+      "file": "养号流程.md",
+      "desc": "搜索→点赞→评论→汇报的养号 SOP（由 cron-xhs-nurture-dispatch 调度触发）"
+    },
+    {
       "name": "素材积累",
       "icon": "📦",
       "skill": "xhs-topic-collector",

@@ -75,22 +75,45 @@ export function syncBotCatalog() {
       }
     }
 
-    // Read SOUL.md for description and style
-    const soulPath = path.join(wsPath, "SOUL.md");
+    // Description priority:
+    //   1. workspace-botN/commercial-selfintro  — bot-authored marketing blurb
+    //      specifically for the 商单系统 card. This is the source of truth
+    //      when present.
+    //   2. SOUL.md first few lines — fallback for bots that haven't written
+    //      a self-intro yet.
     let description = "";
     let styleSummary = "";
 
-    if (fs.existsSync(soulPath)) {
-      const soul = fs.readFileSync(soulPath, "utf8");
-      // Extract first paragraph as description (skip headings and HTML comments)
-      const cleaned = soul.replace(/<!--[\s\S]*?-->/g, "");
-      const lines = cleaned.split("\n").filter((l) => l.trim() && !l.startsWith("#") && !l.startsWith("---"));
-      description = lines.slice(0, 3).join(" ").slice(0, 300);
+    const selfIntroPath = path.join(wsPath, "commercial-selfintro");
+    if (fs.existsSync(selfIntroPath)) {
+      try {
+        const intro = fs.readFileSync(selfIntroPath, "utf8").trim();
+        if (intro) {
+          description = intro.slice(0, 300);
+          // Use the first line as the subtitle so the marketplace card has
+          // something shorter to show. If the file is a single line it'll be
+          // the same as description, which the template handles fine.
+          styleSummary = intro.split("\n")[0].trim().slice(0, 200);
+        }
+      } catch {}
+    }
 
-      // Extract style info
-      const styleMatch = soul.match(/说话风格[：:][\s\S]*?(?=\n##|\n---|\n\n\n|$)/i);
-      if (styleMatch) {
-        styleSummary = styleMatch[0].slice(0, 200).trim();
+    if (!description) {
+      const soulPath = path.join(wsPath, "SOUL.md");
+      if (fs.existsSync(soulPath)) {
+        const soul = fs.readFileSync(soulPath, "utf8");
+        // Extract first paragraph as description (skip headings and HTML comments)
+        const cleaned = soul.replace(/<!--[\s\S]*?-->/g, "");
+        const lines = cleaned
+          .split("\n")
+          .filter((l) => l.trim() && !l.startsWith("#") && !l.startsWith("---"));
+        description = lines.slice(0, 3).join(" ").slice(0, 300);
+
+        // Extract style info
+        const styleMatch = soul.match(/说话风格[：:][\s\S]*?(?=\n##|\n---|\n\n\n|$)/i);
+        if (styleMatch) {
+          styleSummary = styleMatch[0].slice(0, 200).trim();
+        }
       }
     }
 

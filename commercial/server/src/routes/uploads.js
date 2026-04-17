@@ -95,12 +95,28 @@ router.post("/:id/materials", requireAuth, requireOwnedOrder, upload.array("file
   const db = getDb();
   const order = req.order;
 
+  // New uploads get appended at the end of the current order (max sort_order + 1).
+  // We snapshot the base once per request and increment locally so multiple files
+  // in the same upload keep their relative order.
+  const maxSort = db
+    .prepare("SELECT COALESCE(MAX(sort_order), 0) AS max FROM order_materials WHERE order_id = ?")
+    .get(order.id).max;
+  let nextSort = maxSort;
   const insertStmt = db.prepare(
-    "INSERT INTO order_materials (order_id, file_name, file_path, file_type, file_size) VALUES (?, ?, ?, ?, ?)"
+    "INSERT INTO order_materials (order_id, file_name, file_path, file_type, file_size, sort_order) VALUES (?, ?, ?, ?, ?, ?)"
   );
+  const insertMaterial = (orderId, fileName, filePath, fileType, fileSize) => {
+    nextSort += 1;
+    return insertStmt.run(orderId, fileName, filePath, fileType, fileSize, nextSort);
+  };
 
   const results = [];
   let hasDocxImages = false;
+  // DOCX 文字优先进 order.requirements:
+  //   - 若 requirements 为空,直接写进去
+  //   - 若已有内容,追加在已有内容后
+  // (历史行为是把文字存成单独的 text material — 新流程不再这样做)
+  let requirementsAppend = "";
 
   for (const file of req.files) {
     const fileName = decodeFilename(file.originalname);
@@ -112,22 +128,14 @@ router.post("/:id/materials", requireAuth, requireOwnedOrder, upload.array("file
         const outputDir = path.join(UPLOADS_BASE, req.params.id);
         const parsed = await parseDocx(file.path, outputDir);
 
-        // Save extracted text as a material
         if (parsed.text) {
-          const textPath = path.join(outputDir, "materials", `${Date.now()}_docx_content.txt`);
-          fs.writeFileSync(textPath, parsed.text, "utf8");
-          const textResult = insertStmt.run(order.id, `${fileName} (文字内容)`, textPath, "text/plain", Buffer.byteLength(parsed.text));
-          results.push({
-            id: textResult.lastInsertRowid,
-            file_name: `${fileName} (文字内容)`,
-            file_type: "text/plain",
-            file_size: Buffer.byteLength(parsed.text),
-          });
+          // Accumulate across all docx files uploaded in this request.
+          requirementsAppend += (requirementsAppend ? "\n\n---\n\n" : "") + parsed.text;
         }
 
         // Save extracted images as materials
         for (const img of parsed.images) {
-          const imgResult = insertStmt.run(order.id, img.fileName, img.path, img.contentType, fs.statSync(img.path).size);
+          const imgResult = insertMaterial(order.id, img.fileName, img.path, img.contentType, fs.statSync(img.path).size);
           results.push({
             id: imgResult.lastInsertRowid,
             file_name: img.fileName,
@@ -142,12 +150,12 @@ router.post("/:id/materials", requireAuth, requireOwnedOrder, upload.array("file
       } catch (err) {
         console.error(`DOCX parse error:`, err);
         // Fallback: save the docx as-is
-        const result = insertStmt.run(order.id, fileName, file.path, file.mimetype, file.size);
+        const result = insertMaterial(order.id, fileName, file.path, file.mimetype, file.size);
         results.push({ id: result.lastInsertRowid, file_name: fileName, file_type: file.mimetype, file_size: file.size });
       }
     } else {
       // Regular file
-      const result = insertStmt.run(order.id, fileName, file.path, file.mimetype, file.size);
+      const result = insertMaterial(order.id, fileName, file.path, file.mimetype, file.size);
       results.push({ id: result.lastInsertRowid, file_name: fileName, file_type: file.mimetype, file_size: file.size });
     }
   }
@@ -159,7 +167,87 @@ router.post("/:id/materials", requireAuth, requireOwnedOrder, upload.array("file
     modeChanged = true;
   }
 
-  res.status(201).json({ materials: results, mode_changed: modeChanged, content_type: modeChanged ? "image" : order.content_type });
+  // Merge extracted DOCX text into order.requirements.
+  let requirementsUpdated = false;
+  let newRequirements = order.requirements || "";
+  if (requirementsAppend) {
+    newRequirements = newRequirements
+      ? `${newRequirements}\n\n---\n\n${requirementsAppend}`
+      : requirementsAppend;
+    db.prepare(
+      "UPDATE orders SET requirements = ?, updated_at = datetime('now') WHERE id = ?"
+    ).run(newRequirements, order.id);
+    requirementsUpdated = true;
+  }
+
+  res.status(201).json({
+    materials: results,
+    mode_changed: modeChanged,
+    content_type: modeChanged ? "image" : order.content_type,
+    requirements_updated: requirementsUpdated,
+    requirements: requirementsUpdated ? newRequirements : undefined,
+  });
+});
+
+// PUT /api/orders/:id/materials/order - reorder materials
+// Body: { ids: [mid1, mid2, ...] } — the new display order.
+// The array must contain exactly the set of image-material ids of this order.
+// Non-image materials keep their existing sort_order.
+router.put("/:id/materials/order", requireAuth, requireOwnedOrder, (req, res) => {
+  const db = getDb();
+  const order = req.order;
+  const { ids } = req.body || {};
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: "ids 必须是非空数组" });
+  }
+
+  const allMaterials = db
+    .prepare("SELECT id, file_type FROM order_materials WHERE order_id = ?")
+    .all(order.id);
+  const imageIds = new Set(
+    allMaterials.filter((m) => m.file_type.startsWith("image/")).map((m) => m.id)
+  );
+
+  // Validate: every id in the request must be an image material of this order,
+  // and every image material of this order must be represented exactly once.
+  const seen = new Set();
+  for (const raw of ids) {
+    const id = parseInt(raw, 10);
+    if (!Number.isInteger(id) || !imageIds.has(id)) {
+      return res.status(400).json({ error: `素材 ${raw} 不属于本订单或不是图片` });
+    }
+    if (seen.has(id)) {
+      return res.status(400).json({ error: `素材 ${id} 在列表中重复` });
+    }
+    seen.add(id);
+  }
+  if (seen.size !== imageIds.size) {
+    return res.status(400).json({ error: "必须提供所有图片素材的新顺序" });
+  }
+
+  // Non-image materials keep their position: we interleave them by keeping their
+  // old sort_order offset, but it's simpler to just put them after the images.
+  const updateStmt = db.prepare("UPDATE order_materials SET sort_order = ? WHERE id = ?");
+  const tx = db.transaction(() => {
+    let i = 1;
+    for (const raw of ids) {
+      updateStmt.run(i, parseInt(raw, 10));
+      i += 1;
+    }
+    // Non-image materials come after all images.
+    const nonImage = allMaterials
+      .filter((m) => !m.file_type.startsWith("image/"))
+      .map((m) => m.id)
+      .sort((a, b) => a - b);
+    for (const id of nonImage) {
+      updateStmt.run(i, id);
+      i += 1;
+    }
+  });
+  tx();
+
+  res.json({ success: true });
 });
 
 // DELETE /api/orders/:id/materials/:mid - delete material

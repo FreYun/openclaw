@@ -49,7 +49,8 @@ LLM_API_KEY = os.environ.get(
     "XFEyNVb9Hmdkl77H5fD76aB1552046Cc9cC5667f3cEd3c69",
 )
 LLM_MODEL = os.environ.get("FUND_SELECTOR_MODEL", "kimi-k2.5")
-LLM_TIMEOUT = float(os.environ.get("FUND_SELECTOR_TIMEOUT", "60"))
+LLM_TIMEOUT = float(os.environ.get("FUND_SELECTOR_TIMEOUT", "120"))
+LLM_MAX_TOKENS = int(os.environ.get("FUND_SELECTOR_MAX_TOKENS", "20000"))
 MCP_TIMEOUT = float(os.environ.get("FUND_SELECTOR_MCP_TIMEOUT", "30"))
 MCP_FIELDS = "FCODE,SHORTNAME,JJJL,SGZT,FTYPE"
 
@@ -825,7 +826,7 @@ def call_llm(topic: str, normalized_board: str | None, allowed_layers: list[str]
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
         ],
         "temperature": 1,
-        "max_tokens": 1500,
+        "max_tokens": LLM_MAX_TOKENS,
     }
     request = urllib.request.Request(
         LLM_API_URL,

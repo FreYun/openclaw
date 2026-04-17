@@ -2,16 +2,14 @@
 
 ---
 
-## System Admin — 绝对禁止 ⛔
+## System Admin — Strictly Forbidden
 
-**以下命令只有 HQ (mag1) 能执行，bot11 绝对不允许运行，没有任何例外：**
+**Only HQ (mag1) may execute these. All sub-bots are prohibited:**
 
-- `openclaw gateway restart/stop/start` — **禁止！重启 gateway 会中断所有 bot 的服务**
-- `kill/pkill/killall/xargs kill` — 禁止杀任何进程
-- `systemctl/service` — 禁止操作系统服务
+- `openclaw gateway restart/stop/start`, `kill/pkill/killall`, `systemctl/service`
 - `rm -rf`, `trash` on system directories or other bots' files
 
-**遇到基础设施问题（浏览器超时、连接失败、MCP 无响应）→ 立即通过飞书报告研究部，自己不要尝试修复。绝对不要重启任何服务。**
+**Infrastructure issues (timeout, connection failure) → report to HQ, do not troubleshoot yourself.**
 
 ---
 
@@ -61,6 +59,23 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 
 ---
 
+## Memory Recall: mem0_search
+
+语义记忆检索——跨历史会话、日记、发帖、研究报告做语义搜索。当你需要回忆"我之前对 X 说过/想过/做过什么"时调用，替代手动 grep 文件。
+
+| 参数 | 说明 |
+|------|------|
+| `query` | 自然语言检索词 |
+| `scope` | `self`（默认，仅查自己的记忆）/ `all`（跨 bot 查询） |
+
+```
+mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
+```
+
+典型场景：发文前查重、承接上篇话题、回忆过往研究结论、避免重复踩坑。
+
+---
+
 ## Tool Priority
 
 1. **memory** → check history first, update incrementally
@@ -70,6 +85,7 @@ npx mcporter call 'image-gen-mcp.generate_image(style: "扁平插画风", conten
 5. **xiaohongshu-mcp** → note management, interactions
 6. **message bus** → inter-agent communication
 <!-- TOOLS_COMMON:END -->
+
 
 
 
@@ -127,6 +143,30 @@ pro = ts.pro_api()
 | `pro.income()` | 利润表 | 需 2000 积分 |
 | `pro.balancesheet()` | 资产负债表 | 需 2000 积分 |
 | `pro.fund_nav()` | 基金净值 | 需 2000 积分 |
+
+### 实时行情接口（盘中必须用这些，不要用 akshare 全量拉取）
+
+```python
+# 1. 实时快照 — 当前价、开高低、买五卖五、成交量额
+#    注意：用旧版 ts 接口，代码用6位纯数字（不带 .SZ/.SH）
+df = ts.get_realtime_quotes('000001')              # 单只
+df = ts.get_realtime_quotes(['000001','600519'])   # 多只
+# 返回字段：name, open, pre_close, price, high, low, bid, ask,
+#           volume, amount, b1_v~b5_v, b1_p~b5_p, a1_v~a5_v, a1_p~a5_p,
+#           date, time, code
+
+# 2. 实时分钟K线 — 日内走势结构
+#    用 Pro API，代码带 .SZ/.SH 后缀
+#    freq: 1min / 5min / 15min / 30min / 60min
+#    限频：每分钟最多 2 次调用
+df = pro.stk_mins(ts_code='000001.SZ', freq='5min')
+# 返回字段：ts_code, trade_time, open, high, low, close, vol, amount
+```
+
+**为什么优先用 tushare 而不是 akshare 取实时行情**：
+- `ts.get_realtime_quotes()` 按代码精准查询，秒级返回
+- `ak.stock_zh_a_spot_em()` 拉全市场 5000+ 股票再过滤，慢且浪费
+- tushare 返回的 `name` 字段可以验证代码对应的股票名称，避免代码搞错
 
 ---
 

@@ -3,13 +3,6 @@
         "compliance-mcp": {
             "url": "http://localhost:18090/mcp"
         },
-        "fund-selector": {
-            "command": "python3",
-            "args": [
-                "/home/rooot/.openclaw/workspace-bot9/mcp-servers/fund-selector/server.py"
-            ],
-            "toolTimeout": 30
-        },
         "image-gen-mcp": {
             "url": "http://localhost:18085/mcp"
         },

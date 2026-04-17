@@ -51,7 +51,6 @@ function handleOrder(botId) {
       <div class="hero-copy">
         <div class="hero-kicker">Commercial Agent Desk</div>
         <h1>找达人</h1>
-        <p>只展示可下单的主力达人，名称与 dashboard 保持一致。</p>
       </div>
     </section>
 
@@ -88,12 +87,6 @@ function handleOrder(botId) {
         <p class="agent-description">
           {{ bot.description || '暂无介绍' }}
         </p>
-
-        <div class="agent-tags">
-          <span v-for="tag in bot.specialties.slice(0, 4)" :key="tag" class="agent-tag">
-            {{ tag }}
-          </span>
-        </div>
 
         <div class="agent-card__footer">
           <span class="agent-action-hint">点击进入下单</span>

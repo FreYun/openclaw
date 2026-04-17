@@ -40,7 +40,7 @@ description: >
 1. Read [公众号-发文前必读.md](公众号-发文前必读.md) — 红线、禁用词、Checklist
 2. Read [公众号-合规速查.md](公众号-合规速查.md) — 金融合规、风险提示模板
 
-然后读 `memory/发帖记录.md` + `memory/写稿经验.md` + `CONTENT_STYLE.md`（如有），保证连续性。
+然后用 `mem0_search` 查过往发帖、读 `memory/写稿经验.md` + `CONTENT_STYLE.md`（如有），保证连续性。原文档案可在 `memory/posts/` 兜底查阅。
 
 ### 三步发布
 

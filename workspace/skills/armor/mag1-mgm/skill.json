@@ -2,7 +2,7 @@
   "name": "公公运营术",
   "icon": "🏛️",
   "slot": "armor",
-  "desc": "印务局全流程运营：agent 通讯调度、飞书群管理、发布结果上报、各 agent 职能速查",
+  "desc": "mag1 全流程运营：agent 通讯调度、飞书群管理、发布结果上报、各 agent 职能速查",
   "requiresSkills": ["contact-book"],
   "subSkills": [
     {

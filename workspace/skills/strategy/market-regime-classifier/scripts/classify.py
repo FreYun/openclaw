@@ -2,7 +2,7 @@
 """classify.py — market-regime-classifier 的 CLI 编排器。
 
 流程:
-    parse 复盘 MD + akshare       (parser.py)
+    parse 复盘 MD + Tushare       (parser.py)
       → 六维打分                  (scoring.py)
       → 读历史 log, 构造 3 日窗口  (output_writer.parse_regime_log)
       → 逃生门检查                (regime_rules.check_emergency_hatch)
@@ -185,9 +185,9 @@ def classify(
     参数:
         date            目标交易日 'YYYY-MM-DD'
         review_md_path  复盘 MD 路径, 为 None 时 MD 侧字段全部缺失
-        cache_dir       akshare 缓存目录, 默认 skill 下 memory/cache
+        cache_dir       Tushare 缓存目录, 默认 skill 下 memory/cache
         log_path        regime-log.md 路径, 默认 skill 下 memory/regime-log.md
-        hs300_df        (测试用) 预加载的 HS300 日线 DF, 非 None 时跳过 akshare
+        hs300_df        (测试用) 预加载的 HS300 日线 DF, 非 None 时跳过 Tushare
         csi1000_df      (测试用) 同上
     """
     cache_dir = cache_dir or DEFAULT_CACHE_DIR
@@ -286,7 +286,7 @@ def _locate_review_md(date: str, explicit: Optional[str]) -> Optional[str]:
 def _is_likely_trading_day(date: str) -> bool:
     """简易交易日判断: 仅排除周末, 不覆盖节假日。
 
-    daily_review.py 先尝试 tushare 日历, 失败时也用这个回退。本 CLI
+    daily_review.py 先尝试 Tushare 日历, 失败时也用这个回退。本 CLI
     不需要节假日精度 — 数据拉不到自然会降级。
     """
     try:
@@ -330,7 +330,7 @@ def main(argv: Optional[list] = None) -> int:
     parser.add_argument(
         "--cache-dir",
         default=None,
-        help="akshare 缓存目录, 默认 skill 下 memory/cache",
+        help="Tushare 缓存目录, 默认 skill 下 memory/cache",
     )
     parser.add_argument(
         "--ignore-trading-day",

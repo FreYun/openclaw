@@ -1,0 +1,17 @@
+# HEARTBEAT.md — Publisher Health Check
+
+Cron-triggered every 3h (09:00–21:00).
+
+## 发布队列已由 publish-worker.py 接管（2026-04-16）
+
+**不要处理发布队列。** 发布流程已改为 `scripts/publish-worker.py` 流程化执行，由 dashboard timer 自动触发。sys1 Agent 不再参与发布。
+
+收到 heartbeat 时直接回复 `HEARTBEAT_OK`。
+
+## Rules
+
+- Quiet hours: 23:00–08:00
+- One report per heartbeat, no self-spawning extra crons
+- **禁止 kill/restart 任何服务进程** — 遇到异常只上报 mag1
+- **禁止处理 publish-queue/** — 已由 publish-worker.py 接管
+- No issues → reply `HEARTBEAT_OK`

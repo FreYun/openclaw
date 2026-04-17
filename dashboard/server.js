@@ -62,7 +62,7 @@ const GEM_REGISTRY_FILE = path.join(__dirname, "gem-registry.json");
 const BOT_COLORS_FILE = path.join(__dirname, "bot-colors.json");
 const ADMIN_PASSWORD = "openclaw2026";
 const DELETE_PASSWORD = "delete2026";
-const SYSTEM_BOT_IDS = new Set(["mag1", "sys1", "sys2", "sys3"]);
+const SYSTEM_BOT_IDS = new Set(["mag1", "sys1", "sys2", "sys3", "sys4"]);
 const XHS_MCP_BIN = "/home/rooot/MCP/xiaohongshu-mcp/xiaohongshu-mcp";
 const XHS_HEADED_BIN = "/home/rooot/MCP/xiaohongshu-mcp/headed-login";
 const XHS_PROFILES_BASE = "/home/rooot/.xhs-profiles";
@@ -236,7 +236,7 @@ function getContactBook() {
 }
 
 function botWorkspaceDir(botId) {
-  const mapping = { mag1: "workspace-mag1", main: "workspace-mag1", sys1: "workspace-sys1", sys2: "workspace-sys2", sys3: "workspace-sys3" };
+  const mapping = { mag1: "workspace-mag1", main: "workspace-mag1", sys1: "workspace-sys1", sys2: "workspace-sys2", sys3: "workspace-sys3", sys4: "workspace-sys4" };
   return mapping[botId] || `workspace-${botId}`;
 }
 
@@ -268,34 +268,54 @@ function redis(cmd) {
 }
 
 function getMessages(limit = 200) {
-  // Get all message IDs from all inboxes
-  const inboxKeys = redis('KEYS "agentmsg:inbox:*"').split("\n").filter(Boolean);
-  const msgIds = new Set();
+  // Collect (streamId, message_id) from every inbox/outbox stream, then top-N merge
+  // by stream ID (which is time-ordered, ms-seq). Only HMGET the global top-N details —
+  // not every ID from every stream. This keeps the Lua EVAL payload bounded by `limit`
+  // instead of scaling with total message volume.
+  const streamKeys = [
+    ...redis('KEYS "agentmsg:inbox:*"').split("\n").filter(Boolean),
+    ...redis('KEYS "agentmsg:outbox:*"').split("\n").filter(Boolean),
+  ];
 
-  for (const key of inboxKeys) {
-    const entries = redis(`XREVRANGE ${key} + - COUNT ${limit}`).split("\n").filter(Boolean);
-    for (let i = 0; i < entries.length; i++) {
-      if (entries[i] === "message_id" && entries[i + 1]) {
-        msgIds.add(entries[i + 1]);
+  // Per-stream cap: small. Global top-N across N streams only needs a few from each.
+  const perStream = Math.min(limit, 30);
+  const seen = new Set();
+  const candidates = []; // { streamId, msgId }
+
+  for (const key of streamKeys) {
+    const out = redis(`XREVRANGE ${key} + - COUNT ${perStream}`);
+    if (!out) continue;
+    const lines = out.split("\n").filter(Boolean);
+    let curStreamId = null;
+    for (let i = 0; i < lines.length; i++) {
+      // Stream ID = "<epoch-ms>-<seq>", ms is 13 digits
+      if (/^\d{13}-\d+$/.test(lines[i])) {
+        curStreamId = lines[i];
+        continue;
+      }
+      if (lines[i] === "message_id" && lines[i + 1] && curStreamId) {
+        const msgId = lines[i + 1];
+        if (!seen.has(msgId)) {
+          seen.add(msgId);
+          candidates.push({ streamId: curStreamId, msgId });
+        }
       }
     }
   }
 
-  // Also from outboxes
-  const outboxKeys = redis('KEYS "agentmsg:outbox:*"').split("\n").filter(Boolean);
-  for (const key of outboxKeys) {
-    const entries = redis(`XREVRANGE ${key} + - COUNT ${limit}`).split("\n").filter(Boolean);
-    for (let i = 0; i < entries.length; i++) {
-      if (entries[i] === "message_id" && entries[i + 1]) {
-        msgIds.add(entries[i + 1]);
-      }
-    }
-  }
+  // Top-N by stream ID desc (= newest first)
+  const cmpStreamId = (a, b) => {
+    const [am, as] = a.split("-").map(Number);
+    const [bm, bs] = b.split("-").map(Number);
+    return (bm - am) || (bs - as);
+  };
+  candidates.sort((a, b) => cmpStreamId(a.streamId, b.streamId));
+  const idList = candidates.slice(0, limit).map(c => c.msgId);
 
-  // Fetch all message details in one Redis call using Lua script
+  // Fetch only the top-N message details in one Redis call using Lua script
   const fields = ["message_id", "from", "to", "type", "status", "content", "created_at", "reply_to_message_id", "trace", "metadata"];
   const messages = [];
-  const idList = [...msgIds];
+  if (idList.length === 0) return messages;
 
   // Lua script: batch HMGET and return JSON array of arrays
   const luaScript = `
@@ -443,16 +463,44 @@ function readPostFull(filePath) {
   } catch { return null; }
 }
 
+// Track active worker processes for SSE streaming
+const activeWorkers = new Map(); // folderName -> { lines: [], done: bool, exitCode: int|null }
+
 function wakeSys1ForEntry(folderName, postMeta) {
-  const accountId = postMeta?.account_id || (folderName.match(/_(\w+?)_/) || folderName.match(/-(bot\d+)-/) || [])[1] || "unknown";
-  const title = postMeta?.title || folderName;
-  const child = spawn("openclaw", [
-    "agent", "--agent", "sys1",
-    "--session-id", `agent:sys1:agent:${accountId}`,
-    "-m", `📮 发布队列就绪：《${title}》${folderName}，请处理发布队列`
-  ], { stdio: "ignore", detached: true });
+  // 2026-04-16: 用 publish-worker.py 替代 sys1 Agent，流程化发布无需 LLM
+  const globalLog = path.join(__dirname, "..", "workspace-sys1", "publish-queue", "worker.log");
+  const globalFd = fs.openSync(globalLog, "a");
+  const state = { lines: [], done: false, exitCode: null };
+  activeWorkers.set(folderName, state);
+
+  const child = spawn("python3", [
+    "-u",
+    path.join(__dirname, "..", "scripts", "publish-worker.py"),
+    folderName
+  ], { stdio: ["ignore", "pipe", "pipe"], detached: true });
+
+  const handleData = (chunk) => {
+    const text = chunk.toString();
+    // Write to global log
+    fs.writeSync(globalFd, text);
+    // Buffer lines for SSE
+    for (const line of text.split("\n")) {
+      if (line !== "") state.lines.push(line);
+    }
+  };
+  child.stdout.on("data", handleData);
+  child.stderr.on("data", handleData);
+  child.on("close", (code) => {
+    state.done = true;
+    state.exitCode = code;
+    try { fs.closeSync(globalFd); } catch {}
+    // Clean up after 5 minutes
+    setTimeout(() => activeWorkers.delete(folderName), 300000);
+  });
   child.unref();
-  console.log(`[hold-timer] Woke sys1 for ${folderName} (${accountId})`);
+
+  const accountId = postMeta?.account_id || (folderName.match(/_(\w+?)_/) || [])[1] || "?";
+  console.log(`[hold-timer] publish-worker.py started for ${folderName} (${accountId})`);
 }
 
 const XHS_STATS_FILE = path.join(__dirname, "xhs-stats.json");
@@ -528,7 +576,7 @@ function matchXhsMetrics(publishedList, stats) {
 }
 
 function getPublishQueue() {
-  const result = { pending: [], publishing: [], published: [] };
+  const result = { pending: [], publishing: [], published: [], failed: [] };
   for (const status of Object.keys(result)) {
     const dir = path.join(PUBLISH_QUEUE, status);
     try {
@@ -559,6 +607,28 @@ function getPublishQueue() {
           const holdDeadline = submittedMs ? submittedMs + HOLD_MINUTES * 60000 : 0;
           const remainingSec = Math.max(0, Math.ceil((holdDeadline - Date.now()) / 1000));
           return { name: f, ...full, accountId: full.account_id, remainingSec, isHeld: remainingSec > 0 };
+        }
+
+        // Failed items: lightweight metadata + error reason
+        if (status === "failed") {
+          let meta = { title: "", summary: "" };
+          let errorReason = "";
+          if (stat.isDirectory()) {
+            const postMd = path.join(fullPath, "post.md");
+            if (fs.existsSync(postMd)) meta = readPostMeta(postMd);
+            const errFile = path.join(fullPath, "error.txt");
+            if (fs.existsSync(errFile)) {
+              const lines = fs.readFileSync(errFile, "utf8").split("\n");
+              for (const line of lines) {
+                if (line.startsWith("reason:")) { errorReason = line.slice(7).trim(); break; }
+              }
+            }
+          }
+          if (!meta.accountId) {
+            const m = f.match(/_(\w+?)_/) || f.match(/-(bot\d+)-/);
+            if (m) meta.accountId = m[1];
+          }
+          return { name: f, ...meta, errorReason };
         }
 
         // Publishing / Published: lightweight metadata only
@@ -1215,12 +1285,18 @@ const server = http.createServer(async (req, res) => {
   }
 
   // GET /api/services — get MCP service status + health
+  // Source of truth: gem-registry.json (manageable gems with local port + cmd + cwd).
   if (url.pathname === "/api/services" && req.method === "GET") {
     res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
-    const services = [
-      { id: "image-gen-mcp", name: "image-gen-mcp", port: 18085, cmd: "python3 server.py --transport streamable-http --port 18085", cwd: "/home/rooot/MCP/image-gen-mcp" },
-      { id: "compliance-mcp", name: "compliance-mcp", port: 18090, cmd: "./compliance-mcp -port=:18090", cwd: "/home/rooot/MCP/compliance-mcp" },
-    ];
+    let services = [];
+    try {
+      const reg = JSON.parse(fs.readFileSync(GEM_REGISTRY_FILE, "utf8"));
+      services = Object.entries(reg.gems || {})
+        .filter(([, g]) => g.manageable && g.port && g.cmd && g.cwd)
+        .map(([id, g]) => ({ id, name: id, displayName: g.name || id, port: g.port, cmd: g.cmd, cwd: g.cwd }));
+    } catch (e) {
+      // Fall through with empty list — frontend handles it.
+    }
     const results = await Promise.all(services.map(svc => {
       return new Promise(resolve => {
         let running = false;
@@ -1259,11 +1335,15 @@ const server = http.createServer(async (req, res) => {
       req.on("end", () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
     });
     const { id, action } = body; // action: "start" | "stop"
-    const services = {
-      "image-gen-mcp": { port: 18085, cmd: "python3 server.py --transport streamable-http --port 18085", cwd: "/home/rooot/MCP/image-gen-mcp" },
-      "compliance-mcp": { port: 18090, cmd: "./compliance-mcp -port=:18090", cwd: "/home/rooot/MCP/compliance-mcp" },
-    };
-    const svc = services[id];
+    // Source of truth: gem-registry.json (same list as /api/services).
+    let svc = null;
+    try {
+      const reg = JSON.parse(fs.readFileSync(GEM_REGISTRY_FILE, "utf8"));
+      const g = (reg.gems || {})[id];
+      if (g && g.manageable && g.port && g.cmd && g.cwd) {
+        svc = { port: g.port, cmd: g.cmd, cwd: g.cwd };
+      }
+    } catch {}
     if (!svc) {
       res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
       res.end(JSON.stringify({ error: "Unknown service" }));
@@ -3655,6 +3735,139 @@ print(json.dumps(result, ensure_ascii=False))
     return;
   }
 
+  // GET /api/queue/read-failed — full post metadata for editing
+  if (url.pathname === "/api/queue/read-failed" && req.method === "GET") {
+    const name = url.searchParams.get("name") || "";
+    const postMd = path.join(PUBLISH_QUEUE, "failed", name, "post.md");
+    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" });
+    try {
+      if (!fs.existsSync(postMd)) { res.end(JSON.stringify({ error: "not found" })); return; }
+      const full = readPostFull(postMd);
+      res.end(JSON.stringify({ ok: true, ...full }));
+    } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    return;
+  }
+
+  // POST /api/queue/edit-failed — edit fields in a failed post.md then move to pending
+  if (url.pathname === "/api/queue/edit-failed" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      try {
+        const { name, title, content, text_image, tags, visibility } = JSON.parse(body || "{}");
+        const postMd = path.join(PUBLISH_QUEUE, "failed", name, "post.md");
+        if (!fs.existsSync(postMd)) { res.end(JSON.stringify({ error: "not found in failed/" })); return; }
+        let raw = fs.readFileSync(postMd, "utf8");
+        const esc = s => String(s || "").replace(/"/g, '\\"');
+        const updated = [];
+        if (title !== undefined) { raw = raw.replace(/^title:\s*".*?"$/m, `title: "${esc(title)}"`); updated.push("title"); }
+        if (content !== undefined) { raw = raw.replace(/^content:\s*"[\s\S]*?"$/m, `content: "${esc(content)}"`); updated.push("content"); }
+        if (text_image !== undefined) { raw = raw.replace(/^text_image:\s*".*?"$/m, `text_image: "${esc(text_image)}"`); updated.push("text_image"); }
+        if (visibility !== undefined) { raw = raw.replace(/^visibility:\s*".*?"$/m, `visibility: "${visibility}"`); updated.push("visibility"); }
+        if (tags !== undefined) {
+          const normalizedTags = tags.map(t => String(t || "").trim()).map(t => t.replace(/^#+|#+$/g, "").trim()).filter(Boolean);
+          const tagsYaml = "[" + normalizedTags.map(t => `"${esc(t)}"`).join(", ") + "]";
+          raw = raw.replace(/^tags:\s*\[.*?\]$/m, `tags: ${tagsYaml}`);
+          updated.push("tags");
+        }
+        fs.writeFileSync(postMd, raw);
+        // Move to pending (with hold timer)
+        const src = path.join(PUBLISH_QUEUE, "failed", name);
+        const dst = path.join(PUBLISH_QUEUE, "pending", name);
+        const errFile = path.join(src, "error.txt");
+        if (fs.existsSync(errFile)) fs.unlinkSync(errFile);
+        // Update submitted_at so the 5-min hold timer restarts
+        let raw2 = fs.readFileSync(postMd, "utf8");
+        raw2 = raw2.replace(/^submitted_at:\s*".*?"$/m, `submitted_at: "${new Date().toISOString()}"`);
+        fs.writeFileSync(postMd, raw2);
+        fs.renameSync(src, dst);
+        cachedData = null; cacheTime = 0;
+        res.end(JSON.stringify({ ok: true, updated }));
+      } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+
+  // GET /api/queue/worker-log — tail global log OR stream a single entry
+  if (url.pathname === "/api/queue/worker-log" && req.method === "GET") {
+    const entry = url.searchParams.get("entry");
+
+    // Per-entry streaming: return buffered lines + done status
+    if (entry) {
+      const state = activeWorkers.get(entry);
+      const offset = parseInt(url.searchParams.get("offset")) || 0;
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*" });
+      if (!state) {
+        res.end(JSON.stringify({ lines: [], offset: 0, done: true, exitCode: null, found: false }));
+      } else {
+        const newLines = state.lines.slice(offset);
+        res.end(JSON.stringify({ lines: newLines, offset: state.lines.length, done: state.done, exitCode: state.exitCode, found: true }));
+      }
+      return;
+    }
+
+    // Global log tail
+    const tail = parseInt(url.searchParams.get("tail")) || 100;
+    const logPath = path.join(PUBLISH_QUEUE, "worker.log");
+    try {
+      if (!fs.existsSync(logPath)) {
+        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ lines: [], size: 0 }));
+        return;
+      }
+      const raw = fs.readFileSync(logPath, "utf8");
+      const allLines = raw.split("\n");
+      const lines = allLines.slice(-tail);
+      const stat = fs.statSync(logPath);
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ lines, size: stat.size }));
+    } catch (e) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
+  // POST /api/queue/retry — move failed entry back to pending
+  if (url.pathname === "/api/queue/retry" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      try {
+        const { name } = JSON.parse(body || "{}");
+        const src = path.join(PUBLISH_QUEUE, "failed", name);
+        const dst = path.join(PUBLISH_QUEUE, "pending", name);
+        if (!fs.existsSync(src)) { res.end(JSON.stringify({ error: "not found in failed/" })); return; }
+        const errFile = path.join(src, "error.txt");
+        if (fs.existsSync(errFile)) fs.unlinkSync(errFile);
+        fs.renameSync(src, dst);
+        cachedData = null; cacheTime = 0;
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+
+  // POST /api/queue/delete-failed — permanently remove failed entry
+  if (url.pathname === "/api/queue/delete-failed" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      try {
+        const { name } = JSON.parse(body || "{}");
+        const target = path.join(PUBLISH_QUEUE, "failed", name);
+        if (!fs.existsSync(target)) { res.end(JSON.stringify({ error: "not found in failed/" })); return; }
+        fs.rmSync(target, { recursive: true, force: true });
+        cachedData = null; cacheTime = 0;
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) { res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+
   if (url.pathname === "/api/commercial/draft-requests" && req.method === "GET") {
     try {
       const status = url.searchParams.get("status") || "pending_review";
@@ -3692,6 +3905,55 @@ print(json.dumps(result, ensure_ascii=False))
       const body = await readJsonBody(req);
       const result = await requestCommercial(
         `/api/research/draft-requests/${encodeURIComponent(commercialRejectMatch[1])}/reject`,
+        "POST",
+        body
+      );
+      res.writeHead(result.statusCode, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(result.data));
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // --- Publish review queue (new flow: research confirms final publish) ---
+  if (url.pathname === "/api/commercial/publish-queue" && req.method === "GET") {
+    try {
+      const result = await requestCommercial("/api/research/publish-queue");
+      res.writeHead(result.statusCode, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(result.data));
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  const commercialConfirmPublishMatch = url.pathname.match(/^\/api\/commercial\/orders\/([^/]+)\/confirm-publish$/);
+  if (commercialConfirmPublishMatch && req.method === "POST") {
+    try {
+      const body = await readJsonBody(req);
+      const result = await requestCommercial(
+        `/api/research/orders/${encodeURIComponent(commercialConfirmPublishMatch[1])}/confirm-publish`,
+        "POST",
+        body
+      );
+      res.writeHead(result.statusCode, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(result.data));
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  const commercialRejectPublishMatch = url.pathname.match(/^\/api\/commercial\/orders\/([^/]+)\/reject-publish$/);
+  if (commercialRejectPublishMatch && req.method === "POST") {
+    try {
+      const body = await readJsonBody(req);
+      const result = await requestCommercial(
+        `/api/research/orders/${encodeURIComponent(commercialRejectPublishMatch[1])}/reject-publish`,
         "POST",
         body
       );

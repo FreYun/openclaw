@@ -74,7 +74,7 @@ function viewOrder(row) {
       </el-table-column>
       <el-table-column label="内容类型" width="100">
         <template #default="{ row }">
-          {{ { text_to_image: '图文卡片', image: '图文', longform: '长文' }[row.content_type] || row.content_type }}
+          {{ { text_to_image: '文字生图', image: '图文', longform: '长文' }[row.content_type] || row.content_type }}
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="180">

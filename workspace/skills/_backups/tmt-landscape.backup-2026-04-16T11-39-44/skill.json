@@ -1,0 +1,34 @@
+{
+  "name": "TMT全景",
+  "icon": "📡",
+  "slot": "research",
+  "subType": "research",
+  "desc": "电子/计算机/通信/传媒四方向供需推导与轮动判断",
+  "requiresMcp": ["research-mcp"],
+  "subSkills": [
+    {
+      "name": "电子：供需框架",
+      "icon": "🔬",
+      "file": "electronics.md",
+      "desc": "半导体/消费电子/光模块供需推导与标的库"
+    },
+    {
+      "name": "计算机：供需框架",
+      "icon": "💻",
+      "file": "computer.md",
+      "desc": "AI/信创/安全供需推导与标的库"
+    },
+    {
+      "name": "通信：供需框架",
+      "icon": "📶",
+      "file": "telecom.md",
+      "desc": "算力基建/光通信/卫星供需推导与标的库"
+    },
+    {
+      "name": "传媒：供需框架",
+      "icon": "🎬",
+      "file": "media.md",
+      "desc": "游戏/影视/AIGC供需推导与标的库"
+    }
+  ]
+}

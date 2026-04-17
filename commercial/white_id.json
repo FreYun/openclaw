@@ -1,0 +1,124 @@
+{
+  "accounts": [
+    {
+      "username": "client01",
+      "password": "LLO0rVJ",
+      "display_name": "客户01",
+      "company": ""
+    },
+    {
+      "username": "client02",
+      "password": "7frG4EE2",
+      "display_name": "客户02",
+      "company": ""
+    },
+    {
+      "username": "client03",
+      "password": "1ukZHc1L",
+      "display_name": "客户03",
+      "company": ""
+    },
+    {
+      "username": "client04",
+      "password": "Qh2gfEu",
+      "display_name": "客户04",
+      "company": ""
+    },
+    {
+      "username": "client05",
+      "password": "ICXh3o3",
+      "display_name": "客户05",
+      "company": ""
+    },
+    {
+      "username": "client06",
+      "password": "NaOW3NXD",
+      "display_name": "客户06",
+      "company": ""
+    },
+    {
+      "username": "client07",
+      "password": "zHBf7v83",
+      "display_name": "客户07",
+      "company": ""
+    },
+    {
+      "username": "client08",
+      "password": "GqtLHtw",
+      "display_name": "客户08",
+      "company": ""
+    },
+    {
+      "username": "client09",
+      "password": "dCY6Qxal",
+      "display_name": "客户09",
+      "company": ""
+    },
+    {
+      "username": "client10",
+      "password": "917wr5W",
+      "display_name": "客户10",
+      "company": ""
+    },
+    {
+      "username": "client11",
+      "password": "D8TKYQMI",
+      "display_name": "客户11",
+      "company": ""
+    },
+    {
+      "username": "client12",
+      "password": "uDSRwNJR",
+      "display_name": "客户12",
+      "company": ""
+    },
+    {
+      "username": "client13",
+      "password": "2UCt4s",
+      "display_name": "客户13",
+      "company": ""
+    },
+    {
+      "username": "client14",
+      "password": "dmLXlz8Q",
+      "display_name": "客户14",
+      "company": ""
+    },
+    {
+      "username": "client15",
+      "password": "1o50czTx",
+      "display_name": "客户15",
+      "company": ""
+    },
+    {
+      "username": "client16",
+      "password": "r1ncIPSV",
+      "display_name": "客户16",
+      "company": ""
+    },
+    {
+      "username": "client17",
+      "password": "ZMhGKWHu",
+      "display_name": "客户17",
+      "company": ""
+    },
+    {
+      "username": "client18",
+      "password": "1fXn1pxC",
+      "display_name": "客户18",
+      "company": ""
+    },
+    {
+      "username": "client19",
+      "password": "2CwNPGr3",
+      "display_name": "客户19",
+      "company": ""
+    },
+    {
+      "username": "client20",
+      "password": "9m7HdPdD",
+      "display_name": "客户20",
+      "company": ""
+    }
+  ]
+}

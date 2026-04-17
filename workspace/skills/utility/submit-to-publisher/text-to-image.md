@@ -1,35 +1,26 @@
 # Text-to-Image Post
 
-> **🚨 核心规则：`-b` 文件中的空行（`\n\n`）= 分割线，每段生成一张独立的图片卡片！**
-> - 想要 **1 张图片** → `-b` 文件中**不要有空行**（所有文字连续写）
-> - 想要 **2 张图片** → 用**一个空行**分成两段
-> - 想要 **3 张图片** → 用**两个空行**分成三段（最多 3 张）
-> - **常见错误**：把多个段落用空行隔开，结果生成了多张图片而不是预期的一张
+> **🚨 `-b` 是封面标题文件，不是正文文件！正文走 `-c`。**
+> - **`-b` (封面标题文件)** → `text_image` 字段。**≤ 20 字，一句话的 hook**。就是图片上的那一行大字。**默认只生成 1 张卡片**（文件里不要有空行）。
+> - **`-c` (parameter)** → `content` 字段，**图片下方的正文**，正文全部写在这里。
+> - **漏掉 `-c` 会直接报错，无法提交。** 两者内容必须不同：`-b` 是钩子，`-c` 才是正文。
 
-> **🚨 `-b` 和 `-c` 都是必填项，缺一不可！**
-> - **`-b` (body file)** = 卡片上的文字 (`text_image`)。用**空行**分隔不同卡片，最多 3 张。
-> - **`-c` (parameter)** = 图片下方的正文 (`content`)。通常是总结、互动引导、或补充说明。
-> - **漏掉 `-c` 会直接报错，无法提交。** 两者内容必须不同：卡片是核心观点，正文是补充讨论。
+> **⚠️ 常见错误：把正文要点、数据、分段内容塞进 `-b`。** `-b` 不是正文，只是"封面上的那行字"。想象信息流里用户先看到的那 1 行 ≤ 20 字的大字——那就是 `-b` 的全部内容。
 
 ```bash
 cat > /tmp/post_body_$$.txt << 'BODYEOF'
-First card content
-3-6 lines ideal, include key points + data
-
-Second card content
-Continue the narrative; blank line = new card
-
-Third card (optional)
-Summary + engagement hook
+金价又新高，但我反而想跑了
 BODYEOF
 
 folder=$(bash skills/xhs-op/submit-to-publisher.sh \
-  -a ${ACCOUNT_ID} -t "标题" -b /tmp/post_body_$$.txt \
+  -a ${ACCOUNT_ID} -t "黄金ETF配置指南｜高位追涨还是观望" -b /tmp/post_body_$$.txt \
   -m text_to_image -r "direct:ou_xxx" \
   -T "A股,投资" \
   -s "基础" \
-  -c "Body text below images, different from card text. E.g.: 你怎么看？欢迎评论区聊聊～")
+  -c "午饭同事问我：老詹，黄金涨疯了还能买吗？我看了眼走势——年初到现在涨了70%多，这位置心里发毛……（此处省略全文正文，包括开头、分点、结尾互动引导、风险提示等。正文全部写在 -c 里。）")
 echo "FOLDER: $folder"
 ```
+
+> **多张卡片是例外，不是默认。** 如果确实需要 2-3 张卡片（例如一个 hook + 一个金句），才用空行分段，**每段依然 ≤ 20 字**。不要把正文段落直接拆卡片。最多 3 张。
 
 `image_style` options: `基础` (default), `光影`, `涂写`, `书摘`, `涂鸦`, `便签`, `边框`, `手写`, `几何`

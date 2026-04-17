@@ -1,0 +1,38 @@
+{
+  "name": "内容运营 Agent",
+  "icon": "🧬",
+  "slot": "armor",
+  "desc": "内容运营主编层：选题排期、审稿、人感诊断、爆款拆解",
+  "requiresMcp": [
+    "xiaohongshu-mcp"
+  ],
+  "requiresSkills": [
+    "contact-book"
+  ],
+  "subSkills": [
+    {
+      "name": "选题日历",
+      "icon": "📅",
+      "file": "content-calendar.md",
+      "desc": "内容支柱、周度排期、热点响应、多 bot 差异化协调"
+    },
+    {
+      "name": "审稿",
+      "icon": "📝",
+      "file": "draft-review.md",
+      "desc": "渐进式加载，三阶段审稿（人感→战略→打磨）"
+    },
+    {
+      "name": "人感诊断",
+      "icon": "🧬",
+      "file": "human-feel-audit.md",
+      "desc": "检测 AI 味七宗罪，输出诊断报告和针对性处方"
+    },
+    {
+      "name": "爆款拆解",
+      "icon": "🔍",
+      "file": "hit-breakdown.md",
+      "desc": "跨领域采集高互动帖子，拆解通用爆款规律，沉淀模式库"
+    }
+  ]
+}

@@ -3,13 +3,86 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 import { getDb } from "../db.js";
+import { cleanupOrderArtifacts } from "./order-cleanup.js";
 
-const SUBMIT_SCRIPT = "/home/rooot/.openclaw/workspace/skills/xhs-op/submit-to-publisher.sh";
+const SUBMIT_SCRIPT = "/home/rooot/.openclaw/workspace/skills/armor/xhs-op/submit-to-publisher.sh";
+const QUEUE_ROOT = "/home/rooot/.openclaw/workspace-sys1/publish-queue";
+
+// Folder subdirs sys1 can move a publish entry into, and how the commercial
+// order should react when it shows up there.
+const QUEUE_STATE_TO_ORDER_STATUS = {
+  pending: null,            // still being held — no change
+  "pending-approval": null, // still being held — no change
+  publishing: null,         // mid-publish — no change
+  published: "published",
+  done: "published",
+  rejected: "approved",     // dashboard 打回 → client 可重新提交
+  failed: "approved",       // publisher 失败 → client 可重新提交
+};
+
+function findQueueFolderLocation(folderName) {
+  if (!folderName) return null;
+  for (const sub of Object.keys(QUEUE_STATE_TO_ORDER_STATUS)) {
+    try {
+      if (fs.statSync(path.join(QUEUE_ROOT, sub, folderName)).isDirectory()) {
+        return sub;
+      }
+    } catch {}
+  }
+  return null;
+}
+
+/**
+ * Reconcile any orders stuck in `publishing` against the actual location of
+ * their publish_folder in workspace-sys1/publish-queue. sys1 / the dashboard
+ * can move folders between pending/rejected/published without telling us, so
+ * commercial must poll to avoid orders being stuck in `publishing` forever.
+ */
+export function reconcilePublishingOrders() {
+  const db = getDb();
+  const stuck = db
+    .prepare(
+      "SELECT id, publish_folder FROM orders WHERE status = 'publishing' AND publish_folder IS NOT NULL AND publish_folder != ''"
+    )
+    .all();
+
+  let changed = 0;
+  for (const order of stuck) {
+    const loc = findQueueFolderLocation(order.publish_folder);
+    if (loc === null) {
+      console.warn(
+        `[publish-bridge] Reconcile: order ${order.id} folder "${order.publish_folder}" not found in any queue subdir — leaving as-is`
+      );
+      continue;
+    }
+    const nextStatus = QUEUE_STATE_TO_ORDER_STATUS[loc];
+    if (!nextStatus) continue; // still in-flight
+
+    db.prepare(
+      "UPDATE orders SET status = ?, updated_at = datetime('now') WHERE id = ?"
+    ).run(nextStatus, order.id);
+    console.log(
+      `[publish-bridge] Reconciled order ${order.id}: folder in "${loc}" → status=${nextStatus}`
+    );
+    // When a reconcile lands the order in a terminal state, sweep its
+    // iteration scratch (draft-live, bot session). Other statuses (approved,
+    // rejected) leave the scratch alone so the client can continue refining.
+    if (nextStatus === "published") {
+      try {
+        cleanupOrderArtifacts(order.id);
+      } catch (err) {
+        console.error(`[publish-bridge] cleanup after published failed:`, err.message);
+      }
+    }
+    changed++;
+  }
+  return changed;
+}
 
 function getOrderImagePaths(orderId) {
   const db = getDb();
   const materials = db.prepare(
-    "SELECT file_path FROM order_materials WHERE order_id = ? AND file_type LIKE 'image/%' ORDER BY id"
+    "SELECT file_path FROM order_materials WHERE order_id = ? AND file_type LIKE 'image/%' ORDER BY sort_order ASC, id ASC"
   ).all(orderId);
 
   return materials

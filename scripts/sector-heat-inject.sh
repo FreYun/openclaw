@@ -3,7 +3,7 @@
 # cron 每 15 分钟调用一次
 
 SCRIPT_DIR="/home/rooot/.openclaw/scripts"
-HOT_FILE="/home/rooot/.openclaw/workspace/skills/xhs-op/hot_shot.md"
+HOT_FILE="/home/rooot/.openclaw/workspace/skills/armor/xhs-op/hot_shot.md"
 
 # 运行 sector-heat.mjs，超时 60 秒
 OUTPUT=$(cd "$SCRIPT_DIR" && timeout 60 node sector-heat.mjs --xueqiu 2>/dev/null | grep -v '^✅')

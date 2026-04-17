@@ -1,0 +1,70 @@
+{
+  "order": {
+    "id": "cb9361ee-6580-4386-a7f7-655fb1dc9631",
+    "title": "创业板新高",
+    "bot_id": "bot7",
+    "status": "pending",
+    "requirements": "讲一下今天创业板的情况，今天行情很猛",
+    "content_type": "image",
+    "max_revisions": 3,
+    "reference_links": [],
+    "created_at": "2026-04-10 06:20:20",
+    "updated_at": "2026-04-10 06:20:20"
+  },
+  "client": {
+    "id": 7,
+    "username": "test11",
+    "display_name": "test",
+    "company": "",
+    "phone": ""
+  },
+  "generation_request": {
+    "version": 1,
+    "revision_note": ""
+  },
+  "materials": [
+    {
+      "id": 50,
+      "file_name": "创新药-老K.docx (文字内容)",
+      "file_type": "text/plain",
+      "file_size": 2159,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/cb9361ee-6580-4386-a7f7-655fb1dc9631/materials/1775802020698_docx_content.txt",
+      "uploaded_at": "2026-04-10 06:20:20",
+      "text_content": "今天大盘反弹了一点，但说实话我的注意力全在医药上 📈 中证医药单日拉了超3%，创新药板块直接领涨——连续两周市场跌得人心惶惶，今天医药这个力度，我觉得不是简单的超跌反弹。\n\n先说我的判断：创新药接下来一到两个月，可能是全年弹性最大的方向。\n\n\\[一\\]\n\n为什么？三个原因，一个比一个硬 💪\n\n第一，业绩拐点。之前大家最嫌弃创新药的就是\"只烧💰不赚钱\"，估值全靠故事撑着。但从去年年报开始，头部公司开始密集交出盈利答卷了。有公司创新药收入占比过半，有公司直接跨过百亿营收同时盈利。这不是一两家的事，是趋势——Biotech在从讲故事阶段毕业 😂\n\n第二，政策定调变了。两会直接把生物医药列为新兴支柱产业，含金量很高 📶 然后长护险文件又打开了医保之外的新支付通道。以前创新药只靠医保一条腿走路，现在商保\\+长护险在给第二条腿。\n\n第三，BD出海。一季度出海BD已经超出预期，海外在用真💰给中国创新药定价。不是谁在吹，是订单在说话 🐮\n\n\\[二\\]\n\n值得注意一点：每年这个时候是创新药的\"事件窗口\"✅4月和5月有两场全球最重要的医药学术会议，资金现在开始布局，是在抢预期。\n\n医药板块经过这两周调整，估值已经回到合理区间。机构研报开始密集翻多，基本面和估值双修复的逻辑正在形成共识。\n\n但我个人的看法是，别光听研报的，看两点就够了：一是头部公司盈利能不能持续，二是BD出海订单能不能维持高位。这两个是核心变量。\n\n\\[老K怎么看\\]\n\n四重共振落在同一个窗口，这种机会不多。想关注创新药方向，A股和隔壁市场各有一只创新药ETF，搜一下就行。\n\n声明：个人观点和思考不构成投Z决策建议。没有群，不做投Z咨询，所有决策均应视自身风险承受能力以及预期目标来做出。\n\n\\#创新药\\[话题\\]\\# \\#ETF\\[话题\\]\\# \\#医药\\[话题\\]\\# \\#行情\\[话题\\]\\# \\#我的理财日记\\[话题\\]\\#"
+    },
+    {
+      "id": 51,
+      "file_name": "docx_img_1.png",
+      "file_type": "image/png",
+      "file_size": 1083466,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/cb9361ee-6580-4386-a7f7-655fb1dc9631/docx_images/docx_img_1.png",
+      "uploaded_at": "2026-04-10 06:20:20",
+      "text_content": null
+    },
+    {
+      "id": 52,
+      "file_name": "docx_img_2.png",
+      "file_type": "image/png",
+      "file_size": 122667,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/cb9361ee-6580-4386-a7f7-655fb1dc9631/docx_images/docx_img_2.png",
+      "uploaded_at": "2026-04-10 06:20:20",
+      "text_content": null
+    },
+    {
+      "id": 53,
+      "file_name": "docx_img_3.png",
+      "file_type": "image/png",
+      "file_size": 96427,
+      "file_path": "/home/rooot/.openclaw/commercial/uploads/orders/cb9361ee-6580-4386-a7f7-655fb1dc9631/docx_images/docx_img_3.png",
+      "uploaded_at": "2026-04-10 06:20:20",
+      "text_content": null
+    }
+  ],
+  "drafts": [],
+  "request_id": "9f5f26fd-92c5-46f9-b09b-9b5b77d1df8d",
+  "status": "rejected",
+  "created_at": "2026-04-10T06:20:33.176Z",
+  "updated_at": "2026-04-14T08:59:27.609Z",
+  "reviewer_note": "123",
+  "reviewed_at": "2026-04-14T08:59:27.609Z"
+}

@@ -70,6 +70,7 @@ function migrate(db) {
       file_path   TEXT NOT NULL,
       file_type   TEXT NOT NULL,
       file_size   INTEGER NOT NULL,
+      sort_order  INTEGER NOT NULL DEFAULT 0,
       uploaded_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
@@ -115,7 +116,28 @@ function migrate(db) {
       ON draft_generation_requests(order_id);
     CREATE INDEX IF NOT EXISTS idx_draft_generation_requests_status
       ON draft_generation_requests(status);
+
+    CREATE TABLE IF NOT EXISTS client_bot_chat_quota (
+      client_id    INTEGER NOT NULL REFERENCES clients(id),
+      bot_id       TEXT NOT NULL,
+      used_count   INTEGER NOT NULL DEFAULT 0,
+      max_count    INTEGER NOT NULL DEFAULT 50,
+      last_used_at TEXT,
+      created_at   TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at   TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (client_id, bot_id)
+    );
   `);
+
+  // Additive migrations for columns that were introduced after the
+  // initial schema was shipped.
+  const materialCols = db.prepare(`PRAGMA table_info(order_materials)`).all();
+  if (!materialCols.some((c) => c.name === "sort_order")) {
+    db.exec(`ALTER TABLE order_materials ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0`);
+    // Backfill existing rows: use id as the initial sort_order so the
+    // current upload order is preserved until someone drags to reorder.
+    db.exec(`UPDATE order_materials SET sort_order = id WHERE sort_order = 0`);
+  }
 }
 
 export default getDb;

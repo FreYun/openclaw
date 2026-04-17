@@ -15,14 +15,14 @@ description: ">"
 | 研究部给了基金产品资料 + 业绩走势图，让你出内容 | 从 Step 1 开始 |
 | 研究部说「出一套科普卡片」「做个知识图文帖」且涉及基金/理财产品 | 从 Step 1 开始 |
 | 研究部给了选题方向 + 要求带业绩图和风险提示 | 从 Step 1 开始 |
-| 收到「✅」/「已批准」 | 跳到 scheduled-post Step C |
+| 收到「✅」/「已批准」 | 按 `skills/xhs-op/投稿发布.md` 投稿 |
 | 收到修改意见/「打回」 | 按意见修改后重新提交 |
 
 ### 不触发的场景
 
 | 场景 | 用什么 |
 |------|-------|
-| 日常发帖（非商单） | `james-daily-post` 等日常内容 skill |
+| 日常发帖（非商单） | `skills/xhs-op/daily-post.md` |
 | 只需要封面图 | `james-cover` |
 | 纯文字帖（不需要多图卡片） | `xhs-writing` |
 | 非基金/理财类商单 | 根据品类选其他 skill |
@@ -268,7 +268,7 @@ npx mcporter call 'image-gen-mcp.generate_image(
 
 ### Step 5 · 合规检查
 
-**必须 Read `COMPLIANCE.md`**，逐项过 Checklist（图片 + 正文两个部分均需检查），通过后交 `scheduled-post`。
+**必须 Read `COMPLIANCE.md`**，逐项过 Checklist（图片 + 正文两个部分均需检查），通过后按 `skills/xhs-op/投稿发布.md` 投稿。
 
 **快速记忆：每张图底部必须有风险提示 + 广告标；正文末尾必须有完整风险提示；图 4 需叠加场景化风险提示。**
 

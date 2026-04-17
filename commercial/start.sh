@@ -4,6 +4,39 @@ cd "$(dirname "$0")"
 PORT=18900
 APP_ENTRY="server/src/index.js"
 
+# --- Auto-rebuild client if sources are newer than dist -----------------------
+# Server serves client/dist/ as static assets. If the .vue / .js / .css sources
+# under client/src/ (or config files) are newer than dist/index.html, rebuild
+# before (re)starting the server. Prevents the classic "restarted server but
+# browser still loads old bundle" footgun.
+#
+# Build runs BEFORE killing the old server — if build fails, old server keeps
+# running so we don't end up with nothing live.
+NEEDS_BUILD=0
+if [ ! -f client/dist/index.html ]; then
+    echo "[client] dist/ missing, building..."
+    NEEDS_BUILD=1
+elif find \
+        client/src \
+        client/index.html \
+        client/package.json \
+        client/vite.config.js client/vite.config.ts \
+        -newer client/dist/index.html \
+        -print -quit 2>/dev/null | grep -q .; then
+    echo "[client] source changed since last build, rebuilding..."
+    NEEDS_BUILD=1
+fi
+
+if [ "$NEEDS_BUILD" = "1" ]; then
+    if [ ! -d client/node_modules ]; then
+        echo "[client] node_modules missing, running npm install first..."
+        (cd client && npm install) || { echo "FAIL - client npm install failed"; exit 1; }
+    fi
+    (cd client && npm run build) || { echo "FAIL - client build failed"; exit 1; }
+    echo "[client] build OK"
+fi
+# -----------------------------------------------------------------------------
+
 is_commercial_pid() {
     local pid="$1"
     local args

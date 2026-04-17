@@ -90,17 +90,27 @@ with open(stats_file) as f:
 args = sys.argv[1:]
 
 # --summary mode: one line per bot
+# 曝光 < 50 = 大概率被 XHS 限流或未过 AI 审核（看 impressions 而非 views，两者是独立字段）
 if '--summary' in args:
+    def iv(v):
+        try: return int(v or 0)
+        except: return 0
     print(f"Updated: {data.get('updated_at', '?')}")
+    print(f"  {'bot':<7} {'notes':>5} {'likes':>6} {'comm':>5} {'曝<50':>6} {'死亡率':>7}")
     for bot_id in sorted(data.get('bots', {}), key=lambda x: int(x.replace('bot','')) if x.startswith('bot') else 0):
         bot = data['bots'][bot_id]
         notes = bot.get('notes', [])
         if not notes:
             print(f"  {bot_id}: no data")
             continue
-        total_likes = sum(int(n.get('likes', 0)) for n in notes)
-        total_comments = sum(int(n.get('comments', 0)) for n in notes)
-        print(f"  {bot_id}: {len(notes)} notes, {total_likes} likes, {total_comments} comments")
+        total_likes = sum(iv(n.get('likes')) for n in notes)
+        total_comments = sum(iv(n.get('comments')) for n in notes)
+        dead = sum(1 for n in notes if iv(n.get('impressions')) < 50)
+        death_rate = dead / len(notes) * 100 if notes else 0
+        marker = ' ⚠️' if death_rate >= 30 else ''
+        print(f"  {bot_id:<7} {len(notes):>5} {total_likes:>6} {total_comments:>5} {dead:>6} {death_rate:>6.1f}%{marker}")
+    print()
+    print("  (曝<50 = 曝光量<50 的帖子数 = 大概率被限流/未过审；注意区分曝光和浏览)")
     sys.exit(0)
 
 # Need a bot ID
@@ -161,6 +171,6 @@ else:
                     print(f"    {line}")
                 print(f"    --- /正文 ---")
             else:
-                print(f"    (正文未找到，可查 bot 的 memory/发帖记录.md)")
+                print(f"    (正文未找到，可查 bot 的 memory/posts/ 归档)")
         print()
 PYEOF

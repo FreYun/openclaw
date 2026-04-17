@@ -3,10 +3,11 @@
 覆盖:
 1. parse_daily_review — 真实复盘 MD fixture + 合成最小 MD 字符串
 2. compute_index_ma / compute_volume_ratio — 合成 DataFrame, 不依赖网络
-3. fetch_index_daily — 本地 CSV 缓存读取路径 (不打 akshare)
-4. build_raw_market_data — 完整编排器, 含降级路径
+3. fetch_index_daily — 本地 CSV 缓存读取路径 + monkeypatch Tushare 拉取路径
+4. fetch_full_market_volume — 缓存读取 + monkeypatch Tushare daily_info 路径
+5. build_raw_market_data — 完整编排器, 含降级路径
 
-不测 akshare 网络调用 (接口已在 REPL 手动验证)。
+不打真实 Tushare 网络 (网络路径通过 monkeypatch 打桩 tushare_client.call)。
 """
 
 import os
@@ -399,54 +400,127 @@ class TestComputePctChange:
 # --------------------------------------------------------------------------- #
 
 
-class TestFetchFullMarketVolumeFromCache:
-    """直接构造上证/深证的 _em 缓存文件, 验证合成逻辑正确。"""
+class TestFetchFullMarketVolumeCacheRead:
+    """fetch_full_market_volume 的缓存读取路径 (预写 CSV, 不打网络)。"""
 
-    def _write_cache(self, cache_dir, symbol, dates, amounts):
-        df = pd.DataFrame({
-            "date": dates,
-            "open": [100.0] * len(dates),
-            "close": [100.0] * len(dates),
-            "high": [100.0] * len(dates),
-            "low": [100.0] * len(dates),
-            "volume": [1e8] * len(dates),
-            "amount": amounts,
+    def _write_cache(self, cache_dir, dates, volumes):
+        df = pd.DataFrame({"date": dates, "volume": volumes})
+        df.to_csv(os.path.join(cache_dir, "full_market_amount.csv"), index=False)
+
+    def test_reads_existing_cache_when_target_date_present(self, tmp_path):
+        cd = str(tmp_path)
+        self._write_cache(cd, ["2026-03-23", "2026-03-24", "2026-03-25"], [1000, 1100, 1200])
+
+        df = fetch_full_market_volume(cd, target_date="2026-03-25")
+        assert list(df.columns) == ["date", "volume"]
+        assert len(df) == 3
+        assert df.iloc[-1]["volume"] == pytest.approx(1200.0)
+
+    def test_reads_existing_cache_when_target_date_none(self, tmp_path):
+        cd = str(tmp_path)
+        self._write_cache(cd, ["2026-03-23", "2026-03-24"], [1000, 1100])
+        df = fetch_full_market_volume(cd)  # target_date=None
+        assert len(df) == 2
+
+    def test_cache_sorted_by_date(self, tmp_path):
+        cd = str(tmp_path)
+        self._write_cache(cd, ["2026-03-25", "2026-03-23", "2026-03-24"], [3, 1, 2])
+        df = fetch_full_market_volume(cd, target_date="2026-03-25")
+        assert list(df["date"]) == ["2026-03-23", "2026-03-24", "2026-03-25"]
+
+
+class TestFetchFullMarketVolumeTushareStub:
+    """Tushare 拉取路径 — monkeypatch tushare_client.call, 验证合成与合并逻辑。"""
+
+    def _fake_call(self, daily_info_payloads):
+        """构造一个打桩函数: 根据 params['ts_code'] 返回对应的 DataFrame。
+
+        daily_info_payloads: {ts_code: DataFrame(trade_date, ts_code, amount)}
+        """
+        def _stub(api_name, params, fields=""):
+            assert api_name == "daily_info"
+            ts = params["ts_code"]
+            return daily_info_payloads[ts].copy()
+        return _stub
+
+    def test_combines_sh_market_and_sz_market(self, tmp_path, monkeypatch):
+        cd = str(tmp_path)
+        # Tushare trade_date 是 YYYYMMDD 字符串
+        sh = pd.DataFrame({
+            "trade_date": ["20260323", "20260324", "20260325"],
+            "ts_code": ["SH_MARKET"] * 3,
+            "amount": [9000.0, 9500.0, 9678.0],  # 亿元
         })
-        df.to_csv(
-            os.path.join(cache_dir, f"index_{symbol}_em.csv"),
-            index=False,
+        sz = pd.DataFrame({
+            "trade_date": ["20260323", "20260324", "20260325"],
+            "ts_code": ["SZ_MARKET"] * 3,
+            "amount": [11000.0, 11500.0, 12120.0],
+        })
+        import tushare_client
+        monkeypatch.setattr(
+            tushare_client, "call",
+            self._fake_call({"SH_MARKET": sh, "SZ_MARKET": sz}),
         )
 
-    def test_combines_shanghai_and_shenzhen_amount(self, tmp_path):
-        cd = str(tmp_path)
-        dates = ["2026-03-23", "2026-03-24", "2026-03-25"]
-        # 上证 9000/9500/9678 亿, 深证 11000/11500/12120 亿
-        self._write_cache(cd, "sh000001", dates, [9.0e11, 9.5e11, 9.678e11])
-        self._write_cache(cd, "sz399001", dates, [1.1e12, 1.15e12, 1.212e12])
-
-        df = fetch_full_market_volume(cd)
+        df = fetch_full_market_volume(cd, refresh=True)
         assert list(df.columns) == ["date", "volume"]
         assert len(df) == 3
         # 2026-03-25: 9678 + 12120 = 21798 亿
         row = df[df["date"] == "2026-03-25"].iloc[0]
-        assert row["volume"] == pytest.approx(9.678e11 + 1.212e12)
+        assert row["volume"] == pytest.approx(9678.0 + 12120.0)
+        # 写入缓存
+        assert os.path.exists(os.path.join(cd, "full_market_amount.csv"))
 
-    def test_inner_join_drops_missing_dates(self, tmp_path):
+    def test_inner_join_drops_missing_dates(self, tmp_path, monkeypatch):
         cd = str(tmp_path)
-        # 上证有 3 天, 深证只有 2 天 → 合并后 2 天
-        self._write_cache(cd, "sh000001", ["2026-03-23", "2026-03-24", "2026-03-25"], [1, 2, 3])
-        self._write_cache(cd, "sz399001", ["2026-03-24", "2026-03-25"], [10, 20])
-        df = fetch_full_market_volume(cd)
+        sh = pd.DataFrame({
+            "trade_date": ["20260323", "20260324", "20260325"],
+            "ts_code": ["SH_MARKET"] * 3,
+            "amount": [1.0, 2.0, 3.0],
+        })
+        # 深证只有 2 天
+        sz = pd.DataFrame({
+            "trade_date": ["20260324", "20260325"],
+            "ts_code": ["SZ_MARKET"] * 2,
+            "amount": [10.0, 20.0],
+        })
+        import tushare_client
+        monkeypatch.setattr(
+            tushare_client, "call",
+            self._fake_call({"SH_MARKET": sh, "SZ_MARKET": sz}),
+        )
+
+        df = fetch_full_market_volume(cd, refresh=True)
         assert len(df) == 2
         assert set(df["date"]) == {"2026-03-24", "2026-03-25"}
 
-    def test_sorted_by_date(self, tmp_path):
+    def test_target_date_missing_triggers_refetch(self, tmp_path, monkeypatch):
+        """缓存不含 target_date 时应重新拉取 (老 akshare 版本漏掉的 bug)。"""
         cd = str(tmp_path)
-        dates = ["2026-03-25", "2026-03-23", "2026-03-24"]
-        self._write_cache(cd, "sh000001", dates, [3, 1, 2])
-        self._write_cache(cd, "sz399001", dates, [30, 10, 20])
-        df = fetch_full_market_volume(cd)
-        assert list(df["date"]) == ["2026-03-23", "2026-03-24", "2026-03-25"]
+        # 预写缓存, 只含 03-23
+        stale = pd.DataFrame({"date": ["2026-03-23"], "volume": [999.0]})
+        stale.to_csv(os.path.join(cd, "full_market_amount.csv"), index=False)
+
+        sh = pd.DataFrame({
+            "trade_date": ["20260323", "20260324"],
+            "ts_code": ["SH_MARKET"] * 2,
+            "amount": [100.0, 150.0],
+        })
+        sz = pd.DataFrame({
+            "trade_date": ["20260323", "20260324"],
+            "ts_code": ["SZ_MARKET"] * 2,
+            "amount": [200.0, 250.0],
+        })
+        import tushare_client
+        monkeypatch.setattr(
+            tushare_client, "call",
+            self._fake_call({"SH_MARKET": sh, "SZ_MARKET": sz}),
+        )
+
+        # 请求 target_date=2026-03-24 → 应 refetch
+        df = fetch_full_market_volume(cd, target_date="2026-03-24")
+        assert len(df) == 2  # 不是 stale 的 1 行
+        assert df[df["date"] == "2026-03-24"].iloc[0]["volume"] == pytest.approx(400.0)
 
 
 class TestBuildRawWithFullMarketDf:
@@ -493,28 +567,104 @@ class TestBuildRawWithFullMarketDf:
 
 
 class TestFetchIndexDailyCache:
-    def test_reads_existing_cache(self, tmp_path):
+    def test_reads_existing_cache_when_target_date_present(self, tmp_path):
         cache_dir = str(tmp_path)
-        # 手工写一个缓存 CSV
+        # 手工写一个缓存 CSV (新前缀: index_ts_{name}.csv)
         df_in = _make_index_df(n_days=10)
-        cache_path = os.path.join(cache_dir, "index_sh000300.csv")
+        cache_path = os.path.join(cache_dir, "index_ts_hs300.csv")
         df_in.to_csv(cache_path, index=False)
 
-        df_out = fetch_index_daily("sh000300", cache_dir, refresh=False)
+        target = df_in.iloc[-1]["date"]
+        df_out = fetch_index_daily("hs300", cache_dir, target_date=target)
         assert len(df_out) == 10
         assert list(df_out.columns) == ["date", "open", "high", "low", "close", "volume"]
         assert df_out.iloc[0]["date"] == df_in.iloc[0]["date"]
+
+    def test_reads_existing_cache_when_target_date_none(self, tmp_path):
+        cache_dir = str(tmp_path)
+        df_in = _make_index_df(n_days=5)
+        df_in.to_csv(os.path.join(cache_dir, "index_ts_csi1000.csv"), index=False)
+
+        df_out = fetch_index_daily("csi1000", cache_dir)  # target_date=None
+        assert len(df_out) == 5
 
     def test_cache_sorted_by_date(self, tmp_path):
         cache_dir = str(tmp_path)
         # 写入一个乱序的缓存
         df_in = _make_index_df(n_days=10)
         df_in = df_in.sample(frac=1, random_state=42).reset_index(drop=True)
-        df_in.to_csv(os.path.join(cache_dir, "index_sh000300.csv"), index=False)
+        df_in.to_csv(os.path.join(cache_dir, "index_ts_hs300.csv"), index=False)
 
-        df_out = fetch_index_daily("sh000300", cache_dir)
+        df_out = fetch_index_daily("hs300", cache_dir)
         dates = df_out["date"].tolist()
         assert dates == sorted(dates)
+
+    def test_unknown_name_raises(self, tmp_path):
+        with pytest.raises(KeyError, match="unknown index name"):
+            fetch_index_daily("not_a_real_index", str(tmp_path))
+
+
+class TestFetchIndexDailyTushareStub:
+    """Tushare 拉取路径 — monkeypatch tushare_client.call, 验证列规范化。"""
+
+    def test_fetches_and_normalizes_columns(self, tmp_path, monkeypatch):
+        cd = str(tmp_path)
+        # Tushare 原生列: ts_code, trade_date (YYYYMMDD), open, high, low, close, vol
+        raw = pd.DataFrame({
+            "ts_code": ["000300.SH"] * 3,
+            "trade_date": ["20260410", "20260413", "20260414"],
+            "open": [4600.0, 4620.0, 4676.12],
+            "high": [4650.0, 4680.0, 4701.28],
+            "low": [4580.0, 4610.0, 4654.85],
+            "close": [4636.57, 4646.15, 4701.28],
+            "vol": [2.08e8, 1.97e8, 2.05e8],
+        })
+        import tushare_client
+
+        def _stub(api_name, params, fields=""):
+            assert api_name == "index_daily"
+            assert params["ts_code"] == "000300.SH"
+            return raw.copy()
+
+        monkeypatch.setattr(tushare_client, "call", _stub)
+
+        df = fetch_index_daily("hs300", cd, refresh=True)
+        assert list(df.columns) == ["date", "open", "high", "low", "close", "volume"]
+        assert list(df["date"]) == ["2026-04-10", "2026-04-13", "2026-04-14"]
+        assert df.iloc[-1]["close"] == pytest.approx(4701.28)
+        assert df.iloc[-1]["volume"] == pytest.approx(2.05e8)
+        # 写入了新前缀缓存
+        assert os.path.exists(os.path.join(cd, "index_ts_hs300.csv"))
+
+    def test_target_date_missing_triggers_refetch(self, tmp_path, monkeypatch):
+        cd = str(tmp_path)
+        # 预写陈旧缓存, 只含 04-10
+        stale = pd.DataFrame({
+            "date": ["2026-04-10"],
+            "open": [4600.0], "high": [4650.0], "low": [4580.0],
+            "close": [4636.57], "volume": [2.08e8],
+        })
+        stale.to_csv(os.path.join(cd, "index_ts_hs300.csv"), index=False)
+
+        raw = pd.DataFrame({
+            "ts_code": ["000300.SH"] * 2,
+            "trade_date": ["20260410", "20260414"],
+            "open": [4600.0, 4676.12],
+            "high": [4650.0, 4701.28],
+            "low":  [4580.0, 4654.85],
+            "close": [4636.57, 4701.28],
+            "vol":   [2.08e8, 2.05e8],
+        })
+        import tushare_client
+        monkeypatch.setattr(
+            tushare_client, "call",
+            lambda api, params, fields="": raw.copy(),
+        )
+
+        # 请求 target_date=2026-04-14 → 应 refetch (陈旧缓存里没有)
+        df = fetch_index_daily("hs300", cd, target_date="2026-04-14")
+        assert "2026-04-14" in set(df["date"].values)
+        assert len(df) == 2
 
 
 # --------------------------------------------------------------------------- #
@@ -575,7 +725,7 @@ class TestBuildRawMarketData:
             md_path=str(md),
             hs300_df=None,
             csi1000_df=None,
-            cache_dir=None,  # 不触发 akshare
+            cache_dir=None,  # 不触发 Tushare
         )
         assert "ma_position" in result.missing_dims
         assert "volume_trend" in result.missing_dims

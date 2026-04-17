@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-07 07:03:55
+> 更新时间：2026-04-17 00:51:51
 
 ## 职业
 
@@ -16,7 +16,6 @@
 
 ## 通用技能
 
-- 定时发稿（scheduled-post） — `skills/scheduled-post/SKILL.md`
 - 浏览器基础（browser-base） — `skills/browser-base/SKILL.md`
 - 小红书写稿经验（xhs-writing） — `skills/xhs-writing/SKILL.md`
 - 詹姆斯话题库（james-topic-research） — `skills/james-topic-research/SKILL.md`

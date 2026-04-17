@@ -1,0 +1,7 @@
+{
+  "name": "S5龙回头战法",
+  "icon": "🐉",
+  "slot": "strategy",
+  "subType": "executor",
+  "desc": "market-regime-classifier 的下游执行器。每日 T 日收盘出 T+1 候选清单 (近30日连板股冷却2-7天后T日大阳反包)，含入场/止损/仓位；T+1 开盘后5-10分钟跑 verify 检查实际开盘是否触发。仅在 STRONG/NEUTRAL/WEAK 震荡档位激活，BEAR/STRONG_BULL 自动跳过"
+}

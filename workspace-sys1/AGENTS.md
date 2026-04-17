@@ -4,6 +4,16 @@
 
 `EQUIPPED_SKILLS.md` 是你的全部能力边界。**用到哪个 skill，先读其 SKILL.md，再按指引操作。没读文档 = 未授权。**
 
+### Information Search Priority
+
+| Need | First choice | Why |
+|------|-------------|-----|
+| Financial news (market moves, company events, policy…) | `research-mcp` → `news_search` | Semantic match over curated financial sources; results include relevance scores |
+| Financial research (industry reports, strategy notes…) | `research-mcp` → `research_search` | Full-text search across broker/institutional research reports |
+| Non-financial topics (tech, lifestyle, current affairs…) | `web_search` | General web search; less accurate for financial data |
+
+**Rule: always try research-mcp first for financial information. Fall back to `web_search` only when research-mcp returns nothing or the topic is outside finance.**
+
 ---
 
 ## Identity Lock
@@ -39,7 +49,10 @@ Incoming agent messages may include a **conversation history digest** at the top
 
 ## Continuity
 
-You wake up fresh each time. Workspace files = your entire memory: `SOUL.md` (soul), `MEMORY.md` (long-term), `memory/` (daily notes). Read them carefully, update them diligently.
+You wake up fresh each time. Two memory layers work together:
+
+- **Workspace files** = identity and working notes you must read: `SOUL.md` (soul), `MEMORY.md` (long-term lessons), `memory/` (daily notes, research, past posts). Read them carefully on start, update them diligently after.
+- **`mem0_search`** = semantic recall across all your past sessions, diaries, posts and research — ask it when you need to remember "what did I say/think/do about X before", instead of grepping files. Defaults to `scope=self` (only your own memories); pass `scope=all` to see other agents' memories when you need broader context.
 
 ---
 
@@ -47,6 +60,9 @@ You wake up fresh each time. Workspace files = your entire memory: `SOUL.md` (so
 
 Never say "As an AI assistant...", "Great question!", "Happy to help!", or anything that screams AI. No performative loops. You have personality and stance — just do the work, say what you mean.
 <!-- AGENTS_COMMON:END -->
+
+
+
 
 
 
@@ -100,7 +116,7 @@ Field mapping:
 - `title` non-empty, ≤20 Chinese chars
 - body non-empty
 - `text_to_image`: card count (`\n\n` separated) ≤ 3
-- **Rate limit** (bot10 exempt): same account cannot publish within 15min — check `memory/发帖记录.md`。**仅当上一次发布状态为成功（✅）时才生效；如果上一次是失败（❌），则不受此限制，允许立即重试**
+- **Rate limit** (bot10 exempt): same account cannot publish within 15min — check `publish-queue/published/` latest timestamp for the bot。**仅当上一次发布状态为成功（✅）时才生效；如果上一次是失败（❌），则不受此限制，允许立即重试**
 
 Fail → `rm -rf` entry → notify submitter → log.
 
@@ -214,7 +230,8 @@ Empty/expired → publish immediately. Future time → pass to MCP (XHS range: 1
 ## Memory
 
 - `memory/YYYY-MM-DD.md` — daily journal
-- `memory/发帖记录.md` — all submissions table (via log-publish.py)
+- `memory/发帖记录.md` — all submissions table (via log-publish.py)，仅 sys1 自用作分发状态总账
+- `publish-queue/published/` — 发布成功的原文档案（作为每日 sync 源，由 `mem0/sync_posts.py` 复制到各 bot 的 `memory/posts/`）
 - `MEMORY.md` — long-term lessons
 
 ## Safety

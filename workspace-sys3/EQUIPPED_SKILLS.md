@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-07 07:03:55
+> 更新时间：2026-04-17 00:51:51
 
 ## 职业
 
@@ -20,7 +20,7 @@
 - 狗哥画图风格（dog-bro-image） — `skills/dog-bro-image/SKILL.md`
 - 叙事风格库（writing-styles） — `skills/writing-styles/SKILL.md`
 - Alex画图风格（alex-cover-style） — `skills/alex-cover-style/SKILL.md`
-- 大E飞风格（dae-fly-style） — `skills/dae-fly-style/SKILL.md`
+- 老K风格（dae-fly-style） — `skills/dae-fly-style/SKILL.md`
 - 天天出版社内容风格（default-content-style） — `skills/default-content-style/SKILL.md`
 - 天天出版社封面（default-cover-style） — `skills/default-cover-style/SKILL.md`
 - 狗哥内容风格（dog-bro-content） — `skills/dog-bro-content/SKILL.md`
@@ -54,7 +54,6 @@
 - 詹姆斯话题库（james-topic-research） — `skills/james-topic-research/SKILL.md`
 - 微信读书（weread-reader） — `skills/weread-reader/SKILL.md`
 - 异常上报（report-incident） — `skills/report-incident/SKILL.md`
-- 定时发稿（scheduled-post） — `skills/scheduled-post/SKILL.md`
 - 商单写作（shangdan-card） — `skills/shangdan-card/SKILL.md`
 - 小红书写稿经验（xhs-writing） — `skills/xhs-writing/SKILL.md`
 - 热点板块追踪（hotspot-sector-analysis） — `skills/hotspot-sector-analysis/SKILL.md`
@@ -74,7 +73,6 @@
 - 黄金盯盘（gold-tracker） — `skills/gold-tracker/SKILL.md`
 - 来财妹妹每日复盘（laicaimeimei-fupan） — `skills/laicaimeimei-fupan/SKILL.md`
 - 技术分析（technical-analyst） — `skills/technical-analyst/SKILL.md`
-- tougu-product-match（tougu-product-match） — `skills/tougu-product-match/SKILL.md`
 - 深度研究（deepreasearch） — `skills/deepreasearch/SKILL.md`
 - 能化产业链（energy-chem-tracker） — `skills/energy-chem-tracker/SKILL.md`
 - FinBot Research（finbot-research） — `skills/finbot-research/SKILL.md`
@@ -89,5 +87,4 @@
 - 行业研究（sector-pulse） — `skills/sector-pulse/SKILL.md`
 - 自选股（stock-watcher） — `skills/stock-watcher/SKILL.md`
 - TMT全景（tmt-landscape） — `skills/tmt-landscape/SKILL.md`
-- tougu-portfolio-review（tougu-portfolio-review） — `skills/tougu-portfolio-review/SKILL.md`
 

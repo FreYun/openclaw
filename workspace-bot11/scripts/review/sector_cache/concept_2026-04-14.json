@@ -1,0 +1,58 @@
+{
+  "top": [
+    {
+      "name": "昨日打二板以上表现",
+      "pct_chg": 6.58,
+      "leader": "华远控股"
+    },
+    {
+      "name": "昨日连板",
+      "pct_chg": 3.64,
+      "leader": "华远控股"
+    },
+    {
+      "name": "同步磁阻电机",
+      "pct_chg": 3.29,
+      "leader": "孚日股份"
+    },
+    {
+      "name": "昨日连板_含一字",
+      "pct_chg": 3.26,
+      "leader": "华远控股"
+    },
+    {
+      "name": "存储芯片",
+      "pct_chg": 3.1,
+      "leader": "协创数据"
+    }
+  ],
+  "bottom": [
+    {
+      "name": "供销社概念",
+      "pct_chg": -0.61,
+      "leader": "新力金融"
+    },
+    {
+      "name": "油气设服",
+      "pct_chg": -0.61,
+      "leader": "春晖智控"
+    },
+    {
+      "name": "可燃冰",
+      "pct_chg": -0.66,
+      "leader": "海默科技"
+    },
+    {
+      "name": "汽车整车",
+      "pct_chg": -0.73,
+      "leader": "汉马科技"
+    },
+    {
+      "name": "资源开采概念",
+      "pct_chg": -1.09,
+      "leader": "金诚信"
+    }
+  ],
+  "total": 493,
+  "source": "akshare"
+}

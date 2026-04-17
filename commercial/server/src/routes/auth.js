@@ -5,32 +5,10 @@ import { signToken, requireAuth } from "../auth.js";
 
 const router = Router();
 
-// POST /api/auth/register
+// POST /api/auth/register — 公开注册已关闭。账号通过 white_id.json 白名单
+// 批量 seed,需要开通账号时联系管理员。
 router.post("/register", (req, res) => {
-  const { username, password, display_name, company, phone } = req.body;
-  if (!username || !password || !display_name) {
-    return res.status(400).json({ error: "用户名、密码、昵称为必填项" });
-  }
-  if (password.length < 6) {
-    return res.status(400).json({ error: "密码至少6位" });
-  }
-
-  const db = getDb();
-  const existing = db.prepare("SELECT id FROM clients WHERE username = ?").get(username);
-  if (existing) {
-    return res.status(409).json({ error: "用户名已存在" });
-  }
-
-  const hash = bcrypt.hashSync(password, 10);
-  const result = db.prepare(
-    "INSERT INTO clients (username, password_hash, display_name, company, phone) VALUES (?, ?, ?, ?, ?)"
-  ).run(username, hash, display_name, company || "", phone || "");
-
-  const token = signToken(result.lastInsertRowid);
-  res.status(201).json({
-    token,
-    client: { id: result.lastInsertRowid, username, display_name, company: company || "" },
-  });
+  return res.status(403).json({ error: "暂不开放公开注册,如需账号请联系管理员" });
 });
 
 // POST /api/auth/login

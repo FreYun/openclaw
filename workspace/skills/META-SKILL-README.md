@@ -216,7 +216,6 @@
 | skill ID | name | desc |
 |----------|------|------|
 | `submit-to-publisher` | 印务局投稿 | 通过印务局发布队列提交内容（无 slot） |
-| `xhs-nurture` | 养号互动 | 小红书养号（无 slot） |
 | `xhs-writing` | 小红书写作规范 | 通用排版、标题、限流防范（无 slot） |
 
 ---

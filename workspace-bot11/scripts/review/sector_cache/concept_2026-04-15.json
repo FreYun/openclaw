@@ -1,0 +1,58 @@
+{
+  "top": [
+    {
+      "name": "科创次新股",
+      "pct_chg": 3.81,
+      "leader": "健信超导"
+    },
+    {
+      "name": "仿制药一致性评价",
+      "pct_chg": 2.42,
+      "leader": "博瑞医药"
+    },
+    {
+      "name": "医药电商",
+      "pct_chg": 2.4,
+      "leader": "华人健康"
+    },
+    {
+      "name": "重组蛋白",
+      "pct_chg": 2.36,
+      "leader": "博瑞医药"
+    },
+    {
+      "name": "减肥药",
+      "pct_chg": 2.27,
+      "leader": "博瑞医药"
+    }
+  ],
+  "bottom": [
+    {
+      "name": "盐湖提锂",
+      "pct_chg": -1.75,
+      "leader": "万德斯"
+    },
+    {
+      "name": "动力电池回收",
+      "pct_chg": -1.78,
+      "leader": "圣阳股份"
+    },
+    {
+      "name": "金属钴",
+      "pct_chg": -1.82,
+      "leader": "华宏科技"
+    },
+    {
+      "name": "氟化工概念",
+      "pct_chg": -1.97,
+      "leader": "康鹏科技"
+    },
+    {
+      "name": "磷化工",
+      "pct_chg": -2.02,
+      "leader": "兴福电子"
+    }
+  ],
+  "total": 387,
+  "source": "tushare"
+}

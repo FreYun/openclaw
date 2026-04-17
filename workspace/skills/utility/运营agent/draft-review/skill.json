@@ -1,8 +1,0 @@
-{
-  "name": "审稿",
-  "icon": "📝",
-  "slot": "utility",
-  "subType": "craft",
-  "desc": "结构化审稿：五维度评审草稿，输出教练式反馈",
-  "requiresSkills": ["contact-book"]
-}

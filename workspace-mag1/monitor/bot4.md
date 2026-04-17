@@ -142,7 +142,7 @@ description: >
 
 ### 写稿前
 
-读 `memory/发帖记录.md` + `memory/写稿经验.md` + `CONTENT_STYLE.md`（如有），保证连续性。
+用 `mem0_search` 查过往发帖 + 读 `memory/写稿经验.md` + `CONTENT_STYLE.md`（如有），保证连续性。原文档案在 `memory/posts/` 兜底。
 
 ### 两步发布
 

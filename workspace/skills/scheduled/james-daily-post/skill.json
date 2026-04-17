@@ -1,9 +1,0 @@
-{
-  "name": "老詹定时发帖",
-  "icon": "💻",
-  "slot": "scheduled",
-  "subType": "scheduled",
-  "desc": "内容生产：看行情 → 选题（多资产轮换） → 写稿 → 生图，产出后交 scheduled-post 审批投稿",
-  "requiresMcp": ["image-gen-mcp", "research-mcp"],
-  "requiresSkills": ["scheduled-post"]
-}

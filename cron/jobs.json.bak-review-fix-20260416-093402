@@ -1,0 +1,1306 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "caffb0d4-f51d-4e9c-b10a-de2bcce28cb5",
+      "agentId": "mag1",
+      "name": "daily-model-report",
+      "description": "每天中午12点通报各bot的模型序列号",
+      "enabled": true,
+      "createdAtMs": 1773402570013,
+      "updatedAtMs": 1776229853715,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 12 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "通报各 bot 当前使用的模型序列号。执行以下脚本获取数据，然后整理成简洁表格播报：\n\n```bash\npython3 -c \"\nimport json, os, glob\nagents_dir = '/home/rooot/.openclaw/agents'\nfor agent_dir in sorted(glob.glob(f'{agents_dir}/*/sessions')):\n    agent = agent_dir.split('/')[-2]\n    files = [f for f in glob.glob(f'{agent_dir}/*.jsonl') if not any(x in f for x in ['.deleted', '.reset', '.lock'])]\n    if not files: print(f'{agent}: 无活跃会话'); continue\n    latest = max(files, key=os.path.getmtime)\n    with open(latest) as fh:\n        for i, line in enumerate(fh):\n            if i > 5: break\n            d = json.loads(line.strip())\n            if 'modelId' in d:\n                print(f'{agent}: {d.get(\\\"provider\\\",\\\"?\\\")}/{d[\\\"modelId\\\"]}')\n                break\n        else: print(f'{agent}: 未知')\n\"\n```\n\n播报格式：\n【模型序列号日报】\n| Agent | Provider | Model |\n按 bot1-10 → 系统 agent 排列。"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "chat:oc_e59188e3ecdb04acd9b33843870a2249"
+      },
+      "state": {
+        "nextRunAtMs": 1776312000000,
+        "lastRunAtMs": 1776229821073,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 32642,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
+      }
+    },
+    {
+      "id": "9f4d75c4-3d1a-4c43-b8a0-7df42f8f1db5",
+      "agentId": "bot11",
+      "name": "zsxq-reader-morning",
+      "description": "每天9:30 小奶龙巡检知识星球，汇总上次巡检以来的新话题",
+      "enabled": true,
+      "createdAtMs": 1773653264256,
+      "updatedAtMs": 1776303188809,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 9 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read HEARTBEAT.md，执行「知识星球话题巡检」任务。先 Read skills/zsxq-reader/SKILL.md 加载完整流程，然后依次浏览每个已加入的星球，提取自上次巡检以来的新话题，分星球汇总后发送给小富龙。"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "chat:oc_6fd813d4cebdcbc97ed622e2d47d8fac"
+      },
+      "state": {
+        "consecutiveErrors": 1,
+        "lastRunAtMs": 1776303000012,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 188797,
+        "lastDeliveryStatus": "delivered",
+        "nextRunAtMs": 1776389400000,
+        "lastDelivered": true,
+        "lastError": "LLM request timed out."
+      }
+    },
+    {
+      "id": "456b020c-9fb8-47d0-949a-4899912cea39",
+      "agentId": "bot11",
+      "name": "zsxq-reader-afternoon",
+      "description": "每天14:30 小奶龙巡检知识星球，汇总上次巡检以来的新话题",
+      "enabled": true,
+      "createdAtMs": 1773653264256,
+      "updatedAtMs": 1776235219329,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 14 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read HEARTBEAT.md，执行「知识星球话题巡检」任务。先 Read skills/zsxq-reader/SKILL.md 加载完整流程，然后依次浏览每个已加入的星球，提取自上次巡检以来的新话题，分星球汇总后发送给小富龙。"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "chat:oc_6fd813d4cebdcbc97ed622e2d47d8fac"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "lastRunAtMs": 1776234600023,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 619306,
+        "lastDeliveryStatus": "delivered",
+        "nextRunAtMs": 1776321000000,
+        "lastDelivered": true
+      }
+    },
+    {
+      "id": "06aae4ce-a7be-475e-80cd-8b14989f8fe5",
+      "agentId": "bot11",
+      "name": "zsxq-reader-night",
+      "description": "每天23:00 小奶龙巡检知识星球",
+      "enabled": true,
+      "createdAtMs": 1773653264256,
+      "updatedAtMs": 1776265693013,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 23 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read HEARTBEAT.md，执行「知识星球话题巡检」任务。先 Read skills/zsxq-reader/SKILL.md 加载完整流程，然后依次浏览每个已加入的星球，提取自上次巡检以来的新话题，分星球汇总后发送给小富龙。"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "chat:oc_6fd813d4cebdcbc97ed622e2d47d8fac"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "lastRunAtMs": 1776265200025,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 492988,
+        "lastDeliveryStatus": "delivered",
+        "nextRunAtMs": 1776351600000,
+        "lastDelivered": true
+      }
+    },
+    {
+      "id": "69cb0993-a909-4fce-b2f8-a18d27d062f9",
+      "agentId": "bot7",
+      "name": "bot7-us-tech-morning",
+      "description": "工作日8:40 美股科技新闻分析",
+      "enabled": true,
+      "createdAtMs": 1773803334053,
+      "updatedAtMs": 1776300106972,
+      "schedule": {
+        "kind": "cron",
+        "expr": "40 8 * * 1-5",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read HEARTBEAT.md，执行第 0 节「早盘资讯播报」任务。分析前夜美股科技板块动态和今天国内科技新闻，整理成简洁播报，按 HEARTBEAT.md 中的发送方式投递到飞书群。"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "chat:oc_6fd813d4cebdcbc97ed622e2d47d8fac",
+        "bestEffort": true
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776386400000,
+        "lastRunAtMs": 1776300000023,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 106949,
+        "lastDeliveryStatus": "delivered",
+        "lastDelivered": true
+      }
+    },
+    {
+      "id": "ab30b062-a401-4b53-b3f8-47210c6de17f",
+      "agentId": "bot1",
+      "sessionKey": "agent:sys3:agent:mag1",
+      "name": "bot1-xhs-nurture",
+      "description": "bot1小红书养号，每3h，未登录自动放弃",
+      "enabled": false,
+      "createdAtMs": 1773877998591,
+      "updatedAtMs": 1773911016138,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 8,11,14,17,20,23 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行小红书养号任务。\n\n**第一步（必须）：** 先用 check_login_status 检查主站登录状态。如果未登录，直接回复「未登录，跳过」然后结束，不要重试、不要报警、不要调用 get_login_qrcode。\n\n**已登录则执行：** Read HEARTBEAT.md，按「小红书养号」部分随机挑 1-2 项执行。完成后简短汇报。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "lastRunAtMs": 1773910811161,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 204977,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "e7902823-4575-41a5-9c7e-4a29a350de5e",
+      "agentId": "bot3",
+      "sessionKey": "agent:sys3:agent:mag1",
+      "name": "bot3-xhs-nurture",
+      "description": "bot3小红书养号，每3h，未登录自动放弃",
+      "enabled": false,
+      "createdAtMs": 1773877998627,
+      "updatedAtMs": 1773911323879,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 8,11,14,17,20,23 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行小红书养号任务。\n\n**第一步（必须）：** 先用 check_login_status 检查主站登录状态。如果未登录，直接回复「未登录，跳过」然后结束，不要重试、不要报警、不要调用 get_login_qrcode。\n\n**已登录则执行：** Read HEARTBEAT.md，按「小红书养号」部分随机挑 1-2 项执行。完成后简短汇报。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "lastRunAtMs": 1773911016138,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 307741,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "f923ffe0-bedf-4065-af04-9c569d332003",
+      "agentId": "bot4",
+      "sessionKey": "agent:sys3:agent:mag1",
+      "name": "bot4-xhs-nurture",
+      "description": "bot4小红书互动，每3h，未登录自动放弃",
+      "enabled": false,
+      "createdAtMs": 1773877998654,
+      "updatedAtMs": 1775121695264,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 8,11,14,17,20,23 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行小红书互动任务。\n\n**第一步（必须）：** 先用 check_login_status 检查主站登录状态。如果未登录，直接回复「未登录，跳过」然后结束，不要重试、不要报警、不要调用 get_login_qrcode。\n\n**已登录则执行：** Read HEARTBEAT.md，按互动任务部分执行。完成后简短汇报。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "lastRunAtMs": 1773911323879,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 44,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "ea852218-27cd-48d1-a394-4678e4015682",
+      "agentId": "bot5",
+      "sessionKey": "agent:sys3:agent:mag1",
+      "name": "bot5-xhs-nurture",
+      "description": "bot5小红书素材巡逻+内容（已迁移至 mag1 统一调度）",
+      "enabled": false,
+      "createdAtMs": 1773877998682,
+      "updatedAtMs": 1774010134610,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 8,11,14,17,20,23 * * *",
+        "staggerMs": 0
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行小红书相关任务。\n\n**第一步（必须）：** 先用 check_login_status 检查主站登录状态。如果未登录，直接回复「未登录，跳过」然后结束，不要重试、不要报警、不要调用 get_login_qrcode。\n\n**已登录则执行：** Read HEARTBEAT.md，按素材巡逻和内容策划部分执行当前时段应做的任务。完成后简短汇报。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "lastRunAtMs": 1774009800018,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 334592,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
+      }
+    },
+    {
+      "id": "7fdb0530-d6b9-4e87-a2d1-1ee4373df792",
+      "agentId": "bot6",
+      "sessionKey": "agent:sys3:agent:mag1",
+      "name": "bot6-xhs-nurture",
+      "description": "bot6小红书素材巡逻+内容，每3h，未登录自动放弃",
+      "enabled": false,
+      "createdAtMs": 1773877998709,
+      "updatedAtMs": 1773911395735,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 8,11,14,17,20,23 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行小红书相关任务。\n\n**第一步（必须）：** 先用 check_login_status 检查主站登录状态。如果未登录，直接回复「未登录，跳过」然后结束，不要重试、不要报警、不要调用 get_login_qrcode。\n\n**已登录则执行：** Read HEARTBEAT.md，按素材巡逻和内容策划部分执行当前时段应做的任务。完成后简短汇报。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "lastRunAtMs": 1773911361310,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 34425,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
+      }
+    },
+    {
+      "id": "cb4ff8e3-08cb-44e8-bd81-b4828cf2da43",
+      "agentId": "bot3",
+      "name": "bot3-meme-daily-post",
+      "description": "定时执行 meme定时发帖",
+      "enabled": true,
+      "createdAtMs": 1774427864038,
+      "updatedAtMs": 1776218981042,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 10 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读 skills/xhs-op/daily-post.md，根据里面的 SOP 进行发帖。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776305220000,
+        "lastRunAtMs": 1776218820027,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 161015,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-03-25",
+      "endDate": "2028-03-25"
+    },
+    {
+      "id": "8528fea9-98c5-49b3-b795-9e7fe0347865",
+      "agentId": "bot3",
+      "name": "bot3-meme-daily-post",
+      "description": "定时执行 meme定时发帖",
+      "enabled": true,
+      "createdAtMs": 1774589579391,
+      "updatedAtMs": 1776150517803,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 15 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读 skills/xhs-op/daily-post.md，根据里面的 SOP 进行发帖。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776323220000,
+        "lastRunAtMs": 1776150420011,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 97792,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-03-27"
+    },
+    {
+      "id": "762e4105-4455-4198-9b2c-aba1b110374a",
+      "agentId": "bot3",
+      "name": "bot3-trend-broadcast-morning",
+      "description": "每天9:00 热门趋势播报（早间）",
+      "enabled": true,
+      "createdAtMs": 1774706498193,
+      "updatedAtMs": 1776301612241,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read skills/trend-broadcast/SKILL.md 加载完整流程，然后按「选题工作流」依次执行三个数据源命令，整理成「播报输出格式」发送。时段标注：早间。\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_6fd813d4cebdcbc97ed622e2d47d8fac\n- account: bot3"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776387600000,
+        "lastRunAtMs": 1776301200013,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 412228,
+        "lastDeliveryStatus": "not-delivered",
+        "lastDelivered": false
+      },
+      "startDate": "2026-03-29"
+    },
+    {
+      "id": "2f4145d3-6393-4d35-a988-d229ddefe2d6",
+      "agentId": "bot3",
+      "name": "bot3-trend-broadcast-noon",
+      "description": "每天13:00 热门趋势播报（午间）",
+      "enabled": true,
+      "createdAtMs": 1774706498193,
+      "updatedAtMs": 1776229905296,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 13 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read skills/trend-broadcast/SKILL.md 加载完整流程，然后按「选题工作流」依次执行三个数据源命令，整理成「播报输出格式」发送。时段标注：午间。\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_6fd813d4cebdcbc97ed622e2d47d8fac\n- account: bot3"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776315600000,
+        "lastRunAtMs": 1776229853715,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 51581,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-03-29"
+    },
+    {
+      "id": "d232dbd8-f16b-4abb-94ee-753d1afba6ee",
+      "agentId": "bot3",
+      "name": "bot3-trend-broadcast-afternoon",
+      "description": "每天15:00 热门趋势播报（下午）",
+      "enabled": true,
+      "createdAtMs": 1774706498193,
+      "updatedAtMs": 1776236448117,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 15 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read skills/trend-broadcast/SKILL.md 加载完整流程，然后按「选题工作流」依次执行三个数据源命令，整理成「播报输出格式」发送。时段标注：下午。\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_6fd813d4cebdcbc97ed622e2d47d8fac\n- account: bot3"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776322800000,
+        "lastRunAtMs": 1776236400023,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 48094,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-03-29"
+    },
+    {
+      "id": "e0860cb4-bfcc-4742-afda-cc8626ade10d",
+      "agentId": "bot1",
+      "name": "bot1-xhs-topic-collector",
+      "description": "定时执行 小红书素材积累",
+      "enabled": true,
+      "createdAtMs": 1775026231989,
+      "updatedAtMs": 1776302454356,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 9,21 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read skills/xhs-topic-collector/SKILL.md 加载完整流程，然后按流程执行。\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: ou_68cc1fc4093cdcecdb08e73ee053e090\n- account: bot1"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776344820000,
+        "lastRunAtMs": 1776301997170,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 457186,
+        "lastDeliveryStatus": "not-delivered",
+        "lastDelivered": false
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "c2a69ad7-f47e-4093-839c-94015a8d6363",
+      "agentId": "bot7",
+      "name": "bot7-xhs-topic-collector",
+      "description": "定时执行 小红书素材积累",
+      "enabled": true,
+      "createdAtMs": 1775026285665,
+      "updatedAtMs": 1776294632392,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 7,19 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read skills/xhs-topic-collector/SKILL.md 加载完整流程，然后按流程执行。\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: ou_fe187b618161b60af2d961f3e2e78ed7\n- account: bot7"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776337620000,
+        "lastRunAtMs": 1776294420018,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 212374,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "1df1866f-c30a-4e15-92f6-19d7b946291c",
+      "agentId": "bot1",
+      "name": "nighty-post",
+      "description": "自定义指令: 阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖",
+      "enabled": true,
+      "createdAtMs": 1775040372276,
+      "updatedAtMs": 1776252014593,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 19 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot1"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776337620000,
+        "lastRunAtMs": 1776251803522,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 211071,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "c949625e-9425-4bd1-a964-d52b98c2639f",
+      "agentId": "bot2",
+      "name": "daily-post",
+      "description": "自定义指令: 阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖",
+      "enabled": true,
+      "createdAtMs": 1775044909964,
+      "updatedAtMs": 1776233417623,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 10,14 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot2"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776305220000,
+        "lastRunAtMs": 1776233220025,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 197598,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "4e7f3da2-c742-48b6-ae0e-bdbf7ebd2ac9",
+      "agentId": "bot13",
+      "name": "素材积累",
+      "description": "自定义指令: 阅读skills/xhs-topic-collector，根据里面的sop进行素材积累",
+      "enabled": true,
+      "createdAtMs": 1775045051759,
+      "updatedAtMs": 1776298192753,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 8,13 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/xhs-topic-collector，根据里面的sop进行素材积累"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776316020000,
+        "lastRunAtMs": 1776298020020,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 172733,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "6da65e03-7bbe-4456-be5d-24f6fc5a7c24",
+      "agentId": "bot17",
+      "name": "素材积累",
+      "description": "自定义指令: 阅读skills/xhs-topic-collector，根据里面的sop进行素材积累",
+      "enabled": true,
+      "createdAtMs": 1775045145637,
+      "updatedAtMs": 1776298574135,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 8,13 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/xhs-topic-collector，根据里面的sop进行素材积累"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776316020000,
+        "lastRunAtMs": 1776298192753,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 381382,
+        "lastDeliveryStatus": "not-delivered",
+        "lastDelivered": false
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "12c9c1a2-070b-42be-9c25-ce4021a4b925",
+      "agentId": "bot17",
+      "name": "daily-post",
+      "description": "自定义指令: 阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖",
+      "enabled": true,
+      "createdAtMs": 1775045170138,
+      "updatedAtMs": 1776233546345,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 10,14 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot17"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776305220000,
+        "lastRunAtMs": 1776233417623,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 128722,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "d2387215-f642-472d-9965-ac55165be960",
+      "agentId": "bot7",
+      "name": "daily-post",
+      "description": "自定义指令: 阅读skills/K-daily-post，根据里面的sop进行发帖",
+      "enabled": true,
+      "createdAtMs": 1775045290305,
+      "updatedAtMs": 1776233837603,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 14 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/K-daily-post，根据里面的sop进行发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot7"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776319620000,
+        "lastRunAtMs": 1776233546345,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 291258,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "7af59fe6-12fe-43c9-86ac-4c148bad7f2a",
+      "agentId": "bot2",
+      "name": "小红书素材积累",
+      "description": "自定义指令: 阅读skills/xhs-topic-collector，根据里面的sop进行素材积累",
+      "enabled": true,
+      "createdAtMs": 1775045463752,
+      "updatedAtMs": 1776298793538,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 8,12 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/xhs-topic-collector，根据里面的sop进行素材积累"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 1,
+        "nextRunAtMs": 1776312420000,
+        "lastRunAtMs": 1776298574135,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 219403,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "lastError": "⚠️ 📝 Edit: in ~/.openclaw/workspace-bot2/memory/topic-library.md (963 chars) failed",
+        "lastDeliveryError": "⚠️ 📝 Edit: in ~/.openclaw/workspace-bot2/memory/topic-library.md (963 chars) failed"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "5bb94f07-c443-4106-8f95-e12563f4a3a0",
+      "agentId": "mag1",
+      "name": "汇报传达",
+      "description": "自定义指令: 读取汇报清单并转发到飞书管理群",
+      "enabled": true,
+      "createdAtMs": 1775045519741,
+      "updatedAtMs": 1776258728303,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 12,21 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "读取汇报清单并转发到飞书管理群。\n\n## 执行步骤\n\n1. **读取待播报备忘录**（后台脚本写入，需要播报的内容）：\n   ```bash\n   python3 ~/.openclaw/workspace-mag1/scripts/check-mem0-report.py\n   ```\n   - 有输出 → 纳入本次汇报（mem0 每日记忆入库日报）\n   - 无输出 → 跳过\n\n2. **整理今日待汇报事项**：结合今日/昨日日记里的关键事件、异常、决策，整理成简洁的汇报清单。\n\n3. **合并播报**：把第 1 步的脚本输出和第 2 步的叙事汇报合并成一份 markdown。\n\n## 投递方式\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_e59188e3ecdb04acd9b33843870a2249\n- account: mag1\n\n如果本次没有任何值得播报的内容，直接静默，不要发空消息。"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776312420000,
+        "lastRunAtMs": 1776258688019,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 40284,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-01"
+    },
+    {
+      "id": "024bc7ca-d560-474e-b3ed-b971e866c1b0",
+      "agentId": "bot11",
+      "name": "小奶龙公众号创作",
+      "description": "自定义指令: 根据skills/mp-content-writer/type-daily.md，每天写一下当日的复",
+      "enabled": true,
+      "createdAtMs": 1775120816790,
+      "updatedAtMs": 1776240931655,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 16 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "根据skills/mp-content-writer/type-daily.md，每天写一下当日的复盘文章\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: ou_e7d7488d98d6bdb0be5960f996379f80\n- account: bot11"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776326820000,
+        "lastRunAtMs": 1776240420015,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 511640,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-02"
+    },
+    {
+      "id": "13b810e1-a7d5-4739-8662-830771dc7b35",
+      "agentId": "bot5",
+      "name": "宣妈素材搜集",
+      "description": "自定义指令: 用这个skills/xhs-topic-collector去进行素材搜集",
+      "enabled": true,
+      "createdAtMs": 1775180122109,
+      "updatedAtMs": 1776298968464,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 8,19 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "用这个skills/xhs-topic-collector去进行素材搜集\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: ou_4ab2933b8cf0735df3491ac48efb25c2\n- account: bot5"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776337620000,
+        "lastRunAtMs": 1776298793538,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 174926,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-03"
+    },
+    {
+      "id": "09b3882a-e91c-496b-9d10-1c6425392417",
+      "agentId": "bot12",
+      "name": "小天素材搜集",
+      "description": "自定义指令: 用这个skills/xhs-topic-collector去进行素材搜集",
+      "enabled": true,
+      "createdAtMs": 1775180175870,
+      "updatedAtMs": 1776299207734,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 8,19 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "用这个skills/xhs-topic-collector去进行素材搜集\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_6fd813d4cebdcbc97ed622e2d47d8fac\n- account: bot12"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776337620000,
+        "lastRunAtMs": 1776298968464,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 239270,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-03"
+    },
+    {
+      "id": "e67f989d-91c0-4f30-a704-4840bc186dd7",
+      "agentId": "bot6",
+      "name": "老詹素材搜集",
+      "description": "自定义指令: 用skills/xhs-topic-collector这个去进行素材搜集",
+      "enabled": true,
+      "createdAtMs": 1775180239370,
+      "updatedAtMs": 1776299397748,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 8,20 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "用skills/xhs-topic-collector这个去进行素材搜集"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 1,
+        "nextRunAtMs": 1776341220000,
+        "lastRunAtMs": 1776299207734,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 190014,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "lastError": "⚠️ 📝 Edit: in ~/.openclaw/workspace-bot6/memory/topic-library.md failed",
+        "lastDeliveryError": "⚠️ 📝 Edit: in ~/.openclaw/workspace-bot6/memory/topic-library.md failed"
+      },
+      "startDate": "2026-04-03"
+    },
+    {
+      "id": "7d5f6c6a-aa2f-47a4-8b3b-299007a12f00",
+      "agentId": "bot6",
+      "name": "老詹自动发帖",
+      "description": "自定义指令: 按这个skills/xhs-op/daily-post.md进行每日发帖",
+      "enabled": true,
+      "createdAtMs": 1775180368035,
+      "updatedAtMs": 1776234122832,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 10,14 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "按这个skills/xhs-op/daily-post.md进行每日发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot6"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776305220000,
+        "lastRunAtMs": 1776233837603,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 285229,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-03"
+    },
+    {
+      "id": "0b597eeb-882b-4a81-b706-c21f2c357c3d",
+      "agentId": "bot12",
+      "name": "小天自动发帖",
+      "description": "自定义指令: 用这个skills/xhs-op/daily-post.md进行自动发帖",
+      "enabled": true,
+      "createdAtMs": 1775180421391,
+      "updatedAtMs": 1776234403603,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 10,14 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "用这个skills/xhs-op/daily-post.md进行自动发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot12"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776305220000,
+        "lastRunAtMs": 1776234122832,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 280771,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-03"
+    },
+    {
+      "id": "af44b41b-adfc-41c5-b213-cf30c820e2cd",
+      "agentId": "sys2",
+      "name": "技能部-技能进化",
+      "description": "自定义指令: 进化1个技能，完成后写到mag1的汇报清单里",
+      "enabled": true,
+      "createdAtMs": 1775228152412,
+      "updatedAtMs": 1776273291677,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 1 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "进化1个技能，完成后写到mag1的汇报清单里"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 1,
+        "nextRunAtMs": 1776359220000,
+        "lastRunAtMs": 1776272820014,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 471663,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "lastError": "⚠️ ✍️ Write: to ~/.openclaw/skills-sandbox/pending-approval/tmt-landscape/proposal.json (847 chars) failed",
+        "lastDeliveryError": "⚠️ ✍️ Write: to ~/.openclaw/skills-sandbox/pending-approval/tmt-landscape/proposal.json (847 chars) failed"
+      },
+      "startDate": "2026-04-03"
+    },
+    {
+      "id": "9f46d8b1-8958-499e-bd92-d6c0e25bc2f0",
+      "agentId": "mag1",
+      "name": "xhs-nurture-dispatch",
+      "description": "定时执行 养号调度",
+      "enabled": true,
+      "createdAtMs": 1776063871250,
+      "updatedAtMs": 1776299441300,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 0,8,16 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read skills/cron-xhs-nurture-dispatch/SKILL.md 加载完整流程，然后按流程执行。\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_e59188e3ecdb04acd9b33843870a2249\n- account: mag1"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776326820000,
+        "lastRunAtMs": 1776299397748,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 43552,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-13"
+    },
+    {
+      "id": "b54b340f-70ab-4450-b9b5-57647990fcea",
+      "agentId": "bot5",
+      "name": "宣妈晚间自动发帖",
+      "description": "自定义指令: 用这个skills/xhs-op/daily-post.md进行自动发帖",
+      "enabled": true,
+      "createdAtMs": 1776147691884,
+      "updatedAtMs": 1776255106856,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 20 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "用这个skills/xhs-op/daily-post.md进行自动发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot5"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776341220000,
+        "lastRunAtMs": 1776254945311,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 161545,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-14"
+    },
+    {
+      "id": "b42edcf6-f1fa-4c41-a48a-d3c7ac6b573a",
+      "agentId": "bot13",
+      "name": "阿泽下午自动发帖",
+      "description": "自定义指令: 阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖",
+      "enabled": true,
+      "createdAtMs": 1776147759282,
+      "updatedAtMs": 1776150735669,
+      "schedule": {
+        "kind": "cron",
+        "expr": "7 15 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "阅读skills/xhs-op/daily-post.md，根据里面的sop进行发帖\n\n完成后用 message 工具投递结果到飞书：\n- channel: feishu\n- to: oc_60eedc287757fa36581430517d838726\n- account: bot13"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776323220000,
+        "lastRunAtMs": 1776150517803,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 217866,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered"
+      },
+      "startDate": "2026-04-14"
+    },
+    {
+      "id": "8d497c1c-d491-4243-b2c9-9fffafa839e8",
+      "agentId": "sys4",
+      "name": "daily-calendar-bot13",
+      "description": "每天 8:30 为 bot13 更新 queue + 推送今日选题 + 唤醒发帖",
+      "enabled": true,
+      "createdAtMs": 1776148608645,
+      "updatedAtMs": 1776299671073,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 8 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "每日 content-calendar 流程（只处理 bot13）。\n\n**Step 1 — 读文档**\nRead workspace-sys4/AGENTS.md（特别是 §4.1.5 和 §8 豁免名单）和 skills/content-ops/content-calendar.md 整篇。\n\n**Step 2 — 豁免检查**\n本次只处理 **bot13** 一个 bot。对照 AGENTS.md §8 确认 bot13 不在豁免名单（bot11 豁免，但本次和 bot13 无关）。\n\n**Step 3 — 数据刷新（FAIL-LOUD）**\n用 Bash 工具真跑以下命令，stdout 贴日记：\n```\nbash /home/rooot/.openclaw/dashboard/query-stats.sh --summary\nbash /home/rooot/.openclaw/dashboard/query-stats.sh bot13 --top=3 --with-content\nbash /home/rooot/.openclaw/dashboard/query-stats.sh bot13 --titles\n```\n命令失败 → 立即停止，在日记里记完整错误，等研究部介入，不要自己找\"替代方案\"。\n\n**Step 4 — 更新 queue + 组织今日选题**\n1. Read workspace-bot13/memory/topic-library.md、SOUL.md、IDENTITY.md\n2. 更新 workspace-sys4/queue/bot13.md：\n   - 昨天/前天已发布的条目标 📝 已发布（用 query-stats.sh 的 updated 时间判定）\n   - 剔除已过期的 🔥 时效素材或已过时的热点\n   - 今天原排期选题仍合适 → 状态改为 ⏳ 待推送；不合适 → 从素材库补替代选题\n   - 「数据回顾」节的每个数字必须能在 query-stats.sh stdout 原文搜到，不准编造\n3. **不要向 workspace-bot13/ 下写任何文件**。在 context 里组织好\"今日作战命令\"的完整文本（结构见 Step 5），准备通过 send_message 派发。\n\n**Step 5 — 用 send_message 把今日选题派发给 bot13**\n调用 `send_message` 工具（**不要**用 Bash 起 `openclaw agent`，转义不安全且会污染 main session）：\n\n```\nsend_message(\n  to: \"bot13\",\n  content: <下面的完整作战命令文本>,\n  trace: [{\"agent\": \"sys4\"}]\n)\n```\n\n`content` 文本的结构（把 queue 里今日 ⏳ 待推送 条目的内容抽出来填进去）：\n\n---\n⚙️ 本消息由 sys4 cron 派发，**无需 reply_message**（cron isolated session 无回路，reply_message 会报错）。完成后按下面指令走 submit-to-publisher 交稿，再用 `message` 工具汇报飞书群即可。\n\n# 今日选题（sys4 YYYY-MM-DD 派发）\n\n## 选题\n<一句话选题，来自 queue 的「选题」字段>\n\n## 角度\n<角度描述，来自 queue 的「角度」字段>\n\n## 为什么今天发\n<原因，来自 queue 的「理由」字段>\n\n## 参考你的旧作\n<从 query-stats.sh --top=3 --with-content 输出里挑一篇相似主题或高 engagement 的旧作，贴标题、impressions/likes/comments 数据、开头金句>\n\n## 注意事项\n<可选：限流红线、风格提醒、素材来源等，没有就省略这一节>\n\n---\n\n读完以上选题后：\n1. Read skills/xhs-op/daily-post.md 和 skills/xhs-op/投稿发布.md\n2. **跳过 daily-post.md 的 Step 1-3**（选题、角度、参考旧作上面已经给你了，直接用）\n3. 从 Step 4 开始：Read skills/xhs-op/内容策划.md 然后生产内容（封面标题+正文标题+正文）\n4. **Step 5 提交发布**：按 投稿发布.md 的 text_to_image 模式，先用 `compliance-mcp.review_content` 做合规审核，审核通过后运行 `skills/xhs-op/submit-to-publisher.sh` 交稿到 `workspace-sys1/publish-queue/pending/`（由印务局 sys1 接管发布）\n5. **禁止直接调用小红书发布 MCP**，必须走 submit-to-publisher.sh 交稿流程\n6. 交稿成功后（脚本输出 pending 文件夹名）用 `message` 工具汇报到 `channel:feishu, to:oc_60eedc287757fa36581430517d838726, account:bot13`\n7. 合规审核未通过 → 按 suggestion 修改后重试，最多 2 次失败就停止并汇报\n---\n\n**关键**：bot13 走的是 daily-post.md Step 4-5 + submit-to-publisher.sh 的交稿链路（交到印务局 sys1，由 sys1 实际发布），**不是** bot13 自己直接调 XHS 发布 MCP。\n\n**Step 6 — 写日记**\nAppend 到 workspace-sys4/memory/YYYY-MM-DD.md：记录本次执行（bot13）、send_message 的 message_id、queue 更新摘要、stdout 摘录、任何异常。\n\n**注意**\n- 每个数字必须能在 query-stats.sh stdout 原文搜到，不准编造\n- queue 文件写 workspace-sys4/queue/，不要写 skills/ 下\n- **不再向 workspace-bot13/ 下写任何文件**（选题通过 send_message 内联传递，bot 从消息体读）\n- 如果 bot13 在豁免名单，跳过 Step 5，只更新 queue 和写日记"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1776385800000,
+        "lastRunAtMs": 1776299441426,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 229647,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
+      },
+      "startDate": "2026-04-15"
+    },
+    {
+      "id": "50d3dd6b-572f-4674-801c-16b9506097ca",
+      "agentId": "sys4",
+      "name": "daily-calendar-bot5",
+      "description": "每天 9:00 为 bot5 更新 queue + 推送今日选题 + 唤醒发帖",
+      "enabled": true,
+      "createdAtMs": 1776148608645,
+      "updatedAtMs": 1776301997066,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "每日 content-calendar 流程（只处理 bot5）。\n\n**Step 1 — 读文档**\nRead workspace-sys4/AGENTS.md（特别是 §4.1.5 和 §8 豁免名单）和 skills/content-ops/content-calendar.md 整篇。\n\n**Step 2 — 豁免检查**\n本次只处理 **bot5** 一个 bot。对照 AGENTS.md §8 确认 bot5 不在豁免名单（bot11 豁免，但本次和 bot5 无关）。\n\n**Step 3 — 数据刷新（FAIL-LOUD）**\n用 Bash 工具真跑以下命令，stdout 贴日记：\n```\nbash /home/rooot/.openclaw/dashboard/query-stats.sh --summary\nbash /home/rooot/.openclaw/dashboard/query-stats.sh bot5 --top=3 --with-content\nbash /home/rooot/.openclaw/dashboard/query-stats.sh bot5 --titles\n```\n命令失败 → 立即停止，在日记里记完整错误，等研究部介入，不要自己找\"替代方案\"。\n\n**Step 4 — 更新 queue + 组织今日选题**\n1. Read workspace-bot5/memory/topic-library.md、SOUL.md、IDENTITY.md\n2. 更新 workspace-sys4/queue/bot5.md：\n   - 昨天/前天已发布的条目标 📝 已发布（用 query-stats.sh 的 updated 时间判定）\n   - 剔除已过期的 🔥 时效素材或已过时的热点\n   - 今天原排期选题仍合适 → 状态改为 ⏳ 待推送；不合适 → 从素材库补替代选题\n   - 「数据回顾」节的每个数字必须能在 query-stats.sh stdout 原文搜到，不准编造\n3. **不要向 workspace-bot5/ 下写任何文件**。在 context 里组织好\"今日作战命令\"的完整文本（结构见 Step 5），准备通过 send_message 派发。\n\n**Step 5 — 用 send_message 把今日选题派发给 bot5**\n调用 `send_message` 工具（**不要**用 Bash 起 `openclaw agent`，转义不安全且会污染 main session）：\n\n```\nsend_message(\n  to: \"bot5\",\n  content: <下面的完整作战命令文本>,\n  trace: [{\"agent\": \"sys4\"}]\n)\n```\n\n`content` 文本的结构（把 queue 里今日 ⏳ 待推送 条目的内容抽出来填进去）：\n\n---\n⚙️ 本消息由 sys4 cron 派发，**无需 reply_message**（cron isolated session 无回路，reply_message 会报错）。完成后按下面指令走 submit-to-publisher 交稿，再用 `message` 工具汇报飞书群即可。\n\n# 今日选题（sys4 YYYY-MM-DD 派发）\n\n## 选题\n<一句话选题，来自 queue 的「选题」字段>\n\n## 角度\n<角度描述，来自 queue 的「角度」字段>\n\n## 为什么今天发\n<原因，来自 queue 的「理由」字段>\n\n## 参考你的旧作\n<从 query-stats.sh --top=3 --with-content 输出里挑一篇相似主题或高 engagement 的旧作，贴标题、impressions/likes/comments 数据、开头金句>\n\n## 注意事项\n<可选：限流红线、风格提醒、素材来源等，没有就省略这一节>\n\n---\n\n读完以上选题后：\n1. Read skills/xhs-op/daily-post.md 和 skills/xhs-op/投稿发布.md\n2. **跳过 daily-post.md 的 Step 1-3**（选题、角度、参考旧作上面已经给你了，直接用）\n3. 从 Step 4 开始：Read skills/xhs-op/内容策划.md 然后生产内容（封面标题+正文标题+正文）\n4. **Step 5 提交发布**：按 投稿发布.md 的 text_to_image 模式，先用 `compliance-mcp.review_content` 做合规审核，审核通过后运行 `skills/xhs-op/submit-to-publisher.sh` 交稿到 `workspace-sys1/publish-queue/pending/`（由印务局 sys1 接管发布）\n5. **禁止直接调用小红书发布 MCP**，必须走 submit-to-publisher.sh 交稿流程\n6. 交稿成功后（脚本输出 pending 文件夹名）用 `message` 工具汇报到 `channel:feishu, to:oc_60eedc287757fa36581430517d838726, account:bot5`\n7. 合规审核未通过 → 按 suggestion 修改后重试，最多 2 次失败就停止并汇报\n---\n\n**关键**：bot5 走的是 daily-post.md Step 4-5 + submit-to-publisher.sh 的交稿链路（交到印务局 sys1，由 sys1 实际发布），**不是** bot5 自己直接调 XHS 发布 MCP。\n\n**Step 6 — 写日记**\nAppend 到 workspace-sys4/memory/YYYY-MM-DD.md：记录本次执行（bot5）、send_message 的 message_id、queue 更新摘要、stdout 摘录、任何异常。\n\n**注意**\n- 每个数字必须能在 query-stats.sh stdout 原文搜到，不准编造\n- queue 文件写 workspace-sys4/queue/，不要写 skills/ 下\n- **不再向 workspace-bot5/ 下写任何文件**（选题通过 send_message 内联传递，bot 从消息体读）\n- 如果 bot5 在豁免名单，跳过 Step 5，只更新 queue 和写日记"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1776387600000,
+        "lastRunAtMs": 1776301612241,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 384825,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
+      },
+      "startDate": "2026-04-15"
+    },
+    {
+      "id": "7051a432-d16d-4121-904b-2c7ee93140b1",
+      "agentId": "sys4",
+      "name": "daily-calendar-bot1",
+      "description": "每天 9:20 为 bot1 更新 queue + 推送今日选题 + 唤醒发帖",
+      "enabled": true,
+      "createdAtMs": 1776148608645,
+      "updatedAtMs": 1776244753465,
+      "schedule": {
+        "kind": "cron",
+        "expr": "20 9 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "每日 content-calendar 流程（只处理 bot1）。\n\n**Step 1 — 读文档**\nRead workspace-sys4/AGENTS.md（特别是 §4.1.5 和 §8 豁免名单）和 skills/content-ops/content-calendar.md 整篇。\n\n**Step 2 — 豁免检查**\n本次只处理 **bot1** 一个 bot。对照 AGENTS.md §8 确认 bot1 不在豁免名单（bot11 豁免，但本次和 bot1 无关）。\n\n**Step 3 — 数据刷新（FAIL-LOUD）**\n用 Bash 工具真跑以下命令，stdout 贴日记：\n```\nbash /home/rooot/.openclaw/dashboard/query-stats.sh --summary\nbash /home/rooot/.openclaw/dashboard/query-stats.sh bot1 --top=3 --with-content\nbash /home/rooot/.openclaw/dashboard/query-stats.sh bot1 --titles\n```\n命令失败 → 立即停止，在日记里记完整错误，等研究部介入，不要自己找\"替代方案\"。\n\n**Step 4 — 更新 queue + 组织今日选题**\n1. Read workspace-bot1/memory/topic-library.md、SOUL.md、IDENTITY.md\n2. 更新 workspace-sys4/queue/bot1.md：\n   - 昨天/前天已发布的条目标 📝 已发布（用 query-stats.sh 的 updated 时间判定）\n   - 剔除已过期的 🔥 时效素材或已过时的热点\n   - 今天原排期选题仍合适 → 状态改为 ⏳ 待推送；不合适 → 从素材库补替代选题\n   - 「数据回顾」节的每个数字必须能在 query-stats.sh stdout 原文搜到，不准编造\n3. **不要向 workspace-bot1/ 下写任何文件**。在 context 里组织好\"今日作战命令\"的完整文本（结构见 Step 5），准备通过 send_message 派发。\n\n**Step 5 — 用 send_message 把今日选题派发给 bot1**\n调用 `send_message` 工具（**不要**用 Bash 起 `openclaw agent`，转义不安全且会污染 main session）：\n\n```\nsend_message(\n  to: \"bot1\",\n  content: <下面的完整作战命令文本>,\n  trace: [{\"agent\": \"sys4\"}]\n)\n```\n\n`content` 文本的结构（把 queue 里今日 ⏳ 待推送 条目的内容抽出来填进去）：\n\n---\n⚙️ 本消息由 sys4 cron 派发，**无需 reply_message**（cron isolated session 无回路，reply_message 会报错）。完成后按下面指令走 submit-to-publisher 交稿，再用 `message` 工具汇报飞书群即可。\n\n# 今日选题（sys4 YYYY-MM-DD 派发）\n\n## 选题\n<一句话选题，来自 queue 的「选题」字段>\n\n## 角度\n<角度描述，来自 queue 的「角度」字段>\n\n## 为什么今天发\n<原因，来自 queue 的「理由」字段>\n\n## 参考你的旧作\n<从 query-stats.sh --top=3 --with-content 输出里挑一篇相似主题或高 engagement 的旧作，贴标题、impressions/likes/comments 数据、开头金句>\n\n## 注意事项\n<可选：限流红线、风格提醒、素材来源等，没有就省略这一节>\n\n---\n\n读完以上选题后：\n1. Read skills/xhs-op/daily-post.md 和 skills/xhs-op/投稿发布.md\n2. **跳过 daily-post.md 的 Step 1-3**（选题、角度、参考旧作上面已经给你了，直接用）\n3. 从 Step 4 开始：Read skills/xhs-op/内容策划.md 然后生产内容（封面标题+正文标题+正文）\n4. **Step 5 提交发布**：按 投稿发布.md 的 text_to_image 模式，先用 `compliance-mcp.review_content` 做合规审核，审核通过后运行 `skills/xhs-op/submit-to-publisher.sh` 交稿到 `workspace-sys1/publish-queue/pending/`（由印务局 sys1 接管发布）\n5. **禁止直接调用小红书发布 MCP**，必须走 submit-to-publisher.sh 交稿流程\n6. 交稿成功后（脚本输出 pending 文件夹名）用 `message` 工具汇报到 `channel:feishu, to:oc_60eedc287757fa36581430517d838726, account:bot1`\n7. 合规审核未通过 → 按 suggestion 修改后重试，最多 2 次失败就停止并汇报\n---\n\n**关键**：bot1 走的是 daily-post.md Step 4-5 + submit-to-publisher.sh 的交稿链路（交到印务局 sys1，由 sys1 实际发布），**不是** bot1 自己直接调 XHS 发布 MCP。\n\n**Step 6 — 写日记**\nAppend 到 workspace-sys4/memory/YYYY-MM-DD.md：记录本次执行（bot1）、send_message 的 message_id、queue 更新摘要、stdout 摘录、任何异常。\n\n**注意**\n- 每个数字必须能在 query-stats.sh stdout 原文搜到，不准编造\n- queue 文件写 workspace-sys4/queue/，不要写 skills/ 下\n- **不再向 workspace-bot1/ 下写任何文件**（选题通过 send_message 内联传递，bot 从消息体读）\n- 如果 bot1 在豁免名单，跳过 Step 5，只更新 queue 和写日记"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1776388800000,
+        "lastRunAtMs": 1776216000026,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 205233,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "lastDeliveryError": "⚠️ ✍️ Write: to ~/.openclaw/workspace-bot1/今日选题.md (638 chars) failed",
+        "consecutiveErrors": 1
+      },
+      "startDate": "2026-04-15"
+    }
+  ]
+}

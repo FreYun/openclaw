@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-07 07:03:55
+> 更新时间：2026-04-17 00:51:51
 
 ## 职业
 
@@ -21,14 +21,8 @@
 - 小红书写稿经验（xhs-writing） — `skills/xhs-writing/SKILL.md`
 - 詹姆斯话题库（james-topic-research） — `skills/james-topic-research/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
-- 定时发稿（scheduled-post） — `skills/scheduled-post/SKILL.md`
 - 商单写作（shangdan-card） — `skills/shangdan-card/SKILL.md`
 - 小红书素材巡逻（xhs-topic-collector） — `skills/xhs-topic-collector/SKILL.md`
-
-## 投顾技能
-
-- 投顾产品匹配（tougu-product-match） — `skills/portfolio/tougu-product-match/SKILL.md`
-- 投顾组合巡检（tougu-portfolio-review） — `skills/portfolio/tougu-portfolio-review/SKILL.md`
 
 ## 研究技能
 

@@ -2,150 +2,121 @@
 /**
  * 板块热度探测
  *
- * 数据源：
- *   1. 雪球热搜（CDP浏览器）
- *   2. research-mcp 财经新闻
+ * 数据源：雪球热搜（Playwright 无头浏览器）
  *
  * 用法：
- *   node sector-heat.mjs              # 雪球 + 新闻
- *   node sector-heat.mjs --xueqiu     # 只看雪球
- *   node sector-heat.mjs --news       # 只看新闻
+ *   node sector-heat.mjs              # 雪球热搜 + 热股榜
+ *   node sector-heat.mjs --xueqiu     # 只看雪球热搜
  *
- * 依赖：
- *   - CDP 浏览器实例在 9222 端口（xhs-browser.mjs）
- *   - bot7 的 research-mcp
+ * 依赖：playwright（npm install playwright）
  */
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import { chromium } from 'playwright';
-const execAsync = promisify(exec);
+import { readFileSync, writeFileSync } from 'fs';
 
-const WS = '/home/rooot/.openclaw/workspace-bot7';
-const CDP_URL = 'http://localhost:9222';
+const SKILL_PATH = '/home/rooot/.openclaw/workspace/skills/utility/xhs-topic-collector/SKILL.md';
 
-const mcpCall = (cmd) =>
-  execAsync(`cd ${WS} && npx mcporter call '${cmd}' 2>/dev/null`, { timeout: 20000 })
-    .then(r => r.stdout).catch(() => '[]');
+// 确保进程退出时杀干净浏览器（timeout SIGTERM 等场景）
+let _browser = null;
+for (const sig of ['SIGTERM', 'SIGINT', 'SIGHUP']) {
+  process.on(sig, () => { _browser?.close().catch(() => {}); process.exit(1); });
+}
+process.on('exit', () => { _browser?.process()?.kill('SIGKILL'); });
 
 // ========== 雪球热搜 ==========
 async function getXueqiuHot() {
   let browser;
   try {
-    browser = await chromium.connectOverCDP(CDP_URL);
-  } catch {
-    console.error('无法连接 CDP 9222，请先启动 xhs-browser.mjs');
-    return [];
-  }
-
-  const context = browser.contexts()[0];
-  let page = context.pages().find(p => p.url().includes('xueqiu.com'));
-
-  if (!page) {
-    page = await context.newPage();
+    browser = _browser = await chromium.launch({
+      headless: true,
+      executablePath: '/home/rooot/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome',
+    });
+    const page = await browser.newPage();
     await page.goto('https://xueqiu.com', { waitUntil: 'domcontentloaded', timeout: 30000 });
-  } else {
-    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
-  }
-  await page.waitForTimeout(3000);
+    await page.waitForTimeout(3000);
 
-  const topics = await page.evaluate(() => {
-    const results = [];
-    const headers = document.querySelectorAll('h2, h3, .title, [class*="title"]');
-    for (const h of headers) {
-      if (h.innerText.includes('热门话题')) {
-        const parent = h.closest('div, section, aside');
-        if (parent) {
-          const items = parent.querySelectorAll('a');
-          items.forEach(a => {
-            const text = a.innerText.trim();
-            if (text.length > 4 && text.length < 80) results.push(text);
-          });
+    // 热门话题
+    const topics = await page.evaluate(() => {
+      const results = [];
+      const rows = document.querySelectorAll('table tr');
+      let inHotTopic = false;
+      for (const row of rows) {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 2) {
+          const rank = cells[0]?.innerText?.trim();
+          const text = cells[1]?.innerText?.trim();
+          if (rank && text && /^\d+$/.test(rank) && text.length > 4 && text.length < 80) {
+            results.push(text);
+          }
         }
-        break;
       }
-    }
-    return results;
-  });
+      // 从 "热门话题" heading 下面的 table 取
+      const heading = [...document.querySelectorAll('h3')].find(h => h.textContent.includes('热门话题'));
+      if (heading) {
+        const table = heading.closest('div')?.querySelector('table');
+        if (table) {
+          const items = [];
+          for (const row of table.querySelectorAll('tr')) {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 2) {
+              const text = cells[1]?.innerText?.trim();
+              if (text) items.push(text);
+            }
+          }
+          if (items.length > 0) return items;
+        }
+      }
+      return results;
+    });
 
-  return topics;
-}
+    // 热股榜 — 表格有 thead/tbody，列为：排名 | 名称 | (空) | 涨跌幅
+    const hotStocks = await page.evaluate(() => {
+      const heading = [...document.querySelectorAll('h3')].find(h => h.textContent.includes('热股榜'));
+      if (!heading) return [];
+      // 向上找到包含 heading 和 table 的最近容器
+      let container = heading.parentElement;
+      let table = null;
+      while (container && !table) {
+        table = container.querySelector('table tbody');
+        if (!table) container = container.parentElement;
+      }
+      if (!table) return [];
+      const items = [];
+      for (const row of table.querySelectorAll('tr')) {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 3) {
+          const rank = cells[0]?.innerText?.trim();
+          const name = cells[1]?.innerText?.trim();
+          const pct = cells[cells.length - 1]?.innerText?.trim();
+          if (name && pct && pct.includes('%')) items.push({ rank, name, pct });
+        }
+      }
+      return items;
+    });
 
-// ========== research-mcp 新闻 ==========
-async function getNewsHot() {
-  const queries = [
-    '板块异动 资金流入 主力',
-    '机构调研 行业景气',
-    '北向资金 加仓 板块',
-    '概念股 龙头 涨幅',
-    '跌停 板块 暴跌',
-    'ETF资金流入 板块 抄底',
-    '恒生科技 港股通 恐慌',
-    '美股 纳指 科技股',
-  ];
-
-  const results = await Promise.all(
-    queries.map(q => mcpCall(`research-mcp.news_search(query: "${q}", top_k: 5, search_day_ago: 1)`))
-  );
-
-  const allNews = [];
-  for (const raw of results) {
-    try { allNews.push(...JSON.parse(raw)); } catch {}
+    await browser.close();
+    return { topics, hotStocks };
+  } catch (e) {
+    console.error('Playwright 抓取失败:', e.message);
+    if (browser) await browser.close().catch(() => {});
+    return { topics: [], hotStocks: [] };
   }
-
-  // 去重 + 只保留今天的（ID前缀为今天日期 YYYYMMDD）
-  const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  const seen = new Set();
-  const unique = allNews.filter(item => {
-    if (seen.has(item[0])) return false;
-    seen.add(item[0]);
-    return item[0].startsWith(today);
-  });
-
-  // 过滤掉内容里提到昨天日期或"昨日"的
-  const now = new Date();
-  const yesterday = new Date(now - 86400000);
-  const ydStr = `${yesterday.getMonth() + 1}月${yesterday.getDate()}日`;
-  const filtered = unique.filter(item => {
-    const text = item[1];
-    return !text.includes(ydStr) && !text.includes('昨日') && !text.includes('昨天');
-  });
-
-  // 提取摘要文本
-  return filtered.map(item => item[1]).filter(Boolean);
 }
 
 // ========== main ==========
-const args = process.argv.slice(2);
-const xueqiuOnly = args.includes('--xueqiu');
-const newsOnly = args.includes('--news');
-const runBoth = !xueqiuOnly && !newsOnly;
+const { topics, hotStocks } = await getXueqiuHot();
 
-let xueqiuTopics = [];
-let newsItems = [];
+console.log(`=== 雪球热搜 TOP${topics.length} ===\n`);
+topics.forEach((t, i) => console.log(`${String(i + 1).padStart(2)}. ${t}`));
+console.log();
 
-if (xueqiuOnly || runBoth) {
-  xueqiuTopics = await getXueqiuHot();
-  console.log(`=== 雪球热搜 TOP${xueqiuTopics.length} ===\n`);
-  xueqiuTopics.forEach((t, i) => console.log(`${String(i + 1).padStart(2)}. ${t}`));
+if (hotStocks.length > 0) {
+  console.log(`=== 热股榜 TOP${hotStocks.length} ===\n`);
+  hotStocks.forEach(s => console.log(`${String(s.rank).padStart(2)}. ${s.name}  ${s.pct}`));
   console.log();
 }
 
-if (newsOnly || runBoth) {
-  newsItems = await getNewsHot();
-  console.log(`=== 财经新闻热点（${newsItems.length}条）===\n`);
-  newsItems.slice(0, 20).forEach((n, i) => {
-    const match = n.match(/\['(.+?)'\]/);
-    const text = match ? match[1] : n.slice(0, 120);
-    console.log(`${String(i + 1).padStart(2)}. ${text.slice(0, 100)}`);
-  });
-}
-
 // ========== 写入 SKILL.md ==========
-const SKILL_PATH = '/home/rooot/.openclaw/workspace/skills/xhs-topic-collector/SKILL.md';
-
-import { readFileSync, writeFileSync } from 'fs';
-
 try {
   const skill = readFileSync(SKILL_PATH, 'utf-8');
   const startTag = '<!-- sector-heat-start -->';
@@ -153,27 +124,19 @@ try {
   const startIdx = skill.indexOf(startTag);
   const endIdx = skill.indexOf(endTag);
 
-  if (startIdx === -1 || endIdx === -1) {
-    console.error('SKILL.md 中未找到 sector-heat 标记');
-  } else {
-    // 拼注入内容
+  if (startIdx !== -1 && endIdx !== -1) {
     const now = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
     let inject = `${startTag}\n## 板块热度探测（自动更新：${now}）\n\n\`\`\`\n`;
 
-    // 雪球部分（从上面的变量拿）
-    if (typeof xueqiuTopics !== 'undefined' && xueqiuTopics.length > 0) {
-      inject += `=== 雪球热搜 TOP${xueqiuTopics.length} ===\n\n`;
-      xueqiuTopics.forEach((t, i) => { inject += `${String(i + 1).padStart(2)}. ${t}\n`; });
+    if (topics.length > 0) {
+      inject += `=== 雪球热搜 TOP${topics.length} ===\n\n`;
+      topics.forEach((t, i) => { inject += `${String(i + 1).padStart(2)}. ${t}\n`; });
       inject += '\n';
     }
 
-    if (typeof newsItems !== 'undefined' && newsItems.length > 0) {
-      inject += `=== 财经新闻热点（${newsItems.length}条）===\n\n`;
-      newsItems.slice(0, 20).forEach((n, i) => {
-        const match = n.match(/\['(.+?)'\]/);
-        const text = match ? match[1] : n.slice(0, 120);
-        inject += `${String(i + 1).padStart(2)}. ${text.slice(0, 100)}\n`;
-      });
+    if (hotStocks.length > 0) {
+      inject += `=== 热股榜 TOP${hotStocks.length} ===\n\n`;
+      hotStocks.forEach(s => { inject += `${String(s.rank).padStart(2)}. ${s.name}  ${s.pct}\n`; });
     }
 
     inject += `\`\`\`\n\n${endTag}`;

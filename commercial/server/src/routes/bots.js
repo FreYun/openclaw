@@ -47,6 +47,78 @@ router.get("/:id", (req, res) => {
   res.json({ ...bot, specialties: JSON.parse(bot.specialties) });
 });
 
+// GET /api/bots/:id/capabilities - read-only snapshot of equipped skills and
+// MCP servers. Source of truth is workspace-botN/EQUIPPED_SKILLS.md (written
+// by the 装备 system) and workspace-botN/config/mcporter.json. Commercial
+// clients see this so they know what the达人 can actually do before ordering.
+const MCP_DISPLAY_NAMES = {
+  "xiaohongshu-mcp": "小红书",
+  "xhs-mcp": "小红书",
+  "research-mcp": "研究数据库",
+  "compliance-mcp": "合规审核",
+  "image-gen-mcp": "图像生成",
+  "tougu-portfolio-mcp": "投顾组合",
+  "feishu-mcp": "飞书",
+};
+
+function parseEquippedSkills(mdPath) {
+  if (!fs.existsSync(mdPath)) return {};
+  const text = fs.readFileSync(mdPath, "utf8");
+  const lines = text.split(/\r?\n/);
+  const result = {};
+  let currentCategory = null;
+  for (const line of lines) {
+    const hdr = line.match(/^##\s+(.+?)\s*$/);
+    if (hdr) {
+      currentCategory = hdr[1].trim();
+      result[currentCategory] = [];
+      continue;
+    }
+    if (!currentCategory) continue;
+    // Match lines like: `- 小红书运营（xhs-op） — ...` or `- xxx (xxx) — ...`
+    const item = line.match(/^-\s+(.+?)\s*[（(]\s*([^）)]+?)\s*[）)]/);
+    if (item) {
+      result[currentCategory].push({ name: item[1].trim(), id: item[2].trim() });
+    }
+  }
+  // Drop empty categories.
+  for (const key of Object.keys(result)) {
+    if (result[key].length === 0) delete result[key];
+  }
+  return result;
+}
+
+function parseMcpServers(jsonPath) {
+  if (!fs.existsSync(jsonPath)) return [];
+  try {
+    const raw = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+    const servers = raw.mcpServers || {};
+    return Object.keys(servers).map((name) => ({
+      name,
+      display_name: MCP_DISPLAY_NAMES[name] || name,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+router.get("/:id/capabilities", (req, res) => {
+  const botId = req.params.id;
+  const db = getDb();
+  const bot = db.prepare("SELECT bot_id FROM bot_profiles WHERE bot_id = ?").get(botId);
+  if (!bot) return res.status(404).json({ error: "Bot 不存在" });
+
+  const wsDir = path.join(OPENCLAW_DIR, botWorkspaceDir(botId));
+  const skills = parseEquippedSkills(path.join(wsDir, "EQUIPPED_SKILLS.md"));
+  const mcpServers = parseMcpServers(path.join(wsDir, "config", "mcporter.json"));
+
+  res.json({
+    bot_id: botId,
+    skills,
+    mcp_servers: mcpServers,
+  });
+});
+
 // GET /api/bots/:id/avatar - serve avatar image
 router.get("/:id/avatar", (req, res) => {
   const avatarPath = resolveAvatarPath(req.params.id);

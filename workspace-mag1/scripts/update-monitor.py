@@ -14,7 +14,7 @@ MONITOR_DIR = "/home/rooot/.openclaw/workspace-mag1/monitor"
 CST = timezone(timedelta(hours=8))
 
 # 要监控的 agent 列表（跳过 coder/main 等内部 agent）
-WATCH_AGENTS = ["bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7", "bot8", "bot9", "bot10", "bot_main"]
+WATCH_AGENTS = ["bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7", "bot8", "bot9", "bot10", "mag1"]
 
 BOT_NAMES = {
     "bot1": "来财妹妹",
@@ -27,7 +27,7 @@ BOT_NAMES = {
     "bot8": "bot8",
     "bot9": "bot9",
     "bot10": "bot10",
-    "bot_main": "魏忠贤",
+    "mag1": "魏忠贤",
 }
 
 

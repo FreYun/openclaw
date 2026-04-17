@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-07 07:09:12
+> 更新时间：2026-04-17 00:51:51
 
 ## 职业
 
@@ -9,7 +9,7 @@
 
 ## 风格
 
-- 大E飞风格（dae-fly-style） — `skills/dae-fly-style/SKILL.md`
+- 老K风格（dae-fly-style） — `skills/dae-fly-style/SKILL.md`
 - 老K画图风格（laok-style） — `skills/laok-style/SKILL.md`
 - 自我复盘（self-review） — `skills/self-review/SKILL.md`
 
@@ -17,9 +17,9 @@
 
 - 浏览器基础（browser-base） — `skills/browser-base/SKILL.md`
 - 异常上报（report-incident） — `skills/report-incident/SKILL.md`
-- 定时发稿（scheduled-post） — `skills/scheduled-post/SKILL.md`
 - K-daily-post（K-daily-post） — `skills/K-daily-post/SKILL.md`
 - 合规审核（compliance-review） — `skills/compliance-review/SKILL.md`
+- 投顾库刷新（tougu-db-refresh） — `skills/tougu-db-refresh/SKILL.md`
 
 ## 研究技能
 
@@ -36,4 +36,6 @@
 - TMT全景（tmt-landscape） — `skills/tmt-landscape/SKILL.md`
 - 光伏跟踪（solar-tracker） — `skills/solar-tracker/SKILL.md`
 - 锂电产业链（lithium-battery-tracker） — `skills/lithium-battery-tracker/SKILL.md`
+- 妙想模拟盘（mx-moni） — `skills/mx-moni/SKILL.md`
+- 研报批判（report-critique） — `skills/report-critique/SKILL.md`
 

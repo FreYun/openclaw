@@ -1,0 +1,8 @@
+{
+    "mcpServers": {
+        "media-data-pack": {
+            "url": "http://localhost:18075/mcp"
+        }
+    },
+    "imports": []
+}

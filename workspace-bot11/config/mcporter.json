@@ -1,7 +1,6 @@
 {
     "mcpServers": {
         "xiaohongshu-mcp": {
-            "baseUrl": "http://localhost:18811/mcp",
             "url": "http://localhost:18060/mcp/bot11"
         },
         "research-mcp": {
@@ -12,6 +11,9 @@
         },
         "weread-mcp": {
             "url": "http://localhost:18100/mcp/bot11"
+        },
+        "tougu-portfolio-mcp": {
+            "url": "http://localhost:18070/mcp"
         }
     },
     "imports": []

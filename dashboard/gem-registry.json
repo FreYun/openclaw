@@ -27,7 +27,9 @@
       "urlTemplate": "http://localhost:18085/mcp",
       "healthEndpoint": "/mcp",
       "healthMethod": "mcp-initialize",
-      "manageable": true
+      "manageable": true,
+      "cwd": "/home/rooot/MCP/image-gen-mcp",
+      "cmd": "python3 server.py --transport streamable-http --port 18085"
     },
     "compliance-mcp": {
       "name": "合规审核",
@@ -39,7 +41,23 @@
       "urlTemplate": "http://localhost:18090/mcp",
       "healthEndpoint": "/mcp",
       "healthMethod": "mcp-initialize",
-      "manageable": true
+      "manageable": true,
+      "cwd": "/home/rooot/MCP/compliance-mcp",
+      "cmd": "./compliance-mcp -port=:18090"
+    },
+    "media-data-pack": {
+      "name": "媒体数据包",
+      "icon": "🟠",
+      "color": "#ff9f43",
+      "desc": "财经公众号 + 小红书/抖音 语义检索（天天基金 research-api 网关）",
+      "perBot": false,
+      "port": 18075,
+      "urlTemplate": "http://localhost:18075/mcp",
+      "healthEndpoint": "/mcp",
+      "healthMethod": "mcp-initialize",
+      "manageable": true,
+      "cwd": "/home/rooot/MCP/media-data-pack",
+      "cmd": "python3 server.py --transport streamable-http --port 18075"
     },
     "research-mcp": {
       "name": "研究数据",

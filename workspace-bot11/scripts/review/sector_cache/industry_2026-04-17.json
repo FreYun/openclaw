@@ -1,0 +1,98 @@
+{
+  "top": [
+    {
+      "name": "钴",
+      "pct_chg": 5.04,
+      "amount": 0.0,
+      "leader": "腾远钴业",
+      "leader_pct": 6.74,
+      "up_count": 2,
+      "down_count": 0
+    },
+    {
+      "name": "铅锌",
+      "pct_chg": 3.51,
+      "amount": 0.0,
+      "leader": "株冶集团",
+      "leader_pct": 10.01,
+      "up_count": 11,
+      "down_count": 1
+    },
+    {
+      "name": "镍",
+      "pct_chg": 3.19,
+      "amount": 0.0,
+      "leader": "华友钴业",
+      "leader_pct": 3.2,
+      "up_count": 1,
+      "down_count": 0
+    },
+    {
+      "name": "激光设备",
+      "pct_chg": 2.85,
+      "amount": 0.0,
+      "leader": "德龙激光",
+      "leader_pct": 7.12,
+      "up_count": 8,
+      "down_count": 2
+    },
+    {
+      "name": "稀土",
+      "pct_chg": 2.58,
+      "amount": 0.0,
+      "leader": "中稀有色",
+      "leader_pct": 4.73,
+      "up_count": 4,
+      "down_count": 0
+    }
+  ],
+  "bottom": [
+    {
+      "name": "教育运营及其他",
+      "pct_chg": -2.48,
+      "amount": 0.0,
+      "leader": "博瑞传播",
+      "leader_pct": -0.98,
+      "up_count": 0,
+      "down_count": 3
+    },
+    {
+      "name": "旅游综合",
+      "pct_chg": -2.49,
+      "amount": 0.0,
+      "leader": "锦旅Ｂ股",
+      "leader_pct": -0.35,
+      "up_count": 0,
+      "down_count": 8
+    },
+    {
+      "name": "酒店",
+      "pct_chg": -2.56,
+      "amount": 0.0,
+      "leader": "锦江Ｂ股",
+      "leader_pct": -0.73,
+      "up_count": 0,
+      "down_count": 6
+    },
+    {
+      "name": "钾肥",
+      "pct_chg": -2.66,
+      "amount": 0.0,
+      "leader": "盐湖股份",
+      "leader_pct": -0.47,
+      "up_count": 0,
+      "down_count": 4
+    },
+    {
+      "name": "氨纶",
+      "pct_chg": -2.71,
+      "amount": 0.0,
+      "leader": "华峰化学",
+      "leader_pct": -2.71,
+      "up_count": 0,
+      "down_count": 1
+    }
+  ],
+  "total": 496,
+  "source": "akshare"
+}

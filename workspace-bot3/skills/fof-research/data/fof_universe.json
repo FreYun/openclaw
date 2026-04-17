@@ -1,0 +1,5525 @@
+{
+  "generated_at": "2026-04-13 16:43:13",
+  "source": "Tushare Pro fund_basic(market='O')",
+  "identification_rule": "name 含 'FOF' 或 '养老目标'",
+  "total_raw_shares": 306,
+  "total_merged_products": 184,
+  "products": [
+    {
+      "primary_code": "022376.OF",
+      "primary_name": "光大安选平衡养老目标三年持有A",
+      "stem": "光大安选平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "光大保德信基金",
+      "custodian": "中国建设银行",
+      "found_date": "20241210",
+      "issue_date": "20241111",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合财富(总值)指数收益率*50%+沪深300指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "022376.OF",
+          "name": "光大安选平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20241210"
+        },
+        {
+          "code": "026587.OF",
+          "name": "光大安选平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20260312"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "014006.OF",
+      "primary_name": "中银养老目标日期2050五年持有A",
+      "stem": "中银养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "中银基金",
+      "custodian": "交通银行",
+      "found_date": "20220308",
+      "issue_date": "20220214",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "沪深300指数收益率*61.75%+中债综合全价(总值)指数收益率*30%+银行活期存款利率(税后)*5%+恒生指数收益率*3.25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "014006.OF",
+          "name": "中银养老目标日期2050五年持有A",
+          "share": "A",
+          "found_date": "20220308"
+        },
+        {
+          "code": "026545.OF",
+          "name": "中银养老目标日期2050五年持有Y",
+          "share": "Y",
+          "found_date": "20251231"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "025325.OF",
+      "primary_name": "富达任远保守养老目标一年持有",
+      "stem": "富达任远保守养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "保守",
+      "hold_period_years": 1,
+      "management": "富达基金",
+      "custodian": "中国银行",
+      "found_date": "20251229",
+      "issue_date": "20251201",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*80%+沪深300指数收益率*5%+标普500指数收益率(经汇率调整)*5%+银行活期存款利率(税后)*5%+上海黄金交易所AU99.99现货实盘合约收益率*4%+恒生指数收益率(使用估值汇率折算)*1%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "025325.OF",
+          "name": "富达任远保守养老目标一年持有",
+          "share": "",
+          "found_date": "20251229"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017325.OF",
+      "primary_name": "农银鑫享稳健养老目标一年持有A",
+      "stem": "农银鑫享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "农银汇理基金",
+      "custodian": "交通银行",
+      "found_date": "20230209",
+      "issue_date": "20230103",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证全债指数收益率*80%+沪深300指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017325.OF",
+          "name": "农银鑫享稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20230209"
+        },
+        {
+          "code": "019655.OF",
+          "name": "农银鑫享稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20251201"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "024131.OF",
+      "primary_name": "兴银颐福保守养老目标一年持有",
+      "stem": "兴银颐福保守养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "保守",
+      "hold_period_years": 1,
+      "management": "兴银基金",
+      "custodian": "兴业银行",
+      "found_date": "20251010",
+      "issue_date": "20250916",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证全债指数收益率*75%+中证800指数收益率*12%+上海黄金交易所AU99.99现货实盘合约收益率*5%+商业银行活期存款利率(税后)*5%+中证港股通综合指数收益率*3%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "024131.OF",
+          "name": "兴银颐福保守养老目标一年持有",
+          "share": "",
+          "found_date": "20251010"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "019664.OF",
+      "primary_name": "易方达养老目标日期2060五年持有",
+      "stem": "易方达养老目标日期2060五年持有",
+      "category": "目标日期型",
+      "target_year": 2060,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "易方达基金",
+      "custodian": "招商银行",
+      "found_date": "20250910",
+      "issue_date": "20250609",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*56%+中债新综合指数(财富)收益率*30%+中证港股通综合指数收益率*14%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019664.OF",
+          "name": "易方达养老目标日期2060五年持有",
+          "share": "",
+          "found_date": "20250910"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018514.OF",
+      "primary_name": "南方康乐养老目标日期2045三年持有A",
+      "stem": "南方康乐养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "南方基金",
+      "custodian": "中国工商银行",
+      "found_date": "20230905",
+      "issue_date": "20230807",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证偏股型基金指数收益率*50%+中债综合指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018514.OF",
+          "name": "南方康乐养老目标日期2045三年持有A",
+          "share": "A",
+          "found_date": "20230905"
+        },
+        {
+          "code": "025394.OF",
+          "name": "南方康乐养老目标日期2045三年持有Y",
+          "share": "Y",
+          "found_date": "20250903"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018825.OF",
+      "primary_name": "安信平衡养老目标三年持有A",
+      "stem": "安信平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "安信基金",
+      "custodian": "招商银行",
+      "found_date": "20240507",
+      "issue_date": "20240415",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*45%+中债新综合全价(总值)指数收益率*45%+恒生指数收益率(使用估值汇率折算)*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018825.OF",
+          "name": "安信平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20240507"
+        },
+        {
+          "code": "025072.OF",
+          "name": "安信平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20250818"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "020230.OF",
+      "primary_name": "汇丰晋信养老目标日期2036一年持有A",
+      "stem": "汇丰晋信养老目标日期2036一年持有",
+      "category": "目标日期型",
+      "target_year": 2036,
+      "risk_level": null,
+      "hold_period_years": 1,
+      "management": "汇丰晋信基金",
+      "custodian": "招商银行",
+      "found_date": "20240612",
+      "issue_date": "20240510",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债新综合财富(总值)指数收益率*75%+沪深300指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "020230.OF",
+          "name": "汇丰晋信养老目标日期2036一年持有A",
+          "share": "A",
+          "found_date": "20240612"
+        },
+        {
+          "code": "023157.OF",
+          "name": "汇丰晋信养老目标日期2036一年持有Y",
+          "share": "Y",
+          "found_date": "20250604"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "023005.OF",
+      "primary_name": "广发养老目标2055五年持有",
+      "stem": "广发养老目标2055五年持有",
+      "category": "目标日期型",
+      "target_year": 2055,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "广发基金",
+      "custodian": "交通银行",
+      "found_date": "20250604",
+      "issue_date": "20250512",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*62.28%+中债-综合全价(总值)指数收益率*30.8%+人民币计价的恒生指数收益率*6.92%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "023005.OF",
+          "name": "广发养老目标2055五年持有",
+          "share": "",
+          "found_date": "20250604"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "023006.OF",
+      "primary_name": "易方达汇享保守养老目标一年持有A",
+      "stem": "易方达汇享保守养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "保守",
+      "hold_period_years": 1,
+      "management": "易方达基金",
+      "custodian": "交通银行",
+      "found_date": "20250206",
+      "issue_date": "20250106",
+      "m_fee": 0.3,
+      "c_fee": 0.1,
+      "benchmark": "中债新综合指数(财富)收益率*90%+沪深300指数收益率*8%+中证港股通综合指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "023006.OF",
+          "name": "易方达汇享保守养老目标一年持有A",
+          "share": "A",
+          "found_date": "20250206"
+        },
+        {
+          "code": "024312.OF",
+          "name": "易方达汇享保守养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20250530"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013060.OF",
+      "primary_name": "工银养老目标日期2060五年持有A",
+      "stem": "工银养老目标日期2060五年持有",
+      "category": "目标日期型",
+      "target_year": 2060,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "工银瑞信基金",
+      "custodian": "招商银行",
+      "found_date": "20220106",
+      "issue_date": "20211220",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*70%+中债新综合(财富)指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013060.OF",
+          "name": "工银养老目标日期2060五年持有A",
+          "share": "A",
+          "found_date": "20220106"
+        },
+        {
+          "code": "024311.OF",
+          "name": "工银养老目标日期2060五年持有Y",
+          "share": "Y",
+          "found_date": "20250523"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "019608.OF",
+      "primary_name": "华泰紫金稳健养老目标一年持有A",
+      "stem": "华泰紫金稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "华泰证券资管",
+      "custodian": "招商银行",
+      "found_date": "20231103",
+      "issue_date": "20231011",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价(总值)指数收益率*80%+中证800指数收益率*15%+恒生指数收益率(使用估值汇率折算)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019608.OF",
+          "name": "华泰紫金稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20231103"
+        },
+        {
+          "code": "023706.OF",
+          "name": "华泰紫金稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20250523"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "020350.OF",
+      "primary_name": "景顺长城养老目标日期2055五年持有",
+      "stem": "景顺长城养老目标日期2055五年持有",
+      "category": "目标日期型",
+      "target_year": 2055,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "景顺长城基金",
+      "custodian": "中国工商银行",
+      "found_date": "20250513",
+      "issue_date": "20250326",
+      "m_fee": 1.0,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*67.5%+中证全债指数收益率*25%+恒生指数收益率(使用估值汇率折算)*7.5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "020350.OF",
+          "name": "景顺长城养老目标日期2055五年持有",
+          "share": "",
+          "found_date": "20250513"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "019622.OF",
+      "primary_name": "财通资管康泽稳健养老目标一年持有A",
+      "stem": "财通资管康泽稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "财通证券资管",
+      "custodian": "中国工商银行",
+      "found_date": "20240612",
+      "issue_date": "20240308",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*80%+沪深300指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019622.OF",
+          "name": "财通资管康泽稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20240612"
+        },
+        {
+          "code": "021994.OF",
+          "name": "财通资管康泽稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20250430"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018673.OF",
+      "primary_name": "财通资管康恒平衡养老目标三年持有A",
+      "stem": "财通资管康恒平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "财通证券资管",
+      "custodian": "平安银行",
+      "found_date": "20230907",
+      "issue_date": "20230814",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*50%+沪深300指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018673.OF",
+          "name": "财通资管康恒平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20230907"
+        },
+        {
+          "code": "021993.OF",
+          "name": "财通资管康恒平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20250430"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018687.OF",
+      "primary_name": "东方养老目标2050五年持有A",
+      "stem": "东方养老目标2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "东方基金",
+      "custodian": "中国建设银行",
+      "found_date": "20231114",
+      "issue_date": "20231023",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*66.5%+中债综合全价指数收益率*30%+中证港股通综合指数(人民币)收益率*3.5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018687.OF",
+          "name": "东方养老目标2050五年持有A",
+          "share": "A",
+          "found_date": "20231114"
+        },
+        {
+          "code": "023714.OF",
+          "name": "东方养老目标2050五年持有Y",
+          "share": "Y",
+          "found_date": "20250425"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018912.OF",
+      "primary_name": "东方养老目标2040三年持有",
+      "stem": "东方养老目标2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "东方基金",
+      "custodian": "华夏银行",
+      "found_date": "20250402",
+      "issue_date": "20250303",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "(沪深300指数收益率*95%+中证港股通综合指数(人民币)收益率*5%)*50%+中债综合全价指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018912.OF",
+          "name": "东方养老目标2040三年持有",
+          "share": "",
+          "found_date": "20250402"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "015726.OF",
+      "primary_name": "银河致远养老目标日期2045三年持有",
+      "stem": "银河致远养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "银河基金",
+      "custodian": "兴业银行",
+      "found_date": "20250325",
+      "issue_date": "20250321",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*53.1%+中债新综合全价指数(总值)收益率*41%+中证港股通综合指数(CNY)*5.9%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "015726.OF",
+          "name": "银河致远养老目标日期2045三年持有",
+          "share": "",
+          "found_date": "20250325"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "010910.OF",
+      "primary_name": "交银安悦平衡养老目标三年持有A",
+      "stem": "交银安悦平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "交银施罗德基金",
+      "custodian": "招商银行",
+      "found_date": "20240205",
+      "issue_date": "20231220",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价指数收益率*50%+中证偏股型基金指数收益率*48%+恒生指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "010910.OF",
+          "name": "交银安悦平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20240205"
+        },
+        {
+          "code": "023459.OF",
+          "name": "交银安悦平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20250310"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "015270.OF",
+      "primary_name": "南方养老目标日期2050五年持有A",
+      "stem": "南方养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "南方基金",
+      "custodian": "中国农业银行",
+      "found_date": "20220323",
+      "issue_date": "20220311",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "(沪深300指数收益率*90%+中证港股通综合指数(人民币)收益率*10%)*70%+上证国债指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "015270.OF",
+          "name": "南方养老目标日期2050五年持有A",
+          "share": "A",
+          "found_date": "20220323"
+        },
+        {
+          "code": "023428.OF",
+          "name": "南方养老目标日期2050五年持有Y",
+          "share": "Y",
+          "found_date": "20250214"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "019707.OF",
+      "primary_name": "鹏扬平衡养老目标三年持有A",
+      "stem": "鹏扬平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "鹏扬基金",
+      "custodian": "中国农业银行",
+      "found_date": "20231204",
+      "issue_date": "20231106",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中债综合财富(总值)指数收益率*40%+银行活期存款利率(税后)*5%+中证港股通综合指数收益率*3%+中证商品期货成份指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019707.OF",
+          "name": "鹏扬平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20231204"
+        },
+        {
+          "code": "023150.OF",
+          "name": "鹏扬平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20250102"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018270.OF",
+      "primary_name": "富国鑫旺积极养老目标五年持有A",
+      "stem": "富国鑫旺积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "富国基金",
+      "custodian": "中国建设银行",
+      "found_date": "20230816",
+      "issue_date": "20230710",
+      "m_fee": 1.0,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*70%+中债综合全价指数收益率*25%+恒生指数收益率(使用汇率估值折算)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018270.OF",
+          "name": "富国鑫旺积极养老目标五年持有A",
+          "share": "A",
+          "found_date": "20230816"
+        },
+        {
+          "code": "022278.OF",
+          "name": "富国鑫旺积极养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20241015"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "019665.OF",
+      "primary_name": "景顺长城保守养老目标一年持有A",
+      "stem": "景顺长城保守养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "保守",
+      "hold_period_years": 1,
+      "management": "景顺长城基金",
+      "custodian": "兴业银行",
+      "found_date": "20240320",
+      "issue_date": "20240108",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证全债指数收益率*75%+中证800指数收益率*12%+上海黄金交易所Au99.99现货实盘合约收益率*5%+商业银行活期存款利率(税后)*5%+恒生指数收益率(使用估值汇率折算)*3%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019665.OF",
+          "name": "景顺长城保守养老目标一年持有A",
+          "share": "A",
+          "found_date": "20240320"
+        },
+        {
+          "code": "022272.OF",
+          "name": "景顺长城保守养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20240927"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "021166.OF",
+      "primary_name": "财通颐享稳健养老目标一年持有",
+      "stem": "财通颐享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "财通基金",
+      "custodian": "交通银行",
+      "found_date": "20240910",
+      "issue_date": "20240805",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合指数收益率*75%+沪深300指数收益率*20%+恒生指数收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "021166.OF",
+          "name": "财通颐享稳健养老目标一年持有",
+          "share": "",
+          "found_date": "20240910"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018837.OF",
+      "primary_name": "广发养老目标2060五年持有A",
+      "stem": "广发养老目标2060五年持有",
+      "category": "目标日期型",
+      "target_year": 2060,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "广发基金",
+      "custodian": "招商银行",
+      "found_date": "20230726",
+      "issue_date": "20230724",
+      "m_fee": 0.7,
+      "c_fee": 0.2,
+      "benchmark": "(中证800指数收益率*90%+人民币计价的恒生指数收益率*10%)*75.6%+中债-综合全价(总值)指数收益率*24.4%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018837.OF",
+          "name": "广发养老目标2060五年持有A",
+          "share": "A",
+          "found_date": "20230726"
+        },
+        {
+          "code": "022046.OF",
+          "name": "广发养老目标2060五年持有Y",
+          "share": "Y",
+          "found_date": "20240822"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017755.OF",
+      "primary_name": "平安养老目标日期2040三年持有A",
+      "stem": "平安养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "平安基金",
+      "custodian": "中国工商银行",
+      "found_date": "20230630",
+      "issue_date": "20230607",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "(沪深300指数收益率*90%+中证港股通综合指数(人民币)收益率*10%)*51%+中债新综合(财富)指数收益率*44%+同期银行活期存款利率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017755.OF",
+          "name": "平安养老目标日期2040三年持有A",
+          "share": "A",
+          "found_date": "20230630"
+        },
+        {
+          "code": "021956.OF",
+          "name": "平安养老目标日期2040三年持有Y",
+          "share": "Y",
+          "found_date": "20240816"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "020185.OF",
+      "primary_name": "兴业安康稳健养老目标一年持有",
+      "stem": "兴业安康稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "兴业基金",
+      "custodian": "交通银行",
+      "found_date": "20240723",
+      "issue_date": "20240513",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "中证普通债券型基金指数收益率*70%+中证股票型基金指数收益率*25%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "020185.OF",
+          "name": "兴业安康稳健养老目标一年持有",
+          "share": "",
+          "found_date": "20240723"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018913.OF",
+      "primary_name": "汇添富添福睿鑫积极养老目标五年持有",
+      "stem": "汇添富添福睿鑫积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "汇添富基金",
+      "custodian": "中国建设银行",
+      "found_date": "20240723",
+      "issue_date": "20240531",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*65%+中债综合指数收益率*30%+恒生指数收益率(使用估值汇率折算)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018913.OF",
+          "name": "汇添富添福睿鑫积极养老目标五年持有",
+          "share": "",
+          "found_date": "20240723"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017748.OF",
+      "primary_name": "国投瑞银平衡养老目标三年持有A",
+      "stem": "国投瑞银平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "国投瑞银基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230427",
+      "issue_date": "20230412",
+      "m_fee": 0.65,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*45%+中债综合指数收益率*45%+中证港股通综合指数收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017748.OF",
+          "name": "国投瑞银平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20230427"
+        },
+        {
+          "code": "021612.OF",
+          "name": "国投瑞银平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20240712"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "020375.OF",
+      "primary_name": "华泰柏瑞永泰积极养老目标五年",
+      "stem": "华泰柏瑞永泰积极养老目标五年",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": null,
+      "management": "华泰柏瑞基金",
+      "custodian": "招商银行",
+      "found_date": "20240703",
+      "issue_date": "20240531",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*70%+中债综合全价(总值)指数收益率*25%+中证港股通综合指数(人民币)收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "020375.OF",
+          "name": "华泰柏瑞永泰积极养老目标五年",
+          "share": "",
+          "found_date": "20240703"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018688.OF",
+      "primary_name": "鑫元鑫选稳健养老目标一年持有A",
+      "stem": "鑫元鑫选稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "鑫元基金",
+      "custodian": "中国建设银行",
+      "found_date": "20240228",
+      "issue_date": "20231127",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证债券型基金指数收益率*75%+沪深300指数收益率*15%+中证港股通综合指数(人民币)收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018688.OF",
+          "name": "鑫元鑫选稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20240228"
+        },
+        {
+          "code": "021437.OF",
+          "name": "鑫元鑫选稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20240702"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "014366.OF",
+      "primary_name": "建信普泽养老目标日期2050五年持有A",
+      "stem": "建信普泽养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "建信基金",
+      "custodian": "中国邮政储蓄银行",
+      "found_date": "20220531",
+      "issue_date": "20220425",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*68%+中债综合指数收益率*32%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "014366.OF",
+          "name": "建信普泽养老目标日期2050五年持有A",
+          "share": "A",
+          "found_date": "20220531"
+        },
+        {
+          "code": "021598.OF",
+          "name": "建信普泽养老目标日期2050五年持有Y",
+          "share": "Y",
+          "found_date": "20240607"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016964.OF",
+      "primary_name": "富国鑫汇养老目标日期2035三年持有A",
+      "stem": "富国鑫汇养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "富国基金",
+      "custodian": "中国银行",
+      "found_date": "20230517",
+      "issue_date": "20230406",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价指数收益率*71.5%+(沪深300指数收益率*90%+恒生指数收益率(使用汇率估值折算)*10%)*28.5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016964.OF",
+          "name": "富国鑫汇养老目标日期2035三年持有A",
+          "share": "A",
+          "found_date": "20230517"
+        },
+        {
+          "code": "021600.OF",
+          "name": "富国鑫汇养老目标日期2035三年持有Y",
+          "share": "Y",
+          "found_date": "20240604"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "020172.OF",
+      "primary_name": "华泰柏瑞养老目标日期2035三年持有",
+      "stem": "华泰柏瑞养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "华泰柏瑞基金",
+      "custodian": "中国建设银行",
+      "found_date": "20240531",
+      "issue_date": "20240509",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*50%+中证全债指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "020172.OF",
+          "name": "华泰柏瑞养老目标日期2035三年持有",
+          "share": "",
+          "found_date": "20240531"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018513.OF",
+      "primary_name": "易方达养老目标日期2045五年持有A",
+      "stem": "易方达养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "易方达基金",
+      "custodian": "华夏银行",
+      "found_date": "20240124",
+      "issue_date": "20231023",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "沪深300指数收益率*48.8%+中债新综合指数(财富)收益率*39%+中证港股通综合指数收益率*12.2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018513.OF",
+          "name": "易方达养老目标日期2045五年持有A",
+          "share": "A",
+          "found_date": "20240124"
+        },
+        {
+          "code": "021504.OF",
+          "name": "易方达养老目标日期2045五年持有Y",
+          "share": "Y",
+          "found_date": "20240523"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017160.OF",
+      "primary_name": "中欧颐享平衡养老目标三年持有A",
+      "stem": "中欧颐享平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "中欧基金",
+      "custodian": "中信银行",
+      "found_date": "20230523",
+      "issue_date": "20230423",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合财富(总值)指数收益率*50%+中证800指数收益率*45%+中证港股通综合指数(人民币)收益率*3%+中证商品期货成份指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017160.OF",
+          "name": "中欧颐享平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20230523"
+        },
+        {
+          "code": "021497.OF",
+          "name": "中欧颐享平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20240523"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "019661.OF",
+      "primary_name": "易方达汇悦平衡养老目标三年持有A",
+      "stem": "易方达汇悦平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "易方达基金",
+      "custodian": "兴业银行",
+      "found_date": "20240116",
+      "issue_date": "20231101",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "中债新综合指数(财富)收益率*50%+沪深300指数收益率*40%+中证港股通综合指数收益率*10%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019661.OF",
+          "name": "易方达汇悦平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20240116"
+        },
+        {
+          "code": "021498.OF",
+          "name": "易方达汇悦平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20240523"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016649.OF",
+      "primary_name": "广发养老目标日期2045三年持有A",
+      "stem": "广发养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "广发基金",
+      "custodian": "中国银行",
+      "found_date": "20230505",
+      "issue_date": "20230217",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "(中证800指数收益率*90%+人民币计价的恒生指数收益率*10%)*53%+中债-综合全价(总值)指数收益率*47%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016649.OF",
+          "name": "广发养老目标日期2045三年持有A",
+          "share": "A",
+          "found_date": "20230505"
+        },
+        {
+          "code": "021496.OF",
+          "name": "广发养老目标日期2045三年持有Y",
+          "share": "Y",
+          "found_date": "20240517"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013904.OF",
+      "primary_name": "景顺长城养老目标日期2035三年持有A",
+      "stem": "景顺长城养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "景顺长城基金",
+      "custodian": "中国工商银行",
+      "found_date": "20220125",
+      "issue_date": "20220113",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证目标日期2035指数收益率",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013904.OF",
+          "name": "景顺长城养老目标日期2035三年持有A",
+          "share": "A",
+          "found_date": "20220125"
+        },
+        {
+          "code": "021048.OF",
+          "name": "景顺长城养老目标日期2035三年持有Y",
+          "share": "Y",
+          "found_date": "20240327"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016783.OF",
+      "primary_name": "平安养老目标日期2050三年持有",
+      "stem": "平安养老目标日期2050三年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "平安基金",
+      "custodian": "交通银行",
+      "found_date": "20240307",
+      "issue_date": "20231226",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "(沪深300指数收益率*90%+中证港股通综合指数(人民币)收益率*10%)*54%+中债新综合(财富)指数收益率*41%+同期银行活期存款利率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016783.OF",
+          "name": "平安养老目标日期2050三年持有",
+          "share": "",
+          "found_date": "20240307"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "012306.OF",
+      "primary_name": "浦银安盛养老目标日期2050五年持有",
+      "stem": "浦银安盛养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "浦银安盛基金",
+      "custodian": "兴业银行",
+      "found_date": "20240227",
+      "issue_date": "20231128",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证股票型基金指数收益率*66.5%+中证债券型基金指数收益率*25%+中证港股通综合指数(人民币)收益率*3.5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012306.OF",
+          "name": "浦银安盛养老目标日期2050五年持有",
+          "share": "",
+          "found_date": "20240227"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017980.OF",
+      "primary_name": "南方养老目标日期2055五年持有A",
+      "stem": "南方养老目标日期2055五年持有",
+      "category": "目标日期型",
+      "target_year": 2055,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "南方基金",
+      "custodian": "中国银行",
+      "found_date": "20230328",
+      "issue_date": "20230301",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "(沪深300指数收益率*90%+中证港股通综合指数(人民币)收益率*10%)*70%+中债综合全价指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017980.OF",
+          "name": "南方养老目标日期2055五年持有A",
+          "share": "A",
+          "found_date": "20230328"
+        },
+        {
+          "code": "020756.OF",
+          "name": "南方养老目标日期2055五年持有Y",
+          "share": "Y",
+          "found_date": "20240227"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018314.OF",
+      "primary_name": "易方达养老目标日期2055五年持有A",
+      "stem": "易方达养老目标日期2055五年持有",
+      "category": "目标日期型",
+      "target_year": 2055,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "易方达基金",
+      "custodian": "中国工商银行",
+      "found_date": "20231106",
+      "issue_date": "20230922",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "沪深300指数收益率*55.2%+中债新综合指数(财富)收益率*31%+中证港股通综合指数收益率*13.8%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018314.OF",
+          "name": "易方达养老目标日期2055五年持有A",
+          "share": "A",
+          "found_date": "20231106"
+        },
+        {
+          "code": "020795.OF",
+          "name": "易方达养老目标日期2055五年持有Y",
+          "share": "Y",
+          "found_date": "20240226"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017497.OF",
+      "primary_name": "南方养老目标日期2060五年持有A",
+      "stem": "南方养老目标日期2060五年持有",
+      "category": "目标日期型",
+      "target_year": 2060,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "南方基金",
+      "custodian": "中国光大银行",
+      "found_date": "20230117",
+      "issue_date": "20221214",
+      "m_fee": 1.0,
+      "c_fee": 0.2,
+      "benchmark": "(沪深300指数收益率*90%+中证港股通综合指数(人民币)收益率*10%)*70%+上证国债指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017497.OF",
+          "name": "南方养老目标日期2060五年持有A",
+          "share": "A",
+          "found_date": "20230117"
+        },
+        {
+          "code": "020757.OF",
+          "name": "南方养老目标日期2060五年持有Y",
+          "share": "Y",
+          "found_date": "20240222"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016846.OF",
+      "primary_name": "中欧预见养老目标2045三年持有A",
+      "stem": "中欧预见养老目标2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "中欧基金",
+      "custodian": "招商银行",
+      "found_date": "20230207",
+      "issue_date": "20230116",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*52.25%+中债综合指数收益率*45%+中证港股通综合指数(人民币)收益率*2.75%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "016846.OF",
+          "name": "中欧预见养老目标2045三年持有A",
+          "share": "A",
+          "found_date": "20230207"
+        },
+        {
+          "code": "020734.OF",
+          "name": "中欧预见养老目标2045三年持有Y",
+          "share": "Y",
+          "found_date": "20240206"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018605.OF",
+      "primary_name": "中银养老目标日期2035三年持有",
+      "stem": "中银养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "中银基金",
+      "custodian": "招商银行",
+      "found_date": "20240123",
+      "issue_date": "20231020",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价(总值)指数收益率*52.02%+沪深300指数收益率*42.12%+银行活期存款利率(税后)*5%+恒生指数收益率*0.86%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018605.OF",
+          "name": "中银养老目标日期2035三年持有",
+          "share": "",
+          "found_date": "20240123"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018979.OF",
+      "primary_name": "中信建投民享稳健养老目标一年持有",
+      "stem": "中信建投民享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "中信建投基金",
+      "custodian": "北京银行",
+      "found_date": "20231226",
+      "issue_date": "20231218",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证债券型基金指数收益率*75%+中证偏股型基金指数收益率*15%+恒生指数收益率(使用估值汇率调整)*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018979.OF",
+          "name": "中信建投民享稳健养老目标一年持有",
+          "share": "",
+          "found_date": "20231226"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018374.OF",
+      "primary_name": "国富养老目标日期2045三年持有",
+      "stem": "国富养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "国海富兰克林基金",
+      "custodian": "交通银行",
+      "found_date": "20231225",
+      "issue_date": "20230922",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债国债总指数收益率(全价)*50%+(中证800指数收益率*95%+恒生指数收益率*5%)*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018374.OF",
+          "name": "国富养老目标日期2045三年持有",
+          "share": "",
+          "found_date": "20231225"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018585.OF",
+      "primary_name": "汇添富养老目标2035三年持有",
+      "stem": "汇添富养老目标2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "汇添富基金",
+      "custodian": "中国民生银行",
+      "found_date": "20231225",
+      "issue_date": "20230922",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*53.2%+中债综合指数收益率*44%+中证港股通综合指数(人民币)收益率*2.8%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018585.OF",
+          "name": "汇添富养老目标2035三年持有",
+          "share": "",
+          "found_date": "20231225"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018711.OF",
+      "primary_name": "华泰柏瑞祥泰稳健养老目标一年持有A",
+      "stem": "华泰柏瑞祥泰稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "华泰柏瑞基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230815",
+      "issue_date": "20230717",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价(总值)指数收益率*80%+沪深300指数收益率*15%+中证港股通综合指数(人民币)收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018711.OF",
+          "name": "华泰柏瑞祥泰稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20230815"
+        },
+        {
+          "code": "020340.OF",
+          "name": "华泰柏瑞祥泰稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20231221"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013059.OF",
+      "primary_name": "工银平衡养老目标三年持有A",
+      "stem": "工银平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "工银瑞信基金",
+      "custodian": "招商银行",
+      "found_date": "20211222",
+      "issue_date": "20211129",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*50%+中债新综合(财富)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013059.OF",
+          "name": "工银平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20211222"
+        },
+        {
+          "code": "020249.OF",
+          "name": "工银平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20231215"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017453.OF",
+      "primary_name": "浦银安盛颐璇平衡养老目标三年持有A",
+      "stem": "浦银安盛颐璇平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "浦银安盛基金",
+      "custodian": "交通银行",
+      "found_date": "20230731",
+      "issue_date": "20230428",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证股票型基金指数收益率*50%+中证债券型基金指数收益率*40%+恒生指数收益率(使用估值汇率折算)*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017453.OF",
+          "name": "浦银安盛颐璇平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20230731"
+        },
+        {
+          "code": "020275.OF",
+          "name": "浦银安盛颐璇平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20231212"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016849.OF",
+      "primary_name": "建信优享进取养老目标五年持有A",
+      "stem": "建信优享进取养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "建信基金",
+      "custodian": "中国农业银行",
+      "found_date": "20221221",
+      "issue_date": "20221101",
+      "m_fee": 1.0,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*75%+中债综合指数收益率*20%+金融机构人民币活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016849.OF",
+          "name": "建信优享进取养老目标五年持有A",
+          "share": "A",
+          "found_date": "20221221"
+        },
+        {
+          "code": "020188.OF",
+          "name": "建信优享进取养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20231208"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017706.OF",
+      "primary_name": "建信添福悠享稳健养老目标一年持有A",
+      "stem": "建信添福悠享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "建信基金",
+      "custodian": "招商证券",
+      "found_date": "20230629",
+      "issue_date": "20230601",
+      "m_fee": 0.3,
+      "c_fee": 0.1,
+      "benchmark": "中债综合指数收益率*85%+中证800指数收益率*10%+金融机构人民币活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017706.OF",
+          "name": "建信添福悠享稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20230629"
+        },
+        {
+          "code": "020189.OF",
+          "name": "建信添福悠享稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20231208"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017023.OF",
+      "primary_name": "信澳颐宁养老目标一年持有A",
+      "stem": "信澳颐宁养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": 1,
+      "management": "信达澳亚基金",
+      "custodian": "中国建设银行",
+      "found_date": "20221229",
+      "issue_date": "20221124",
+      "m_fee": 0.7,
+      "c_fee": 0.2,
+      "benchmark": "中证综合债券指数收益率*80%+中证800指数收益率*18%+中证港股通综合指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017023.OF",
+          "name": "信澳颐宁养老目标一年持有A",
+          "share": "A",
+          "found_date": "20221229"
+        },
+        {
+          "code": "019779.OF",
+          "name": "信澳颐宁养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20231123"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "019659.OF",
+      "primary_name": "万家养老目标日期2045三年持有",
+      "stem": "万家养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "万家基金",
+      "custodian": "中国工商银行",
+      "found_date": "20231115",
+      "issue_date": "20231113",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证偏股型基金指数收益率*49.5%+中债新综合全价(总值)指数收益率*35%+1年期央行定存基准利率*10%+恒生指数收益率*5.5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019659.OF",
+          "name": "万家养老目标日期2045三年持有",
+          "share": "",
+          "found_date": "20231115"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "018274.OF",
+      "primary_name": "嘉实民康平衡养老目标三年持有",
+      "stem": "嘉实民康平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "嘉实基金",
+      "custodian": "中国建设银行",
+      "found_date": "20231107",
+      "issue_date": "20230922",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中债总财富指数收益率*45%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018274.OF",
+          "name": "嘉实民康平衡养老目标三年持有",
+          "share": "",
+          "found_date": "20231107"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017696.OF",
+      "primary_name": "易方达养老目标日期2050五年持有A",
+      "stem": "易方达养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "易方达基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230725",
+      "issue_date": "20230619",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "沪深300指数收益率*52%+中债新综合指数(财富)收益率*35%+中证港股通综合指数收益率*13%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017696.OF",
+          "name": "易方达养老目标日期2050五年持有A",
+          "share": "A",
+          "found_date": "20230725"
+        },
+        {
+          "code": "019965.OF",
+          "name": "易方达养老目标日期2050五年持有Y",
+          "share": "Y",
+          "found_date": "20231106"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017228.OF",
+      "primary_name": "易方达汇裕积极养老目标五年持有A",
+      "stem": "易方达汇裕积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "易方达基金",
+      "custodian": "浦发银行",
+      "found_date": "20230731",
+      "issue_date": "20230428",
+      "m_fee": 0.8,
+      "c_fee": 0.1,
+      "benchmark": "沪深300指数收益率*70%+中债新综合指数(财富)收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017228.OF",
+          "name": "易方达汇裕积极养老目标五年持有A",
+          "share": "A",
+          "found_date": "20230731"
+        },
+        {
+          "code": "019966.OF",
+          "name": "易方达汇裕积极养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20231106"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016242.OF",
+      "primary_name": "东方红养老目标日期2045五年持有A",
+      "stem": "东方红养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "东方红资产管理",
+      "custodian": "中国农业银行",
+      "found_date": "20220905",
+      "issue_date": "20220811",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*68%+中国债券总指数收益率*20%+恒生指数收益率(经汇率估值调整)*12%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "016242.OF",
+          "name": "东方红养老目标日期2045五年持有A",
+          "share": "A",
+          "found_date": "20220905"
+        },
+        {
+          "code": "019823.OF",
+          "name": "东方红养老目标日期2045五年持有Y",
+          "share": "Y",
+          "found_date": "20231103"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017685.OF",
+      "primary_name": "中欧预见积极养老目标五年持有A",
+      "stem": "中欧预见积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "中欧基金",
+      "custodian": "平安银行",
+      "found_date": "20221230",
+      "issue_date": "20221227",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*70%+中债综合财富(总值)指数收益率*25%+中证港股通综合指数(人民币)收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017685.OF",
+          "name": "中欧预见积极养老目标五年持有A",
+          "share": "A",
+          "found_date": "20221230"
+        },
+        {
+          "code": "019900.OF",
+          "name": "中欧预见积极养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20231026"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016079.OF",
+      "primary_name": "华夏福泽养老目标2035三年持有A",
+      "stem": "华夏福泽养老目标2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "华夏基金",
+      "custodian": "中国银行",
+      "found_date": "20221129",
+      "issue_date": "20221024",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*50%+中债综合(全价)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016079.OF",
+          "name": "华夏福泽养老目标2035三年持有A",
+          "share": "A",
+          "found_date": "20221129"
+        },
+        {
+          "code": "019833.OF",
+          "name": "华夏福泽养老目标2035三年持有Y",
+          "share": "Y",
+          "found_date": "20231025"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018672.OF",
+      "primary_name": "广发安诚养老目标2040三年持有A",
+      "stem": "广发安诚养老目标2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "广发基金",
+      "custodian": "兴业银行",
+      "found_date": "20230829",
+      "issue_date": "20230814",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中债-综合全价(总值)指数收益率*53.2%+(中证800指数收益率*90%+人民币计价的恒生指数收益率*10%)*46.8%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018672.OF",
+          "name": "广发安诚养老目标2040三年持有A",
+          "share": "A",
+          "found_date": "20230829"
+        },
+        {
+          "code": "019745.OF",
+          "name": "广发安诚养老目标2040三年持有Y",
+          "share": "Y",
+          "found_date": "20231016"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017676.OF",
+      "primary_name": "广发积极养老目标五年持有A",
+      "stem": "广发积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "广发基金",
+      "custodian": "中国农业银行",
+      "found_date": "20221228",
+      "issue_date": "20221227",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*65%+中债-综合全价(总值)指数收益率*20%+人民币计价的恒生指数收益率*5%+上海黄金交易所Au99.99现货实盘合约收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017676.OF",
+          "name": "广发积极养老目标五年持有A",
+          "share": "A",
+          "found_date": "20221228"
+        },
+        {
+          "code": "019746.OF",
+          "name": "广发积极养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20231016"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "019609.OF",
+      "primary_name": "鹏华养老目标日期2050五年持有",
+      "stem": "鹏华养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "鹏华基金",
+      "custodian": "中国工商银行",
+      "found_date": "20231013",
+      "issue_date": "20231009",
+      "m_fee": 1.0,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*70%+中债新综合财富指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "019609.OF",
+          "name": "鹏华养老目标日期2050五年持有",
+          "share": "",
+          "found_date": "20231013"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "014374.OF",
+      "primary_name": "景顺长城隽丰平衡养老目标三年持有A",
+      "stem": "景顺长城隽丰平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "景顺长城基金",
+      "custodian": "中国农业银行",
+      "found_date": "20220727",
+      "issue_date": "20220513",
+      "m_fee": 1.0,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中证全债指数收益率*35%+恒生指数收益率(使用估值汇率折算)*5%+上海黄金交易所Au99.99现货实盘合约收益率*5%+商业银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "014374.OF",
+          "name": "景顺长城隽丰平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20220727"
+        },
+        {
+          "code": "019652.OF",
+          "name": "景顺长城隽丰平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20230928"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017332.OF",
+      "primary_name": "国富稳健养老目标一年持有A",
+      "stem": "国富稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "国海富兰克林基金",
+      "custodian": "交通银行",
+      "found_date": "20230419",
+      "issue_date": "20230301",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债国债总指数收益率(全价)*85%+中证800指数收益率*10%+恒生指数收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017332.OF",
+          "name": "国富稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20230419"
+        },
+        {
+          "code": "019456.OF",
+          "name": "国富稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20230921"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013735.OF",
+      "primary_name": "创金合信添福平衡养老目标三年持有A",
+      "stem": "创金合信添福平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "创金合信基金",
+      "custodian": "平安银行",
+      "found_date": "20211019",
+      "issue_date": "20211008",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价指数收益率*50%+沪深300指数收益率*45%+恒生指数收益率*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "013735.OF",
+          "name": "创金合信添福平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20211019"
+        },
+        {
+          "code": "013736.OF",
+          "name": "创金合信添福平衡养老目标三年持有C",
+          "share": "C",
+          "found_date": "20211019"
+        },
+        {
+          "code": "019476.OF",
+          "name": "创金合信添福平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20230921"
+        }
+      ],
+      "share_count": 3
+    },
+    {
+      "primary_code": "016121.OF",
+      "primary_name": "华安积极养老目标五年持有A",
+      "stem": "华安积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "华安基金",
+      "custodian": "招商银行",
+      "found_date": "20220928",
+      "issue_date": "20220905",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*75%+中债综合财富(总值)指数收益率*25%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "016121.OF",
+          "name": "华安积极养老目标五年持有A",
+          "share": "A",
+          "found_date": "20220928"
+        },
+        {
+          "code": "019459.OF",
+          "name": "华安积极养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20230920"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016669.OF",
+      "primary_name": "招商和享均衡养老目标三年持有A",
+      "stem": "招商和享均衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "招商基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230517",
+      "issue_date": "20230216",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*50%+中债综合(全价)指数收益率*45%+恒生综合指数收益率(经汇率调整后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016669.OF",
+          "name": "招商和享均衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20230517"
+        },
+        {
+          "code": "019496.OF",
+          "name": "招商和享均衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20230915"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017198.OF",
+      "primary_name": "工银安悦稳健养老目标三年持有A",
+      "stem": "工银安悦稳健养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 3,
+      "management": "工银瑞信基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230628",
+      "issue_date": "20230417",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中债新综合(财富)指数收益率*65%+中证800指数收益率*35%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017198.OF",
+          "name": "工银安悦稳健养老目标三年持有A",
+          "share": "A",
+          "found_date": "20230628"
+        },
+        {
+          "code": "019462.OF",
+          "name": "工银安悦稳健养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20230914"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "018522.OF",
+      "primary_name": "信澳颐远养老目标2055五年持有",
+      "stem": "信澳颐远养老目标2055五年持有",
+      "category": "目标日期型",
+      "target_year": 2055,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "信达澳亚基金",
+      "custodian": "中国工商银行",
+      "found_date": "20230824",
+      "issue_date": "20230811",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "(中证800指数收益率*95%+中证港股通综合指数收益率*5%)*70%+中证综合债券指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "018522.OF",
+          "name": "信澳颐远养老目标2055五年持有",
+          "share": "",
+          "found_date": "20230824"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013420.OF",
+      "primary_name": "富国鑫汇养老目标日期2045五年持有A",
+      "stem": "富国鑫汇养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "富国基金",
+      "custodian": "招商银行",
+      "found_date": "20220330",
+      "issue_date": "20220114",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*59.6%+中债综合全价指数收益率*40.4%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013420.OF",
+          "name": "富国鑫汇养老目标日期2045五年持有A",
+          "share": "A",
+          "found_date": "20220330"
+        },
+        {
+          "code": "019012.OF",
+          "name": "富国鑫汇养老目标日期2045五年持有Y",
+          "share": "Y",
+          "found_date": "20230817"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017396.OF",
+      "primary_name": "英大延福养老目标2045三年持有",
+      "stem": "英大延福养老目标2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "英大基金",
+      "custodian": "浦发银行",
+      "found_date": "20230801",
+      "issue_date": "20230428",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价(总值)指数收益率*50%+中证800指数收益率*47.5%+中证港股通综合指数(人民币)收益率*2.5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017396.OF",
+          "name": "英大延福养老目标2045三年持有",
+          "share": "",
+          "found_date": "20230801"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017394.OF",
+      "primary_name": "英大延福养老目标2050三年持有",
+      "stem": "英大延福养老目标2050三年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "英大基金",
+      "custodian": "浦发银行",
+      "found_date": "20230801",
+      "issue_date": "20230428",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价(总值)指数收益率*50%+中证800指数收益率*47.5%+中证港股通综合指数(人民币)收益率*2.5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017394.OF",
+          "name": "英大延福养老目标2050三年持有",
+          "share": "",
+          "found_date": "20230801"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017179.OF",
+      "primary_name": "天弘永丰平衡养老目标三年持有",
+      "stem": "天弘永丰平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "天弘基金",
+      "custodian": "北京银行",
+      "found_date": "20230724",
+      "issue_date": "20230421",
+      "m_fee": 0.7,
+      "c_fee": 0.15,
+      "benchmark": "中债新综合财富(总值)指数收益率*50%+沪深300指数收益率*45%+恒生指数收益率(使用估值汇率调整)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017179.OF",
+          "name": "天弘永丰平衡养老目标三年持有",
+          "share": "",
+          "found_date": "20230724"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017146.OF",
+      "primary_name": "永赢恒欣稳健养老目标三年持有A",
+      "stem": "永赢恒欣稳健养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 3,
+      "management": "永赢基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230329",
+      "issue_date": "20230306",
+      "m_fee": 1.0,
+      "c_fee": 0.15,
+      "benchmark": "中债-综合指数(全价)收益率*60%+中证800指数收益率*25%+恒生指数收益率(使用估值汇率折算)*5%+上海黄金交易所Au99.99现货实盘合约收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017146.OF",
+          "name": "永赢恒欣稳健养老目标三年持有A",
+          "share": "A",
+          "found_date": "20230329"
+        },
+        {
+          "code": "018689.OF",
+          "name": "永赢恒欣稳健养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20230724"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017404.OF",
+      "primary_name": "天弘养老目标日期2045五年持有",
+      "stem": "天弘养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "天弘基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230724",
+      "issue_date": "20230428",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*70%+中债新综合财富(总值)指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017404.OF",
+          "name": "天弘养老目标日期2045五年持有",
+          "share": "",
+          "found_date": "20230724"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017774.OF",
+      "primary_name": "泰康养老目标日期2040三年持有",
+      "stem": "泰康养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "泰康基金",
+      "custodian": "浦发银行",
+      "found_date": "20230718",
+      "issue_date": "20230605",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中债综合(全价)指数收益率*55%+沪深300指数收益率*42.75%+恒生指数收益率*2.25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017774.OF",
+          "name": "泰康养老目标日期2040三年持有",
+          "share": "",
+          "found_date": "20230718"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017580.OF",
+      "primary_name": "汇添富添福鑫添益均衡养老目标三年持有",
+      "stem": "汇添富添福鑫添益均衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "汇添富基金",
+      "custodian": "中国工商银行",
+      "found_date": "20230710",
+      "issue_date": "20230407",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*50%+中债综合指数收益率*45%+恒生指数收益率(使用估值汇率折算)*3%+中证商品期货成份指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017580.OF",
+          "name": "汇添富添福鑫添益均衡养老目标三年持有",
+          "share": "",
+          "found_date": "20230710"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017768.OF",
+      "primary_name": "大成颐禧积极养老目标五年持有",
+      "stem": "大成颐禧积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "大成基金",
+      "custodian": "招商银行",
+      "found_date": "20230629",
+      "issue_date": "20230327",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*65%+中债综合全价(总值)指数收益率*25%+银行活期存款利率(税后)*5%+恒生指数收益率(使用估值汇率调整)*3%+中证商品期货成份指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017768.OF",
+          "name": "大成颐禧积极养老目标五年持有",
+          "share": "",
+          "found_date": "20230629"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017004.OF",
+      "primary_name": "上银恒睿养老目标日期2045三年持有",
+      "stem": "上银恒睿养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "上银基金",
+      "custodian": "招商银行",
+      "found_date": "20230626",
+      "issue_date": "20230324",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*50%+中债综合全价(总值)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017004.OF",
+          "name": "上银恒睿养老目标日期2045三年持有",
+          "share": "",
+          "found_date": "20230626"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013253.OF",
+      "primary_name": "海富通养老目标2035三年持有A",
+      "stem": "海富通养老目标2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "海富通基金",
+      "custodian": "兴业银行",
+      "found_date": "20211214",
+      "issue_date": "20211206",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证全债指数收益率*67%+沪深300指数收益率*33%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013253.OF",
+          "name": "海富通养老目标2035三年持有A",
+          "share": "A",
+          "found_date": "20211214"
+        },
+        {
+          "code": "018700.OF",
+          "name": "海富通养老目标2035三年持有Y",
+          "share": "Y",
+          "found_date": "20230620"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017591.OF",
+      "primary_name": "汇添富添福智富均衡养老目标三年持有",
+      "stem": "汇添富添福智富均衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "汇添富基金",
+      "custodian": "中国银行",
+      "found_date": "20230620",
+      "issue_date": "20230428",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*55%+中债综合指数收益率*45%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017591.OF",
+          "name": "汇添富添福智富均衡养老目标三年持有",
+          "share": "",
+          "found_date": "20230620"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "014365.OF",
+      "primary_name": "建信优享平衡养老目标三年持有A",
+      "stem": "建信优享平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "建信基金",
+      "custodian": "兴业银行",
+      "found_date": "20220415",
+      "issue_date": "20220314",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中债综合指数收益率*45%+金融机构人民币活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "014365.OF",
+          "name": "建信优享平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20220415"
+        },
+        {
+          "code": "018696.OF",
+          "name": "建信优享平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20230616"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017184.OF",
+      "primary_name": "华商嘉逸养老目标2045五年持有",
+      "stem": "华商嘉逸养老目标2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "华商基金",
+      "custodian": "中国建设银行",
+      "found_date": "20230609",
+      "issue_date": "20230421",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "(中证全指指数收益率*95%+中证港股通综合指数(人民币)收益率*5%)*66.00%+中债综合(全价)指数收益率*34.0%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017184.OF",
+          "name": "华商嘉逸养老目标2045五年持有",
+          "share": "",
+          "found_date": "20230609"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017579.OF",
+      "primary_name": "汇添富添福欣享均衡养老目标三年持有",
+      "stem": "汇添富添福欣享均衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "汇添富基金",
+      "custodian": "交通银行",
+      "found_date": "20230602",
+      "issue_date": "20230320",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*50%+中债综合指数收益率*45%+恒生指数收益率(使用估值汇率折算)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017579.OF",
+          "name": "汇添富添福欣享均衡养老目标三年持有",
+          "share": "",
+          "found_date": "20230602"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017267.OF",
+      "primary_name": "招商乐颐和惠养老目标日期2035三年持有",
+      "stem": "招商乐颐和惠养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "招商基金",
+      "custodian": "北京银行",
+      "found_date": "20230517",
+      "issue_date": "20230413",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*55%+沪深300指数收益率*42.75%+恒生综合指数收益率(经汇率调整后)*2.25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017267.OF",
+          "name": "招商乐颐和惠养老目标日期2035三年持有",
+          "share": "",
+          "found_date": "20230517"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017291.OF",
+      "primary_name": "申万菱信养老目标日期2045五年持有",
+      "stem": "申万菱信养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "申万菱信基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230516",
+      "issue_date": "20230407",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*60%+上证国债指数收益率*40%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017291.OF",
+          "name": "申万菱信养老目标日期2045五年持有",
+          "share": "",
+          "found_date": "20230516"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "016132.OF",
+      "primary_name": "国泰海通善兴平衡养老目标三年持有",
+      "stem": "国泰海通善兴平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "国泰海通资管",
+      "custodian": "兴业银行",
+      "found_date": "20230510",
+      "issue_date": "20230508",
+      "m_fee": 0.7,
+      "c_fee": 0.15,
+      "benchmark": "中债新综合指数(财富)收益率*50%+中证800指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016132.OF",
+          "name": "国泰海通善兴平衡养老目标三年持有",
+          "share": "",
+          "found_date": "20230510"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "009460.OF",
+      "primary_name": "安信禧悦稳健养老目标一年持有A",
+      "stem": "安信禧悦稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "安信基金",
+      "custodian": "中国农业银行",
+      "found_date": "20200609",
+      "issue_date": "20200518",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*70%+中证800指数收益率*20%+恒生指数(人民币计价)收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "009460.OF",
+          "name": "安信禧悦稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20200609"
+        },
+        {
+          "code": "018361.OF",
+          "name": "安信禧悦稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20230509"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017238.OF",
+      "primary_name": "创金合信宁和平衡养老目标三年持有",
+      "stem": "创金合信宁和平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "创金合信基金",
+      "custodian": "宁波银行",
+      "found_date": "20230426",
+      "issue_date": "20230320",
+      "m_fee": 0.5,
+      "c_fee": 0.1,
+      "benchmark": "中债综合财富指数收益率*50%+沪深300指数收益率*45%+恒生指数收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017238.OF",
+          "name": "创金合信宁和平衡养老目标三年持有",
+          "share": "",
+          "found_date": "20230426"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "008631.OF",
+      "primary_name": "国泰民泽平衡养老目标三年A",
+      "stem": "国泰民泽平衡养老目标三年",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": null,
+      "management": "国泰基金",
+      "custodian": "中国建设银行",
+      "found_date": "20200710",
+      "issue_date": "20200525",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证综合债指数收益率*60%+沪深300指数收益率*40%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "008631.OF",
+          "name": "国泰民泽平衡养老目标三年A",
+          "share": "A",
+          "found_date": "20200710"
+        },
+        {
+          "code": "018353.OF",
+          "name": "国泰民泽平衡养老目标三年Y",
+          "share": "Y",
+          "found_date": "20230417"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "007747.OF",
+      "primary_name": "海富通平衡养老目标三年(FOF)A",
+      "stem": "海富通平衡养老目标三年(FOF)",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": null,
+      "management": "海富通基金",
+      "custodian": "中国工商银行",
+      "found_date": "20200219",
+      "issue_date": "20191219",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证全债指数收益率*50%+沪深300指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "007747.OF",
+          "name": "海富通平衡养老目标三年(FOF)A",
+          "share": "A",
+          "found_date": "20200219"
+        },
+        {
+          "code": "018264.OF",
+          "name": "海富通平衡养老目标三年(FOF)Y",
+          "share": "Y",
+          "found_date": "20230404"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "017788.OF",
+      "primary_name": "摩根锦颐养老目标日期2035三年持有",
+      "stem": "摩根锦颐养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "摩根基金",
+      "custodian": "招商银行",
+      "found_date": "20230404",
+      "issue_date": "20230320",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中债-综合全价(总值)指数收益率*53%+中证800指数收益率*35.15%+活期存款利率(税后)*10%+中证港股通综合指数(人民币)收益率*1.85%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017788.OF",
+          "name": "摩根锦颐养老目标日期2035三年持有",
+          "share": "",
+          "found_date": "20230404"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "017728.OF",
+      "primary_name": "创金合信荣和积极养老目标五年持有",
+      "stem": "创金合信荣和积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "创金合信基金",
+      "custodian": "中国农业银行",
+      "found_date": "20230330",
+      "issue_date": "20230308",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*70%+中债综合全价指数收益率*25%+恒生指数收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "017728.OF",
+          "name": "创金合信荣和积极养老目标五年持有",
+          "share": "",
+          "found_date": "20230330"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013246.OF",
+      "primary_name": "宏利养老目标2030一年持有A",
+      "stem": "宏利养老目标2030一年持有",
+      "category": "目标日期型",
+      "target_year": 2030,
+      "risk_level": null,
+      "hold_period_years": 1,
+      "management": "宏利基金",
+      "custodian": "中国农业银行",
+      "found_date": "20220831",
+      "issue_date": "20220804",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证综合债指数收益率*81.7%+沪深300指数收益率*16.3%+中证港股通综合指数(人民币)收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013246.OF",
+          "name": "宏利养老目标2030一年持有A",
+          "share": "A",
+          "found_date": "20220831"
+        },
+        {
+          "code": "018164.OF",
+          "name": "宏利养老目标2030一年持有Y",
+          "share": "Y",
+          "found_date": "20230327"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "006306.OF",
+      "primary_name": "宏利泰和养老(FOF)A",
+      "stem": "宏利泰和养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "宏利基金",
+      "custodian": "中国农业银行",
+      "found_date": "20181025",
+      "issue_date": "20180910",
+      "m_fee": 1.0,
+      "c_fee": 0.2,
+      "benchmark": "中证全指指数收益率*50%+中证全债指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "006306.OF",
+          "name": "宏利泰和养老(FOF)A",
+          "share": "A",
+          "found_date": "20181025"
+        },
+        {
+          "code": "018161.OF",
+          "name": "宏利泰和养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20230327"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013928.OF",
+      "primary_name": "银华尊和养老目标日期2045三年持有A",
+      "stem": "银华尊和养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "银华基金",
+      "custodian": "招商银行",
+      "found_date": "20220325",
+      "issue_date": "20220316",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中债综合全价(总值)指数收益率*49%+沪深300指数收益率*47%+中证港股通综合指数(人民币)收益率*4%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013928.OF",
+          "name": "银华尊和养老目标日期2045三年持有A",
+          "share": "A",
+          "found_date": "20220325"
+        },
+        {
+          "code": "017942.OF",
+          "name": "银华尊和养老目标日期2045三年持有Y",
+          "share": "Y",
+          "found_date": "20230303"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013510.OF",
+      "primary_name": "国寿安保养老目标日期2030三年持有A",
+      "stem": "国寿安保养老目标日期2030三年持有",
+      "category": "目标日期型",
+      "target_year": 2030,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "国寿安保基金",
+      "custodian": "中国建设银行",
+      "found_date": "20220517",
+      "issue_date": "20220214",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证全债指数收益率*65%+中证800指数收益率*35%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013510.OF",
+          "name": "国寿安保养老目标日期2030三年持有A",
+          "share": "A",
+          "found_date": "20220517"
+        },
+        {
+          "code": "017901.OF",
+          "name": "国寿安保养老目标日期2030三年持有Y",
+          "share": "Y",
+          "found_date": "20230215"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016946.OF",
+      "primary_name": "国泰海通善元稳健养老目标一年持有A",
+      "stem": "国泰海通善元稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "国泰海通资管",
+      "custodian": "上海银行",
+      "found_date": "20221021",
+      "issue_date": "20221020",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "中债新综合指数(财富)收益率*80%+沪深300指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016946.OF",
+          "name": "国泰海通善元稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20221021"
+        },
+        {
+          "code": "017906.OF",
+          "name": "国泰海通善元稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20230209"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016907.OF",
+      "primary_name": "国泰海通善吾养老目标日期2045五年持有A",
+      "stem": "国泰海通善吾养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "国泰海通资管",
+      "custodian": "中信银行",
+      "found_date": "20221021",
+      "issue_date": "20221020",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*65%+中债新综合指数(财富)收益率*35%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016907.OF",
+          "name": "国泰海通善吾养老目标日期2045五年持有A",
+          "share": "A",
+          "found_date": "20221021"
+        },
+        {
+          "code": "017905.OF",
+          "name": "国泰海通善吾养老目标日期2045五年持有Y",
+          "share": "Y",
+          "found_date": "20230209"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016271.OF",
+      "primary_name": "华安养老目标日期2035三年持有",
+      "stem": "华安养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "华安基金",
+      "custodian": "中国银行",
+      "found_date": "20230111",
+      "issue_date": "20221226",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合财富(总值)指数收益率*50%+中证800指数收益率*45%+恒生指数收益率(使用汇率估值折算)*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "016271.OF",
+          "name": "华安养老目标日期2035三年持有",
+          "share": "",
+          "found_date": "20230111"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "016115.OF",
+      "primary_name": "华安养老目标日期2050五年持有",
+      "stem": "华安养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "华安基金",
+      "custodian": "招商银行",
+      "found_date": "20230110",
+      "issue_date": "20221212",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*70%+中债综合财富(总值)指数收益率*30%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "016115.OF",
+          "name": "华安养老目标日期2050五年持有",
+          "share": "",
+          "found_date": "20230110"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "008931.OF",
+      "primary_name": "中加安瑞积极养老目标五年持有",
+      "stem": "中加安瑞积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "中加基金",
+      "custodian": "交通银行",
+      "found_date": "20221227",
+      "issue_date": "20221024",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*65%+中债综合全价(总值)指数收益率*25%+中证港股通综合指数(人民币)收益率*5%+1年定期存款利率(税后)*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "008931.OF",
+          "name": "中加安瑞积极养老目标五年持有",
+          "share": "",
+          "found_date": "20221227"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "009183.OF",
+      "primary_name": "东方红颐和平衡养老目标三年持有A",
+      "stem": "东方红颐和平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "东方红资产管理",
+      "custodian": "中国建设银行",
+      "found_date": "20200611",
+      "issue_date": "20200525",
+      "m_fee": 0.65,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*50%+中国债券总指数收益率*40%+恒生指数收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "009183.OF",
+          "name": "东方红颐和平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20200611"
+        },
+        {
+          "code": "017674.OF",
+          "name": "东方红颐和平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20221224"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "006580.OF",
+      "primary_name": "兴全安泰平衡养老(FOF)A",
+      "stem": "兴全安泰平衡养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "兴证全球基金",
+      "custodian": "招商银行",
+      "found_date": "20190125",
+      "issue_date": "20181224",
+      "m_fee": 0.5,
+      "c_fee": 0.15,
+      "benchmark": "中证偏股型基金指数收益率*50%+中债综合(全价)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "006580.OF",
+          "name": "兴全安泰平衡养老(FOF)A",
+          "share": "A",
+          "found_date": "20190125"
+        },
+        {
+          "code": "017672.OF",
+          "name": "兴全安泰平衡养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221224"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "009184.OF",
+      "primary_name": "东方红颐和积极养老目标五年持有A",
+      "stem": "东方红颐和积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "东方红资产管理",
+      "custodian": "招商银行",
+      "found_date": "20200623",
+      "issue_date": "20200525",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*60%+中国债券总指数收益率*20%+恒生指数收益率*15%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "009184.OF",
+          "name": "东方红颐和积极养老目标五年持有A",
+          "share": "A",
+          "found_date": "20200623"
+        },
+        {
+          "code": "017675.OF",
+          "name": "东方红颐和积极养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20221224"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "009174.OF",
+      "primary_name": "东方红颐和稳健养老目标两年持有A",
+      "stem": "东方红颐和稳健养老目标两年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": null,
+      "management": "东方红资产管理",
+      "custodian": "中国工商银行",
+      "found_date": "20200624",
+      "issue_date": "20200525",
+      "m_fee": 0.5,
+      "c_fee": 0.15,
+      "benchmark": "中国债券总指数收益率*75%+沪深300指数收益率*18%+银行活期存款利率(税后)*5%+恒生指数收益率*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "009174.OF",
+          "name": "东方红颐和稳健养老目标两年持有A",
+          "share": "A",
+          "found_date": "20200624"
+        },
+        {
+          "code": "017673.OF",
+          "name": "东方红颐和稳健养老目标两年持有Y",
+          "share": "Y",
+          "found_date": "20221224"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "015975.OF",
+      "primary_name": "工银积极养老目标五年持有",
+      "stem": "工银积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "工银瑞信基金",
+      "custodian": "招商银行",
+      "found_date": "20221220",
+      "issue_date": "20221121",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*75%+中债新综合(财富)指数收益率*25%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "015975.OF",
+          "name": "工银积极养老目标五年持有",
+          "share": "",
+          "found_date": "20221220"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "014009.OF",
+      "primary_name": "华安养老目标日期2045五年持有",
+      "stem": "华安养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "华安基金",
+      "custodian": "中信银行",
+      "found_date": "20221206",
+      "issue_date": "20221025",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*66%+中债综合财富(总值)指数收益率*34%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "014009.OF",
+          "name": "华安养老目标日期2045五年持有",
+          "share": "",
+          "found_date": "20221206"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "006872.OF",
+      "primary_name": "长信颐天平衡养老(FOF)A",
+      "stem": "长信颐天平衡养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "长信基金",
+      "custodian": "中国民生银行",
+      "found_date": "20190926",
+      "issue_date": "20190628",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证全债指数收益率*50%+中证偏股型基金指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "006872.OF",
+          "name": "长信颐天平衡养老(FOF)A",
+          "share": "A",
+          "found_date": "20190926"
+        },
+        {
+          "code": "006873.OF",
+          "name": "长信颐天平衡养老(FOF)C",
+          "share": "C",
+          "found_date": "20190926"
+        },
+        {
+          "code": "017407.OF",
+          "name": "长信颐天平衡养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221121"
+        }
+      ],
+      "share_count": 3
+    },
+    {
+      "primary_code": "015345.OF",
+      "primary_name": "嘉实养老目标日期2055五年持有",
+      "stem": "嘉实养老目标日期2055五年持有",
+      "category": "目标日期型",
+      "target_year": 2055,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "嘉实基金",
+      "custodian": "交通银行",
+      "found_date": "20221121",
+      "issue_date": "20220817",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*64.60%+中债总财富指数收益率*35.40%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "015345.OF",
+          "name": "嘉实养老目标日期2055五年持有",
+          "share": "",
+          "found_date": "20221121"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "012450.OF",
+      "primary_name": "长信颐年平衡养老(FOF)A",
+      "stem": "长信颐年平衡养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "长信基金",
+      "custodian": "中国民生银行",
+      "found_date": "20220114",
+      "issue_date": "20211022",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证全债指数收益率*50%+中证800指数收益率*45%+恒生指数收益率(使用估值汇率折算)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012450.OF",
+          "name": "长信颐年平衡养老(FOF)A",
+          "share": "A",
+          "found_date": "20220114"
+        },
+        {
+          "code": "017409.OF",
+          "name": "长信颐年平衡养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221121"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012095.OF",
+      "primary_name": "长信颐和养老(FOF)A",
+      "stem": "长信颐和养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "长信基金",
+      "custodian": "中国民生银行",
+      "found_date": "20211207",
+      "issue_date": "20210930",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证全债指数收益率*50%+中证800指数收益率*45%+恒生指数收益率(使用估值汇率折算)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012095.OF",
+          "name": "长信颐和养老(FOF)A",
+          "share": "A",
+          "found_date": "20211207"
+        },
+        {
+          "code": "017408.OF",
+          "name": "长信颐和养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221121"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "010866.OF",
+      "primary_name": "嘉实福康稳健养老目标一年持有A",
+      "stem": "嘉实福康稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "嘉实基金",
+      "custodian": "中国邮政储蓄银行",
+      "found_date": "20220111",
+      "issue_date": "20211221",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中债总财富指数收益率*80%+中证800股票指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "010866.OF",
+          "name": "嘉实福康稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220111"
+        },
+        {
+          "code": "017397.OF",
+          "name": "嘉实福康稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221118"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012513.OF",
+      "primary_name": "泰康福泽积极养老目标五年持有A",
+      "stem": "泰康福泽积极养老目标五年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": 5,
+      "management": "泰康基金",
+      "custodian": "招商银行",
+      "found_date": "20210629",
+      "issue_date": "20210621",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*75%+中债新综合全价(总值)指数收益率*20%+金融机构人民币活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012513.OF",
+          "name": "泰康福泽积极养老目标五年持有A",
+          "share": "A",
+          "found_date": "20210629"
+        },
+        {
+          "code": "017393.OF",
+          "name": "泰康福泽积极养老目标五年持有Y",
+          "share": "Y",
+          "found_date": "20221118"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013571.OF",
+      "primary_name": "天弘养老目标2030一年持有",
+      "stem": "天弘养老目标2030一年持有",
+      "category": "目标日期型",
+      "target_year": 2030,
+      "risk_level": null,
+      "hold_period_years": 1,
+      "management": "天弘基金",
+      "custodian": "中国邮政储蓄银行",
+      "found_date": "20221118",
+      "issue_date": "20220817",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中债新综合财富(总值)指数收益率*80.48%+沪深300指数收益率*19.52%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013571.OF",
+          "name": "天弘养老目标2030一年持有",
+          "share": "",
+          "found_date": "20221118"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "007660.OF",
+      "primary_name": "招商和悦均衡养老三年(FOF)A",
+      "stem": "招商和悦均衡养老三年(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "招商基金",
+      "custodian": "中国工商银行",
+      "found_date": "20191203",
+      "issue_date": "20191111",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证综合债指数收益率*60%+沪深300指数收益率*40%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "007660.OF",
+          "name": "招商和悦均衡养老三年(FOF)A",
+          "share": "A",
+          "found_date": "20191203"
+        },
+        {
+          "code": "017395.OF",
+          "name": "招商和悦均衡养老三年(FOF)Y",
+          "share": "Y",
+          "found_date": "20221118"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "011233.OF",
+      "primary_name": "泰康福泰平衡养老FOFA",
+      "stem": "泰康福泰平衡养老FOF",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "泰康基金",
+      "custodian": "招商银行",
+      "found_date": "20210428",
+      "issue_date": "20210406",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*50%+中债新综合全价(总值)指数收益率*45%+金融机构人民币活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "011233.OF",
+          "name": "泰康福泰平衡养老FOFA",
+          "share": "A",
+          "found_date": "20210428"
+        },
+        {
+          "code": "017392.OF",
+          "name": "泰康福泰平衡养老FOFY",
+          "share": "Y",
+          "found_date": "20221118"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012508.OF",
+      "primary_name": "嘉实安康稳健养老目标一年持有A",
+      "stem": "嘉实安康稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "嘉实基金",
+      "custodian": "华夏银行",
+      "found_date": "20211015",
+      "issue_date": "20210913",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债总财富指数收益率*80%+中证800股票指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012508.OF",
+          "name": "嘉实安康稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211015"
+        },
+        {
+          "code": "017319.OF",
+          "name": "嘉实安康稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221118"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "009143.OF",
+      "primary_name": "摩根锦程稳健养老目标一年(FOF)A",
+      "stem": "摩根锦程稳健养老目标一年(FOF)",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": null,
+      "management": "摩根基金",
+      "custodian": "中国建设银行",
+      "found_date": "20200423",
+      "issue_date": "20200407",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中证综合债指数收益率*70%+中证800指数收益率*20%+活期存款利率(税后)*10%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "009143.OF",
+          "name": "摩根锦程稳健养老目标一年(FOF)A",
+          "share": "A",
+          "found_date": "20200423"
+        },
+        {
+          "code": "017341.OF",
+          "name": "摩根锦程稳健养老目标一年(FOF)Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013139.OF",
+      "primary_name": "上银恒泰稳健养老目标一年持有期A",
+      "stem": "上银恒泰稳健养老目标一年持有期",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "上银基金",
+      "custodian": "兴业银行",
+      "found_date": "20210917",
+      "issue_date": "20210816",
+      "m_fee": 0.5,
+      "c_fee": 0.15,
+      "benchmark": "上证国债指数收益率*80%+沪深300指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013139.OF",
+          "name": "上银恒泰稳健养老目标一年持有期A",
+          "share": "A",
+          "found_date": "20210917"
+        },
+        {
+          "code": "017388.OF",
+          "name": "上银恒泰稳健养老目标一年持有期Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "009884.OF",
+      "primary_name": "民生加银康宁平衡养老(FOF)A",
+      "stem": "民生加银康宁平衡养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "民生加银基金",
+      "custodian": "中国建设银行",
+      "found_date": "20200909",
+      "issue_date": "20200831",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中债综合指数收益率*55%+沪深300指数收益率*35%+恒生综合指数收益率*5%+1年期定期存款收益率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "009884.OF",
+          "name": "民生加银康宁平衡养老(FOF)A",
+          "share": "A",
+          "found_date": "20200909"
+        },
+        {
+          "code": "017398.OF",
+          "name": "民生加银康宁平衡养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012167.OF",
+      "primary_name": "浦银安盛颐享稳健养老目标一年持有A",
+      "stem": "浦银安盛颐享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "浦银安盛基金",
+      "custodian": "中国民生银行",
+      "found_date": "20211209",
+      "issue_date": "20210930",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证债券型基金指数收益率*75%+中证股票型基金指数收益率*20%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012167.OF",
+          "name": "浦银安盛颐享稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211209"
+        },
+        {
+          "code": "017321.OF",
+          "name": "浦银安盛颐享稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013519.OF",
+      "primary_name": "易方达汇智平衡养老(FOF)A",
+      "stem": "易方达汇智平衡养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "易方达基金",
+      "custodian": "招商银行",
+      "found_date": "20211104",
+      "issue_date": "20211013",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*50%+中债新综合指数(财富)收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013519.OF",
+          "name": "易方达汇智平衡养老(FOF)A",
+          "share": "A",
+          "found_date": "20211104"
+        },
+        {
+          "code": "017340.OF",
+          "name": "易方达汇智平衡养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "010267.OF",
+      "primary_name": "兴全安泰积极养老目标五年A",
+      "stem": "兴全安泰积极养老目标五年",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": null,
+      "management": "兴证全球基金",
+      "custodian": "兴业银行",
+      "found_date": "20201216",
+      "issue_date": "20201130",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证偏股型基金指数收益率*70%+中债综合(全价)指数收益率*30%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "010267.OF",
+          "name": "兴全安泰积极养老目标五年A",
+          "share": "A",
+          "found_date": "20201216"
+        },
+        {
+          "code": "017386.OF",
+          "name": "兴全安泰积极养老目标五年Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012311.OF",
+      "primary_name": "民生加银康泰养老目标日期2040三年持有A",
+      "stem": "民生加银康泰养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "民生加银基金",
+      "custodian": "交通银行",
+      "found_date": "20210923",
+      "issue_date": "20210823",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中债综合全价(总值)指数收益率*55%+沪深300指数收益率*40%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012311.OF",
+          "name": "民生加银康泰养老目标日期2040三年持有A",
+          "share": "A",
+          "found_date": "20210923"
+        },
+        {
+          "code": "017399.OF",
+          "name": "民生加银康泰养老目标日期2040三年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013512.OF",
+      "primary_name": "汇添富添福增长稳健养老目标一年持有A",
+      "stem": "汇添富添福增长稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "汇添富基金",
+      "custodian": "兴业银行",
+      "found_date": "20211109",
+      "issue_date": "20211025",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合指数收益率*75%+中证800指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013512.OF",
+          "name": "汇添富添福增长稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211109"
+        },
+        {
+          "code": "017372.OF",
+          "name": "汇添富添福增长稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "016245.OF",
+      "primary_name": "易方达汇康稳健养老目标一年持有A",
+      "stem": "易方达汇康稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "易方达基金",
+      "custodian": "中国民生银行",
+      "found_date": "20220906",
+      "issue_date": "20220822",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合指数(财富)收益率*75%+沪深300指数收益率*20%+中证港股通综合指数收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "016245.OF",
+          "name": "易方达汇康稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220906"
+        },
+        {
+          "code": "017331.OF",
+          "name": "易方达汇康稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012386.OF",
+      "primary_name": "银河颐年稳健养老目标一年持有A",
+      "stem": "银河颐年稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "银河基金",
+      "custodian": "渤海银行",
+      "found_date": "20210728",
+      "issue_date": "20210712",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价指数收益率*80%+沪深300指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012386.OF",
+          "name": "银河颐年稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20210728"
+        },
+        {
+          "code": "017330.OF",
+          "name": "银河颐年稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "014093.OF",
+      "primary_name": "汇添富添福睿享稳健养老目标一年持有A",
+      "stem": "汇添富添福睿享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "汇添富基金",
+      "custodian": "中国邮政储蓄银行",
+      "found_date": "20220518",
+      "issue_date": "20220218",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中债综合指数收益率*75%+中证800指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "014093.OF",
+          "name": "汇添富添福睿享稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220518"
+        },
+        {
+          "code": "017373.OF",
+          "name": "汇添富添福睿享稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012743.OF",
+      "primary_name": "汇添富添福睿选稳健养老目标一年持有A",
+      "stem": "汇添富添福睿选稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "汇添富基金",
+      "custodian": "招商银行",
+      "found_date": "20210820",
+      "issue_date": "20210809",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合指数收益率*75%+中证800指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012743.OF",
+          "name": "汇添富添福睿选稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20210820"
+        },
+        {
+          "code": "017367.OF",
+          "name": "汇添富添福睿选稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013155.OF",
+      "primary_name": "汇添富添福汇盈稳健养老目标一年持有A",
+      "stem": "汇添富添福汇盈稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "汇添富基金",
+      "custodian": "华夏银行",
+      "found_date": "20211015",
+      "issue_date": "20210913",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合指数收益率*75%+中证800指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013155.OF",
+          "name": "汇添富添福汇盈稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211015"
+        },
+        {
+          "code": "017371.OF",
+          "name": "汇添富添福汇盈稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012190.OF",
+      "primary_name": "汇添富添福盈和稳健养老目标一年持有A",
+      "stem": "汇添富添福盈和稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "汇添富基金",
+      "custodian": "中国民生银行",
+      "found_date": "20210913",
+      "issue_date": "20210907",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合指数收益率*75%+中证800指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012190.OF",
+          "name": "汇添富添福盈和稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20210913"
+        },
+        {
+          "code": "017368.OF",
+          "name": "汇添富添福盈和稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "010217.OF",
+      "primary_name": "中银添禧丰禄稳健养老目标一年持有A",
+      "stem": "中银添禧丰禄稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "中银基金",
+      "custodian": "兴业银行",
+      "found_date": "20211123",
+      "issue_date": "20211115",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价(总值)指数收益率*80%+中证股票型基金指数收益率*15%+恒生指数收益率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "010217.OF",
+          "name": "中银添禧丰禄稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211123"
+        },
+        {
+          "code": "017406.OF",
+          "name": "中银添禧丰禄稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "007221.OF",
+      "primary_name": "摩根锦程均衡养老(FOF)A",
+      "stem": "摩根锦程均衡养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "摩根基金",
+      "custodian": "中国建设银行",
+      "found_date": "20190902",
+      "issue_date": "20190626",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*50%+中证综合债指数收益率*45%+活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "007221.OF",
+          "name": "摩根锦程均衡养老(FOF)A",
+          "share": "A",
+          "found_date": "20190902"
+        },
+        {
+          "code": "017342.OF",
+          "name": "摩根锦程均衡养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221117"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "009385.OF",
+      "primary_name": "天弘永裕平衡养老目标三年A",
+      "stem": "天弘永裕平衡养老目标三年",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": null,
+      "management": "天弘基金",
+      "custodian": "兴业银行",
+      "found_date": "20200826",
+      "issue_date": "20200720",
+      "m_fee": 0.7,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*50%+中债新综合财富(总值)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "009385.OF",
+          "name": "天弘永裕平衡养老目标三年A",
+          "share": "A",
+          "found_date": "20200826"
+        },
+        {
+          "code": "017355.OF",
+          "name": "天弘永裕平衡养老目标三年Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "006294.OF",
+      "primary_name": "万家稳健养老(FOF)A",
+      "stem": "万家稳健养老(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "万家基金",
+      "custodian": "中国建设银行",
+      "found_date": "20181213",
+      "issue_date": "20181025",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "三年期银行定期存款利率*80%+中证800指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "006294.OF",
+          "name": "万家稳健养老(FOF)A",
+          "share": "A",
+          "found_date": "20181213"
+        },
+        {
+          "code": "017343.OF",
+          "name": "万家稳健养老(FOF)Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "015509.OF",
+      "primary_name": "平安养老目标日期2030一年持有A",
+      "stem": "平安养老目标日期2030一年持有",
+      "category": "目标日期型",
+      "target_year": 2030,
+      "risk_level": null,
+      "hold_period_years": 1,
+      "management": "平安基金",
+      "custodian": "平安银行",
+      "found_date": "20220622",
+      "issue_date": "20220412",
+      "m_fee": 0.6,
+      "c_fee": 0.12,
+      "benchmark": "中债新综合(财富)指数收益率*75%+沪深300指数收益率*20%+同期银行活期存款利率*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "015509.OF",
+          "name": "平安养老目标日期2030一年持有A",
+          "share": "A",
+          "found_date": "20220622"
+        },
+        {
+          "code": "017333.OF",
+          "name": "平安养老目标日期2030一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013467.OF",
+      "primary_name": "华夏安盈稳健养老目标一年持有A",
+      "stem": "华夏安盈稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "华夏基金",
+      "custodian": "华夏银行",
+      "found_date": "20211015",
+      "issue_date": "20210913",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*75%+沪深300指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013467.OF",
+          "name": "华夏安盈稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211015"
+        },
+        {
+          "code": "017357.OF",
+          "name": "华夏安盈稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013254.OF",
+      "primary_name": "华安优享稳健养老目标一年持有A",
+      "stem": "华安优享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "华安基金",
+      "custodian": "中国邮政储蓄银行",
+      "found_date": "20211207",
+      "issue_date": "20211122",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中债综合财富(总值)指数收益率*80%+中证800指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013254.OF",
+          "name": "华安优享稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211207"
+        },
+        {
+          "code": "017348.OF",
+          "name": "华安优享稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013696.OF",
+      "primary_name": "广发安裕稳健养老目标一年持有A",
+      "stem": "广发安裕稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "广发基金",
+      "custodian": "浦发银行",
+      "found_date": "20220315",
+      "issue_date": "20220228",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*75%+中证800指数收益率*20%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013696.OF",
+          "name": "广发安裕稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220315"
+        },
+        {
+          "code": "017378.OF",
+          "name": "广发安裕稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013088.OF",
+      "primary_name": "华商嘉逸养老目标日期2040三年持有A",
+      "stem": "华商嘉逸养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "华商基金",
+      "custodian": "华夏银行",
+      "found_date": "20211015",
+      "issue_date": "20210913",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "(中证800指数收益率*95%+中证港股通综合指数(人民币)收益率*5%)*50%+中债综合(全价)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013088.OF",
+          "name": "华商嘉逸养老目标日期2040三年持有A",
+          "share": "A",
+          "found_date": "20211015"
+        },
+        {
+          "code": "017346.OF",
+          "name": "华商嘉逸养老目标日期2040三年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012056.OF",
+      "primary_name": "华商嘉悦平衡养老FOFA",
+      "stem": "华商嘉悦平衡养老FOF",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "华商基金",
+      "custodian": "中国农业银行",
+      "found_date": "20210528",
+      "issue_date": "20210506",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中债综合(全价)指数收益率*40%+中证港股通综合指数收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012056.OF",
+          "name": "华商嘉悦平衡养老FOFA",
+          "share": "A",
+          "found_date": "20210528"
+        },
+        {
+          "code": "017345.OF",
+          "name": "华商嘉悦平衡养老FOFY",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "010323.OF",
+      "primary_name": "华安平衡养老目标三年持有A",
+      "stem": "华安平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "华安基金",
+      "custodian": "中国农业银行",
+      "found_date": "20201201",
+      "issue_date": "20201116",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*50%+中债综合财富(总值)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "010323.OF",
+          "name": "华安平衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20201201"
+        },
+        {
+          "code": "017349.OF",
+          "name": "华安平衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "014865.OF",
+      "primary_name": "南方富祥稳健养老目标一年持有A",
+      "stem": "南方富祥稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "南方基金",
+      "custodian": "华夏银行",
+      "found_date": "20220407",
+      "issue_date": "20220321",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "上证国债指数收益率*85%+沪深300指数收益率*15%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "014865.OF",
+          "name": "南方富祥稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220407"
+        },
+        {
+          "code": "017364.OF",
+          "name": "南方富祥稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "007249.OF",
+      "primary_name": "广发均衡养老目标三年持有A",
+      "stem": "广发均衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "广发基金",
+      "custodian": "中国建设银行",
+      "found_date": "20190924",
+      "issue_date": "20190829",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中证股票型基金指数收益率*50%+中证债券型基金指数收益率*45%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "007249.OF",
+          "name": "广发均衡养老目标三年持有A",
+          "share": "A",
+          "found_date": "20190924"
+        },
+        {
+          "code": "017383.OF",
+          "name": "广发均衡养老目标三年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013158.OF",
+      "primary_name": "华夏安康稳健养老目标一年持有A",
+      "stem": "华夏安康稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "华夏基金",
+      "custodian": "招商银行",
+      "found_date": "20220315",
+      "issue_date": "20211229",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*75%+沪深300指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013158.OF",
+          "name": "华夏安康稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220315"
+        },
+        {
+          "code": "017356.OF",
+          "name": "华夏安康稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012515.OF",
+      "primary_name": "南方富瑞稳健养老目标一年持有A",
+      "stem": "南方富瑞稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "南方基金",
+      "custodian": "招商银行",
+      "found_date": "20210727",
+      "issue_date": "20210719",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "上证国债指数收益率*80%+沪深300指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012515.OF",
+          "name": "南方富瑞稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20210727"
+        },
+        {
+          "code": "017358.OF",
+          "name": "南方富瑞稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "015317.OF",
+      "primary_name": "景顺长城隽发平衡养老目标三年持有",
+      "stem": "景顺长城隽发平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "景顺长城基金",
+      "custodian": "浦发银行",
+      "found_date": "20221116",
+      "issue_date": "20220815",
+      "m_fee": 1.0,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中证全债指数收益率*35%+恒生指数收益率(使用估值汇率折算)*5%+上海黄金交易所Au99.99现货实盘合约收益率*5%+商业银行活期存款利率(税后)*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "015317.OF",
+          "name": "景顺长城隽发平衡养老目标三年持有",
+          "share": "",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "015682.OF",
+      "primary_name": "华夏福源养老目标日期2045三年持有A",
+      "stem": "华夏福源养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "华夏基金",
+      "custodian": "中信银行",
+      "found_date": "20220624",
+      "issue_date": "20220607",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*50%+中债综合(全价)指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "015682.OF",
+          "name": "华夏福源养老目标日期2045三年持有A",
+          "share": "A",
+          "found_date": "20220624"
+        },
+        {
+          "code": "017365.OF",
+          "name": "华夏福源养老目标日期2045三年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012038.OF",
+      "primary_name": "银华尊颐稳健养老目标一年持有A",
+      "stem": "银华尊颐稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "银华基金",
+      "custodian": "中国邮政储蓄银行",
+      "found_date": "20220104",
+      "issue_date": "20210930",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中债综合全价(总值)指数收益率*75%+沪深300指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012038.OF",
+          "name": "银华尊颐稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220104"
+        },
+        {
+          "code": "017369.OF",
+          "name": "银华尊颐稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221116"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "007272.OF",
+      "primary_name": "景顺长城稳健养老目标三年A",
+      "stem": "景顺长城稳健养老目标三年",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": null,
+      "management": "景顺长城基金",
+      "custodian": "中国银行",
+      "found_date": "20190926",
+      "issue_date": "20190909",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证全债指数收益率*55%+中证800指数收益率*30%+恒生指数收益率(使用估值汇率折算)*5%+上海黄金交易所Au99.99现货实盘合约收益率*5%+商业银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "007272.OF",
+          "name": "景顺长城稳健养老目标三年A",
+          "share": "A",
+          "found_date": "20190926"
+        },
+        {
+          "code": "017259.OF",
+          "name": "景顺长城稳健养老目标三年Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012037.OF",
+      "primary_name": "招商和惠养老目标日期2040三年持有A",
+      "stem": "招商和惠养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "招商基金",
+      "custodian": "浦发银行",
+      "found_date": "20220105",
+      "issue_date": "20210930",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*55%+中债综合指数收益率*45%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012037.OF",
+          "name": "招商和惠养老目标日期2040三年持有A",
+          "share": "A",
+          "found_date": "20220105"
+        },
+        {
+          "code": "017272.OF",
+          "name": "招商和惠养老目标日期2040三年持有Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012783.OF",
+      "primary_name": "鹏华长治稳健养老目标一年持有期A",
+      "stem": "鹏华长治稳健养老目标一年持有期",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "鹏华基金",
+      "custodian": "招商银行",
+      "found_date": "20210811",
+      "issue_date": "20210719",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证全债指数收益率*75%+中证800指数收益率*25%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012783.OF",
+          "name": "鹏华长治稳健养老目标一年持有期A",
+          "share": "A",
+          "found_date": "20210811"
+        },
+        {
+          "code": "017239.OF",
+          "name": "鹏华长治稳健养老目标一年持有期Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013192.OF",
+      "primary_name": "华商嘉悦稳健养老目标一年持有A",
+      "stem": "华商嘉悦稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "华商基金",
+      "custodian": "中国银行",
+      "found_date": "20210923",
+      "issue_date": "20210827",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合(全价)指数收益率*70%+中证800指数收益率*20%+中证港股通综合指数收益率*5%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013192.OF",
+          "name": "华商嘉悦稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20210923"
+        },
+        {
+          "code": "017281.OF",
+          "name": "华商嘉悦稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013741.OF",
+      "primary_name": "万家聚优稳健养老目标一年持有A",
+      "stem": "万家聚优稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "万家基金",
+      "custodian": "中国建设银行",
+      "found_date": "20220510",
+      "issue_date": "20220304",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中债新综合全价(总值)指数收益率*80%+中证800指数收益率*12%+一年期定期存款基准利率(税后)*5%+恒生指数收益率*3%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013741.OF",
+          "name": "万家聚优稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20220510"
+        },
+        {
+          "code": "017246.OF",
+          "name": "万家聚优稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "007232.OF",
+      "primary_name": "万家平衡养老三年(FOF)A",
+      "stem": "万家平衡养老三年(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "万家基金",
+      "custodian": "中国农业银行",
+      "found_date": "20190422",
+      "issue_date": "20190415",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "中证全债指数收益率*50%+中证800指数收益率*45%+1年期定期存款收益率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "007232.OF",
+          "name": "万家平衡养老三年(FOF)A",
+          "share": "A",
+          "found_date": "20190422"
+        },
+        {
+          "code": "017241.OF",
+          "name": "万家平衡养老三年(FOF)Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013826.OF",
+      "primary_name": "天弘永丰稳健养老目标一年持有A",
+      "stem": "天弘永丰稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "天弘基金",
+      "custodian": "中国农业银行",
+      "found_date": "20211126",
+      "issue_date": "20211105",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债新综合财富(总值)指数收益率*80%+沪深300指数收益率*18%+恒生指数收益率(使用估值汇率调整)*2%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013826.OF",
+          "name": "天弘永丰稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211126"
+        },
+        {
+          "code": "017237.OF",
+          "name": "天弘永丰稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "006298.OF",
+      "primary_name": "广发稳健养老目标一年持有A",
+      "stem": "广发稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "广发基金",
+      "custodian": "中国工商银行",
+      "found_date": "20181225",
+      "issue_date": "20181112",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证债券型基金指数收益率*70%+中证股票型基金指数收益率*25%+银行活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "006298.OF",
+          "name": "广发稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20181225"
+        },
+        {
+          "code": "017279.OF",
+          "name": "广发稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012505.OF",
+      "primary_name": "华安民享稳健养老目标一年持有A",
+      "stem": "华安民享稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "华安基金",
+      "custodian": "中国民生银行",
+      "found_date": "20211022",
+      "issue_date": "20211012",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合财富(总值)指数收益率*80%+中证800指数收益率*20%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012505.OF",
+          "name": "华安民享稳健养老目标一年持有A",
+          "share": "A",
+          "found_date": "20211022"
+        },
+        {
+          "code": "017276.OF",
+          "name": "华安民享稳健养老目标一年持有Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "012283.OF",
+      "primary_name": "建信普泽养老目标日期2040三年持有A",
+      "stem": "建信普泽养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "建信基金",
+      "custodian": "兴业银行",
+      "found_date": "20210714",
+      "issue_date": "20210617",
+      "m_fee": 1.0,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中债综合指数收益率*50%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "012283.OF",
+          "name": "建信普泽养老目标日期2040三年持有A",
+          "share": "A",
+          "found_date": "20210714"
+        },
+        {
+          "code": "017258.OF",
+          "name": "建信普泽养老目标日期2040三年持有Y",
+          "share": "Y",
+          "found_date": "20221111"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "015639.OF",
+      "primary_name": "国联养老目标日期2045三年持有",
+      "stem": "国联养老目标日期2045三年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "国联基金",
+      "custodian": "招商银行",
+      "found_date": "20221027",
+      "issue_date": "20221012",
+      "m_fee": 0.9,
+      "c_fee": 0.2,
+      "benchmark": "中债综合指数收益率*51%+中证800指数收益率*44.1%+中证港股通综合指数(人民币)收益率*4.9%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "015639.OF",
+          "name": "国联养老目标日期2045三年持有",
+          "share": "",
+          "found_date": "20221027"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "015914.OF",
+      "primary_name": "申万菱信养老目标日期2040三年持有",
+      "stem": "申万菱信养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "申万菱信基金",
+      "custodian": "交通银行",
+      "found_date": "20220802",
+      "issue_date": "20220613",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "上证国债指数收益率*55%+沪深300指数收益率*45%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "015914.OF",
+          "name": "申万菱信养老目标日期2040三年持有",
+          "share": "",
+          "found_date": "20220802"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "015234.OF",
+      "primary_name": "上银恒享平衡养老目标三年持有",
+      "stem": "上银恒享平衡养老目标三年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": 3,
+      "management": "上银基金",
+      "custodian": "恒丰银行",
+      "found_date": "20220607",
+      "issue_date": "20220304",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "上证国债指数收益率*50%+沪深300指数收益率*50%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "015234.OF",
+          "name": "上银恒享平衡养老目标三年持有",
+          "share": "",
+          "found_date": "20220607"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013708.OF",
+      "primary_name": "永赢养老目标2040三年持有",
+      "stem": "永赢养老目标2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "永赢基金",
+      "custodian": "招商银行",
+      "found_date": "20220224",
+      "issue_date": "20220216",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中证800指数收益率*50%+中债综合全价(总值)指数收益率*45%+银行活期存款利率(税后)*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "013708.OF",
+          "name": "永赢养老目标2040三年持有",
+          "share": "",
+          "found_date": "20220224"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "014022.OF",
+      "primary_name": "大摩养老目标日期2040三年持有",
+      "stem": "大摩养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "摩根士丹利基金",
+      "custodian": "中国建设银行",
+      "found_date": "20211215",
+      "issue_date": "20211206",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*50%+中证全债指数收益率*50%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "014022.OF",
+          "name": "大摩养老目标日期2040三年持有",
+          "share": "",
+          "found_date": "20211215"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013300.OF",
+      "primary_name": "工银价值稳健6个月持有(FOF)A",
+      "stem": "工银价值稳健6个月持有(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "工银瑞信基金",
+      "custodian": "招商银行",
+      "found_date": "20211109",
+      "issue_date": "20211025",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债-新综合财富(总值)指数收益率*90%+中证800指数收益率*10%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "013300.OF",
+          "name": "工银价值稳健6个月持有(FOF)A",
+          "share": "A",
+          "found_date": "20211109"
+        },
+        {
+          "code": "013301.OF",
+          "name": "工银价值稳健6个月持有(FOF)C",
+          "share": "C",
+          "found_date": "20211109"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "013061.OF",
+      "primary_name": "博时养老目标日期2050五年持有",
+      "stem": "博时养老目标日期2050五年持有",
+      "category": "目标日期型",
+      "target_year": 2050,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "博时基金",
+      "custodian": "中国建设银行",
+      "found_date": "20210830",
+      "issue_date": "20210719",
+      "m_fee": 0.8,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*70%+中债综合财富(总值)指数收益率*30%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "013061.OF",
+          "name": "博时养老目标日期2050五年持有",
+          "share": "",
+          "found_date": "20210830"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013043.OF",
+      "primary_name": "博时养老目标日期2045五年持有",
+      "stem": "博时养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "博时基金",
+      "custodian": "招商银行",
+      "found_date": "20210830",
+      "issue_date": "20210719",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*70%+中债综合财富(总值)指数收益率*30%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "013043.OF",
+          "name": "博时养老目标日期2045五年持有",
+          "share": "",
+          "found_date": "20210830"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013022.OF",
+      "primary_name": "博时养老目标日期2040五年持有",
+      "stem": "博时养老目标日期2040五年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "博时基金",
+      "custodian": "中国邮政储蓄银行",
+      "found_date": "20210830",
+      "issue_date": "20210719",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*70%+中债综合财富(总值)指数收益率*30%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "013022.OF",
+          "name": "博时养老目标日期2040五年持有",
+          "share": "",
+          "found_date": "20210830"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "012996.OF",
+      "primary_name": "博时养老目标日期2035三年持有",
+      "stem": "博时养老目标日期2035三年持有",
+      "category": "目标日期型",
+      "target_year": 2035,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "博时基金",
+      "custodian": "中信银行",
+      "found_date": "20210827",
+      "issue_date": "20210719",
+      "m_fee": 0.6,
+      "c_fee": 0.1,
+      "benchmark": "沪深300指数收益率*50%+中债综合财富(总值)指数收益率*50%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "012996.OF",
+          "name": "博时养老目标日期2035三年持有",
+          "share": "",
+          "found_date": "20210827"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "013135.OF",
+      "primary_name": "银河悦宁稳健养老目标一年持有",
+      "stem": "银河悦宁稳健养老目标一年持有",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "稳健",
+      "hold_period_years": 1,
+      "management": "银河基金",
+      "custodian": "中国建设银行",
+      "found_date": "20210823",
+      "issue_date": "20210820",
+      "m_fee": 0.6,
+      "c_fee": 0.15,
+      "benchmark": "中债综合全价指数收益率*70%+沪深300指数收益率*20%+恒生指数收益率(使用估值汇率折算)*5%+银行活期存款利率(税后)*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "013135.OF",
+          "name": "银河悦宁稳健养老目标一年持有",
+          "share": "",
+          "found_date": "20210823"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "012518.OF",
+      "primary_name": "景顺长城颐心养老目标日期2040三年持有",
+      "stem": "景顺长城颐心养老目标日期2040三年持有",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": 3,
+      "management": "景顺长城基金",
+      "custodian": "招商银行",
+      "found_date": "20210628",
+      "issue_date": "20210617",
+      "m_fee": 1.0,
+      "c_fee": 0.2,
+      "benchmark": "中证全债指数收益率*62%+中证800指数收益率*38%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "012518.OF",
+          "name": "景顺长城颐心养老目标日期2040三年持有",
+          "share": "",
+          "found_date": "20210628"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "012512.OF",
+      "primary_name": "嘉实养老目标日期2045五年持有",
+      "stem": "嘉实养老目标日期2045五年持有",
+      "category": "目标日期型",
+      "target_year": 2045,
+      "risk_level": null,
+      "hold_period_years": 5,
+      "management": "嘉实基金",
+      "custodian": "招商银行",
+      "found_date": "20210625",
+      "issue_date": "20210621",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*63.75%+中债总财富指数收益率*36.25%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "012512.OF",
+          "name": "嘉实养老目标日期2045五年持有",
+          "share": "",
+          "found_date": "20210625"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "009442.OF",
+      "primary_name": "中银养老目标日期2040",
+      "stem": "中银养老目标日期2040",
+      "category": "目标日期型",
+      "target_year": 2040,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "中银基金",
+      "custodian": "中国工商银行",
+      "found_date": "20201110",
+      "issue_date": "20200925",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "沪深300指数收益率*50.51%+中债综合全价(总值)指数收益率*44.49%+银行活期存款利率(税后)*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "009442.OF",
+          "name": "中银养老目标日期2040",
+          "share": "",
+          "found_date": "20201110"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "008930.OF",
+      "primary_name": "中加安瑞平衡养老目标三年",
+      "stem": "中加安瑞平衡养老目标三年",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "平衡",
+      "hold_period_years": null,
+      "management": "中加基金",
+      "custodian": "中国工商银行",
+      "found_date": "20200827",
+      "issue_date": "20200525",
+      "m_fee": 0.9,
+      "c_fee": 0.15,
+      "benchmark": "中证综合债指数收益率*50%+中证800指数收益率*50%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "008930.OF",
+          "name": "中加安瑞平衡养老目标三年",
+          "share": "",
+          "found_date": "20200827"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "008158.OF",
+      "primary_name": "招商盛鑫优选3个月持有期(FOF)A",
+      "stem": "招商盛鑫优选3个月持有期(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "招商基金",
+      "custodian": "中国银行",
+      "found_date": "20200514",
+      "issue_date": "20200409",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "沪深300指数收益率*60%+中债综合财富指数收益率*40%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "008158.OF",
+          "name": "招商盛鑫优选3个月持有期(FOF)A",
+          "share": "A",
+          "found_date": "20200514"
+        },
+        {
+          "code": "008159.OF",
+          "name": "招商盛鑫优选3个月持有期(FOF)C",
+          "share": "C",
+          "found_date": "20200514"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "009161.OF",
+      "primary_name": "摩根锦程积极成长养老目标五年",
+      "stem": "摩根锦程积极成长养老目标五年",
+      "category": "目标风险型",
+      "target_year": null,
+      "risk_level": "积极",
+      "hold_period_years": null,
+      "management": "摩根基金",
+      "custodian": "中国建设银行",
+      "found_date": "20200429",
+      "issue_date": "20200327",
+      "m_fee": 0.6,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*75%+中证综合债指数收益率*20%+活期存款利率(税后)*5%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "009161.OF",
+          "name": "摩根锦程积极成长养老目标五年",
+          "share": "",
+          "found_date": "20200429"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "008754.OF",
+      "primary_name": "泰康睿福优选配置3个月持有期(FOF)A",
+      "stem": "泰康睿福优选配置3个月持有期(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "泰康基金",
+      "custodian": "中国农业银行",
+      "found_date": "20200413",
+      "issue_date": "20200311",
+      "m_fee": 1.0,
+      "c_fee": 0.2,
+      "benchmark": "中证偏股型基金指数收益率*60%+中证普通债券型基金指数收益率*30%+恒生指数收益率*5%+金融机构人民币活期存款利率(税后)*5%",
+      "status": "L",
+      "all_shares": [
+        {
+          "code": "008754.OF",
+          "name": "泰康睿福优选配置3个月持有期(FOF)A",
+          "share": "A",
+          "found_date": "20200413"
+        },
+        {
+          "code": "008755.OF",
+          "name": "泰康睿福优选配置3个月持有期(FOF)C",
+          "share": "C",
+          "found_date": "20200413"
+        }
+      ],
+      "share_count": 2
+    },
+    {
+      "primary_code": "008462.OF",
+      "primary_name": "平安盈丰积极配置三个月持有C(FOF)",
+      "stem": "平安盈丰积极配置三个月持有C(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "平安基金",
+      "custodian": "中国工商银行",
+      "found_date": "20191227",
+      "issue_date": "20191209",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*80%+中债新综合指数收益率*20%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "008462.OF",
+          "name": "平安盈丰积极配置三个月持有C(FOF)",
+          "share": "",
+          "found_date": "20191227"
+        }
+      ],
+      "share_count": 1
+    },
+    {
+      "primary_code": "008461.OF",
+      "primary_name": "平安盈丰积极配置三个月持有A(FOF)",
+      "stem": "平安盈丰积极配置三个月持有A(FOF)",
+      "category": "普通FOF",
+      "target_year": null,
+      "risk_level": null,
+      "hold_period_years": null,
+      "management": "平安基金",
+      "custodian": "中国工商银行",
+      "found_date": "20191227",
+      "issue_date": "20191209",
+      "m_fee": 0.8,
+      "c_fee": 0.2,
+      "benchmark": "中证800指数收益率*80%+中债新综合指数收益率*20%",
+      "status": "D",
+      "all_shares": [
+        {
+          "code": "008461.OF",
+          "name": "平安盈丰积极配置三个月持有A(FOF)",
+          "share": "",
+          "found_date": "20191227"
+        }
+      ],
+      "share_count": 1
+    }
+  ]
+}

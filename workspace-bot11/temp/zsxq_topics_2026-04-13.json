@@ -1,0 +1,11 @@
+import json, re
+from collections import defaultdict
+
+data = {
+  "黑马调研": [
+    # paste the 219 topics here... I'll write a script that reads from a file
+  ],
+  "土狗": [
+    # paste 2 topics
+  ]
+}

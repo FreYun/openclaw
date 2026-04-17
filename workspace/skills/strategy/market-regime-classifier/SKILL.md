@@ -1,6 +1,10 @@
 # 市场 Regime 判断器
 
-读取 `daily_review.py` 的复盘 MD 和 akshare 指数数据，六维打分后映射到 5 档市场 regime，输出战法推荐与仓位上限，供策略型 bot 做决策前的 step 0。
+读取 `daily_review.py` 的复盘 MD 和 Tushare 指数数据，六维打分后映射到 5 档市场 regime，**输出战法推荐、regime 标签、switched 标记**，供下游 skill 决策。
+
+> ⚠️ **仓位决策 (2026-04-17 更新)**: JSON 输出里的 `playbook.position_limit.total` (spec §5 梯度仓位表) **已在 11 年样本验证失效**, 不要用。
+>
+> 已验证的仓位规则是 **v2_entry_only**: 默认 50% 底仓, `switched=1` 且 `regime ∈ {强牛, 强势震荡}` 的那天加仓到 90%。详情 (含 4 次 out-of-sample 验证数据、失败替代方案、边界) 见 [memory/position-sizing-v2-entry-only.md](memory/position-sizing-v2-entry-only.md)。
 
 ---
 
@@ -52,7 +56,7 @@ python3 scripts/classify.py --format=json
   "playbook": {
     "recommended": [{"id": "S5", "name": "龙回头", "priority": 1}],
     "forbidden": ["S1", "S2", "S6"],
-    "position_limit": {"total": 0.50, "single": 0.20}
+    "position_limit": {"total": 0.50, "single": 0.20}  // ⚠️ 已证伪, 见顶部说明
   },
   "last_regime": "中性震荡",
   "switched": false,

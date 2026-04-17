@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-07 07:03:55
+> 更新时间：2026-04-17 00:51:51
 
 ## 职业
 
@@ -33,4 +33,5 @@
 - 光伏跟踪（solar-tracker） — `skills/solar-tracker/SKILL.md`
 - 深度研究（deepreasearch） — `skills/deepreasearch/SKILL.md`
 - 公众号行业深度文章（gzh-industry-article） — `skills/gzh-industry-article/SKILL.md`
+- 行业深研（industry-deep-dive） — `skills/industry-deep-dive/SKILL.md`
 

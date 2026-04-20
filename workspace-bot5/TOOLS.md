@@ -92,6 +92,9 @@ mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
 
 
 
+
+
+
 # TOOLS.md - bot5（宣妈慢慢变富）工具配置
 
 

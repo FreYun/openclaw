@@ -1,8 +1,10 @@
 """共享 DB 访问层 — 所有 strategy skill 用这个模块开 SQLite 连接。
 
-两层架构:
-  market.db  共享市场数据 (regime / 涨停池 / K 线 / 行业 / 交易日历)
-  s5.db      S5 专属 (select_runs / candidates / verifications / rejects)
+单库架构 (2026-04-17 合库):
+  market.db   所有 strategy 数据都住这里
+    - 共享市场数据: regime_classify_daily / 涨停池 / K 线 / 行业 / 交易日历
+    - S5 专属: s5_select_runs / s5_candidates / s5_candidate_rejects / s5_verifications
+    - 未来新策略加 sX_* 前缀表, 避免跨策略命名冲突
 
 设计原则:
   - 零依赖, 只用 sqlite3 (Python stdlib)
@@ -30,7 +32,6 @@ STRATEGY_ROOT = os.path.dirname(_LIB_DIR)
 # - 跟 backfill 流水线 (daily/stk_limit/index_daily 等大表) 共用同一个文件
 # - 路径在 git 仓库外, 数据不被跟踪 (严禁在 .openclaw 目录下创建 market.db 的 symlink/副本)
 MARKET_DB_PATH = "/home/rooot/database/market.db"
-S5_DB_PATH = os.path.join(STRATEGY_ROOT, "s5-dragon-pullback", ".data", "s5.db")
 
 # --------------------------------------------------------------------------- #
 # 共用的 schema_version 表 + PRAGMA
@@ -44,8 +45,7 @@ CREATE TABLE IF NOT EXISTS schema_version (
 );
 """
 
-MARKET_DB_VERSION = 1
-S5_DB_VERSION = 1
+MARKET_DB_VERSION = 2  # v2: s5_* 表并入 market.db (原 s5.db 下线)
 
 
 def _open_conn(path: str) -> sqlite3.Connection:
@@ -61,10 +61,6 @@ def _open_conn(path: str) -> sqlite3.Connection:
 
 def get_market_db() -> sqlite3.Connection:
     return _open_conn(MARKET_DB_PATH)
-
-
-def get_s5_db() -> sqlite3.Connection:
-    return _open_conn(S5_DB_PATH)
 
 
 def _set_version(conn: sqlite3.Connection, name: str, version: int):
@@ -97,7 +93,7 @@ MARKET_DDL = [
     # ========================================================================
     # regime_daily — 每日市场 regime 判断 (classifier 的 source of truth)
     # 一行 = 一个交易日的完整 classifier 输出, 所有下游策略从这里读
-    # 由 market-regime-classifier 写入, S5/S4/S7 等策略读取
+    # 由 scripts/market-regime (cron 管道) 写入, S5/S4/S7 等策略读取
     # ========================================================================
     """
     CREATE TABLE IF NOT EXISTS regime_daily (
@@ -335,6 +331,142 @@ MARKET_DDL = [
         computed_at  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
     """,
+
+    # ========================================================================
+    # S5 龙回头战法专属表 (2026-04-17 从 s5.db 迁入, 加 s5_ 前缀避免跨策略冲突)
+    # ========================================================================
+
+    # s5_select_runs — 每次 select.py 运行的 metadata
+    # 一行 = 一天一次 select (无论是否出 candidate), 作为 s5_candidates/rejects 的父表
+    """
+    CREATE TABLE IF NOT EXISTS s5_select_runs (
+        date                        TEXT PRIMARY KEY,
+        strategy                    TEXT NOT NULL,
+
+        regime_code                 TEXT NOT NULL,
+        regime_name                 TEXT NOT NULL,
+        regime_score                INTEGER NOT NULL,
+        confidence                  TEXT,
+        switched                    INTEGER,
+        emergency_switch            INTEGER,
+        position_limit_single_base  REAL,
+
+        skipped_reason              TEXT,
+
+        universe_size               INTEGER,
+        dragon_pool_size            INTEGER,
+        passed_count                INTEGER,
+        hot_industries_json         TEXT,
+
+        config_json                 TEXT,
+
+        created_at                  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    """,
+
+    # s5_candidates — 通过 S5 信号的标的 (一行 = 一只)
+    """
+    CREATE TABLE IF NOT EXISTS s5_candidates (
+        id                        INTEGER PRIMARY KEY AUTOINCREMENT,
+        date                      TEXT NOT NULL,
+        code                      TEXT NOT NULL,
+        name                      TEXT,
+        industry                  TEXT,
+
+        dragon_peak_date          TEXT NOT NULL,
+        dragon_peak_close         REAL NOT NULL,
+        dragon_peak_max_streak    INTEGER NOT NULL,
+
+        cooldown_days             INTEGER NOT NULL,
+        cooldown_drop_pct         REAL NOT NULL,
+        cooldown_t1_close         REAL,
+
+        rebound_t_pct             REAL NOT NULL,
+        rebound_t_close           REAL NOT NULL,
+        rebound_t_low             REAL,
+        rebound_t_high            REAL,
+        rebound_t1_high           REAL,
+
+        entry_zone_low            REAL NOT NULL,
+        entry_zone_high           REAL NOT NULL,
+        entry_rule                TEXT,
+
+        stop_loss_price           REAL NOT NULL,
+        stop_loss_rule            TEXT,
+
+        target_1_price            REAL,
+        target_2_price            REAL,
+
+        position_pct              REAL NOT NULL,
+        position_calc             TEXT,
+
+        UNIQUE(date, code)
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_s5_cand_date ON s5_candidates(date);",
+    "CREATE INDEX IF NOT EXISTS idx_s5_cand_code ON s5_candidates(code);",
+
+    # s5_daily_universe — 每日 S5 universe 预算结果 (prewarm 写入, select 读)
+    # 一行 = 某日某只股属于 universe, 按 (date, code) 唯一
+    """
+    CREATE TABLE IF NOT EXISTS s5_daily_universe (
+        date       TEXT NOT NULL,
+        code       TEXT NOT NULL,
+        industry   TEXT,
+        PRIMARY KEY (date, code)
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_s5_univ_date ON s5_daily_universe(date);",
+
+    # s5_candidate_rejects — 差一点的标的抽样
+    """
+    CREATE TABLE IF NOT EXISTS s5_candidate_rejects (
+        id             INTEGER PRIMARY KEY AUTOINCREMENT,
+        date           TEXT NOT NULL,
+        code           TEXT NOT NULL,
+        name           TEXT,
+        stage_failed   TEXT NOT NULL,
+        reject_reason  TEXT NOT NULL,
+        UNIQUE(date, code)
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_s5_rej_date ON s5_candidate_rejects(date);",
+
+    # s5_verifications — T+1 盘中/回测验证结果
+    """
+    CREATE TABLE IF NOT EXISTS s5_verifications (
+        id                INTEGER PRIMARY KEY AUTOINCREMENT,
+        t_date            TEXT NOT NULL,
+        t1_date           TEXT NOT NULL,
+        candidate_id      INTEGER NOT NULL,
+        code              TEXT NOT NULL,
+        mode              TEXT NOT NULL,
+
+        status            TEXT NOT NULL,
+
+        entry_status      TEXT,
+        entry_price       REAL,
+        exit_price        REAL,
+        exit_reason       TEXT,
+        pnl_pct           REAL,
+
+        t1_open           REAL,
+        t1_high           REAL,
+        t1_low            REAL,
+        t1_close          REAL,
+
+        live_open_price   REAL,
+        live_current      REAL,
+
+        note              TEXT,
+
+        created_at        TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(candidate_id) REFERENCES s5_candidates(id)
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_s5_veri_t1 ON s5_verifications(t1_date);",
+    "CREATE INDEX IF NOT EXISTS idx_s5_veri_code ON s5_verifications(code);",
+    "CREATE INDEX IF NOT EXISTS idx_s5_veri_mode ON s5_verifications(mode);",
 ]
 
 
@@ -350,183 +482,9 @@ def init_market_db():
         conn.close()
 
 
-# --------------------------------------------------------------------------- #
-# s5.db DDL
-# --------------------------------------------------------------------------- #
-
-S5_DDL = [
-    SCHEMA_VERSION_DDL,
-
-    # ========================================================================
-    # select_runs — 每次 select.py 运行的 metadata
-    # 一行 = 一天一次 select (无论是否出 candidate), 作为 candidates/rejects 的父表
-    # ========================================================================
-    """
-    CREATE TABLE IF NOT EXISTS select_runs (
-        date                        TEXT PRIMARY KEY,    -- T 日 YYYY-MM-DD
-        strategy                    TEXT NOT NULL,       -- 策略 ID: 'S5'
-
-        -- 当日 regime 快照 (从 market.db.regime_daily 冗余过来, 免 join)
-        regime_code                 TEXT NOT NULL,       -- 如 WEAK_RANGE
-        regime_name                 TEXT NOT NULL,       -- 如 弱势震荡
-        regime_score                INTEGER NOT NULL,    -- 总分
-        confidence                  TEXT,                -- high/medium/low
-        switched                    INTEGER,             -- 1=regime 切换当日
-        emergency_switch            INTEGER,             -- 1=逃生门触发日
-        position_limit_single_base  REAL,                -- base 单票上限 (regime playbook 来)
-
-        -- 跳过路径 (NULL = 成功跑了信号检测)
-        skipped_reason              TEXT,  -- 如 "regime=熊, S5 not in playbook.recommended" 或 "涨停池为空"
-
-        -- 漏斗统计
-        universe_size               INTEGER,  -- 初筛后的候选股池大小
-        dragon_pool_size            INTEGER,  -- universe 里近 30 日有 ≥2 连板的数量
-        passed_count                INTEGER,  -- 三段确认后最终 candidate 数量
-        hot_industries_json         TEXT,     -- JSON 数组: T 日热门行业名列表
-
-        -- 当时的信号阈值快照 (调参后能回溯为什么某天选 vs 没选)
-        -- JSON: {dragon_min_streak, cooldown_min_days, rebound_min_pct, ...}
-        config_json                 TEXT,
-
-        created_at                  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-    """,
-
-    # ========================================================================
-    # candidates — 每只通过 S5 信号的标的 (一行 = 一只)
-    # 包含三段证据 (龙头/冷却/反包) + 交易计划 (入场/止损/止盈/仓位)
-    # ========================================================================
-    """
-    CREATE TABLE IF NOT EXISTS candidates (
-        id                        INTEGER PRIMARY KEY AUTOINCREMENT,
-        date                      TEXT NOT NULL,  -- T 日, 关联 select_runs.date
-        code                      TEXT NOT NULL,  -- 股票 6 位代码
-        name                      TEXT,           -- 股票简称
-        industry                  TEXT,           -- 所属行业
-
-        -- === 阶段 1 证据: 龙头 ===
-        dragon_peak_date          TEXT NOT NULL,    -- 龙头高点日 YYYY-MM-DD
-        dragon_peak_close         REAL NOT NULL,    -- 龙头高点日收盘价
-        dragon_peak_max_streak    INTEGER NOT NULL, -- 龙头日的最高连板数 (≥2)
-
-        -- === 阶段 2 证据: 冷却 ===
-        cooldown_days             INTEGER NOT NULL,  -- 冷却天数 (2-7 个交易日)
-        cooldown_drop_pct         REAL NOT NULL,     -- 阶段跌幅 (负数, ≤-5%)
-        cooldown_t1_close         REAL,              -- T-1 日收盘价
-
-        -- === 阶段 3 证据: T 日反包 ===
-        rebound_t_pct             REAL NOT NULL,     -- T 日涨跌幅 (%, ≥+7)
-        rebound_t_close           REAL NOT NULL,     -- T 日收盘价
-        rebound_t_low             REAL,              -- T 日最低价
-        rebound_t_high            REAL,              -- T 日最高价
-        rebound_t1_high           REAL,              -- T-1 日最高价 (收复判定用)
-
-        -- === 交易计划: 入场区 ===
-        entry_zone_low            REAL NOT NULL,     -- 入场区下沿 (通常 T 日收盘 * 0.99)
-        entry_zone_high           REAL NOT NULL,     -- 入场区上沿 (通常 T 日收盘 * 1.01)
-        entry_rule                TEXT,              -- 规则说明: "T 日收盘 ±1%"
-
-        -- === 交易计划: 止损 ===
-        stop_loss_price           REAL NOT NULL,     -- 止损价格
-        stop_loss_rule            TEXT,              -- 规则说明: "T 日最低" 或 "T 日最低 × 0.98"
-
-        -- === 交易计划: 止盈 ===
-        target_1_price            REAL,              -- 止盈位 1 (通常 T 日收盘 * 1.05)
-        target_2_price            REAL,              -- 止盈位 2 (通常 T 日收盘 * 1.10)
-
-        -- === 仓位 ===
-        position_pct              REAL NOT NULL,     -- 最终建议仓位 (0-1)
-        position_calc             TEXT,              -- 计算过程解释 "0.15 × 0.8 (switched) = 0.1200"
-
-        UNIQUE(date, code)  -- 同一天同一只股只能有一个 candidate
-    );
-    """,
-    "CREATE INDEX IF NOT EXISTS idx_cand_date ON candidates(date);  -- 按日期聚合 (某日有几只候选)",
-    "CREATE INDEX IF NOT EXISTS idx_cand_code ON candidates(code);  -- 按股票查 (某只票被推荐过几次)",
-
-    # ========================================================================
-    # candidate_rejects — 未通过 S5 的 "差一点" 标的抽样
-    # 用途: 调试 + 校准阈值 (看哪些股在 cooldown/rebound 阶段差多少)
-    # 只存 stage_failed in (cooldown, rebound, build) 的, dragon 阶段拒掉的太多不存
-    # ========================================================================
-    """
-    CREATE TABLE IF NOT EXISTS candidate_rejects (
-        id             INTEGER PRIMARY KEY AUTOINCREMENT,
-        date           TEXT NOT NULL,  -- T 日
-        code           TEXT NOT NULL,  -- 股票 6 位代码
-        name           TEXT,           -- 股票简称
-        stage_failed   TEXT NOT NULL,  -- 失败的阶段: dragon / cooldown / rebound / build
-        reject_reason  TEXT NOT NULL,  -- 拒绝原因文本 (例 "冷却仅 1 天, 少于 2 天")
-        UNIQUE(date, code)
-    );
-    """,
-    "CREATE INDEX IF NOT EXISTS idx_rej_date ON candidate_rejects(date);",
-
-    # ========================================================================
-    # verifications — T+1 盘中/回测验证结果
-    # 一行 = 一只 candidate 在 T+1 的结局
-    # mode=live:     fetch_intraday 拿实时数据, 当日使用
-    # mode=backtest: fetch_klines_batch 拿 T+1 日线 OHLC, 历史回放
-    # ========================================================================
-    """
-    CREATE TABLE IF NOT EXISTS verifications (
-        id                INTEGER PRIMARY KEY AUTOINCREMENT,
-        t_date            TEXT NOT NULL,  -- 候选日 (candidates.date)
-        t1_date           TEXT NOT NULL,  -- T+1 验证日
-        candidate_id      INTEGER NOT NULL,  -- 外键 → candidates.id
-        code              TEXT NOT NULL,  -- 冗余: 股票代码
-        mode              TEXT NOT NULL,  -- 'live' 或 'backtest'
-
-        -- === 最终状态 ===
-        -- live:     triggered / triggered_late / gap_up_skip / stop_hit / wait / no_data
-        -- backtest: triggered_at_open / triggered_intraday / gap_up_skip / gap_down_skip
-        --           / stop_hit / hit_target_1 / hit_target_2 / close_hold / no_data
-        status            TEXT NOT NULL,
-
-        -- === 入场判定 (backtest 专用) ===
-        entry_status      TEXT,  -- triggered_at_open 或 triggered_intraday
-        entry_price       REAL,  -- 实际买入价 (NULL = 未触发)
-        exit_price        REAL,  -- 当日退出价 (止损/止盈/收盘)
-        exit_reason       TEXT,  -- stop_hit/hit_target_1/hit_target_2/close_hold
-        pnl_pct           REAL,  -- 单日盈亏 % (NULL = 未触发)
-
-        -- === T+1 OHLC (backtest 模式填, live 模式 NULL) ===
-        t1_open           REAL,
-        t1_high           REAL,
-        t1_low            REAL,
-        t1_close          REAL,
-
-        -- === live 模式字段 (backtest 模式 NULL) ===
-        live_open_price   REAL,  -- 实时分时第一笔成交价 = 开盘
-        live_current      REAL,  -- 实时分时最后一笔 = 当前价
-
-        note              TEXT,  -- 人可读说明
-
-        created_at        TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(candidate_id) REFERENCES candidates(id)
-    );
-    """,
-    "CREATE INDEX IF NOT EXISTS idx_veri_t1 ON verifications(t1_date);    -- 按 T+1 日期查 (某日 verify 结果)",
-    "CREATE INDEX IF NOT EXISTS idx_veri_code ON verifications(code);      -- 按股票查 (某只票的历史 T+1 结局)",
-    "CREATE INDEX IF NOT EXISTS idx_veri_mode ON verifications(mode);      -- 按模式分 (separate live/backtest 统计)",
-]
-
-
-def init_s5_db():
-    """跑 s5.db DDL, idempotent。"""
-    conn = get_s5_db()
-    try:
-        for stmt in S5_DDL:
-            conn.execute(stmt)
-        _set_version(conn, "s5", S5_DB_VERSION)
-        conn.commit()
-    finally:
-        conn.close()
-
-
 def init_all():
+    """兼容老代码, 现在只是 init_market_db 的别名 (单库架构)."""
     init_market_db()
-    init_s5_db()
 
 
 # --------------------------------------------------------------------------- #
@@ -551,10 +509,7 @@ def query_all(conn: sqlite3.Connection, sql: str, params: tuple = ()) -> list:
 if __name__ == "__main__":
     print(f"Initializing market.db at {MARKET_DB_PATH}")
     init_market_db()
-    print(f"Initializing s5.db at {S5_DB_PATH}")
-    init_s5_db()
     print("✅ DB init done")
     # 验证两次跑都不报错
     init_market_db()
-    init_s5_db()
     print("✅ Idempotent re-run OK")

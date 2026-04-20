@@ -80,7 +80,7 @@ T 日收盘后:
 
 base = `regime.playbook.position_limit.single`（单票上限，由 classifier 给出）
 
-**乘数链**（同 [classifier mapping.md](../../market-regime-classifier/references/mapping.md)）：
+**乘数链**（同 [market-regime mapping.md](/home/rooot/.openclaw/scripts/market-regime/references/mapping.md)）：
 ```
 final = base
 if confidence == "low":         final *= 0.5

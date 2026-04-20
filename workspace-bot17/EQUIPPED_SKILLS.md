@@ -1,7 +1,7 @@
 # 已装备技能
 
 > 本文件由装备系统自动生成，请勿手动编辑。
-> 更新时间：2026-04-17 00:51:51
+> 更新时间：2026-04-17 09:32:33
 
 ## 职业
 
@@ -29,4 +29,5 @@
 - 行业研究（sector-pulse） — `skills/sector-pulse/SKILL.md`
 - 自选股（stock-watcher） — `skills/stock-watcher/SKILL.md`
 - 技术分析（technical-analyst） — `skills/technical-analyst/SKILL.md`
+- 妙想模拟盘（mx-moni） — `skills/mx-moni/SKILL.md`
 

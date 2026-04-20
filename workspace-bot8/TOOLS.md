@@ -92,6 +92,9 @@ mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
 
 
 
+
+
+
 # TOOLS.md - 工具使用规范
 
 ## 联网搜索
@@ -179,3 +182,27 @@ A 股量化数据优先用 Tushare 工具，不要去搜索：
 - 公司公告：巨潮资讯 `cninfo.com.cn`、上交所 `sse.com.cn`、深交所 `szse.cn`
 - 行业数据：IDC、Gartner、公司 IR 页面
 - 深度报道：36kr、晚点 LatePost、路透中文、财新
+
+---
+
+## 📡 Media Data Pack (MDP) MCP
+
+- **名称**：`media-data-pack`
+- **URL**：`http://localhost:18075/mcp`（streamable-http）
+- **工具**：
+  - `search_weixin(query, top_k, fields, score_threshold)` — 财经公众号文章语义检索
+  - `search_xiaohongshu(query, source, top_k, fields, score_threshold, min_likes)` — 小红书 + 抖音笔记检索
+
+### 使用规则
+
+- **source 参数**：传 `"抖音"` 才是拿爆款视频脚本；传 `"小红书"` 是图文笔记
+- **min_likes**：行情类场景用 10000，科普类用 5000
+- **score_threshold**：0.5-0.7 是中强相关，用来过滤噪声
+- **fields 白名单**：不要全字段返回——不需要 CONTENT 时只取 title/user/showtime 省带宽
+
+### 铁律
+
+- 不要用 MDP 做通用 web 检索；通用热点/新闻用 `web_search` / `research-mcp`
+- 每次检索结果要落到 `.material.md`，脚本里引用要挂 INFOCODE
+
+详见：`skills/voiceover-pack/MDP-检索策略.md`

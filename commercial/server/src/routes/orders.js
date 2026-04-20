@@ -39,9 +39,9 @@ router.post("/", requireAuth, (req, res) => {
   res.status(201).json({ ...order, reference_links: JSON.parse(order.reference_links) });
 });
 
-// PATCH /api/orders/:id - inline edit title / requirements / reference_links /
+// PATCH /api/orders/:id - inline edit requirements / reference_links /
 // content_type. Only allowed while the order is in a "client can still shape
-// the brief" status.
+// the brief" status. Title is auto-generated from V1 draft, not user-editable.
 router.patch("/:id", requireAuth, (req, res) => {
   const db = getDb();
   const order = db.prepare("SELECT * FROM orders WHERE id = ? AND client_id = ?").get(req.params.id, req.clientId);
@@ -56,11 +56,6 @@ router.patch("/:id", requireAuth, (req, res) => {
   const updates = [];
   const params = [];
 
-  if (typeof body.title === "string") {
-    if (body.title.length > 100) return res.status(400).json({ error: "标题过长" });
-    updates.push("title = ?");
-    params.push(body.title);
-  }
   if (typeof body.requirements === "string") {
     if (body.requirements.length > 10000) return res.status(400).json({ error: "内容要求过长" });
     updates.push("requirements = ?");

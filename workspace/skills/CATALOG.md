@@ -118,7 +118,9 @@
 
 | Skill | 名称 | 说明 |
 |-------|------|------|
-| `market-regime-classifier` | 市场Regime判断器 | 读取复盘MD + akshare指数数据，六维打分→5档regime（强牛/强势震荡/中性震荡/弱势震荡/熊）→输出战法推荐和仓位上限，带3日确认+逃生门机制。通用 skill，策略型 bot 通过 symlink 使用 |
+| `s5-dragon-pullback` | S5 龙回头战法 | 从 `market.db.regime_classify_daily` 读 regime → T 日收盘选股出 T+1 候选（近30日连板股冷却2-7天后T日大阳反包）→ T+1 开盘跑 verify。仅在震荡档激活，BEAR/STRONG_BULL 跳过。代码在 `/home/rooot/.openclaw/scripts/s5/`, skill 目录只住 SKILL.md + references/ |
+
+> 注: `market-regime-classifier` 已不再是 skill (没有 bot-invocable 入口), 退化为 cron 数据管道, 住在 `/home/rooot/.openclaw/scripts/market-regime/`。s5 通过 `regime_loader.py` 复用其 playbook mapping。
 
 ## ⏰ 定时任务 (Scheduled) (8)
 

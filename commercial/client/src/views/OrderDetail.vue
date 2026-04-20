@@ -73,6 +73,12 @@ const latestDraft = computed(() => {
   if (!order.value?.drafts?.length) return null
   return order.value.drafts[0]
 })
+// V1 草稿已出现但 title 还没回填(Qwen 异步生成中)显示"标题生成中"
+// V1 草稿都还没生成就用短 id 占位
+const isFirstDraftPending = computed(() => {
+  if (!order.value) return false
+  return Boolean(order.value.drafts?.length) && !order.value.title
+})
 // Which draft version is currently shown when multiple drafts exist. Snaps
 // to the latest whenever a new version is generated.
 const selectedDraftVersion = ref(null)
@@ -884,29 +890,10 @@ async function handleGenerateCover() {
       <el-card class="order-top-bar" style="margin: 16px 0 20px">
         <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px">
           <div style="flex: 1; min-width: 0">
-            <!-- 订单标题 (editable) -->
-            <template v-if="editingOrderField === 'title'">
-              <el-input
-                v-model="orderEditBuffer.title"
-                :disabled="savingOrder"
-                maxlength="100"
-                placeholder="订单标题(选填)"
-                @keydown.enter="saveOrderEdit('title')"
-                @keydown.esc="cancelOrderEdit"
-                style="font-size: 18px"
-              />
-              <div style="margin-top: 6px">
-                <el-button size="small" :disabled="savingOrder" @click="cancelOrderEdit">取消</el-button>
-                <el-button size="small" type="primary" :loading="savingOrder" @click="saveOrderEdit('title')">保存</el-button>
-              </div>
-            </template>
-            <h3
-              v-else
-              :class="{ 'editable-field': canEditOrder }"
-              :title="canEditOrder ? '点击编辑标题' : ''"
-              style="margin: 0 0 8px"
-              @click="canEditOrder && startOrderEdit('title')"
-            >{{ order.title || '(点击添加订单标题)' }}</h3>
+            <!-- 订单标题:V1 草稿生成后由后端自动填充,不可手动编辑 -->
+            <h3 style="margin: 0 0 8px">
+              {{ order.title || (isFirstDraftPending ? '(订单标题生成中…)' : `订单 #${order.id.slice(0, 8)}`) }}
+            </h3>
             <div style="color: #999; font-size: 13px; margin-bottom: 4px">
               达人：{{ order.bot_name || order.bot_id }} ·
               <template v-if="editingOrderField === 'content_type'">

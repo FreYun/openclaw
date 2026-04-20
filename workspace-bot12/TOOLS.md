@@ -91,6 +91,9 @@ mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
 
 
 
+
+
+
 ## 🚨 浏览器 profile 铁律（最高优先级）
 
 > **无论何时何地，调用 `browser` 工具的任何操作（start / open / snapshot / act 等），必须显式传 `profile: "bot12"`（CDP 端口 18812）。**

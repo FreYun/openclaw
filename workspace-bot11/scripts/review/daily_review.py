@@ -164,40 +164,9 @@ def main():
     fail = sum(1 for v in results.values() if "error" in v)
     logging.info(f"===== 完成: {ok} 成功, {fail} 失败 =====")
 
-    # 追加: 跑 market-regime-classifier, 输出 regime MD/JSON 到同目录。
-    # 失败不影响复盘主流程, 只记录 warning。
-    try:
-        import subprocess
-
-        classifier_script = os.path.expanduser(
-            "~/.openclaw/workspace/skills/strategy/market-regime-classifier/scripts/classify.py"
-        )
-        if os.path.exists(classifier_script):
-            logging.info("[开始] market-regime-classifier")
-            r = subprocess.run(
-                [
-                    sys.executable,
-                    classifier_script,
-                    f"--date={date_str}",
-                    f"--from-review={output_path}",
-                    f"--output-dir={OUTPUT_DIR}",
-                ],
-                capture_output=True,
-                text=True,
-                timeout=120,
-            )
-            if r.returncode == 0:
-                logging.info("[完成] market-regime-classifier\n%s", r.stdout.strip())
-            else:
-                logging.warning(
-                    "[失败] market-regime-classifier rc=%d stderr=%s",
-                    r.returncode,
-                    r.stderr.strip()[:500],
-                )
-        else:
-            logging.info("market-regime-classifier 未安装 (%s), 跳过", classifier_script)
-    except Exception as e:
-        logging.warning(f"market-regime-classifier 异常: {e}")
+    # 注: 2026-04-17 起 classify.py 已退役, regime 分类由 cron
+    # (daily-regime-pipeline.sh) 跑 backfill/replay.py 直接写入
+    # market.db.regime_classify_daily. 本脚本只负责采集+落库, 不再触发分类.
 
 
 def _write_raw_to_db(date_str: str, results: dict):

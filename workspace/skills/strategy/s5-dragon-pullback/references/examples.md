@@ -2,7 +2,7 @@
 
 记录 S5 在真实历史数据上的运行结果, 用于验证信号质量和调参依据。
 
-数据源: `market.db.regime_classify_daily` (v2 规则, 由 `daily-regime-pipeline.sh` 日更) + S5 自己跑的 candidates 输出。历史 regime-log.md 在 `../../market-regime-classifier/memory/regime-log.md` 留存但不再作为主数据源。
+数据源: `market.db.regime_classify_daily` (v2 规则, 由 `daily-regime-pipeline.sh` 日更) + S5 自己跑的 candidates 输出。
 
 ---
 

@@ -86,6 +86,9 @@ mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
 6. **message bus** → inter-agent communication
 <!-- TOOLS_COMMON:END -->
 
+
+
+
 # TOOLS.md - 工具配置
 
 > 首先 Read [`/home/rooot/.openclaw/workspace/TOOLS_COMMON/TOOLS_COMMON.md`](../workspace/TOOLS_COMMON/TOOLS_COMMON.md) 获取统一工具规范

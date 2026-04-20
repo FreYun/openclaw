@@ -3,9 +3,10 @@
 投顾数据每日定时刷新脚本
 
 Phase A: 刷新 5 张公共表（tougu_info, tougu_nav, tougu_performance, tougu_portfolio, tougu_equity_analysis）
+Phase B+C: 各 bot 并行执行投顾巡检全链路（openclaw agent + tougu-portfolio-mcp）
 Phase D: 为有持仓的 bot 记录收益快照（record_daily_snapshot）
 
-定时: 每天 03:00 (cron)
+定时: 每天 09:15 (cron) — 对齐远端数据源 09:00 更新后 15 分钟缓冲
 数据源: research-mcp (http://research-mcp.jijinmima.cn/mcp)
 目标库: /home/rooot/.openclaw/data/tougu.db
 """
@@ -786,22 +787,51 @@ def main():
         log.error(f"数据库不存在: {DB_PATH}")
         sys.exit(1)
 
+    # Phase A 前：记录 tougu_nav 当前最新 nav_date（用于判断 Phase A 是否带来新数据）
+    conn_pre = get_conn()
+    row = conn_pre.execute("SELECT MAX(nav_date) AS d FROM tougu_nav").fetchone()
+    nav_date_before = row["d"] if row else None
+    row = conn_pre.execute("SELECT MAX(trade_date) AS d FROM bot_daily_snapshots").fetchone()
+    snap_date_before = row["d"] if row else None
+    conn_pre.close()
+    log.info(f"Phase A 前: tougu_nav 最新 nav_date = {nav_date_before}, bot_daily_snapshots 最新 = {snap_date_before}")
+
     # Phase A: 刷新 5 张公共表
     report = phase_a()
 
-    # 检查 Phase A 关键结果：tougu_nav 无新数据时跳过 Phase B+C
-    nav_rows = report.get("tougu_nav", 0)
+    # Phase A 后：检查 nav_date 是否推进了
+    conn_post = get_conn()
+    row = conn_post.execute("SELECT MAX(nav_date) AS d FROM tougu_nav").fetchone()
+    nav_date_after = row["d"] if row else None
+    conn_post.close()
+    log.info(f"Phase A 后: tougu_nav 最新 nav_date = {nav_date_after}")
+
     mcp_down = report.get("_mcp_unreachable", False)
+
+    # ── 关键 guard：决定是否跑 Phase B+C+D ──
+    # 触发跳过的任一条件：
+    #   1. MCP 不可达（Phase A 完全失败）
+    #   2. tougu_nav 没有新日期（周末/节假日/上游未更新）
+    #   3. tougu_nav 新日期已经有快照（之前已经跑过这一天）
+    skip_reason = None
     if mcp_down:
-        log.warning("Phase A: MCP 不可达，跳过 Phase B+C（bot 全链路不在旧数据上运行）")
-    elif not isinstance(nav_rows, int) or nav_rows == 0:
-        log.warning(f"Phase A: tougu_nav 无新数据（{nav_rows}），跳过 Phase B+C 避免在旧数据上运行")
+        skip_reason = "MCP 不可达（Phase A 完全失败）"
+    elif not nav_date_after:
+        skip_reason = "tougu_nav 无任何数据"
+    elif nav_date_before and nav_date_after <= nav_date_before:
+        skip_reason = f"tougu_nav 没有新数据（仍为 {nav_date_after}，周末/节假日/上游未更新）"
+    elif snap_date_before and nav_date_after <= snap_date_before:
+        skip_reason = f"tougu_nav 最新 ({nav_date_after}) 不晚于已存在快照 ({snap_date_before})，无可生成的新快照"
+
+    if skip_reason:
+        log.warning(f"跳过 Phase B+C+D: {skip_reason}")
+        log.info("本次 cron 仅完成 Phase A 数据刷新，各 bot 巡检和快照未执行")
     else:
+        log.info(f"nav_date 从 {nav_date_before} 推进到 {nav_date_after}，继续执行 Phase B+C+D")
         # Phase B+C: 各 bot 并行执行选品 + 巡检（含调仓写库）
         phase_bc()
-
-    # Phase D: 收益快照兜底（portfolio-review 正常时已执行，这里确保不遗漏）
-    phase_d()
+        # Phase D: 收益快照兜底（portfolio-review 正常时已执行，这里确保不遗漏）
+        phase_d()
 
     elapsed = time.time() - start
     log.info(f"全部完成，耗时 {elapsed:.1f} 秒")

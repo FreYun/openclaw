@@ -1,8 +1,13 @@
+---
+name: contact-book
+description: >
+  通讯录——飞书群 chat_id、用户 per-bot open_id、其他 agent 的 ID↔名字对照表。
+  给别的 agent 发 send_message 前先来这里确认 agent ID。
+---
 # 📇 通讯小本本
 
-> 发飞书消息时查此表，找到正确的 ID。
 >
-> 最近更新：2026-04-09
+> 最近更新：2026-04-17
 
 ---
 
@@ -29,12 +34,13 @@
 | bot5 | 宣妈慢慢变富 |
 | bot6 | 爱理财的James |
 | bot7 | 老K投资笔记 |
-| bot8 | 待定占位老哥 |
+| bot8 | 星星 |
 | bot9 | 公众号运营强哥 |
 | bot10 | 测试君 |
 | bot11 | 小奶龙 |
 | sys1 | 印务局 |
 | sys2 | 技能部 |
+| sys4 | 运营部 |
 | bot12 | 小天爱黄金 |
 | bot13 | 美股学长 Alex |
 | bot14 | 捂紧小荷包 |

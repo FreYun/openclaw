@@ -11,6 +11,9 @@
         },
         "tougu-portfolio-mcp": {
             "url": "http://localhost:18070/mcp"
+        },
+        "zsxq-mcp": {
+            "url": "http://localhost:18080/mcp"
         }
     },
     "imports": []

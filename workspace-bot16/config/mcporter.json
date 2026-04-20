@@ -11,6 +11,9 @@
         },
         "compliance-mcp": {
             "url": "http://localhost:18090/mcp"
+        },
+        "zsxq-mcp": {
+            "url": "http://localhost:18080/mcp"
         }
     },
     "imports": []

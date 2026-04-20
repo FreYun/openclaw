@@ -201,7 +201,22 @@
       "Bash(node -e \"const fs=require\\('fs'\\);const html=fs.readFileSync\\('/home/rooot/.openclaw/dashboard/index.html','utf8'\\);const scripts=[...html.matchAll\\(/<script[^>]*>\\([\\\\s\\\\S]*?\\)<\\\\/script>/g\\)].map\\(m=>m[1]\\);for\\(const [i,s] of scripts.entries\\(\\)\\){try{new Function\\(s\\);}catch\\(e\\){console.log\\('script '+i+' error:',e.message\\);}}console.log\\('checked',scripts.length,'scripts'\\)\")",
       "Bash(node -e \"const fs=require\\('fs'\\);const html=fs.readFileSync\\('/home/rooot/.openclaw/dashboard/index.html','utf8'\\);const scripts=[...html.matchAll\\(/<script[^>]*>\\([\\\\s\\\\S]*?\\)<\\\\/script>/g\\)].map\\(m=>m[1]\\);for\\(const [i,s] of scripts.entries\\(\\)\\){try{new Function\\(s\\);}catch\\(e\\){console.log\\('script '+i+' error:',e.message\\);}}console.log\\('ok',scripts.length\\)\")",
       "Bash(node -e \"const fs=require\\('fs'\\);const html=fs.readFileSync\\('/home/rooot/.openclaw/dashboard/index.html','utf8'\\);const scripts=[...html.matchAll\\(/<script[^>]*>\\([\\\\s\\\\S]*?\\)<\\\\/script>/g\\)].map\\(m=>m[1]\\);for\\(const [i,s] of scripts.entries\\(\\)\\){try{new Function\\(s\\);}catch\\(e\\){console.log\\('err',e.message\\);}}console.log\\('ok'\\)\")",
-      "Bash(ps -p 7224 -o pid,cmd --no-headers)"
+      "Bash(ps -p 7224 -o pid,cmd --no-headers)",
+      "Bash(sqlite3 /home/rooot/.openclaw/commercial/server/commercial.sqlite \"SELECT id, version, substr\\(content, -200\\) FROM drafts WHERE content LIKE '%published_at%' ORDER BY id DESC LIMIT 5\")",
+      "Bash(chmod +x /tmp/profile-switch-and-scan.sh)",
+      "Bash(bash /tmp/profile-switch-and-scan.sh)",
+      "Bash(chmod +x /home/rooot/.openclaw/scripts/tests/test_aggregate_topic_pool.sh)",
+      "Bash(bash /home/rooot/.openclaw/scripts/tests/test_aggregate_topic_pool.sh)",
+      "Bash(chmod +x /home/rooot/.openclaw/scripts/aggregate-topic-pool.sh)",
+      "Bash(bash /home/rooot/.openclaw/scripts/aggregate-topic-pool.sh)",
+      "Bash(lsof -iTCP:18060 -sTCP:LISTEN -P)",
+      "Bash(ln -s ../../workspace/skills/armor/voiceover-pack voiceover-pack)",
+      "Bash(bash /home/rooot/.openclaw/scripts/aggregate-topic-pool.sh --min-level 火 --max-age-days 7)",
+      "Bash(awk -F': ' '{print $2}')",
+      "Bash(journalctl --user -u openclaw-gateway -n 50 --no-pager)",
+      "Bash(node --check src/services/title-gen.js)",
+      "Bash(node --check src/routes/orders.js)",
+      "Bash(timeout 60 npx vite build)"
     ],
     "additionalDirectories": [
       "/home/rooot/.openclaw/workspace-sys1/publish-queue/pending",

@@ -6,6 +6,7 @@ import { getDb } from "../db.js";
 import { requireAuth } from "../auth.js";
 import { generateDraft, refineDraftViaChat, refineDraftViaChatStreaming } from "../services/bot-integration.js";
 import { generateCoverImage, getBotImageStyle, splitContentForImages } from "../services/image-gen.js";
+import { generateOrderTitle } from "../services/title-gen.js";
 import {
   createDraftReviewSnapshot,
   moveDraftReviewSnapshot,
@@ -36,6 +37,18 @@ function getCompletedDraftCount(db, orderId) {
   return db
     .prepare("SELECT COUNT(*) AS count FROM drafts WHERE order_id = ? AND status NOT IN ('pending', 'failed')")
     .get(orderId).count;
+}
+
+async function autoFillOrderTitle(orderId, draftResult) {
+  const db = getDb();
+  const current = db.prepare("SELECT title FROM orders WHERE id = ?").get(orderId);
+  if (!current || (current.title && current.title !== "")) return;
+
+  const title = await generateOrderTitle(draftResult.title || "", draftResult.content || "");
+
+  db.prepare(
+    "UPDATE orders SET title = ?, updated_at = datetime('now') WHERE id = ? AND (title = '' OR title IS NULL)"
+  ).run(title, orderId);
 }
 
 function buildDraftReviewSnapshot(db, order, client, version, revisionNote) {
@@ -168,6 +181,14 @@ export async function startDraftGenerationFromRequest(requestId) {
       result.image_style || "基础",
       draftId
     );
+
+    if (request.version === 1 && (!order.title || order.title === "")) {
+      setImmediate(() => {
+        autoFillOrderTitle(order.id, result).catch((err) =>
+          console.error(`[auto-title] order ${order.id} failed:`, err.message)
+        );
+      });
+    }
 
     snapshotPath = moveDraftReviewSnapshot(request.id, snapshotPath, "completed", {
       result_draft_id: draftId,

@@ -56,7 +56,11 @@ def parse_post_md(post_path: Path) -> tuple[dict, str]:
         raise ValueError(f"post.md 格式错误：找不到 YAML frontmatter 分隔符 (---)")
 
     fm_text = parts[1]
-    body = parts[2].strip()
+    body = parts[2]
+
+    # 剥离归档时追加的 published_at 注释，防止重发场景下把归档标记当正文发出去。
+    body = re.sub(r"\n*<!--\s*published_at:.*?-->\s*", "", body)
+    body = body.strip()
 
     meta = yaml.safe_load(fm_text)
     if not isinstance(meta, dict):
@@ -355,8 +359,9 @@ def publish(account_id: str, method: str, args: dict, folder_path: Path) -> tupl
         has_success = any(k.lower() in output_lower for k in success_keywords)
 
         # 判断优先级：明确失败 > 明确成功 > returncode
-        if has_fail and not has_success:
-            # 提取错误摘要：找到包含失败关键词的那一行
+        # 失败优先：同一 output 同时含两类关键词时，宁可误报失败也不能把失败当成功
+        # （失败误报最多触发一次重试；成功误报会污染 post.md 并跳过实际错误处理）
+        if has_fail:
             error_hint = ""
             for line in output.splitlines():
                 if any(k in line for k in fail_keywords):

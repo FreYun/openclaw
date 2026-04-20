@@ -91,6 +91,9 @@ mem0_search(query: "黄金ETF写过哪些角度", scope: "self")
 
 
 
+
+
+
 ## Bot 专属配置
 - account_id: bot18
 - 小红书 MCP: 单进程多租户，所有 bot 共用 `:18060`，URL path 自动识别身份（已配置在 mcporter.json）

@@ -3,8 +3,10 @@
 #
 # 流程:
 #   1. daily_review.py  → 采集行情, 写入 daily/stk_limit/regime_raw_daily/index_daily
-#   2. replay.py        → 从 2015 起完整回放, 写入 regime_classify_daily(v2)
+#   2. replay.py        → 从 2015 起完整回放, 直接 INSERT OR REPLACE 写 regime_classify_daily(v2)
 #                          (保证 3 日确认链完整一致, ~40 秒)
+#   3. s5-prewarm.py    → 预热 S5 战法所需缓存: limit_up_pool + klines_cache
+#                          (让 s5 select.py 运行时只读 DB, 不触外部 API)
 #
 # 为什么用 replay 而不是 classify.py:
 #   classify.py 读 regime-log.md 做 3 日确认, 历史链可能跟 DB 不一致
@@ -16,8 +18,9 @@
 set -euo pipefail
 
 LOG_PREFIX="[regime-pipeline $(date +%Y-%m-%d_%H:%M:%S)]"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REVIEW_DIR="/home/rooot/.openclaw/workspace-bot11/scripts"
-BACKFILL_DIR="/home/rooot/.openclaw/workspace/skills/strategy/market-regime-classifier/scripts/backfill"
+BACKFILL_DIR="$SCRIPT_DIR/market-regime/scripts/backfill"
 
 TODAY=$(date +%Y-%m-%d)
 TODAY_FMT=$(date +%Y%m%d)
@@ -26,22 +29,23 @@ echo ""
 echo "$LOG_PREFIX ========== 开始 =========="
 
 # Step 1: daily_review.py — 采集 + 落库
-echo "$LOG_PREFIX [1/2] daily_review.py"
+echo "$LOG_PREFIX [1/3] daily_review.py"
 cd "$REVIEW_DIR"
 python3 review/daily_review.py "$TODAY" 2>&1 || {
     echo "$LOG_PREFIX daily_review.py 失败 (rc=$?), 但继续尝试 replay" >&2
 }
 
-# Step 2: replay.py — 完整回放 regime 链
-echo "$LOG_PREFIX [2/2] replay.py (全量回放)"
+# Step 2: replay.py — 完整回放 + 直接写 regime_classify_daily
+echo "$LOG_PREFIX [2/3] replay.py (全量回放 → DB)"
 cd "$BACKFILL_DIR"
-python3 replay.py --rules v2 --start 20150105 --end "$TODAY_FMT" --csv /tmp/regime_replay_full.csv 2>&1
+python3 replay.py --rules v2 --start 20150105 --end "$TODAY_FMT" 2>&1
 
-# Step 3: 导入 DB
-echo "$LOG_PREFIX 导入 regime_classify_daily"
-python3 load_to_db.py --v2 /tmp/regime_replay_full.csv 2>&1
+# Step 3: S5 cache 预热 (涨停池 + 行业成分股 + 近 35 日 K 线)
+echo "$LOG_PREFIX [3/3] s5-prewarm.py"
+python3 "$SCRIPT_DIR/s5-prewarm.py" --date "$TODAY" 2>&1 || {
+    echo "$LOG_PREFIX s5-prewarm 失败 (rc=$?), 不影响 regime 数据" >&2
+}
 
-# Step 4: 打印今日结果
 echo "$LOG_PREFIX 今日结果:"
 python3 -c "
 import sqlite3

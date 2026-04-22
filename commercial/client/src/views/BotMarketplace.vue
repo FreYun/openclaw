@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/auth.js'
 import api from '../api/index.js'
 import { ElMessage } from 'element-plus'
 
-const featuredBotIds = ['bot1', 'bot2', 'bot3', 'bot4', 'bot5', 'bot6', 'bot7', 'bot12', 'bot13', 'bot17']
+const featuredBotIds = ['bot1', 'bot2', 'bot3', 'bot4', 'bot5', 'bot6', 'bot7', 'bot9', 'bot12', 'bot13', 'bot17']
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -35,13 +35,22 @@ onMounted(async () => {
   }
 })
 
-function handleOrder(botId) {
+async function handleOrder(botId) {
   if (!auth.isLoggedIn) {
     ElMessage.warning('请先登录')
-    router.push({ name: 'Login', query: { redirect: `/order/create/${botId}` } })
+    router.push({ name: 'Login', query: { redirect: `/order/select-service/${botId}` } })
     return
   }
-  router.push(`/order/create/${botId}`)
+  try {
+    const { data } = await api.get(`/bots/${botId}/offerings`)
+    if (data.offerings && data.offerings.length > 0) {
+      router.push(`/order/select-service/${botId}`)
+    } else {
+      router.push(`/order/create/${botId}`)
+    }
+  } catch {
+    router.push(`/order/create/${botId}`)
+  }
 }
 </script>
 

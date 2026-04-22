@@ -20,8 +20,14 @@ function logout() {
         <router-link to="/" style="font-size: 20px; font-weight: bold; text-decoration: none; color: #333">
           天天出版社 · 商单系统
         </router-link>
+        <router-link v-if="auth.isLoggedIn" to="/marketplace" style="text-decoration: none; color: #666">
+          达人列表
+        </router-link>
         <router-link v-if="auth.isLoggedIn" to="/orders" style="text-decoration: none; color: #666">
           我的订单
+        </router-link>
+        <router-link v-if="auth.isAdmin" to="/admin/clients" style="text-decoration: none; color: #e6a23c; font-weight: 500">
+          用户管理
         </router-link>
       </div>
       <div>

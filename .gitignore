@@ -129,3 +129,22 @@ workspace-bot15/茱莉亚图包/
 # 研报 PDF / 知识星球附件 (大二进制文件不进 git)
 workspace-bot4/reports/
 shared/zsxq-files/
+
+# Bot 图片资源 (大二进制)
+workspace-bot*/image/
+workspace-bot*/avatar.png
+
+# 订单附件
+commercial/uploads/
+
+# 第三方编译产物
+vendor/EMQuantAPI_Python/
+
+# 根目录发布队列 (历史遗留)
+publish-queue/
+
+# 根目录调试截图
+after-login.png
+bot8-*.png
+download-progress.png
+file-menu-test.png

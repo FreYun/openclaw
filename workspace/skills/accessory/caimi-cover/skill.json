@@ -1,0 +1,10 @@
+{
+  "name": "搞钱小财迷封面生成",
+  "icon": "🎬",
+  "slot": "accessory",
+  "subType": "image",
+  "desc": "搞钱小财迷专属封面：电影感复古剧照封面、浅米色质感内页、纯色短帖封面三套模板",
+  "requiresMcp": [
+    "image-gen-mcp"
+  ]
+}

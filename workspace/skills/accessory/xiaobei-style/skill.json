@@ -1,0 +1,8 @@
+{
+  "name": "小贝宏观内容风格",
+  "icon": "📊",
+  "slot": "accessory",
+  "subType": "content",
+  "desc": "小贝宏观笔记小红书内容风格规范：轻量科普、深度长文、数据可视化、语气铁律、写稿教训",
+  "requiresMcp": []
+}

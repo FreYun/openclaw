@@ -121,3 +121,6 @@ crawl_comments.py
 init_db.py
 datas/
 samples/
+
+# Cookie 文件
+cookies-bot*.json

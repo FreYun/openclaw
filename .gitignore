@@ -53,3 +53,63 @@ memory/
 # Strategy 运行时缓存 — market.db 一律放 /home/rooot/database/, 禁止出现在仓库内
 workspace/skills/strategy/.cache/
 workspace/skills/strategy/*/.cache/
+
+# === Agent 运行时状态 ===
+
+# Agent 会话 (JSONL) 与 tombstone / lock / reset
+agents/*/sessions/*.jsonl
+agents/*/sessions/*.jsonl.lock
+agents/*/sessions/*.jsonl.deleted.*
+agents/*/sessions/*.jsonl.reset.*
+agents/*/sessions/sessions.json
+
+# Agent 认证状态
+agents/*/agent/auth-profiles.json
+agents/*/agent/models.json
+
+# === 发布队列 & 任务队列 ===
+workspace-sys1/publish-queue/
+workspace-sys4/queue/
+
+# === Cron 运行记录 ===
+cron/runs/
+cron/jobs.json
+cron/jobs.json.bak*
+cron/bulletin.jsonl
+
+# === 数据库 (SQLite / DB) ===
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm
+
+# === Dashboard / Mem0 / Security 等运行时状态 ===
+dashboard/xhs-stats.json
+mem0/import_progress*.json
+mem0/markdown_progress.json
+mem0/history.db
+security/incidents.jsonl
+feishu/dedup/
+identity/device-auth.json
+
+# === Bot workspace 运行时 cache ===
+workspace-bot*/scripts/review/erp_cache.json
+workspace-bot*/HEARTBEAT_LOG.md
+workspace/mx_data/
+workspace-bot11/review-output/
+
+# === Skills sandbox ===
+skills-sandbox/
+
+# === Playwright MCP 临时截图 ===
+.playwright-mcp/
+
+# === 根目录散落的爬虫脚本 (非主项目) ===
+batch_collect.py
+batch_collect_authors.py
+crawl_comments.py
+init_db.py
+datas/
+samples/

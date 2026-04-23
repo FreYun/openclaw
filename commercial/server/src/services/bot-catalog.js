@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { getDb } from "../db.js";
+import { OPENCLAW_DIR } from "../paths.js";
 
-const OPENCLAW_DIR = "/home/rooot/.openclaw";
 const OPENCLAW_CONFIG = path.join(OPENCLAW_DIR, "openclaw.json");
 const AVATAR_EXTS = [".png", ".jpg", ".jpeg", ".webp"];
 

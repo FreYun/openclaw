@@ -3,9 +3,11 @@ import fs from "fs";
 import path from "path";
 import { getDb } from "../db.js";
 import { syncBotCatalog } from "../services/bot-catalog.js";
+import { getClientAllowedBotIds, tryResolveClientId } from "../bot-access.js";
+
+import { OPENCLAW_DIR } from "../paths.js";
 
 const router = Router();
-const OPENCLAW_DIR = "/home/rooot/.openclaw";
 const IMG_EXTS = [".png", ".jpg", ".jpeg", ".webp"];
 const MIME_MAP = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp" };
 const avatarPlaceholder = Buffer.from(
@@ -32,10 +34,18 @@ function sendAvatarPlaceholder(res) {
   res.send(avatarPlaceholder);
 }
 
-// GET /api/bots - list available bots
+// GET /api/bots - list available bots (restricted users only see allowed bots)
 router.get("/", (req, res) => {
   const db = getDb();
-  const bots = db.prepare("SELECT * FROM bot_profiles WHERE is_available = 1 ORDER BY bot_id").all();
+  let bots = db.prepare("SELECT * FROM bot_profiles WHERE is_available = 1 ORDER BY bot_id").all();
+  const clientId = tryResolveClientId(req);
+  if (clientId) {
+    const allowed = getClientAllowedBotIds(db, clientId);
+    if (allowed) {
+      const set = new Set(allowed);
+      bots = bots.filter((b) => set.has(b.bot_id));
+    }
+  }
   res.json(bots.map((b) => ({ ...b, specialties: JSON.parse(b.specialties) })));
 });
 
@@ -142,6 +152,24 @@ router.get("/:id/avatar", (req, res) => {
       .pipe(res);
   } catch {
     return sendAvatarPlaceholder(res);
+  }
+});
+
+// GET /api/bots/:id/offerings - per-bot service offerings for the service
+// selection step. Reads workspace-botN/commercial-offerings.json. Bots without
+// this file return an empty array (no selection step needed).
+router.get("/:id/offerings", (req, res) => {
+  const botId = req.params.id;
+  const wsDir = path.join(OPENCLAW_DIR, botWorkspaceDir(botId));
+  const offeringsPath = path.join(wsDir, "commercial-offerings.json");
+  if (!fs.existsSync(offeringsPath)) {
+    return res.json({ offerings: [] });
+  }
+  try {
+    const data = JSON.parse(fs.readFileSync(offeringsPath, "utf8"));
+    res.json({ offerings: data.offerings || [] });
+  } catch {
+    res.status(500).json({ error: "配置文件解析失败" });
   }
 });
 

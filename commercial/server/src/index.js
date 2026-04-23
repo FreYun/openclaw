@@ -12,10 +12,12 @@ import uploadsRoutes from "./routes/uploads.js";
 import publishRoutes from "./routes/publish.js";
 import researchRoutes from "./routes/research.js";
 import adminRoutes from "./routes/admin.js";
+import consultRoutes from "./routes/consult.js";
 import { ensureBotCatalog } from "./services/bot-catalog.js";
 import { reconcilePublishingOrders } from "./services/publish-bridge.js";
 import { seedWhitelistAccounts } from "./services/whitelist-seed.js";
 import { sweepStaleArtifacts } from "./services/order-cleanup.js";
+import { attachToExpress as attachTunnel } from "./tunnel/server.js";
 
 // Force stdio to blocking (synchronous) writes — when commercial is launched
 // via nohup and redirected to /tmp/commercial-18900.log, Node's default async
@@ -54,6 +56,7 @@ app.use("/api/orders", uploadsRoutes);
 app.use("/api/orders", publishRoutes);
 app.use("/api/research", researchRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/consult", consultRoutes);
 
 // Serve Vue SPA in production
 const clientDist = path.resolve(__dirname, "../../client/dist");
@@ -76,9 +79,9 @@ seedWhitelistAccounts();
 // Handles dashboard "打回" / sys1 moves that commercial otherwise can't see.
 // Also piggybacks a safety-net sweep of iteration scratch for any order that
 // has silently reached a terminal state without going through the usual hooks.
-function safeReconcile() {
+async function safeReconcile() {
   try {
-    const n = reconcilePublishingOrders();
+    const n = await reconcilePublishingOrders();
     if (n > 0) console.log(`[boot] Reconciled ${n} publishing order(s)`);
   } catch (err) {
     console.error("[boot] Reconcile failed:", err);
@@ -91,8 +94,9 @@ function safeReconcile() {
   }
 }
 safeReconcile();
-setInterval(safeReconcile, 60 * 1000);
+setInterval(() => safeReconcile().catch(() => {}), 60 * 1000);
 
+attachTunnel(app);
 app.listen(PORT, () => {
   console.log(`Commercial Order System running on :${PORT}`);
 });

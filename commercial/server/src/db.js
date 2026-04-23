@@ -138,6 +138,46 @@ function migrate(db) {
     // current upload order is preserved until someone drags to reorder.
     db.exec(`UPDATE order_materials SET sort_order = id WHERE sort_order = 0`);
   }
+
+  const orderCols = db.prepare(`PRAGMA table_info(orders)`).all();
+  if (!orderCols.some((c) => c.name === "skill_id")) {
+    db.exec(`ALTER TABLE orders ADD COLUMN skill_id TEXT DEFAULT NULL`);
+  }
+
+  const draftCols = db.prepare(`PRAGMA table_info(drafts)`).all();
+  if (!draftCols.some((c) => c.name === "fact_check")) {
+    db.exec(`ALTER TABLE drafts ADD COLUMN fact_check TEXT DEFAULT ''`);
+  }
+
+  const clientCols = db.prepare(`PRAGMA table_info(clients)`).all();
+  if (!clientCols.some((c) => c.name === "sys_prompt")) {
+    db.exec(`ALTER TABLE clients ADD COLUMN sys_prompt TEXT DEFAULT ''`);
+  }
+
+  // guidance: sys4 运营指导方案,独立于 requirements,注入 bot system prompt
+  const orderCols2 = db.prepare(`PRAGMA table_info(orders)`).all();
+  if (!orderCols2.some((c) => c.name === "guidance")) {
+    db.exec(`ALTER TABLE orders ADD COLUMN guidance TEXT DEFAULT ''`);
+  }
+
+  const clientCols2 = db.prepare(`PRAGMA table_info(clients)`).all();
+  if (!clientCols2.some((c) => c.name === "role")) {
+    db.exec(`ALTER TABLE clients ADD COLUMN role TEXT NOT NULL DEFAULT 'client'`);
+    db.exec(`UPDATE clients SET role = 'admin' WHERE username = 'hhh'`);
+  }
+
+  if (!clientCols2.some((c) => c.name === "bot_access_mode")) {
+    db.exec(`ALTER TABLE clients ADD COLUMN bot_access_mode TEXT NOT NULL DEFAULT 'all'`);
+  }
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS client_bot_access (
+      client_id  INTEGER NOT NULL REFERENCES clients(id),
+      bot_id     TEXT NOT NULL,
+      granted_at TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (client_id, bot_id)
+    );
+  `);
 }
 
 export default getDb;

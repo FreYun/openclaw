@@ -4,9 +4,12 @@ import path from "path";
 import os from "os";
 import { getDb } from "../db.js";
 import { cleanupOrderArtifacts } from "./order-cleanup.js";
+import * as tunnel from "../tunnel/client-api.js";
 
-const SUBMIT_SCRIPT = "/home/rooot/.openclaw/workspace/skills/armor/xhs-op/submit-to-publisher.sh";
-const QUEUE_ROOT = "/home/rooot/.openclaw/workspace-sys1/publish-queue";
+import { OPENCLAW_DIR } from "../paths.js";
+
+const SUBMIT_SCRIPT = path.join(OPENCLAW_DIR, "workspace/skills/armor/xhs-op/submit-to-publisher.sh");
+const QUEUE_ROOT = path.join(OPENCLAW_DIR, "workspace-sys1/publish-queue");
 
 // Folder subdirs sys1 can move a publish entry into, and how the commercial
 // order should react when it shows up there.
@@ -20,8 +23,19 @@ const QUEUE_STATE_TO_ORDER_STATUS = {
   failed: "approved",       // publisher 失败 → client 可重新提交
 };
 
-function findQueueFolderLocation(folderName) {
+async function findQueueFolderLocation(folderName) {
   if (!folderName) return null;
+
+  if (tunnel.isConnected()) {
+    const subs = Object.keys(QUEUE_STATE_TO_ORDER_STATUS).join(" ");
+    const cmd = `for sub in ${subs}; do test -d "${QUEUE_ROOT}/$sub/${folderName}" && echo "$sub" && exit 0; done`;
+    try {
+      const res = await tunnel.exec("bash", ["-c", cmd], { timeout: 10000 });
+      if (res.code === 0 && res.stdout?.trim()) return res.stdout.trim();
+    } catch {}
+    return null;
+  }
+
   for (const sub of Object.keys(QUEUE_STATE_TO_ORDER_STATUS)) {
     try {
       if (fs.statSync(path.join(QUEUE_ROOT, sub, folderName)).isDirectory()) {
@@ -38,7 +52,7 @@ function findQueueFolderLocation(folderName) {
  * can move folders between pending/rejected/published without telling us, so
  * commercial must poll to avoid orders being stuck in `publishing` forever.
  */
-export function reconcilePublishingOrders() {
+export async function reconcilePublishingOrders() {
   const db = getDb();
   const stuck = db
     .prepare(
@@ -48,7 +62,7 @@ export function reconcilePublishingOrders() {
 
   let changed = 0;
   for (const order of stuck) {
-    const loc = findQueueFolderLocation(order.publish_folder);
+    const loc = await findQueueFolderLocation(order.publish_folder);
     if (loc === null) {
       console.warn(
         `[publish-bridge] Reconcile: order ${order.id} folder "${order.publish_folder}" not found in any queue subdir — leaving as-is`
@@ -146,11 +160,19 @@ export async function submitToPublisher(order, draft) {
     }
 
     // Execute the submit script
+    if (tunnel.isConnected()) {
+      const res = await tunnel.exec("bash", [SUBMIT_SCRIPT, ...args], { timeout: 30000 });
+      if (res.error || res.code !== 0) {
+        throw new Error(res.error || res.stderr || `exit ${res.code}`);
+      }
+      return (res.stdout || "").trim();
+    }
+
     const escapedArgs = args.map((a) => `'${a.replace(/'/g, "'\\''")}'`).join(" ");
     const result = execSync(`bash ${SUBMIT_SCRIPT} ${escapedArgs}`, {
       encoding: "utf8",
       timeout: 30000,
-      cwd: "/home/rooot/.openclaw",
+      cwd: OPENCLAW_DIR,
     });
 
     return result.trim(); // Returns the folder name

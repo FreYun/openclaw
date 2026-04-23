@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getDb } from "../db.js";
 import { requireAuth } from "../auth.js";
 import { cleanupOrderArtifacts } from "../services/order-cleanup.js";
+import { clientCanAccessBot } from "../bot-access.js";
 
 const router = Router();
 
@@ -11,7 +12,7 @@ const router = Router();
 // client can start with just { bot_id, content_type } and fill in the rest on
 // the OrderDetail page (via PATCH /orders/:id and POST /orders/:id/materials).
 router.post("/", requireAuth, (req, res) => {
-  const { bot_id, title, requirements, content_type, reference_links, max_revisions } = req.body;
+  const { bot_id, title, requirements, content_type, reference_links, max_revisions, skill_id, guidance } = req.body;
   if (!bot_id) {
     return res.status(400).json({ error: "bot_id 为必填项" });
   }
@@ -19,11 +20,14 @@ router.post("/", requireAuth, (req, res) => {
   const db = getDb();
   const bot = db.prepare("SELECT bot_id FROM bot_profiles WHERE bot_id = ? AND is_available = 1").get(bot_id);
   if (!bot) return res.status(400).json({ error: "该 Bot 当前不接单" });
+  if (!clientCanAccessBot(db, req.clientId, bot_id)) {
+    return res.status(403).json({ error: "无权使用该达人，请联系管理员开通" });
+  }
 
   const id = uuidv4();
   db.prepare(`
-    INSERT INTO orders (id, client_id, bot_id, title, requirements, content_type, reference_links, max_revisions)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (id, client_id, bot_id, title, requirements, content_type, reference_links, max_revisions, skill_id, guidance)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     id,
     req.clientId,
@@ -32,7 +36,9 @@ router.post("/", requireAuth, (req, res) => {
     requirements || "",
     content_type || "text_to_image",
     JSON.stringify(reference_links || []),
-    max_revisions || 3
+    max_revisions || 3,
+    skill_id || null,
+    guidance || ""
   );
 
   const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(id);
@@ -76,6 +82,10 @@ router.patch("/:id", requireAuth, (req, res) => {
     }
     updates.push("content_type = ?");
     params.push(body.content_type);
+  }
+  if (typeof body.skill_id === "string" || body.skill_id === null) {
+    updates.push("skill_id = ?");
+    params.push(body.skill_id || null);
   }
 
   if (updates.length === 0) {

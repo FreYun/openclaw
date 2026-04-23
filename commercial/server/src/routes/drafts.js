@@ -39,12 +39,12 @@ function getCompletedDraftCount(db, orderId) {
     .get(orderId).count;
 }
 
-async function autoFillOrderTitle(orderId, draftResult) {
+async function autoFillOrderTitle(orderId, userInstruction) {
   const db = getDb();
   const current = db.prepare("SELECT title FROM orders WHERE id = ?").get(orderId);
   if (!current || (current.title && current.title !== "")) return;
 
-  const title = await generateOrderTitle(draftResult.title || "", draftResult.content || "");
+  const title = await generateOrderTitle(userInstruction);
 
   db.prepare(
     "UPDATE orders SET title = ?, updated_at = datetime('now') WHERE id = ? AND (title = '' OR title IS NULL)"
@@ -98,6 +98,7 @@ function buildDraftReviewSnapshot(db, order, client, version, revisionNote) {
       title: draft.title,
       content: draft.content,
       card_text: draft.card_text,
+      fact_check: draft.fact_check || "",
       tags: parseTags(draft.tags),
       image_style: draft.image_style,
       status: draft.status,
@@ -168,6 +169,7 @@ export async function startDraftGenerationFromRequest(requestId) {
       SET title = ?,
           content = ?,
           card_text = ?,
+          fact_check = ?,
           tags = ?,
           image_style = ?,
           status = 'ready',
@@ -177,6 +179,7 @@ export async function startDraftGenerationFromRequest(requestId) {
       result.title,
       result.content,
       result.card_text || "",
+      result.fact_check || "",
       JSON.stringify(result.tags || []),
       result.image_style || "基础",
       draftId
@@ -184,7 +187,7 @@ export async function startDraftGenerationFromRequest(requestId) {
 
     if (request.version === 1 && (!order.title || order.title === "")) {
       setImmediate(() => {
-        autoFillOrderTitle(order.id, result).catch((err) =>
+        autoFillOrderTitle(order.id, request.revision_note || "").catch((err) =>
           console.error(`[auto-title] order ${order.id} failed:`, err.message)
         );
       });
@@ -360,9 +363,14 @@ router.patch("/:id/drafts/:version", requireAuth, (req, res) => {
     params.push(body.content);
   }
   if (typeof body.card_text === "string") {
-    if (body.card_text.length > 2000) return res.status(400).json({ error: "卡片文字过长" });
+    if (body.card_text.length > 50000) return res.status(400).json({ error: "卡片文字过长" });
     updates.push("card_text = ?");
     params.push(body.card_text);
+  }
+  if (typeof body.fact_check === "string") {
+    if (body.fact_check.length > 50000) return res.status(400).json({ error: "核查报告过长" });
+    updates.push("fact_check = ?");
+    params.push(body.fact_check);
   }
   if (Array.isArray(body.tags)) {
     const cleaned = body.tags
@@ -692,8 +700,8 @@ router.post("/:id/refine", requireAuth, async (req, res) => {
 
     const draftId = uuidv4();
     db.prepare(
-      `INSERT INTO drafts (id, order_id, version, title, content, card_text, tags, image_style, status, revision_note, generated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'ready', ?, datetime('now'))`
+      `INSERT INTO drafts (id, order_id, version, title, content, card_text, fact_check, tags, image_style, status, revision_note, generated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ready', ?, datetime('now'))`
     ).run(
       draftId,
       order.id,
@@ -701,6 +709,7 @@ router.post("/:id/refine", requireAuth, async (req, res) => {
       draft.title || "",
       draft.content || "",
       draft.card_text || "",
+      draft.fact_check || "",
       JSON.stringify(draft.tags || []),
       draft.image_style || "基础",
       rawInstruction
@@ -714,6 +723,14 @@ router.post("/:id/refine", requireAuth, async (req, res) => {
 
     db.prepare("UPDATE orders SET status = 'draft_ready', updated_at = datetime('now') WHERE id = ?").run(order.id);
 
+    if (nextVersion === 1 && (!order.title || order.title === "")) {
+      setImmediate(() => {
+        autoFillOrderTitle(order.id, rawInstruction).catch((err) =>
+          console.error(`[auto-title] order ${order.id} failed:`, err.message)
+        );
+      });
+    }
+
     return {
       success: true,
       draft: {
@@ -722,6 +739,7 @@ router.post("/:id/refine", requireAuth, async (req, res) => {
         title: draft.title || "",
         content: draft.content || "",
         card_text: draft.card_text || "",
+        fact_check: draft.fact_check || "",
         tags: draft.tags || [],
         image_style: draft.image_style || "基础",
         status: "ready",

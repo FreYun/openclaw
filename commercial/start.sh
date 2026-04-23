@@ -4,6 +4,9 @@ cd "$(dirname "$0")"
 PORT=18900
 APP_ENTRY="server/src/index.js"
 
+# paths.js 默认指向 ./deps (sync-deps.sh 生成)，本机无 deps 时显式指回 .openclaw
+export OPENCLAW_DIR="${OPENCLAW_DIR:-/home/rooot/.openclaw}"
+
 # --- Auto-rebuild client if sources are newer than dist -----------------------
 # Server serves client/dist/ as static assets. If the .vue / .js / .css sources
 # under client/src/ (or config files) are newer than dist/index.html, rebuild

@@ -1,20 +1,37 @@
-// 与 image-gen.js 同样硬编码,不跨文件 import,保持服务文件自包含
+import * as tunnel from "../tunnel/client-api.js";
+
 const QWEN_BASE_URL = "https://dd-ai-api.eastmoney.com/v1";
 const QWEN_API_KEY = "XFEyNVb9Hmdkl77H5fD76aB1552046Cc9cC5667f3cEd3c69";
 const QWEN_MODEL = "qwen3.5-plus-2026-02-15";
 const TITLE_MAX_CHARS = 30;
-const REQUEST_TIMEOUT_MS = 15000;
+const REQUEST_TIMEOUT_MS = 60000;
 const CONTENT_SLICE_CHARS = 2000;
 
+async function tunnelAwareFetch(url, opts = {}) {
+  if (!tunnel.isConnected()) return fetch(url, opts);
+  const res = await tunnel.tunnelFetch(url, {
+    method: opts.method || "GET",
+    headers: opts.headers || {},
+    body: opts.body || null,
+    timeout: REQUEST_TIMEOUT_MS,
+  });
+  return {
+    ok: res.status >= 200 && res.status < 300,
+    status: res.status,
+    text: async () => res.body,
+    json: async () => JSON.parse(res.body),
+  };
+}
+
 /**
- * 根据草稿 title + 正文,调 Qwen 3.5 总结一个 ≤30 字的中文订单标题。
+ * 根据用户的第一条指令,调 Qwen 3.5 总结一个 ≤30 字的中文订单标题。
  * 失败时抛错,由调用方决定怎么处理(目前 fire-and-forget,只打 log)。
  */
-export async function generateOrderTitle(draftTitle, draftContent) {
+export async function generateOrderTitle(userInstruction) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    const res = await fetch(`${QWEN_BASE_URL}/chat/completions`, {
+    const res = await tunnelAwareFetch(`${QWEN_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +43,7 @@ export async function generateOrderTitle(draftTitle, draftContent) {
           {
             role: "system",
             content:
-              "你是订单命名助手。根据下方小红书草稿,生成一个不超过 30 字的中文订单标题,简洁概括主题。\n" +
+              "你是订单命名助手。用户会描述他想要的小红书内容,你根据他的描述生成一个不超过 30 字的中文订单标题,简洁概括主题。\n" +
               "要求:\n" +
               "1. 不要带引号、书名号、emoji\n" +
               "2. 不要前缀(如'订单:'、'标题:')\n" +
@@ -34,11 +51,12 @@ export async function generateOrderTitle(draftTitle, draftContent) {
           },
           {
             role: "user",
-            content: `草稿标题:${draftTitle || "(无)"}\n\n草稿正文:\n${(draftContent || "").slice(0, CONTENT_SLICE_CHARS)}`,
+            content: userInstruction.slice(0, CONTENT_SLICE_CHARS),
           },
         ],
         temperature: 0.3,
         max_tokens: 80,
+        enable_thinking: false,
       }),
       signal: controller.signal,
     });

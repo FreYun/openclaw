@@ -1,13 +1,38 @@
 import fs from "fs";
 import path from "path";
+import * as tunnel from "../tunnel/client-api.js";
+import { OPENCLAW_DIR } from "../paths.js";
 
 const IMAGE_GEN_MCP_URL = "http://localhost:18085/mcp";
-const OPENCLAW_DIR = "/home/rooot/.openclaw";
 
 // Qwen 3.5 via zai-coding-plan (OpenAI-compatible)
 const QWEN_BASE_URL = "https://dd-ai-api.eastmoney.com/v1";
 const QWEN_API_KEY = "XFEyNVb9Hmdkl77H5fD76aB1552046Cc9cC5667f3cEd3c69";
 const QWEN_MODEL = "qwen3.5-plus-2026-02-15";
+
+/**
+ * Fetch wrapper: routes through tunnel when connected, falls back to native fetch.
+ * Returns a Response-like object with .ok, .status, .headers, .text(), .json().
+ */
+async function tunnelAwareFetch(url, opts = {}) {
+  if (!tunnel.isConnected()) return fetch(url, opts);
+
+  const res = await tunnel.tunnelFetch(url, {
+    method: opts.method || "GET",
+    headers: opts.headers || {},
+    body: opts.body || null,
+    timeout: 120_000,
+  });
+
+  const headers = new Map(Object.entries(res.headers || {}));
+  return {
+    ok: res.status >= 200 && res.status < 300,
+    status: res.status,
+    headers: { get: (k) => headers.get(k.toLowerCase()) || null, entries: () => headers.entries() },
+    text: async () => res.body,
+    json: async () => JSON.parse(res.body),
+  };
+}
 
 /**
  * Split content into N image-generation prompts for multi-image cover generation.
@@ -34,7 +59,7 @@ export async function splitContentForImages(title, content, count, styleDoc) {
       'Large bold Chinese title text "[核心观点]" prominently displayed as the main visual element.';
   }
 
-  const res = await fetch(`${QWEN_BASE_URL}/chat/completions`, {
+  const res = await tunnelAwareFetch(`${QWEN_BASE_URL}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -222,7 +247,7 @@ export async function generateCoverImage(botId, contentDescription) {
   }
 
   // Step 1: Initialize
-  const initRes = await fetch(IMAGE_GEN_MCP_URL, {
+  const initRes = await tunnelAwareFetch(IMAGE_GEN_MCP_URL, {
     method: "POST",
     headers: MCP_HEADERS,
     body: JSON.stringify({
@@ -247,7 +272,7 @@ export async function generateCoverImage(botId, contentDescription) {
   const sessionId = initRes.headers.get("mcp-session-id");
 
   // Step 2: Call generate_image
-  const genRes = await fetch(IMAGE_GEN_MCP_URL, {
+  const genRes = await tunnelAwareFetch(IMAGE_GEN_MCP_URL, {
     method: "POST",
     headers: {
       ...MCP_HEADERS,

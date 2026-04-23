@@ -2,9 +2,10 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getDb } from "../db.js";
+import { OPENCLAW_DIR } from "../paths.js";
+import * as tunnel from "../tunnel/client-api.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OPENCLAW_DIR = "/home/rooot/.openclaw";
 const DRAFT_LIVE_DIR = path.resolve(__dirname, "../../../draft-live");
 const AGENTS_DIR = path.join(OPENCLAW_DIR, "agents");
 

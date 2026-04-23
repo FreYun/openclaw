@@ -100,7 +100,6 @@ const canRefine = computed(() => {
   const blocked = ['awaiting_publish_review', 'publishing', 'published', 'cancelled', 'rejected', 'failed']
   return order.value && !blocked.includes(order.value.status)
 })
-const isGenerating = computed(() => order.value?.status === 'generating')
 const canReview = computed(() => order.value?.status === 'draft_ready' && latestDraft.value?.status === 'ready')
 const canSubmitPublish = computed(() => ['approved', 'scheduled'].includes(order.value?.status))
 const awaitingPublishReview = computed(() => order.value?.status === 'awaiting_publish_review')
@@ -1041,7 +1040,7 @@ async function handleGenerateCover() {
         <!-- Row 2, Col 1: chat / refine card -->
         <div class="grid-row2-left">
           <!-- 与 bot 对话生成 / 迭代草稿 -->
-          <el-card v-if="canRefine || isGenerating || refineTurns.length > 0" class="chat-refine-card">
+          <el-card v-if="canRefine || refineTurns.length > 0" class="chat-refine-card">
             <template #header>
               <div style="display: flex; justify-content: space-between; align-items: center">
                 <span style="font-weight: bold">向 {{ order.bot_name || order.bot_id }} 提需求 · 生成草稿</span>
@@ -1056,9 +1055,6 @@ async function handleGenerateCover() {
               <div v-if="refineTurns.length === 0" style="color: #909399; font-size: 13px; line-height: 1.7; padding: 4px 6px">
                 每次提交 = 生成 1 个新版本草稿。第一条消息会作为订单的"原始背景",bot 后续轮次都能看到。
                 <br />你可以直接输入需求("讲一下半导体国产替代"),也可以在素材卡上传 DOCX,文字会自动作为背景。
-              </div>
-              <div v-if="isGenerating && !refineSending" class="generating-banner">
-                <span class="live-status-dot">⏳</span> 达人正在生成中，请稍候…（你可以离开，稍后回来查看结果）
               </div>
               <div v-for="turn in refineTurns" :key="turn.id" style="margin-bottom: 10px">
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 4px">
@@ -1115,7 +1111,7 @@ async function handleGenerateCover() {
               type="textarea"
               :rows="4"
               :placeholder="refineQuotaExhausted ? '对话次数已达上限，请联系研究部调高' : (refineTurns.length === 0 ? '请描述你希望创作的内容，包括主题、风格、目标受众等' : '提出修改意见，例如：把标题改得更活泼一点 / 正文加一段数据支撑')"
-              :disabled="refineQuotaExhausted || refineSending || isGenerating || !canRefine"
+              :disabled="refineQuotaExhausted || refineSending || !canRefine"
               maxlength="4000"
               show-word-limit
             />
@@ -1123,7 +1119,7 @@ async function handleGenerateCover() {
               <el-button
                 type="primary"
                 :loading="refineSending"
-                :disabled="refineQuotaExhausted || !refineInput.trim() || isGenerating || !canRefine"
+                :disabled="refineQuotaExhausted || !refineInput.trim() || !canRefine"
                 @click="handleRefineSend"
               >
                 {{ refineTurns.length === 0 ? '生成 V1 草稿' : '生成新版本' }}
@@ -1727,25 +1723,6 @@ async function handleGenerateCover() {
 }
 
 /* ----- Live tool-use status box in pending chat bubble ----- */
-.generating-banner {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  background: #fdf6ec;
-  border: 1px solid #f5dab1;
-  color: #e6a23c;
-  font-size: 13px;
-  line-height: 1.5;
-  animation: generating-pulse 2s ease-in-out infinite;
-}
-@keyframes generating-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
 /* Rolling up to LIVE_STATUS_MAX lines. The latest line is bold/⏳, older
    lines dim with ·. New lines slide in from the bottom, old ones fade out. */
 .live-status-box {

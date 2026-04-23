@@ -30,15 +30,38 @@ router.post("/login", (req, res) => {
   const token = signToken(client.id);
   res.json({
     token,
-    client: { id: client.id, username: client.username, display_name: client.display_name, company: client.company },
+    client: { id: client.id, username: client.username, display_name: client.display_name, company: client.company, role: client.role || "client", sys_prompt: client.sys_prompt || "" },
   });
 });
 
 // GET /api/auth/me
 router.get("/me", requireAuth, (req, res) => {
   const db = getDb();
-  const client = db.prepare("SELECT id, username, display_name, company, phone, created_at FROM clients WHERE id = ?").get(req.clientId);
+  const client = db.prepare("SELECT id, username, display_name, company, phone, role, sys_prompt, created_at FROM clients WHERE id = ?").get(req.clientId);
   if (!client) return res.status(404).json({ error: "用户不存在" });
+  res.json(client);
+});
+
+// PATCH /api/auth/me — update client profile (sys_prompt etc.)
+router.patch("/me", requireAuth, (req, res) => {
+  const db = getDb();
+  const body = req.body || {};
+  const updates = [];
+  const params = [];
+
+  if (typeof body.sys_prompt === "string") {
+    if (body.sys_prompt.length > 5000) return res.status(400).json({ error: "系统提示词过长" });
+    updates.push("sys_prompt = ?");
+    params.push(body.sys_prompt);
+  }
+
+  if (updates.length === 0) return res.status(400).json({ error: "没有可更新字段" });
+
+  updates.push("updated_at = datetime('now')");
+  params.push(req.clientId);
+  db.prepare(`UPDATE clients SET ${updates.join(", ")} WHERE id = ?`).run(...params);
+
+  const client = db.prepare("SELECT id, username, display_name, company, phone, role, sys_prompt, created_at FROM clients WHERE id = ?").get(req.clientId);
   res.json(client);
 });
 

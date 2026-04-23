@@ -192,14 +192,16 @@ function needsFactCheckEnforcement(botId, skillId) {
  * "hasVerificationCalls" = after reading the skill, bot made at least one
  *   verification tool call (research-mcp market data, web_fetch, curl, etc.)
  */
-function scanSessionForFactCheck(sessionJsonlPath) {
+async function scanSessionForFactCheck(sessionJsonlPath) {
   const result = { readSkill: false, hasVerificationCalls: false };
   let content;
   try {
     if (tunnel.isConnected()) {
-      return result; // tunnel mode: fall back to stdout-based detection
+      const res = await tunnel.readFile(sessionJsonlPath);
+      content = res.content;
+    } else {
+      content = fs.readFileSync(sessionJsonlPath, "utf8");
     }
-    content = fs.readFileSync(sessionJsonlPath, "utf8");
   } catch {
     return result;
   }
@@ -690,7 +692,7 @@ ${getDraftJsonTemplate(order.bot_id)}${getFactCheckGate(order.bot_id, sourceOrde
     if (needsFactCheckEnforcement(order.bot_id, sourceOrder.skill_id)) {
       const sessionJsonlPath = await waitForSessionJsonlPath(order.bot_id, sessionId, 2000);
       const fcResult = sessionJsonlPath
-        ? scanSessionForFactCheck(sessionJsonlPath)
+        ? await scanSessionForFactCheck(sessionJsonlPath)
         : { readSkill: false, hasVerificationCalls: false };
 
       console.log(`[bot-integration] fact-check scan: readSkill=${fcResult.readSkill} hasVerification=${fcResult.hasVerificationCalls} file=${sessionJsonlPath ? path.basename(sessionJsonlPath) : "N/A"}`);
@@ -805,7 +807,7 @@ ${getDraftJsonTemplate(order.bot_id)}${getFactCheckGate(order.bot_id, sourceOrde
     if (needsFactCheckEnforcement(order.bot_id, sourceOrder.skill_id)) {
       const sessionJsonlPath = await waitForSessionJsonlPath(order.bot_id, sessionId, 2000);
       const fcResult = sessionJsonlPath
-        ? scanSessionForFactCheck(sessionJsonlPath)
+        ? await scanSessionForFactCheck(sessionJsonlPath)
         : { readSkill: false, hasVerificationCalls: false };
 
       console.log(`[bot-integration] fact-check scan (non-stream): readSkill=${fcResult.readSkill} hasVerification=${fcResult.hasVerificationCalls}`);

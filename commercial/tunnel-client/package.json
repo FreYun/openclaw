@@ -1,0 +1,13 @@
+{
+  "name": "commercial-tunnel-client",
+  "version": "1.0.0",
+  "description": "WebSocket tunnel client — runs on office machine, connects to cloud commercial server",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

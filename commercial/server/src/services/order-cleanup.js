@@ -28,14 +28,14 @@ const TERMINAL_STATES = new Set(["published", "cancelled"]);
  *   - uploads/orders/<orderId>/               (raw client-uploaded materials)
  *   - draft-review-snapshots/                 (research-review audit trail)
  */
-export function cleanupOrderArtifacts(orderId) {
+export async function cleanupOrderArtifacts(orderId) {
   const db = getDb();
   const order = db.prepare("SELECT id, bot_id, status FROM orders WHERE id = ?").get(orderId);
   if (!order) return { ok: false, reason: "order not found" };
 
   const removed = [];
 
-  // 1. draft-live snapshot
+  // 1. draft-live snapshot (always local to commercial/)
   const liveDraftPath = path.join(DRAFT_LIVE_DIR, `${orderId}.json`);
   if (fs.existsSync(liveDraftPath)) {
     try {
@@ -47,56 +47,54 @@ export function cleanupOrderArtifacts(orderId) {
   }
 
   // 2 + 3. Gateway session file + sessions.json registry entry.
-  // Session id convention used by commercial refine:
-  //   agent:<bot_id>:commercial:order:<orderId>
-  // The gateway's session file layout is:
   //   agents/<bot_id>/sessions/<uuid>.jsonl
   //   agents/<bot_id>/sessions/sessions.json  (maps session-id → uuid)
   const sessionId = `agent:${order.bot_id}:commercial:order:${orderId}`;
   const sessionsDir = path.join(AGENTS_DIR, order.bot_id, "sessions");
   const registryPath = path.join(sessionsDir, "sessions.json");
 
-  if (fs.existsSync(registryPath)) {
-    try {
-      const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-      // The registry shape varies across gateway versions; be defensive.
-      let sessionUuid = null;
-      if (registry && typeof registry === "object") {
-        // Shape A: flat map { sessionId: { id, ... } }
-        if (registry[sessionId]?.id) {
-          sessionUuid = registry[sessionId].id;
-          delete registry[sessionId];
-        }
-        // Shape B: { sessions: [ { sessionId, id } ] }
-        if (!sessionUuid && Array.isArray(registry.sessions)) {
-          const idx = registry.sessions.findIndex((s) => s?.sessionId === sessionId);
-          if (idx !== -1) {
-            sessionUuid = registry.sessions[idx].id;
-            registry.sessions.splice(idx, 1);
-          }
-        }
-      }
+  try {
+    const registryText = tunnel.isConnected()
+      ? (await tunnel.readFile(registryPath)).content
+      : (fs.existsSync(registryPath) ? fs.readFileSync(registryPath, "utf8") : null);
 
-      if (sessionUuid) {
-        const jsonlPath = path.join(sessionsDir, `${sessionUuid}.jsonl`);
-        if (fs.existsSync(jsonlPath)) {
-          try {
-            fs.unlinkSync(jsonlPath);
-            removed.push(`session:${sessionUuid.slice(0, 8)}`);
-          } catch (err) {
-            console.error(`[order-cleanup] Failed to remove ${jsonlPath}:`, err.message);
-          }
-        }
-        try {
-          fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2));
-        } catch (err) {
-          console.error(`[order-cleanup] Failed to update ${registryPath}:`, err.message);
+    if (!registryText) {
+      if (removed.length > 0) console.log(`[order-cleanup] Swept order ${orderId}: ${removed.join(", ")}`);
+      return { ok: true, removed };
+    }
+
+    const registry = JSON.parse(registryText);
+    let sessionUuid = null;
+    if (registry && typeof registry === "object") {
+      if (registry[sessionId]?.id) {
+        sessionUuid = registry[sessionId].id;
+        delete registry[sessionId];
+      }
+      if (!sessionUuid && Array.isArray(registry.sessions)) {
+        const idx = registry.sessions.findIndex((s) => s?.sessionId === sessionId);
+        if (idx !== -1) {
+          sessionUuid = registry.sessions[idx].id;
+          registry.sessions.splice(idx, 1);
         }
       }
-    } catch (err) {
-      // Registry parse failure isn't fatal — just leave it alone.
-      console.error(`[order-cleanup] Failed to parse ${registryPath}:`, err.message);
     }
+
+    if (sessionUuid) {
+      const jsonlPath = path.join(sessionsDir, `${sessionUuid}.jsonl`);
+      const updatedRegistry = JSON.stringify(registry, null, 2);
+
+      if (tunnel.isConnected()) {
+        await tunnel.exec("bash", ["-c",
+          `rm -f '${jsonlPath}' && cat > '${registryPath}' << 'REGISTRY_EOF'\n${updatedRegistry}\nREGISTRY_EOF`
+        ], { timeout: 10000 });
+      } else {
+        try { fs.unlinkSync(jsonlPath); } catch {}
+        fs.writeFileSync(registryPath, updatedRegistry);
+      }
+      removed.push(`session:${sessionUuid.slice(0, 8)}`);
+    }
+  } catch (err) {
+    console.error(`[order-cleanup] Failed to clean sessions for ${registryPath}:`, err.message);
   }
 
   if (removed.length > 0) {
@@ -110,7 +108,7 @@ export function cleanupOrderArtifacts(orderId) {
  * snapshot on disk and sweep them. Handles races where the transition hook
  * might have been missed (server crash mid-transition, manual DB edit, etc).
  */
-export function sweepStaleArtifacts() {
+export async function sweepStaleArtifacts() {
   if (!fs.existsSync(DRAFT_LIVE_DIR)) return 0;
 
   const db = getDb();
@@ -134,7 +132,7 @@ export function sweepStaleArtifacts() {
       continue;
     }
     if (TERMINAL_STATES.has(row.status)) {
-      cleanupOrderArtifacts(orderId);
+      await cleanupOrderArtifacts(orderId);
       swept += 1;
     }
   }

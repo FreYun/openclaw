@@ -87,7 +87,7 @@ async function safeReconcile() {
     console.error("[boot] Reconcile failed:", err);
   }
   try {
-    const n = sweepStaleArtifacts();
+    const n = await sweepStaleArtifacts();
     if (n > 0) console.log(`[boot] Swept ${n} stale artifact(s)`);
   } catch (err) {
     console.error("[boot] Sweep failed:", err);

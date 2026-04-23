@@ -111,6 +111,9 @@ skills-sandbox/
 # === Playwright MCP 临时截图 ===
 .playwright-mcp/
 
+# === Scripts 运行时缓存 ===
+scripts/s5/.industry_cache.json
+
 # === 根目录散落的爬虫脚本 (非主项目) ===
 batch_collect.py
 batch_collect_authors.py

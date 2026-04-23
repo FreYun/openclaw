@@ -1,0 +1,28 @@
+{
+  "offerings": [
+    {
+      "id": "daily-market-recap",
+      "name": "每日盘面复盘",
+      "icon": "📊",
+      "description": "四段式公众号推送：重磅资讯→数据复盘→盘面解读→后市展望",
+      "content_type": "longform",
+      "requirements_prefix": "你写一下今天的复盘文章，这是你要使用的新闻标题和链接：\n",
+      "requirements_placeholder": "每行一条，格式：新闻标题        链接\n\n例如：\n特朗普：美伊本周末或复谈        https://finance.eastmoney.com/a/xxx.html\nCPO概念龙头股业绩炸裂 高盛再看涨40%！        https://finance.eastmoney.com/a/yyy.html",
+      "requirements_label": "今日新闻素材"
+    },
+    {
+      "id": "hotspot-sector-analysis",
+      "name": "热点板块追踪",
+      "icon": "🔥",
+      "description": "板块深度分析文章：行情播报→深度分析→机构观点→相关基金",
+      "content_type": "longform"
+    },
+    {
+      "id": "gzh-industry-article",
+      "name": "公众号行业深度文章",
+      "icon": "🏭",
+      "description": "基于行业深度研究的公众号长文，叙事风格引用 writing-styles",
+      "content_type": "longform"
+    }
+  ]
+}

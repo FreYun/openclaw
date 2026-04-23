@@ -83,7 +83,7 @@ export async function reconcilePublishingOrders() {
     // rejected) leave the scratch alone so the client can continue refining.
     if (nextStatus === "published") {
       try {
-        cleanupOrderArtifacts(order.id);
+        await cleanupOrderArtifacts(order.id);
       } catch (err) {
         console.error(`[publish-bridge] cleanup after published failed:`, err.message);
       }

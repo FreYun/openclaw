@@ -218,6 +218,7 @@
       "Bash(node --check src/routes/orders.js)",
       "Bash(timeout 60 npx vite build)"
     ],
+    "model": "claude-opus-4-6",
     "additionalDirectories": [
       "/home/rooot/.openclaw/workspace-sys1/publish-queue/pending",
       "/home/rooot/.openclaw/agents/bot10/sessions"

@@ -159,7 +159,7 @@ router.get("/:id", requireAuth, (req, res) => {
 });
 
 // POST /api/orders/:id/cancel - cancel order
-router.post("/:id/cancel", requireAuth, (req, res) => {
+router.post("/:id/cancel", requireAuth, async (req, res) => {
   const db = getDb();
   const order = db.prepare("SELECT * FROM orders WHERE id = ? AND client_id = ?").get(req.params.id, req.clientId);
   if (!order) return res.status(404).json({ error: "订单不存在" });
@@ -172,7 +172,7 @@ router.post("/:id/cancel", requireAuth, (req, res) => {
   db.prepare("UPDATE orders SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?").run(order.id);
   // Sweep iteration scratch (draft-live snapshot + bot session). DB rows and
   // uploaded materials are kept for audit.
-  try { cleanupOrderArtifacts(order.id); } catch (err) {
+  try { await cleanupOrderArtifacts(order.id); } catch (err) {
     console.error(`[orders] cleanup after cancel failed:`, err.message);
   }
   res.json({ success: true });

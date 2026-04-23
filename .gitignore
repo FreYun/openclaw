@@ -125,3 +125,7 @@ samples/
 # Cookie 文件
 cookies-bot*.json
 workspace-bot15/茱莉亚图包/
+
+# 研报 PDF / 知识星球附件 (大二进制文件不进 git)
+workspace-bot4/reports/
+shared/zsxq-files/
